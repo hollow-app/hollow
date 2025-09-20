@@ -18,7 +18,7 @@ Hollow is a desktop app for designing and organizing your digital workspace with
 
 ## Prerequisites
 - [Node.js](https://nodejs.org/) (LTS recommended)
-- Yarn or npm
+- npm
 - [Rust toolchain](https://www.rust-lang.org/tools/install) (via rustup, includes cargo)
 - Tauri CLI and required system libraries (see [Tauri setup guide](https://tauri.app/start/prerequisites/) for your OS)
 

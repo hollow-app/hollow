@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+    <link rel="icon" type="image/svg+xml" href="/src/assets/icon-nobg.svg" />
+    <title>Hollow</title>
+    <script>
+            document.documentElement.classList.toggle(
+                "dark",
+                localStorage.theme !== "light",
+            );
+    </script>
+	<link rel="stylesheet" id="code-theme" />
+	<style id="dynamic-styles">:root { 
+		--primary-rgb: 0, 133, 255;
+		--primary-color: #0085ff;
+		--primary-color-05: #0078e6;
+		--primary-color-10: #006acc;
+		--primary-color-15: #005db3;
+		--primary-color-20: #005099;
+		--primary-color-25: #004280;
+		--primary-color-30: #003566;
+		--primary-color-35: #00284d;
+		--primary-color-40: #001b33;
+		--primary-color-45: #000d19;
+		--primary-color-50: #000;
+		--primary-color-55: #000;
+		--primary-color-60: #000;
+		--primary-color-65: #000;
+		--primary-color-70: #000;
+		--primary-color-75: #000;
+		--primary-color-80: #000;
+		--primary-color-85: #000;
+		--primary-color-90: #000;
+		--primary-color-95: #000;
+		--secondary-rgb: 0, 0, 0;
+		--secondary-color: #000000;
+		--secondary-color-05: #0d0d0d;
+		--secondary-color-10: #1a1a1a;
+		--secondary-color-15: #262626;
+		--secondary-color-20: #333;
+		--secondary-color-25: #404040;
+		--secondary-color-30: #4d4d4d;
+		--secondary-color-35: #595959;
+		--secondary-color-40: #666;
+		--secondary-color-45: #737373;
+		--secondary-color-50: #808080;
+		--secondary-color-55: #8c8c8c;
+		--secondary-color-60: #999;
+		--secondary-color-65: #a6a6a6;
+		--secondary-color-70: #b3b3b3;
+		--secondary-color-75: #bfbfbf;
+		--secondary-color-80: #ccc;
+		--secondary-color-85: #d9d9d9;
+		--secondary-color-90: #e6e6e6;
+		--secondary-color-95: #f2f2f2;
+		--cw: 5%;
+		--rh: 10%;
+		--offcolumns: 0;
+		--offrows: 0;
+
+	}</style>
+
+  </head>
+
+  <body style="background-color: black">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+    <script src="/src/index.tsx" type="module"></script>
+  </body>
+</html>

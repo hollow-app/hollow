@@ -1,0 +1,51 @@
+{
+	"name": "hollow",
+	"version": "0.0.3",
+	"description": "Shape your tools, stay productive",
+	"type": "module",
+	"scripts": {
+		"start": "vite",
+		"dev": "vite",
+		"build": "vite build",
+		"serve": "vite preview",
+		"tauri": "tauri"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@codemirror/lang-markdown": "^6.3.2",
+		"@codemirror/view": "^6.36.2",
+		"@lezer/highlight": "^1.2.1",
+		"@tailwindcss/vite": "^4.1.11",
+		"@tauri-apps/api": "^2.7.0",
+		"@tauri-apps/plugin-opener": "^2",
+		"@thisbeyond/solid-dnd": "^0.7.5",
+		"codemirror": "^6.0.1",
+		"emojibase-data": "^16.0.2",
+		"github-slugger": "^2.0.0",
+		"highlight.js": "^11.11.1",
+		"hollow-api": "^1.1.1",
+		"katex": "^0.16.22",
+		"lucide-solid": "^0.474.0",
+		"marked": "^15.0.7",
+		"marked-katex-extension": "^5.1.4",
+		"overlayscrollbars": "^2.11.4",
+		"overlayscrollbars-solid": "^0.5.6",
+		"polished": "^4.3.1",
+		"solid-codemirror": "^2.3.1",
+		"solid-colorful": "^0.0.2",
+		"solid-js": "^1.9.3",
+		"solid-motionone": "^1.0.3",
+		"solid-textarea-autosize": "^0.0.5",
+		"tailwindcss": "^4.0.3"
+	},
+	"devDependencies": {
+		"@tauri-apps/cli": "^2.7.1",
+		"prettier": "^3.6.2",
+		"prettier-plugin-tailwindcss": "^0.6.14",
+		"rollup-plugin-visualizer": "^6.0.3",
+		"typescript": "~5.6.2",
+		"vite": "^6.0.3",
+		"vite-plugin-solid": "^2.11.0",
+		"vite-plugin-solid-svg": "^0.8.1"
+	}
+}

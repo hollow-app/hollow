@@ -3,9 +3,9 @@
 ![Hollow Banner](https://github.com/hollow-app/hollow/blob/main/src/assets/banner.png)
 
 <div align="center">
-    <a href="https://hollow-space.vercel.app/">Home Page</a> |
-    <a href="https://hollow-space.vercel.app/blog">Blog</a> |
-    <a href="https://hollow-space.vercel.app/documentation/">Documentation</a> |
+    <a href="https://hollow-space.vercel.app/">Home Page</a> •
+    <a href="https://hollow-space.vercel.app/blog">Blog</a> •
+    <a href="https://hollow-space.vercel.app/documentation/">Documentation</a>
 </div>
 
 Hollow is a desktop app for designing and organizing your digital workspace with limitless styling, tools, and functionality for everyday tasks. 

@@ -1,0 +1,149 @@
+.button-control {
+        --color: var(--color-neutral-900);
+        --bg: var(--color-neutral-900);
+        width: fit-content;
+        height: fit-content;
+        border-radius: var(--spacing);
+        padding: calc(var(--spacing) * 2);
+        color: var(--color);
+        transition: all 0.2s ease-in-out;
+        &:hover {
+                background-color: color-mix(
+                        in oklab,
+                        var(--bg) 10%,
+                        transparent
+                );
+                color: var(--bg);
+        }
+        &:active {
+                transform: scale(0.95);
+        }
+        &:disabled {
+                opacity: 0.4;
+        }
+        & > svg {
+                margin: auto;
+                height: 1.2rem;
+                width: 1.2rem;
+        }
+}
+.dark .button-control {
+        --color: var(--color-neutral-50);
+        --bg: var(--color-neutral-50);
+}
+.button-control.primary {
+        --color: var(--color-primary);
+        --bg: rgba(var(--primary-rgb), 0.1);
+}
+.button-control.red {
+        --color: var(--color-red-600);
+        --bg: var(--color-red-600);
+}
+
+.button-control.active {
+        background-color: color-mix(in oklab, var(--bg) 20%, transparent);
+}
+
+.button-primary {
+        --padding-x: calc(var(--spacing) * 5);
+        --padding-y: calc(var(--spacing) * 1);
+        --border-w: 1px;
+        height: fit-content;
+        border: var(--border-w) solid var(--color-primary-05);
+        background-color: var(--color-primary-10);
+        border-radius: var(--radius-md);
+        padding-inline: var(--padding-x);
+        padding-block: var(--padding-y);
+        transition: 0.1s background ease-in-out;
+        cursor: pointer;
+        user-select: none;
+        
+        &:hover {
+                background-color: var(--color-primary-05);
+        }
+        &:active {
+                background-color: var(--color-primary-30);
+        }
+        &:focus-visible {
+                outline: 2px solid var(--color-primary-50);
+                outline-offset: 2px;
+        }
+        &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                pointer-events: none;
+        }
+}
+
+.button-secondary {
+        --padding-x: calc(var(--spacing) * 5);
+        --padding-y: calc(var(--spacing) * 1);
+        --border-w: 1px;
+        --border-radius: var(--radius-md);
+        height: fit-content;
+        border-width: var(--border-w);
+        border-style: solid;
+        border-color: var(--color-secondary-15);
+        background: var(--color-secondary-10);
+        border-radius: var(--border-radius);
+        padding-inline: var(--padding-x);
+        padding-block: var(--padding-y);
+        transition: 0.1s background ease-in-out;
+        cursor: pointer;
+        user-select: none;
+
+        &:hover {
+                background-color: var(--color-secondary-15);
+        }
+        &:active {
+                background-color: var(--color-secondary-20);
+        }
+        &:focus-visible {
+                outline: 2px solid var(--color-secondary-50);
+                outline-offset: 2px;
+        }
+        &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                pointer-events: none;
+        }
+}
+
+.button-empty {
+        --bg-color: #7D7D7D;
+        --border-color: var(--bg-color);
+        --hover-bg: var(--bg-color);
+        --active-bg: color-mix(in hsl, var(--bg-color) 80%, black);
+        --border-w: 1px;
+        --padding-x: calc(var(--spacing) * 5);
+        --padding-y: calc(var(--spacing) * 1);
+        --border-radius: var(--radius-md);
+        height: fit-content;
+        border-width: var(--border-w);
+        border-style: solid;
+        border-color: var(--border-color);
+        background-color: color-mix(in hsl, #747474 50%, var(--bg-color) 50%);
+        border-radius: var(--border-radius);
+        padding-inline: var(--padding-x);
+        padding-block: var(--padding-y);
+        transition: 0.1s background ease-in-out;
+        cursor: pointer;
+        user-select: none;
+
+        &:hover {
+                background-color: var(--hover-bg);
+        }
+        &:active {
+                background-color: var(--active-bg);
+        }
+        &:focus-visible {
+                outline: 2px solid var(--border-color);
+                outline-offset: 2px;
+        }
+        &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                pointer-events: none;
+        }
+}
+

@@ -1,104 +1,105 @@
 .tool-tip {
-        position: relative;
+	position: relative;
 }
 
 .tool-tip::after,
 .tool-tip::before {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-        z-index: 9999;
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 1s ease;
+	z-index: 9999;
 }
 
 .tool-tip:hover::after,
 .tool-tip:hover::before {
-        opacity: 1;
+	opacity: 1;
+	transition: opacity 0.2s;
 }
 
 /* Tooltip box */
 .tool-tip::after {
-        content: attr(data-tooltip);
-        background: var(--color-secondary-10);
-        color: var(--color-secondary-95);
-        padding: 3px 8px;
-        border-radius: var(--radius-md);
-        border-style: solid;
-        border-color: var(--color-secondary-15);
-        font-size: 12px;
-        white-space: nowrap;
+	content: attr(data-tooltip);
+	background: var(--color-secondary-10);
+	color: var(--color-secondary-95);
+	padding: 3px 8px;
+	border-radius: var(--radius-md);
+	border-style: solid;
+	border-color: var(--color-secondary-15);
+	font-size: 12px;
+	white-space: nowrap;
 }
 
 /* Arrow */
 .tool-tip::before {
-        content: "";
-        width: 0;
-        height: 0;
-        border-style: solid;
+	content: "";
+	width: 0;
+	height: 0;
+	border-style: solid;
 }
 
 /* === Positioning based on data-side === */
 
 /* TOP */
 .tool-tip[data-side="top"]::after {
-        bottom: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 1px 1px 0 1px;
+	bottom: calc(100% + 6px);
+	left: 50%;
+	transform: translateX(-50%);
+	border-width: 1px 1px 0 1px;
 }
+
 .tool-tip[data-side="top"]::before {
-        border-width: 6px 6px 0 6px;
-        border-color: var(--color-secondary-10) transparent transparent
-                transparent;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
+	border-width: 6px 6px 0 6px;
+	border-color: var(--color-secondary-10) transparent transparent transparent;
+	bottom: 100%;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 /* BOTTOM */
 .tool-tip[data-side="bottom"]::after {
-        top: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 0 1px 1px 1px;
+	top: calc(100% + 6px);
+	left: 50%;
+	transform: translateX(-50%);
+	border-width: 0 1px 1px 1px;
 }
+
 .tool-tip[data-side="bottom"]::before {
-        border-width: 0 6px 6px 6px;
-        border-color: transparent transparent var(--color-secondary-10)
-                transparent;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
+	border-width: 0 6px 6px 6px;
+	border-color: transparent transparent var(--color-secondary-10) transparent;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
 }
 
 /* LEFT */
 .tool-tip[data-side="left"]::after {
-        right: calc(100% + 6px);
-        top: 50%;
-        transform: translateY(-50%);
-        border-width: 1px 0 1px 1px;
+	right: calc(100% + 6px);
+	top: 50%;
+	transform: translateY(-50%);
+	border-width: 1px 0 1px 1px;
 }
+
 .tool-tip[data-side="left"]::before {
-        border-width: 6px 0 6px 6px;
-        border-color: transparent transparent transparent
-                var(--color-secondary-10);
-        right: 100%;
-        top: 50%;
-        transform: translateY(-50%);
+	border-width: 6px 0 6px 6px;
+	border-color: transparent transparent transparent var(--color-secondary-10);
+	right: 100%;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 /* RIGHT */
 .tool-tip[data-side="right"]::after {
-        left: calc(100% + 6px);
-        top: 50%;
-        transform: translateY(-50%);
-        border-width: 1px 1px 1px 0;
+	left: calc(100% + 6px);
+	top: 50%;
+	transform: translateY(-50%);
+	border-width: 1px 1px 1px 0;
 }
+
 .tool-tip[data-side="right"]::before {
-        border-width: 6px 6px 6px 0;
-        border-color: transparent var(--color-secondary-10) transparent
-                transparent;
-        left: 100%;
-        top: 50%;
-        transform: translateY(-50%);
+	border-width: 6px 6px 6px 0;
+	border-color: transparent var(--color-secondary-10) transparent transparent;
+	left: 100%;
+	top: 50%;
+	transform: translateY(-50%);
 }

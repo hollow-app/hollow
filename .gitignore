@@ -1,0 +1,10 @@
+node_modules/
+
+npm-debug.log*
+*.log
+
+src-tauri/target/
+src-tauri/.cargo/
+src-tauri/Cargo.lock
+
+

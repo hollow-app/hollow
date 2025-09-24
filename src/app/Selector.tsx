@@ -19,6 +19,18 @@ type SelectorProps = {
 	onSelect: Setter<string | null>;
 };
 
+const themes = [
+	{ name: "Blaze", primary: "#FF6B6B", secondary: "#1A1A1A" },
+	{ name: "Abyss", primary: "#1A535C", secondary: "#F0F5F5" },
+	{ name: "Solar", primary: "#FFD93D", secondary: "#2C2C2C" },
+	{ name: "Mint", primary: "#2EC4B6", secondary: "#0B3D2E" },
+	{ name: "Cherry", primary: "#FF3C38", secondary: "#2E1A1A" },
+	{ name: "Twilight", primary: "#6A4C93", secondary: "#EAE6F8" },
+	{ name: "Amber", primary: "#FFBF69", secondary: "#3C2F1F" },
+	{ name: "Cobalt", primary: "#1982C4", secondary: "#E0F0FA" },
+	{ name: "Onyx", primary: "#1A1A1A", secondary: "#FFB6B6" },
+	{ name: "Lime", primary: "#B8E986", secondary: "#2F3B20" },
+];
 const useRealmManager = () => {
 	const [name, setName] = createSignal("");
 	const [primary, setPrimary] = createSignal("#1ab1ff");

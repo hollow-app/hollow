@@ -11,31 +11,19 @@ import { KitEditorType } from "./KitEdiorType";
 export {};
 
 declare global {
-        interface Window {
-                canvas_size: { w: number; h: number };
-                canvas_grid: { cw: number; rh: number };
-                onCopy: () => void;
-                onCut: () => void;
-                onPaste: () => void;
-                hollowManager: HollowManager;
-                realmManager: RealmManager;
-                toolManager: ToolManager;
-                entryManager: EntryManager;
-                editorKit: Setter<KitEditorType>;
-                markdownManager: MarkdownManager;
-                hotkeysManager: hotkeysManager;
-                setEditor: (b: boolean) => void;
-        }
+	interface Window {
+		canvas_size: { w: number; h: number };
+		canvas_grid: { cw: number; rh: number };
+		onCopy: () => void;
+		onCut: () => void;
+		onPaste: () => void;
+		hollowManager: HollowManager;
+		realmManager: RealmManager;
+		toolManager: ToolManager;
+		entryManager: EntryManager;
+		editorKit: Setter<KitEditorType>;
+		markdownManager: MarkdownManager;
+		hotkeysManager: hotkeysManager;
+		setEditor: (b: boolean) => void;
+	}
 }
-
-//
-//get_version: (): Promise<string> => ipcRenderer.invoke("get-version"),
-//    fetch: (
-//            url: string,
-//            options?: RequestInit,
-//            responseType?: ResponseType,
-//    ) => ipcRenderer.invoke("fetch-data", url, options, responseType),
-//    install_plugin: (realmId: string, name: string, repo: string) =>
-//            ipcRenderer.invoke("install-plugin", realmId, name, repo),
-//    uninstall_plugin: (realmId: string, name: string) =>
-//            ipcRenderer.invoke("uninstall-plugin", realmId, name),

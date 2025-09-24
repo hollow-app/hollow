@@ -4,63 +4,66 @@
 @import url("./markdown-preview.css");
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
-@theme {
-        /* primary */
-        --color-primary: var(--primary-color);
-        --color-primary-05: var(--primary-color-05);
-        --color-primary-10: var(--primary-color-10);
-        --color-primary-15: var(--primary-color-15);
-        --color-primary-20: var(--primary-color-20);
-        --color-primary-25: var(--primary-color-25);
-        --color-primary-30: var(--primary-color-30);
-        --color-primary-35: var(--primary-color-35);
-        --color-primary-40: var(--primary-color-40);
-        --color-primary-45: var(--primary-color-45);
-        --color-primary-50: var(--primary-color-50);
-        --color-primary-55: var(--primary-color-55);
-        --color-primary-60: var(--primary-color-60);
-        --color-primary-65: var(--primary-color-65);
-        --color-primary-70: var(--primary-color-70);
-        --color-primary-75: var(--primary-color-75);
-        --color-primary-80: var(--primary-color-80);
-        --color-primary-85: var(--primary-color-85);
-        --color-primary-90: var(--primary-color-90);
-        --color-primary-95: var(--primary-color-95);
-        /* secondary */
-        --color-secondary: var(--secondary-color);
-        --color-secondary-05: var(--secondary-color-05);
-        --color-secondary-10: var(--secondary-color-10);
-        --color-secondary-15: var(--secondary-color-15);
-        --color-secondary-20: var(--secondary-color-20);
-        --color-secondary-25: var(--secondary-color-25);
-        --color-secondary-30: var(--secondary-color-30);
-        --color-secondary-35: var(--secondary-color-35);
-        --color-secondary-40: var(--secondary-color-40);
-        --color-secondary-45: var(--secondary-color-45);
-        --color-secondary-50: var(--secondary-color-50);
-        --color-secondary-55: var(--secondary-color-55);
-        --color-secondary-60: var(--secondary-color-60);
-        --color-secondary-65: var(--secondary-color-65);
-        --color-secondary-70: var(--secondary-color-70);
-        --color-secondary-75: var(--secondary-color-75);
-        --color-secondary-80: var(--secondary-color-80);
-        --color-secondary-85: var(--secondary-color-85);
-        --color-secondary-90: var(--secondary-color-90);
-        --color-secondary-95: var(--secondary-color-95);
-        /* breakpoints  */
-        --breakpoint-xxs: 15rem;
-        /* fonts */
-        /* animations */
-        --animate-reveal-title: reveal-title 3s ease-in-out;
 
-        @keyframes reveal-title {
-                from {
-                        transform: translateX(0%);
-                }
-                to {
-                        transform: translateX(-50%);
-                }
-        }
+@theme {
+
+	/* primary */
+	--color-primary: var(--primary-color);
+	--color-primary-05: var(--primary-color-05);
+	--color-primary-10: var(--primary-color-10);
+	--color-primary-15: var(--primary-color-15);
+	--color-primary-20: var(--primary-color-20);
+	--color-primary-25: var(--primary-color-25);
+	--color-primary-30: var(--primary-color-30);
+	--color-primary-35: var(--primary-color-35);
+	--color-primary-40: var(--primary-color-40);
+	--color-primary-45: var(--primary-color-45);
+	--color-primary-50: var(--primary-color-50);
+	--color-primary-55: var(--primary-color-55);
+	--color-primary-60: var(--primary-color-60);
+	--color-primary-65: var(--primary-color-65);
+	--color-primary-70: var(--primary-color-70);
+	--color-primary-75: var(--primary-color-75);
+	--color-primary-80: var(--primary-color-80);
+	--color-primary-85: var(--primary-color-85);
+	--color-primary-90: var(--primary-color-90);
+	--color-primary-95: var(--primary-color-95);
+	/* secondary */
+	--color-secondary: var(--secondary-color);
+	--color-secondary-05: var(--secondary-color-05);
+	--color-secondary-10: var(--secondary-color-10);
+	--color-secondary-15: var(--secondary-color-15);
+	--color-secondary-20: var(--secondary-color-20);
+	--color-secondary-25: var(--secondary-color-25);
+	--color-secondary-30: var(--secondary-color-30);
+	--color-secondary-35: var(--secondary-color-35);
+	--color-secondary-40: var(--secondary-color-40);
+	--color-secondary-45: var(--secondary-color-45);
+	--color-secondary-50: var(--secondary-color-50);
+	--color-secondary-55: var(--secondary-color-55);
+	--color-secondary-60: var(--secondary-color-60);
+	--color-secondary-65: var(--secondary-color-65);
+	--color-secondary-70: var(--secondary-color-70);
+	--color-secondary-75: var(--secondary-color-75);
+	--color-secondary-80: var(--secondary-color-80);
+	--color-secondary-85: var(--secondary-color-85);
+	--color-secondary-90: var(--secondary-color-90);
+	--color-secondary-95: var(--secondary-color-95);
+	/* breakpoints  */
+	--breakpoint-xxs: 15rem;
+	/* fonts */
+	/* animations */
+	--animate-reveal-title: reveal-title 3s ease-in-out;
+
+	@keyframes reveal-title {
+		from {
+			transform: translateX(0%);
+		}
+
+		to {
+			transform: translateX(-50%);
+		}
+	}
 }
 
 @source inline("animate-ping");

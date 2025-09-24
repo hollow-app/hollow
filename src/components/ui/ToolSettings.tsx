@@ -31,9 +31,9 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 		window.hollowManager.emit("tool-settings", null);
 	};
 	return (
-		<div class="bg-secondary-05 up-pop border-secondary-15 shadow-popup pointer-events-auto absolute flex h-fit max-h-[70%] w-[60%] flex-col overflow-hidden rounded-2xl border-1 p-5">
+		<div class="bg-secondary-05 z-1 up-pop border-secondary-15 shadow-popup pointer-events-auto absolute flex h-fit max-h-[70%] w-[60%] flex-col overflow-hidden rounded-2xl border-1 p-5">
 			<div class="flex h-fit gap-10 pb-5 ">
-				<span class="bg-secondary-10 flex h-30 w-30 items-center justify-center rounded-lg p-3 text-center text-6xl">
+				<span class="bg-secondary-05 flex h-30 w-30 items-center justify-center rounded-lg p-3 text-center text-6xl">
 					{card().emoji}
 				</span>
 				<div class="flex-1 rounded-lg">
@@ -106,10 +106,6 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 														<input
 															type="text"
 															class="input"
-															style={{
-																"--bg-color":
-																	"var(--color-secondary-10)",
-															}}
 															placeholder={
 																option.placeholder
 															}
@@ -127,10 +123,6 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 													return (
 														<textarea
 															class="input w-full resize-none"
-															style={{
-																"--bg-color":
-																	"var(--color-secondary-10)",
-															}}
 															placeholder={
 																option.placeholder
 															}
@@ -285,7 +277,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 					)}
 				</For>
 			</div>
-			<div class="bg-secondary-10/60 mt-auto flex h-fit w-full justify-end gap-5 rounded p-5">
+			<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded p-5">
 				<button class="button-primary" onclick={onSave}>
 					Save
 				</button>

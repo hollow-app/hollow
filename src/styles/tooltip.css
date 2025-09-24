@@ -1,105 +1,121 @@
+/* Base button style */
 .tool-tip {
 	position: relative;
+	display: inline-block;
+	overflow: visible;
 }
 
-.tool-tip::after,
-.tool-tip::before {
+
+/* Tooltip content */
+.tool-tip-content {
 	position: absolute;
+	max-width: 20rem;
+	padding: 6px 10px;
+	background-color: var(--color-secondary-10);
+	color: var(--tc-300);
+	font-size: 14px;
+	border-color: var(--color-secondary-20);
+	border-style: solid;
+	border-radius: 7px;
 	opacity: 0;
+	display: block;
+	width: max-content;
 	pointer-events: none;
-	transition: opacity 1s ease;
-	z-index: 9999;
+	transform: translate(0, 0);
+	transition: opacity 1s ease, transform 0.6s ease;
+	z-index: 10;
+	white-space: normal;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
-.tool-tip:hover::after,
-.tool-tip:hover::before {
+/* Show tool-tip on hover */
+.tool-tip:hover .tool-tip-content {
 	opacity: 1;
-	transition: opacity 0.2s;
+	pointer-events: auto;
+	transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Tooltip box */
-.tool-tip::after {
-	content: attr(data-tooltip);
-	background: var(--color-secondary-10);
-	color: var(--color-secondary-95);
-	padding: 3px 8px;
-	border-radius: var(--radius-md);
-	border-style: solid;
-	border-color: var(--color-secondary-15);
-	font-size: 12px;
-	white-space: nowrap;
-}
-
-/* Arrow */
-.tool-tip::before {
-	content: "";
-	width: 0;
-	height: 0;
-	border-style: solid;
-}
-
-/* === Positioning based on data-side === */
-
-/* TOP */
-.tool-tip[data-side="top"]::after {
-	bottom: calc(100% + 6px);
-	left: 50%;
-	transform: translateX(-50%);
-	border-width: 1px 1px 0 1px;
-}
-
-.tool-tip[data-side="top"]::before {
-	border-width: 6px 6px 0 6px;
-	border-color: var(--color-secondary-10) transparent transparent transparent;
+/* Positioning based on data-side */
+.tool-tip-content[data-side="top"] {
 	bottom: 100%;
 	left: 50%;
-	transform: translateX(-50%);
-}
-
-/* BOTTOM */
-.tool-tip[data-side="bottom"]::after {
-	top: calc(100% + 6px);
-	left: 50%;
-	transform: translateX(-50%);
+	transform: translate(-50%, -6px);
 	border-width: 0 1px 1px 1px;
 }
 
-.tool-tip[data-side="bottom"]::before {
-	border-width: 0 6px 6px 6px;
-	border-color: transparent transparent var(--color-secondary-10) transparent;
-	top: 100%;
-	left: 50%;
-	transform: translateX(-50%);
+.tool-tip:hover .tool-tip-content[data-side="top"] {
+	transform: translate(-50%, -10px);
 }
 
-/* LEFT */
-.tool-tip[data-side="left"]::after {
-	right: calc(100% + 6px);
+.tool-tip-content[data-side="bottom"] {
+	top: 100%;
+	left: 50%;
+	transform: translate(-50%, 6px);
+	border-width: 1px 1px 0 1px;
+}
+
+.tool-tip:hover .tool-tip-content[data-side="bottom"] {
+	transform: translate(-50%, 10px);
+}
+
+.tool-tip-content[data-side="left"] {
+	right: 100%;
 	top: 50%;
-	transform: translateY(-50%);
+	transform: translate(-6px, -50%);
 	border-width: 1px 0 1px 1px;
 }
 
-.tool-tip[data-side="left"]::before {
-	border-width: 6px 0 6px 6px;
-	border-color: transparent transparent transparent var(--color-secondary-10);
-	right: 100%;
-	top: 50%;
-	transform: translateY(-50%);
+.tool-tip:hover .tool-tip-content[data-side="left"] {
+	transform: translate(-10px, -50%);
 }
 
-/* RIGHT */
-.tool-tip[data-side="right"]::after {
-	left: calc(100% + 6px);
+.tool-tip-content[data-side="right"] {
+	left: 100%;
 	top: 50%;
-	transform: translateY(-50%);
+	transform: translate(6px, -50%);
 	border-width: 1px 1px 1px 0;
 }
 
-.tool-tip[data-side="right"]::before {
-	border-width: 6px 6px 6px 0;
-	border-color: transparent var(--color-secondary-10) transparent transparent;
+.tool-tip:hover .tool-tip-content[data-side="right"] {
+	transform: translate(10px, -50%);
+}
+
+/* Optional: small arrow */
+.tool-tip-content::after {
+	content: '';
+	position: absolute;
+	border-style: solid;
+}
+
+.tool-tip-content[data-side="top"]::after {
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px 5px 0 5px;
+	border-color: var(--color-secondary-10) transparent transparent transparent;
+}
+
+.tool-tip-content[data-side="bottom"]::after {
+	bottom: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 0 5px 5px 5px;
+	border-color: transparent transparent var(--color-secondary-10) transparent;
+}
+
+.tool-tip-content[data-side="left"]::after {
 	left: 100%;
 	top: 50%;
-	transform: translateY(-50%);
+	margin-top: -5px;
+	border-width: 5px 0 5px 5px;
+	border-color: transparent transparent transparent var(--color-secondary-10);
+}
+
+.tool-tip-content[data-side="right"]::after {
+	right: 100%;
+	top: 50%;
+	margin-top: -5px;
+	border-width: 5px 5px 5px 0;
+	border-color: transparent var(--color-secondary-10) transparent transparent;
 }

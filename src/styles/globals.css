@@ -148,10 +148,11 @@ a {
 
 .grid-lines {
 	--visible: var(--static-grid-lines);
+	--simi-visible: color-mix(in oklab, var(--static-grid-lines), transparent 50%);
 	--n: 4;
 	--t: 1px;
 	--g: 10px;
-	--c: var(--visible) 25%, #0000 0;
+	--c: color-mix(in oklab, var(--visible), transparent 50%) 25%, #0000 0;
 	background:
 		linear-gradient(to right,
 			var(--visible, black) calc(var(--cw) / var(--n) - var(--g) + var(--t)),
@@ -161,7 +162,10 @@ a {
 			transparent var(--g)) left calc(-1 * ((var(--rh) / var(--n) - var(--g) + var(--t)) / 2)) / var(--t) calc(var(--rh) / var(--n)) repeat-y,
 		linear-gradient(to right,
 			var(--visible, black) calc(var(--cw) / var(--n) - var(--g) + var(--t)),
-			transparent var(--g)) calc(-1 * ((var(--cw) / var(--n) - var(--g) + var(--t)) / 2)) top / calc(var(--cw) / var(--n)) var(--t) repeat-x;
+			transparent var(--g)) calc(-1 * ((var(--cw) / var(--n) - var(--g) + var(--t)) / 2)) top / calc(var(--cw) / var(--n)) var(--t) repeat-x,
+		linear-gradient(to bottom,
+			var(--visible, black) calc(var(--rh) / var(--n) - var(--g) + var(--t)),
+			transparent var(--g)) right calc(-1 * ((var(--rh) / var(--n) - var(--g) + var(--t)) / 2)) / var(--t) calc(var(--rh) / var(--n)) repeat-y;
 
 	& .canvas {
 		background:
@@ -276,8 +280,9 @@ a {
 	--padding-x: calc(var(--spacing) * 3);
 	--padding-y: calc(var(--spacing) * 2);
 	--border-w: 2px;
-	--bg-color: var(--color-secondary-05);
+	--bg-color: var(--color-secondary-10);
 	width: 100%;
+	border: 1px solid var(--bg-color);
 	background-color: color-mix(in oklab, var(--bg-color), transparent);
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);
@@ -286,6 +291,7 @@ a {
 
 	&:focus {
 		background-color: var(--bg-color);
+		border-color: var(--color-primary);
 	}
 
 	&:invalid {
@@ -556,18 +562,18 @@ a {
 .hollow-effect .circle.c1 {
 	transition: 0.5s transform ease;
 	transform-origin: center;
-	stroke: var(--color-secondary-90);
+	/* stroke: var(--color-secondary-90); */
 }
 
 .hollow-effect .circle.c2 {
 	transition: 1s transform ease;
 	transform-origin: center;
-	stroke: var(--color-secondary-90);
+	/* stroke: var(--color-secondary-90); */
 }
 
-.hollow-effect .circle.core {
-	fill: var(--color-secondary-90);
-}
+/* .hollow-effect .circle.core { */
+/* 	fill: var(--color-secondary-90); */
+/* } */
 
 .shadow-popup {
 	box-shadow: 0 12px 78px rgba(0, 0, 0, 0.25);
@@ -810,7 +816,7 @@ a {
 }
 
 .up-pop {
-	--bg-color: var(--color-secondary-05);
+	--bg-color: var(--color-secondary);
 	--border-color: var(--color-secondary-10);
 	--shadow: var(--color-secondary);
 	background: var(--bg-color);

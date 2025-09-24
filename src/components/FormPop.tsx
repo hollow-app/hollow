@@ -1,6 +1,5 @@
 import { handleOptionFile } from "@managers/manipulation/images";
 import { FormType } from "@type/FormType";
-import { InfoIcon, ScrollTextIcon } from "lucide-solid";
 import { Accessor, For, onMount } from "solid-js";
 import { createSignal } from "solid-js";
 import ColorPick from "./ColorPick";
@@ -43,22 +42,22 @@ export default function FormPop({ form }: FormPopProps) {
 		window.hollowManager.emit("Form", null);
 	};
 	return (
-		<div class=" pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 up-pop">
-			<div
-				class="title-panel flex gap-2 items-center"
-				style={{ "--padding-x": "3rem" }}
-			>
-				<div class="py-1 pr-3 text-primary font-medium flex border-secondary-15 gap-2 rounded-sm border-l-0">
-					<ScrollTextIcon />
-					Form
+		<div class="pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 up-pop z-3 p-5">
+			<div class="flex gap-5 items-start border-b border-dashed border-secondary-15 pb-5">
+				<div>
+					<h1 class="text-4xl  font-bold text-neutral-900 dark:text-neutral-100">
+						Form{" "}
+						<span class="text-xl font-light text-neutral-500">
+							{form().title}
+						</span>
+					</h1>
+					<h3 class="text-sm rounded bg-secondary-10 px-2 text-neutral-500 tracking-wider font-medium uppercase">
+						{form().description}
+					</h3>
 				</div>
-				<h1>{form().title}</h1>
 			</div>
 
-			<div
-				class="flex flex-col overflow-x-hidden overflow-y-auto px-10 content-panel"
-				style={{ "--padding-x": "3rem" }}
-			>
+			<div class="flex flex-col overflow-x-hidden overflow-y-auto ">
 				<For each={form().options}>
 					{(preOption, index) => {
 						const option = {
@@ -87,14 +86,23 @@ export default function FormPop({ form }: FormPopProps) {
 									<h2
 										class="text-lg text-neutral-800 flex gap-1 dark:text-neutral-200"
 										classList={{
-											"tool-tip":
-												typeof option.description ===
-												"string",
+											"tool-tip": !!option.description,
 										}}
-										data-tooltip={option.description}
-										data-side="right"
 									>
-										{option.label}
+										{option.label}{" "}
+										{option.description && (
+											<>
+												<span class="font-light tracking-widest text-secondary-20">
+													[i]
+												</span>
+												<span
+													class="tool-tip-content"
+													data-side="right"
+												>
+													{option.description}
+												</span>
+											</>
+										)}
 										{!option.optional && (
 											<span class="text-primary-10 text-sm">
 												*
@@ -109,10 +117,6 @@ export default function FormPop({ form }: FormPopProps) {
 												<input
 													type="text"
 													class="input"
-													style={{
-														"--bg-color":
-															"var(--color-secondary-10)",
-													}}
 													placeholder={
 														option.placeholder
 													}
@@ -129,10 +133,6 @@ export default function FormPop({ form }: FormPopProps) {
 											return (
 												<textarea
 													class="input resize-none"
-													style={{
-														"--bg-color":
-															"var(--color-secondary-10)",
-													}}
 													placeholder={
 														option.placeholder
 													}
@@ -297,7 +297,7 @@ export default function FormPop({ form }: FormPopProps) {
 					}}
 				</For>
 			</div>
-			<div class="bg-secondary-10/60 mt-auto flex h-fit w-full justify-end gap-5 py-5 px-[3rem]">
+			<div class="bg-secondary-05 mt-auto rounded flex h-fit w-full justify-end gap-5 py-5 px-[3rem]">
 				<button class="button-primary" onclick={onSave}>
 					{form().update ? "Update" : "Submit"}
 				</button>
@@ -309,62 +309,3 @@ export default function FormPop({ form }: FormPopProps) {
 	);
 }
 //
-//const form: FormType = {
-//        title: "Example Settings",
-//        submit: (submission) => {
-//                console.log("Form submitted with:", submission);
-//        },
-//        options: [
-//                {
-//                        type: "text",
-//                        label: "Username",
-//                        placeholder: "Example",
-//                        key: "username",
-//                        description: "Enter your preferred username",
-//                },
-//                {
-//                        type: "number",
-//                        label: "Age",
-//                        key: "age",
-//                        min: 0,
-//                        max: 120,
-//                },
-//                {
-//                        type: "boolean",
-//                        label: "Receive Newsletter",
-//                        key: "newsletter",
-//                        optional: true,
-//                },
-//                {
-//                        type: "dropdown",
-//                        label: "Favorite Language",
-//                        key: "language",
-//                        options: ["JavaScript", "TypeScript", "Rust", "Go"],
-//                },
-//                {
-//                        type: "range",
-//                        label: "Volume",
-//                        key: "volume",
-//                        min: 0,
-//                        max: 100,
-//                        step: 1,
-//                },
-//                {
-//                        type: "custom",
-//                        label: "Custom Block",
-//                        key: "customComponent",
-//                        optional: true,
-//                        render: () => (
-//                                <div
-//                                        style={{
-//                                                padding: "8px",
-//                                                background: "#eee",
-//                                        }}
-//                                >
-//                                        Hello from custom
-//                                </div>
-//                        ),
-//                        flexDirection: "row",
-//                },
-//        ],
-//};

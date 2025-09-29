@@ -1,6 +1,6 @@
 # L1
 - [x] the form ui is trash, opt global.css.
-- [ ] the creation of a theme should have an option to select some predefined themes.
+- [ ] the creation of a theme should have an option to select some predefined themes, and in the settings should have the predefined themes and the ability to edit them.
 - [ ] popup for uploading files, which should display more informations about the files imported.
 - [ ] toolsettings and formpop have similar components, could also repeate in future component.
 # L2

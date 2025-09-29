@@ -8,6 +8,7 @@ type DropDownProps = {
 	placeholder?: string;
 	isLoading?: boolean;
 	error?: string;
+	editable?: boolean;
 };
 
 export default function DropDown({
@@ -17,6 +18,7 @@ export default function DropDown({
 	placeholder,
 	isLoading = false,
 	error,
+	editable = true,
 }: DropDownProps) {
 	const [query, setQuery] = createSignal(value || "");
 	const [isOpen, setIsOpen] = createSignal(false);
@@ -165,6 +167,7 @@ export default function DropDown({
 				onKeyDown={handleKeyDown}
 				placeholder={placeholder}
 				spellcheck="false"
+				readonly={!editable}
 				aria-autocomplete="list"
 				aria-controls="dropdown-list"
 				aria-activedescendant={
@@ -172,10 +175,11 @@ export default function DropDown({
 						? `dropdown-item-${activeIndex()}`
 						: undefined
 				}
-				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary w-full max-w-full appearance-none rounded-md bg-secondary-10/75 py-2 pr-20 pl-3 text-sm shadow-sm  focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
+				class="ease h-10 border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary w-full max-w-full appearance-none rounded-md bg-secondary-10/75 py-2 pr-20 pl-3 text-sm shadow-sm  focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
 				disabled={isLoading}
 				classList={{
 					"border-red-500": !!error,
+					"cursor-pointer": !editable,
 				}}
 			/>
 			{error && (

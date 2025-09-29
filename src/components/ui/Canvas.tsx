@@ -3,7 +3,7 @@ import useGrid from "@hooks/useGrid";
 import { Opthand } from "@type/Opthand";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
-import { createSignal, For, onMount, Show, useContext } from "solid-js";
+import { createSignal, For, onMount, Show } from "solid-js";
 
 type CanvasProps = {
 	cards: () => Opthand[];
@@ -23,7 +23,10 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 	});
 
 	return (
-		<div ref={canvas} class="relative w-full h-full overflow-hidden">
+		<div
+			ref={canvas}
+			class="relative w-full h-full overflow-hidden bg-secondary-05/30 border border-secondary-10 rounded-xl"
+		>
 			<div
 				class="absolute top-0 left-0 h-full w-full object-cover"
 				style={{
@@ -36,7 +39,7 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 			/>
 
 			<OverlayScrollbarsComponent
-				class={"grid-lines relative h-full w-full"}
+				class={"grid-lines relative h-full w-full bg-transparent"}
 				style={{
 					"--visible": isGridVisible()
 						? "var(--secondary-color-15)"
@@ -57,8 +60,8 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 						ref={container}
 						class={"canvas relative"}
 						style={{
-							width: `calc(${size().w}px + calc(var(--cw) * var(--offcolumns) - calc(var(--spacing) * 16)))`,
-							height: `calc(${size().h}px + calc(var(--rh) * var(--offrows)))`,
+							width: `calc(${size().w}px + calc(var(--cw) * var(--offcolumns) - 2px))`,
+							height: `calc(${size().h}px + calc(var(--rh) * var(--offrows) - 2px)`,
 						}}
 					>
 						<For each={cards().filter((i) => i.isPlaced)}>

@@ -22,7 +22,7 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 		window.hollowManager.emit("EmojiPicker", null);
 	};
 	return (
-		<div class="bg-secondary border-secondary-15 shadow-popup pointer-events-auto absolute flex h-fit w-fit flex-col items-center gap-5 rounded-xl border-1 p-6 z-5">
+		<div class="bg-secondary border-secondary-15 shadow-popup pointer-events-auto absolute flex h-fit w-fit flex-col items-center gap-5 rounded-xl border-1 p-6 z-7">
 			<div class="flex w-full gap-2">
 				<div class="bg-secondary-10/70 flex items-center rounded">
 					<span class="flex size-12 shrink-0 items-center justify-center text-center text-2xl">

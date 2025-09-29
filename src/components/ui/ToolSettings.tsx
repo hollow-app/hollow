@@ -1,7 +1,7 @@
 import ColorPick from "@components/ColorPick";
 import DropDown from "@components/DropDown";
 import EmojiPick from "@components/EmojiPick";
-import ImportButton from "@components/ImportButton";
+import ImportFile from "@components/ImportFile";
 import NumberInput from "@components/NumberInput";
 import Slider from "@components/Slider";
 import WordInput from "@components/WordInput";
@@ -31,7 +31,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 		window.hollowManager.emit("tool-settings", null);
 	};
 	return (
-		<div class="bg-secondary-05 z-1 up-pop border-secondary-15 shadow-popup pointer-events-auto absolute flex h-fit max-h-[70%] w-[60%] flex-col overflow-hidden rounded-2xl border-1 p-5">
+		<div class="bg-secondary-05 z-1 up-pop border-secondary-15 pointer-events-auto absolute flex h-fit max-h-[70%] w-[60%] flex-col overflow-hidden rounded-2xl border-1 p-5">
 			<div class="flex h-fit gap-10 pb-5 ">
 				<span class="bg-secondary-05 flex h-30 w-30 items-center justify-center rounded-lg p-3 text-center text-6xl">
 					{card().emoji}
@@ -231,8 +231,14 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 
 												case "file":
 													return (
-														<ImportButton
-															option={option}
+														<ImportFile
+															accepts={
+																option.accept
+															}
+															xfile={option.value}
+															onChange={
+																option.onChange
+															}
 														/>
 													);
 

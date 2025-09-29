@@ -8,6 +8,7 @@ import EmojiPick from "./EmojiPick";
 import NumberInput from "./NumberInput";
 import Slider from "./Slider";
 import WordInput from "./WordInput";
+import ImportFile from "./ImportFile";
 
 type FormPopProps = {
 	form: Accessor<FormType>;
@@ -34,15 +35,13 @@ export default function FormPop({ form }: FormPopProps) {
 		) {
 			form().submit(submission);
 			window.hollowManager.emit("Form", null);
-			// console.log(submission);
-		} else {
 		}
 	};
 	const onCancel = () => {
 		window.hollowManager.emit("Form", null);
 	};
 	return (
-		<div class="pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 up-pop z-3 p-5">
+		<div class="pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 up-pop z-5 p-5">
 			<div class="flex gap-5 items-start border-b border-dashed border-secondary-15 pb-5">
 				<div>
 					<h1 class="text-4xl  font-bold text-neutral-900 dark:text-neutral-100">
@@ -237,25 +236,11 @@ export default function FormPop({ form }: FormPopProps) {
 
 										case "file":
 											return (
-												<div class="flex items-center space-x-2">
-													<span class="text-secondary-30 w-30 truncate text-sm"></span>
-													<label class="button-secondary cursor-pointer">
-														Choose File
-														<input
-															type="file"
-															accept={
-																option.accept
-															}
-															onChange={(e) => {
-																handleOptionFile(
-																	e,
-																	option,
-																);
-															}}
-															class="hidden"
-														/>
-													</label>
-												</div>
+												<ImportFile
+													accepts={option.accept}
+													xfile={option.value}
+													onChange={option.onChange}
+												/>
 											);
 
 										case "range":

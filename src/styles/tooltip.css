@@ -1,6 +1,7 @@
 /* Base button style */
 .tool-tip {
-	position: relative;
+	--pos: relative;
+	position: var(--pos);
 	display: inline-block;
 	overflow: visible;
 }
@@ -14,12 +15,13 @@
 	background-color: var(--color-secondary-10);
 	color: var(--tc-300);
 	font-size: 14px;
-	border-color: var(--color-secondary-20);
+	border-color: var(--color-secondary-15);
 	border-style: solid;
 	border-radius: 7px;
 	opacity: 0;
 	display: block;
 	width: max-content;
+	text-align: start;
 	pointer-events: none;
 	transform: translate(0, 0);
 	transition: opacity 1s ease, transform 0.6s ease;

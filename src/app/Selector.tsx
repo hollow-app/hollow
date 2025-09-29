@@ -1,6 +1,7 @@
 import ColorPick from "@components/ColorPick";
 import { formatDate, timeDifference } from "@managers/manipulation/strings";
 import { Realm } from "@type/Realm";
+import TextareaAutosize from "solid-textarea-autosize";
 import HollowIcon from "@assets/icon-nobg.svg";
 import {
 	CalendarIcon,
@@ -9,11 +10,17 @@ import {
 	PlusIcon,
 	ArrowLeftIcon,
 	RocketIcon,
+	PandaIcon,
 } from "lucide-solid";
 import { Accessor, createSignal, For, Setter, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import { confirmThis } from "@managers/manipulation/popups";
 import WindowControl from "@components/ui/WindowControl";
+import DropDown from "@components/DropDown";
+import { Character } from "@type/Character";
+import { importImage } from "@managers/manipulation/images";
+import setStyle from "@hooks/setStyle";
+import { CharacterManager } from "@managers/CharacterManager";
 
 type SelectorProps = {
 	onSelect: Setter<string | null>;
@@ -87,12 +94,11 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 		animate={{ opacity: 1 }}
 		exit={{ opacity: 0 }}
 		transition={{ duration: 0.3 }}
-		class="relative flex h-full w-full items-center justify-center overflow-hidden"
+		class="relative flex h-full w-full items-center justify-center"
 	>
-		<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-950 to-black" />
 		<div class="relative flex w-fit flex-col items-center">
-			<div>
-				<h1 class="mt-8 text-6xl font-black tracking-tight text-white">
+			<div class="rotate-[10deg]">
+				<h1 class="mt-8 text-6xl font-black tracking-tight text-white  ">
 					Hello, adventurer!
 				</h1>
 				<h1 class="mt-2 text-lg w-150 tracking-widest text-neutral-400 uppercase">
@@ -101,7 +107,7 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 				</h1>
 			</div>
 			<button
-				class="button-primary mt-7 ml-auto flex items-center gap-3 text-black"
+				class="button-primary mt-7 ml-auto flex items-center gap-3 text-black "
 				onclick={props.onNext}
 			>
 				<RocketIcon class="size-5 hidden" />
@@ -232,8 +238,9 @@ const RealmList = (props: {
 										<button
 											class="button-control"
 											style={{
-												"--color": "white",
-												"--bg": "white",
+												"--color":
+													"var(--color-neutral-500)",
+												"--bg": "var(--color-neutral-700)",
 											}}
 											onclick={() =>
 												props.onSelect(realm.id)
@@ -439,23 +446,172 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 	);
 };
 
+function CreateCharacter(props: { onSuccess: () => void }) {
+	const [character, setCharacter] = createSignal<Character>(
+		CharacterManager.getSelf().getCharacter(),
+	);
+
+	const importAvatar = async () => {
+		const image = (await importImage()) as string;
+		setCharacter((prev) => ({ ...prev, avatar: image }));
+	};
+
+	const save = () => {
+		CharacterManager.getSelf().setCharacter(character());
+		props.onSuccess();
+	};
+
+	return (
+		<Motion
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			transition={{ duration: 0.3 }}
+			class="flex w-121 flex-col"
+		>
+			<div class="title-panel flex items-center gap-2">
+				<PandaIcon class="h-5 w-5 m-1 text-secondary-50" />
+				<h1>Character Sheet</h1>
+			</div>
+			<div class="p-3 flex flex-col gap-3">
+				<div class="flex justify-between">
+					<p class="text-secondary-40 tracking-wider text-sm">
+						Wait. You there. Step forward. Who are you?
+					</p>
+					<span class="text-secondary-40 tracking-wider text-sm tool-tip">
+						<span class="tool-tip-content" data-side="right">
+							The Characters feature is currently experimental. It
+							doesn’t serve a specific purpose yet, but we wanted
+							to introduce it and explore its potential. If, over
+							time, it doesn’t provide value to most users, we may
+							decide to remove it.
+						</span>
+						[ i ]
+					</span>
+				</div>
+				<hr class="w-full h-[2px] border-secondary bg-secondary-10/50" />
+				<div class="flex gap-5">
+					<div
+						class="p-2 shrink-0 border-secondary-10 rounded border size-40 flex justify-between flex-col"
+						style={{
+							"background-image": `url(${character().avatar})`,
+							"background-size": "cover",
+						}}
+					>
+						<Show when={!character().avatar}>
+							<span class="text-secondary-20 tracking-widest text-sm w-full text-center pt-10">
+								AVATAR
+							</span>
+						</Show>
+						<button
+							class="button-secondary mt-auto"
+							onclick={importAvatar}
+							style={{ "--w": "100%" }}
+						>
+							import
+						</button>
+					</div>
+					<div class="flex flex-col gap-2 w-ful h-40 justify-around">
+						<div class="w-full">
+							<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+								Name
+							</h2>
+							<input
+								class="input"
+								placeholder="All realms remember a name"
+								onInput={(e) =>
+									setCharacter((prev) => ({
+										...prev,
+										username: e.currentTarget.value,
+									}))
+								}
+							/>
+						</div>
+						<div class="w-full">
+							<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+								Title
+							</h2>
+							<DropDown
+								value="Elder"
+								items={["Elder", "The Original Few"]}
+								onSelect={(s) =>
+									setCharacter((prev) => ({
+										...prev,
+										title: s,
+									}))
+								}
+								editable={false}
+							/>
+						</div>
+					</div>
+				</div>
+				<div>
+					<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+						Description
+					</h2>
+					<textarea
+						class="input resize-none"
+						placeholder="Your tale begins here"
+						onInput={(e) =>
+							setCharacter((prev) => ({
+								...prev,
+								bio: e.currentTarget.value,
+							}))
+						}
+					/>
+				</div>
+
+				<hr class="w-full h-[2px] border-secondary bg-secondary-10/50 mx-auto" />
+				<div class="w-full gap-2 flex flex-wrap items-center">
+					<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+						achievements :
+					</h2>
+					<For each={["🌀 First Step"]}>
+						{(ach) => (
+							<span class="px-2 rounded bg-secondary-10 text-secondary-70">
+								{ach}
+							</span>
+						)}
+					</For>
+				</div>
+				<hr class="w-full h-[2px] border-secondary bg-secondary-10/50 mx-auto" />
+			</div>
+			<div class="flex gap-2 mb-5 mx-5">
+				<button
+					class="button-primary"
+					onclick={save}
+					style={{ "--w": "100%" }}
+				>
+					Save
+				</button>
+				<button
+					class="button-secondary"
+					onclick={() => props.onSuccess()}
+					style={{ "--w": "100%" }}
+				>
+					Skip
+				</button>
+			</div>
+		</Motion>
+	);
+}
+
 export default function Selector({ onSelect }: SelectorProps) {
 	const [level, setLevel] = createSignal(
-		// window.realmManager.realms.length === 0 ? 0 : 1,
-		1,
+		window.realmManager.realms.length === 0 ? 0 : 1,
 	);
 	const [realms, setRealms] = createSignal<Realm[]>(
 		window.realmManager.realms,
 	);
 
 	return (
-		<div class="flex h-full w-full items-center justify-center overflow-hidden bg-neutral-950">
+		<div class="flex h-full w-full items-center justify-center bg-neutral-950">
 			<div class="absolute top-2 right-2 z-10">
 				<WindowControl expanded />
 			</div>
 			<div class="h-[90%] w-[95%] flex items-center justify-center">
 				<div
-					class="w-fit h-fit overflow-hidden"
+					class="w-fit h-fit"
 					classList={{ "up-pop": level() !== 0 }}
 					style={{
 						"--bg-color": "var(--color-neutral-950)",
@@ -464,7 +620,7 @@ export default function Selector({ onSelect }: SelectorProps) {
 				>
 					<Presence exitBeforeEnter>
 						<Show when={level() === 0}>
-							<WelcomeScreen onNext={() => setLevel(2)} />
+							<WelcomeScreen onNext={() => setLevel(3)} />
 						</Show>
 
 						<Show when={level() === 1}>
@@ -483,6 +639,10 @@ export default function Selector({ onSelect }: SelectorProps) {
 								onBack={() => setLevel(1)}
 								onSuccess={() => setLevel(1)}
 							/>
+						</Show>
+
+						<Show when={level() === 3}>
+							<CreateCharacter onSuccess={() => setLevel(2)} />
 						</Show>
 					</Presence>
 				</div>

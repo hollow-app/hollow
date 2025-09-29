@@ -70,7 +70,7 @@ export default function EntriesViewer() {
 	});
 
 	return (
-		<div class="bg-secondary-05 z-3 border-secondary-15 shadow-popup pointer-events-auto absolute flex h-[80%] max-h-[90%] w-6xl max-w-[90%] flex-col items-center gap-0 rounded-xl border-1 p-6 text-xl lg:min-w-6xl">
+		<div class="bg-secondary-05 z-3 border-secondary-15 pointer-events-auto absolute flex h-[80%] max-h-[90%] w-6xl max-w-[90%] flex-col items-center gap-0 rounded-xl border-1 p-6 text-xl lg:min-w-6xl">
 			<Presence exitBeforeEnter>
 				<Show when={!selected()}>
 					<Motion

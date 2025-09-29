@@ -50,7 +50,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 		}
 	};
 	return (
-		<div class="bg-secondary border-secondary-15 pointer-events-auto absolute flex h-fit w-100 flex-col items-center gap-4 rounded-2xl border-1 p-7 shadow-[0_0_35px_35px_rgba(0,0,0,0.25)] dark:shadow-[0_0_105px_50px_rgba(0,0,0,0.6)] z-5">
+		<div class="bg-secondary border-secondary-15 pointer-events-auto absolute flex h-fit w-100 flex-col items-center gap-4 rounded-2xl border-1 p-7 shadow-[0_0_35px_35px_rgba(0,0,0,0.25)] dark:shadow-[0_0_105px_50px_rgba(0,0,0,0.6)] z-7">
 			<div class="flex w-full items-center gap-2">
 				<div
 					class="border-secondary-10 relative size-12 shrink-0 rounded-xl border-[6px] transition-transform hover:scale-105"

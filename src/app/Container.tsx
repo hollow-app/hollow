@@ -4,6 +4,8 @@ import { Opthand } from "@type/Opthand";
 import { createSignal, lazy, onMount, Show, Suspense } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import Notifications from "@components/ui/Notifications";
+import SideBar from "@components/ui/SideBar";
+import CharacterPanel from "@components/ui/CharacterPanel";
 const Settings = lazy(() => import("@components/ui/Settings"));
 const Expand = lazy(() => import("@components/ui/Expand"));
 const Editor = lazy(() => import("@components/ui/Editor"));
@@ -13,11 +15,25 @@ function Container() {
 		window.toolManager.optimizeHand(),
 	);
 
+	const [isChara, setChara] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
 	const [isEditor, setEditor] = createSignal(false);
 	const [isSettings, setSettings] = createSignal(false);
 	const [isDrag, setDrag] = createSignal(false);
 	const [isNotifications, setNotifications] = createSignal(false);
+
+	const toggleExpand = () => {
+		if (isChara()) {
+			setChara(false);
+		}
+		setExpand((prev) => !prev);
+	};
+	const toggleChara = () => {
+		if (isExpand()) {
+			setExpand(false);
+		}
+		setChara((prev) => !prev);
+	};
 
 	onMount(() => {
 		window.toolManager.setHand = setHand;
@@ -34,20 +50,26 @@ function Container() {
 		};
 	});
 	return (
-		<div class="bg-secondary flex p-2 h-full w-full flex-col text-neutral-950 dark:text-neutral-200">
-			<div class="relative flex flex-1 gap-2 ">
+		<div class="bg-secondary flex px-2 pb-2 h-full w-full flex-col text-neutral-950 dark:text-neutral-200">
+			<div class="relative flex flex-1 h-full">
+				<SideBar
+					{...{
+						isExpand,
+						toggleExpand,
+						toggleChara,
+						setSettings,
+						setDrag,
+						isDrag,
+						setNotifications,
+					}}
+				/>
 				<Suspense>
-					<Expand isVisible={isExpand} setVisible={setExpand} />
+					<Expand isVisible={isExpand} />
+					<CharacterPanel isVisible={isChara} />
 				</Suspense>
-				<div class="relative flex-1 flex flex-col overflow-hidden h-full">
-					<Navbar
-						setSettings={setSettings}
-						setExpand={setExpand}
-						isDrag={isDrag}
-						setDrag={setDrag}
-						setNotifications={setNotifications}
-					/>
-					<div class="flex-1 flex w-full relative">
+				<div class="relative flex-1 flex flex-col max-h-full min-w-0">
+					<Navbar />
+					<div class="flex-1 flex w-full min-h-0">
 						<Canvas
 							isGridVisible={() =>
 								isEditor() ||

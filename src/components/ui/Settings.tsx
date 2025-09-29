@@ -8,6 +8,7 @@ import {
 	KeyboardIcon,
 	OrbitIcon,
 	PaletteIcon,
+	PandaIcon,
 } from "lucide-solid";
 import { createSignal, Setter, Show, Suspense } from "solid-js";
 import HollowIcon from "@assets/icon-nobg.svg";
@@ -15,6 +16,7 @@ import HollowIcon from "@assets/icon-nobg.svg";
 import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
+import Account from "./settings/Account";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
 const Modifier = lazy(() => import("./settings/Modifier"));
@@ -30,7 +32,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 	return (
 		<div class="bg-secondary border-secondary-10 absolute top-[calc(var(--spacing)*11+5%)] left-[5%] flex h-[calc(90%-calc(var(--spacing)*11))] w-[90%] overflow-hidden rounded-xl border-1 shadow-[0_0_35px_35px_rgba(0,0,0,0.25)] dark:shadow-[0_0_50px_35px_rgba(0,0,0,0.6)]">
 			<div class="bg-secondary-05/50 flex h-full w-full">
-				<div class="bg-secondary-10/50 box-border flex h-full w-[25%] flex-col justify-between px-5 pt-5 pb-10">
+				<div class="bg-secondary-10/30 box-border flex h-full w-[25%] flex-col justify-between px-5 pt-5 pb-10">
 					<div class="flex flex-col gap-2">
 						<div class="bg-secondary-10 mb-5 box-border flex overflow-hidden rounded px-3 py-5">
 							<HollowIcon class="fill-secondary-20 hollow-effect my-auto mr-2 size-12 shrink-0 transition-transform duration-300" />
@@ -104,7 +106,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 						>
 							<HousePlugIcon /> Plugins
 						</button>
-						<hr class="border-secondary-15 w-full" />
+						<hr class="w-full h-[2px] border-secondary bg-secondary-10/50 mx-auto" />
 						<button
 							onClick={() => setSelected(3)}
 							class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
@@ -143,6 +145,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 							<FileCodeIcon />
 							Developers
 						</button>
+
 						<button
 							onClick={() => setSelected(6)}
 							class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
@@ -151,6 +154,19 @@ export default function Settings({ setSettings }: SettingsProps) {
 									selected() === 6,
 								"text-neutral-700 dark:text-neutral-400":
 									selected() !== 6,
+							}}
+						>
+							<PandaIcon />
+							Account
+						</button>
+						<button
+							onClick={() => setSelected(7)}
+							class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
+							classList={{
+								"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
+									selected() === 7,
+								"text-neutral-700 dark:text-neutral-400":
+									selected() !== 7,
 							}}
 						>
 							<BadgeInfoIcon />
@@ -295,6 +311,27 @@ export default function Settings({ setSettings }: SettingsProps) {
 							</Motion>
 						</Show>
 						<Show when={selected() === 6}>
+							<Motion
+								initial={{
+									opacity: 0,
+								}}
+								animate={{
+									opacity: 1,
+								}}
+								exit={{
+									opacity: 0,
+								}}
+								transition={{
+									duration: 0.3,
+								}}
+								class="h-full"
+							>
+								<Suspense>
+									<Account />
+								</Suspense>
+							</Motion>
+						</Show>
+						<Show when={selected() === 7}>
 							<Motion
 								initial={{
 									opacity: 0,

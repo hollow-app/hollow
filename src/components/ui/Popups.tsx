@@ -2,6 +2,7 @@ import { FormType } from "@type/FormType";
 import { HandType } from "@type/HandType";
 import { createMemo, createSignal, lazy, onCleanup, onMount } from "solid-js";
 import ContextMenu from "./ContextMenu";
+import VaultStorage from "./VaultStorage";
 
 const ColorPicker = lazy(() => import("@components/ColorPicker"));
 const ConfirmPop = lazy(() => import("@components/ConfirmPop"));
@@ -26,19 +27,24 @@ export default function Popups() {
 	const [form, setForm] = createSignal<FormType>(null);
 	const [confirm, setConfirm] = createSignal(null);
 	const [toolSettings, setToolSettings] = createSignal(null);
+	const [vault, setVault] = createSignal(null);
 	const visibleShadow = createMemo(
 		() =>
-			(confirm() && "6") ||
-			(color() && "4") ||
-			(emoji() && "4") ||
-			(form() && "2") ||
+			(confirm() && "8") ||
+			(color() && "6") ||
+			(emoji() && "6") ||
+			(form() && "4") ||
 			(entries() && "2") ||
+			(vault() && "2") ||
 			(tool() && "2") ||
 			(toolSettings() && "0"),
 	);
 	//
 	const showEntries = () => {
 		setEntries((prev) => !prev);
+	};
+	const showVault = () => {
+		setVault((prev) => !prev);
 	};
 	onMount(() => {
 		window.hollowManager.on("tool-info", setTool);
@@ -47,6 +53,7 @@ export default function Popups() {
 		window.hollowManager.on("Confirm", setConfirm);
 		window.hollowManager.on("tool-settings", setToolSettings);
 		window.hollowManager.on("show-entries", showEntries);
+		window.hollowManager.on("show-vault", showVault);
 		window.hollowManager.on("Form", setForm);
 	});
 
@@ -57,6 +64,7 @@ export default function Popups() {
 		window.hollowManager.off("Confirm", setConfirm);
 		window.hollowManager.off("tool-settings", setToolSettings);
 		window.hollowManager.off("show-entries", showEntries);
+		window.hollowManager.off("show-vault", showVault);
 		window.hollowManager.off("Form", setForm);
 	});
 
@@ -76,6 +84,7 @@ export default function Popups() {
 
 			{tool() && <ToolPop tool={tool()} setTool={setTool} />}
 			{entries() && <EntriesViewer />}
+			{vault() && <VaultStorage />}
 			{form() && <FormPop form={form} />}
 
 			{emoji() && <EmojiPicker p={emoji()} />}

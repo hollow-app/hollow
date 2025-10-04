@@ -1,88 +1,194 @@
-import { ListFilterPlusIcon } from "lucide-solid";
-import { space } from "postcss/lib/list";
-import { createSignal, For, Setter } from "solid-js";
+import { BrushCleaningIcon, ListFilterPlusIcon } from "lucide-solid";
+import {
+	createSignal,
+	For,
+	Show,
+	onCleanup,
+	Switch,
+	Match,
+	onMount,
+	createEffect,
+} from "solid-js";
 import DropDown from "./DropDown";
 
-type FilterButtonProps = {
-        tools: string[];
-        tags: string[];
-        filter: () => { tool: string; tags: string[] };
-        setFilter: Setter<{ tool: string; tags: string[]; text: string }>;
+type ConfigItem = {
+	id: string;
+	label: string;
+	options: string[];
 };
-export default function FilterButton({
-        tools,
-        tags,
-        filter,
-        setFilter,
-}: FilterButtonProps) {
-        const [isVisi, setVisi] = createSignal(false);
-        const selectTag = (tag: string) => {
-                setFilter((prev) => ({
-                        ...prev,
-                        tags: prev.tags.includes(tag)
-                                ? [...prev.tags.filter((i) => i !== tag)]
-                                : [...prev.tags, tag],
-                }));
-        };
-        const selectTool = (t: string) => {
-                setFilter((prev) => ({
-                        ...prev,
-                        tool: t === "All" ? null : t,
-                }));
-        };
-        const clearAll = () => {
-                setFilter((prev) => ({ ...prev, tags: [], tool: null }));
-        };
-        return (
-                <div class="relative flex flex-col items-center">
-                        <button
-                                class="button-control flex items-center gap-2 px-2 py-2"
-                                onclick={() => setVisi(!isVisi())}
-                        >
-                                <ListFilterPlusIcon class="text-secondary-50" />
-                        </button>
-                        <div
-                                class="bg-secondary-05 border-secondary-10 absolute mt-12 flex max-h-90 w-65 flex-col gap-2 rounded border-1 p-4 shadow-[0_0_5px_5px_rgba(0,0,0,0.25)] dark:shadow-[0_0_10px_5px_rgba(0,0,0,0.6)]"
-                                classList={{ hidden: !isVisi() }}
-                        >
-                                <p class="text-sm font-bold">Tool</p>
-                                <DropDown
-                                        items={["All", ...tools]}
-                                        onSelect={selectTool}
-                                        value={filter().tool ?? "All"}
-                                />
-                                <p class="text-sm font-bold">Tags</p>
-                                <div class="overflow-hidden overflow-y-scroll text-sm">
-                                        <For each={tags}>
-                                                {(tag) => (
-                                                        <div class="flex items-center gap-1">
-                                                                <input
-                                                                        type={
-                                                                                "checkbox"
-                                                                        }
-                                                                        checked={filter().tags.includes(
-                                                                                tag,
-                                                                        )}
-                                                                        onChange={() =>
-                                                                                selectTag(
-                                                                                        tag,
-                                                                                )
-                                                                        }
-                                                                />
-                                                                <span>
-                                                                        {tag}
-                                                                </span>
-                                                        </div>
-                                                )}
-                                        </For>
-                                </div>
-                                <button
-                                        class="button-secondary"
-                                        onclick={clearAll}
-                                >
-                                        Clear All
-                                </button>
-                        </div>
-                </div>
-        );
+type DropdownConfig = ConfigItem & {
+	type: "dropdown";
+	placeholder?: string;
+	onSelect: (value: string) => void;
+};
+
+type MultiOptionConfig = ConfigItem & {
+	type: "multioption";
+	onChange: (values: string[]) => void;
+};
+
+type FilterConfig = DropdownConfig | MultiOptionConfig;
+
+interface FilterButtonProps {
+	label: string;
+	configs: FilterConfig[];
+}
+
+export default function FilterButton(props: FilterButtonProps) {
+	const [open, setOpen] = createSignal(false);
+	const [selectedValues, setSelectedValues] = createSignal<
+		{ id: string; values: string[] }[]
+	>(
+		props.configs
+			.filter((i) => i.type === "multioption")
+			.map((i) => ({ id: i.id, values: [] })),
+	);
+
+	const handleClickOutside = (event: MouseEvent) => {
+		const target = event.target as HTMLElement;
+		if (!target.closest(".filter-button-wrapper")) {
+			setOpen(false);
+		}
+	};
+
+	const onClear = () => {
+		setSelectedValues(
+			props.configs
+				.filter((i) => i.type === "multioption")
+				.map((i) => ({ id: i.id, values: [] })),
+		);
+		props.configs.forEach((config) => {
+			if (config.type === "dropdown") {
+				config.onSelect("");
+			} else if (config.type === "multioption") {
+				config.onChange([]);
+			}
+		});
+	};
+
+	const toggleValue = (id: string, value: string) => {
+		let newValues: string[];
+		const config = selectedValues().find((i) => i.id === id);
+		if (config.values.includes(value)) {
+			newValues = config.values.filter((v) => v !== value);
+		} else {
+			newValues = [...config.values, value];
+		}
+		setSelectedValues((prev) =>
+			prev.map((i) => (i.id === id ? { ...i, values: newValues } : i)),
+		);
+		(props.configs.find((i) => i.id === id) as MultiOptionConfig).onChange(
+			newValues,
+		);
+	};
+
+	createEffect(() => {
+		if (open()) {
+			document.addEventListener("click", handleClickOutside);
+		} else {
+			document.removeEventListener("click", handleClickOutside);
+		}
+	});
+
+	onCleanup(() => document.removeEventListener("click", handleClickOutside));
+	return (
+		<div class="filter-button-wrapper relative inline-block">
+			<button
+				type="button"
+				class="button-control"
+				onClick={() => setOpen((o) => !o)}
+			>
+				<ListFilterPlusIcon class="size-5" />
+			</button>
+
+			<Show when={open()}>
+				<div class="bg-secondary border-secondary-10 absolute z-10 mt-2 min-w-[15rem] rounded-lg border shadow-xl">
+					<div class="flex items-center justify-between p-2">
+						<p class="">{props.label}</p>
+						<button
+							class="button-secondary group"
+							style={{ "--padding-x": "var(--padding-y)" }}
+							onclick={onClear}
+						>
+							<BrushCleaningIcon class="text-secondary-30 group-hover:text-secondary-95 size-5 transition-colors" />
+						</button>
+					</div>
+					<hr class="border-secondary bg-secondary-10 mx-auto my-0.5 h-[2px] w-full" />
+					<For each={props.configs}>
+						{(config) => (
+							<Show when={config.options.length > 0}>
+								<div class="p-2">
+									<p class="my-1 text-xs text-neutral-700 dark:text-neutral-300">
+										{config.label}
+									</p>
+									<Switch>
+										<Match
+											when={config.type === "dropdown"}
+										>
+											<DropDown
+												items={config.options}
+												onSelect={(v) => {
+													setOpen(false);
+													(
+														config as DropdownConfig
+													).onSelect(v);
+												}}
+												placeholder={
+													(config as DropdownConfig)
+														.placeholder
+												}
+												style={{
+													"--w": "calc(var(--spacing) * 50)",
+												}}
+											/>
+										</Match>
+
+										<Match
+											when={config.type === "multioption"}
+										>
+											<div class="h-fit max-h-50 overflow-hidden overflow-y-auto">
+												<For
+													each={
+														(
+															config as MultiOptionConfig
+														).options
+													}
+												>
+													{(option) => (
+														<label class="hover:bg-secondary-10 flex cursor-pointer items-center space-x-2 rounded px-2 py-1">
+															<input
+																type="checkbox"
+																checked={selectedValues()
+																	.find(
+																		(i) =>
+																			i.id ===
+																			config.id,
+																	)
+																	.values.includes(
+																		option,
+																	)}
+																onInput={() =>
+																	toggleValue(
+																		config.id,
+																		option,
+																	)
+																}
+															/>
+															<span>
+																{option}
+															</span>
+														</label>
+													)}
+												</For>
+											</div>
+										</Match>
+									</Switch>
+								</div>
+							</Show>
+						)}
+					</For>
+				</div>
+			</Show>
+		</div>
+	);
 }

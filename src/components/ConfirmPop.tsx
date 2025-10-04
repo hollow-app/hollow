@@ -5,7 +5,7 @@ type ConfirmPopProps = {
 	pack: {
 		type: string;
 		message: string;
-		decision: (b: boolean) => void;
+		decision: () => void;
 		accLabel?: string;
 		refLabel?: string;
 	};
@@ -13,8 +13,8 @@ type ConfirmPopProps = {
 
 export default function ConfirmPop({ pack }: ConfirmPopProps) {
 	const decision = (d: boolean) => {
-		pack.decision(d);
-		window.hollowManager.emit("Confirm", null);
+		d && pack.decision();
+		window.hollowManager.emit("confirm", null);
 	};
 
 	onMount(() => {
@@ -24,7 +24,7 @@ export default function ConfirmPop({ pack }: ConfirmPopProps) {
 			decision(false);
 	});
 	return (
-		<div class="bg-secondary-05 border-secondary-15 shadow-popup pointer-events-auto absolute h-fit w-fit max-w-[90%] rounded-xl border-1 p-10 text-gray-950 md:max-w-[60%] dark:text-gray-200 z-9">
+		<div class="bg-secondary-05 border-secondary-15 shadow-popup pointer-events-auto absolute z-9 h-fit w-fit max-w-[90%] rounded-xl border-1 p-10 text-gray-950 md:max-w-[60%] dark:text-gray-200">
 			<h1 class="mb-3 text-3xl font-bold capitalize">{pack.type}</h1>
 			<p class="w-full whitespace-pre-line">{pack.message}</p>
 			<div class="mt-10 flex w-full justify-between gap-3">

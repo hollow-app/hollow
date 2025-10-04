@@ -24,7 +24,7 @@ export default function Editor({ isVisible }: EditorProps) {
 
 	const onSave = () => {
 		window.setEditor(false);
-		window.hollowManager.emit("Editor.changed");
+		window.hollowManager.emit("editor-changed");
 		setKit(null);
 	};
 	const onCancel = () => {
@@ -106,7 +106,7 @@ export default function Editor({ isVisible }: EditorProps) {
 							<h3>Border</h3>
 							<div class="flex w-[60%] items-center justify-end gap-1">
 								<ColorPick
-									color={kit().border.c}
+									color={() => kit().border.c}
 									setColor={(nc) => kit().setBorderColor(nc)}
 								/>
 								<div class="w-70 max-w-[90%]">

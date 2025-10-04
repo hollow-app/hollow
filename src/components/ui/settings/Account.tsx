@@ -134,7 +134,7 @@ export default function Account() {
 			],
 		};
 
-		window.hollowManager.emit("Form", form);
+		window.hollowManager.emit("form", form);
 	};
 	return (
 		<div class="h-fit w-full p-10">
@@ -173,7 +173,7 @@ export default function Account() {
 						<textarea
 							class="input resize-none"
 							placeholder="name your self"
-							value={character().username}
+							value={character().bio}
 						/>
 					</div>
 				</div>

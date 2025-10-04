@@ -25,7 +25,7 @@ export default function Card({
 	};
 	const onEmojiChanged = (newEmoji: string) => {
 		window.toolManager.changeEmoji(newEmoji, myCard.name, toolName);
-		window.hollowManager.off("EmojiPicker.changed", onEmojiChanged);
+		window.hollowManager.off("emoji-picker-changed", onEmojiChanged);
 	};
 	return (
 		<div class="group bg-secondary-05 grid h-fit w-full shrink-0 grid-cols-[1fr_5fr_2fr] rounded p-2 select-none">

@@ -85,23 +85,9 @@ function Container() {
 					</div>
 				</div>
 			</div>
-			<Presence>
-				<Show when={isSettings()}>
-					<Motion
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						transition={{
-							duration: 0.3,
-						}}
-					>
-						<Suspense>
-							<Settings setSettings={setSettings} />
-						</Suspense>
-					</Motion>
-				</Show>
-			</Presence>
-
+			<Show when={isSettings()}>
+				<Settings setSettings={setSettings} />
+			</Show>
 			<Notifications
 				isVisible={isNotifications}
 				setVisible={setNotifications}

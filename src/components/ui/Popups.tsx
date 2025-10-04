@@ -11,7 +11,6 @@ const EntriesViewer = lazy(() => import("@components/EntriesViewer"));
 const FormPop = lazy(() => import("@components/FormPop"));
 const ToolPop = lazy(() => import("@components/ToolPop"));
 const ToolSettings = lazy(() => import("./ToolSettings"));
-const target = null;
 
 export default function Popups() {
 	const [tool, setTool] = createSignal<Omit<HandType, "cards">>(null);
@@ -27,45 +26,44 @@ export default function Popups() {
 	const [form, setForm] = createSignal<FormType>(null);
 	const [confirm, setConfirm] = createSignal(null);
 	const [toolSettings, setToolSettings] = createSignal(null);
-	const [vault, setVault] = createSignal(null);
-	const visibleShadow = createMemo(
-		() =>
-			(confirm() && "8") ||
-			(color() && "6") ||
-			(emoji() && "6") ||
-			(form() && "4") ||
-			(entries() && "2") ||
-			(vault() && "2") ||
-			(tool() && "2") ||
-			(toolSettings() && "0"),
+	const [vault, setVault] = createSignal<{ onSelect?: (p: string) => void }>(
+		null,
 	);
+	// const visibleShadow = createMemo(
+	// 	() =>
+	// 		(confirm() && "8") ||
+	// 		(color() && "6") ||
+	// 		(emoji() && "6") ||
+	// 		(form() && "4") ||
+	// 		(entries() && "2") ||
+	// 		(vault() && "2") ||
+	// 		(tool() && "2") ||
+	// 		(toolSettings() && "0"),
+	// );
 	//
 	const showEntries = () => {
 		setEntries((prev) => !prev);
 	};
-	const showVault = () => {
-		setVault((prev) => !prev);
-	};
 	onMount(() => {
 		window.hollowManager.on("tool-info", setTool);
-		window.hollowManager.on("EmojiPicker", setEmoji);
-		window.hollowManager.on("ColorPicker", setColor);
-		window.hollowManager.on("Confirm", setConfirm);
+		window.hollowManager.on("emoji-picker", setEmoji);
+		window.hollowManager.on("color-picker", setColor);
+		window.hollowManager.on("confirm", setConfirm);
 		window.hollowManager.on("tool-settings", setToolSettings);
 		window.hollowManager.on("show-entries", showEntries);
-		window.hollowManager.on("show-vault", showVault);
-		window.hollowManager.on("Form", setForm);
+		window.hollowManager.on("show-vault", setVault);
+		window.hollowManager.on("form", setForm);
 	});
 
 	onCleanup(() => {
 		window.hollowManager.off("tool-info", setTool);
-		window.hollowManager.off("EmojiPicker", setEmoji);
-		window.hollowManager.off("ColorPicker", setColor);
-		window.hollowManager.off("Confirm", setConfirm);
+		window.hollowManager.off("emoji-picker", setEmoji);
+		window.hollowManager.off("color-picker", setColor);
+		window.hollowManager.off("confirm", setConfirm);
 		window.hollowManager.off("tool-settings", setToolSettings);
 		window.hollowManager.off("show-entries", showEntries);
-		window.hollowManager.off("show-vault", showVault);
-		window.hollowManager.off("Form", setForm);
+		window.hollowManager.off("show-vault", setVault);
+		window.hollowManager.off("form", setForm);
 	});
 
 	return (
@@ -75,21 +73,18 @@ export default function Popups() {
 			}
 		>
 			<div id="hollow-popup" />
-			<div
+			{/*<div
 				class="absolute inset-0 bg-black/50 opacity-0"
 				classList={{ "opacity-100": !!visibleShadow() }}
 				style={{ "z-index": visibleShadow() }}
-			/>
+			/>*/}
 			{toolSettings() && <ToolSettings pluginSettings={toolSettings()} />}
-
 			{tool() && <ToolPop tool={tool()} setTool={setTool} />}
 			{entries() && <EntriesViewer />}
-			{vault() && <VaultStorage />}
+			{vault() && <VaultStorage {...vault()} />}
 			{form() && <FormPop form={form} />}
-
 			{emoji() && <EmojiPicker p={emoji()} />}
 			{color() && <ColorPicker p={color()} />}
-
 			{confirm() && <ConfirmPop pack={confirm()} />}
 			<ContextMenu />
 		</div>

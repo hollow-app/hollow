@@ -124,14 +124,14 @@ export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
 
 		window.hollowManager.emit("context-menu", false);
 		window.setEditor(true);
-		window.hollowManager.on("Editor.changed", saveKit);
+		window.hollowManager.on("editor-changed", saveKit);
 	};
 	const updateKit = <K extends keyof KitType>(key: K, value: KitType[K]) => {
 		setKit((prev) => ({ ...prev, [key]: value }));
 	};
 	const saveKit = () => {
 		window.toolManager.changeKit(kit(), card, tool);
-		window.hollowManager.off("Editor.changed", saveKit);
+		window.hollowManager.off("editor-changed", saveKit);
 	};
 
 	const showSettings = () => {

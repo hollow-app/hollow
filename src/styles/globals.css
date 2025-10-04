@@ -74,12 +74,14 @@
 }
 
 *::-webkit-scrollbar-thumb {
-	background: transparent;
+	background: var(--color-neutral-700);
 	border-radius: 0.25rem;
+	opacity: 0.3;
 }
 
 *:hover::-webkit-scrollbar-thumb {
-	background: rgba(56, 56, 56, 0.15);
+	background: var(--color-neutral-700);
+	opacity: 1;
 }
 
 *::-webkit-scrollbar {
@@ -265,9 +267,10 @@ a {
 	--padding-y: calc(var(--spacing) * 2);
 	--border-w: 2px;
 	--bg-color: var(--color-secondary-10);
-	width: 100%;
+	--w: 100%;
+	width: var(--w);
 	border: 1px solid var(--bg-color);
-	background-color: color-mix(in oklab, var(--bg-color), transparent);
+	background-color: color-mix(in oklab, var(--bg-color) 50%, transparent);
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);
 	border-radius: 0.35rem;
@@ -280,14 +283,12 @@ a {
 
 	&:invalid {
 		border-color: var(--color-red-800);
-		border-width: 1px;
 	}
 
 	&::placeholder {
-		color: var(--color-secondary-30);
+		color: var(--tc-700);
 	}
 }
-
 
 
 /* From Uiverse.io by Galahhad */
@@ -356,48 +357,6 @@ a {
 	height: calc(var(--slider-height) * 2);
 }
 
-.button-space-one {
-	position: relative;
-	width: fit-content;
-	color: rgb(209, 213, 219);
-	transition: all 0.2s ease-in-out;
-}
-
-.button-space-one::before,
-.button-space-one::after {
-	position: absolute;
-	transition: all 0.2s ease-in-out;
-}
-
-.button-space-one::before {
-	content: "[";
-	left: -1rem;
-}
-
-.button-space-one::after {
-	content: "]";
-	right: -1rem;
-}
-
-.button-space-one:hover {
-	font-size: 1.125rem;
-}
-
-.button-space-one:hover::before {
-	left: -2rem;
-}
-
-.button-space-one:hover::after {
-	right: -2rem;
-}
-
-.button-space-one:active::before {
-	left: -3rem;
-}
-
-.button-space-one:active::after {
-	right: -3rem;
-}
 
 /*class="hover:bg-secondary-15 flex w-full items-center gap-3 rounded-lg px-8 py-2 transition-all active:scale-95"*/
 .button-cm {
@@ -722,7 +681,7 @@ a {
 	border-width: var(--border-w);
 	border-style: solid;
 	border-color: var(--color-secondary-10);
-	background-color: var(--color-secondary-20);
+	background: var(--color-secondary-05);
 	border-radius: var(--radius-md);
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);
@@ -732,12 +691,13 @@ a {
 	user-select: none;
 
 	&:not(:disabled):hover {
-		background-color: var(--color-secondary-15);
-		border-color: var(--color-secondary);
+		background: var(--color-secondary-10);
+		border-color: var(--color-secondary-20);
 	}
 
 	&:not(:disabled):active {
-		background-color: var(--color-secondary-20);
+		background-color: var(--color-secondary-05);
+		border-color: var(--color-secondary-15);
 	}
 
 	&:disabled {
@@ -746,21 +706,21 @@ a {
 	}
 }
 
-.dark .button-secondary {
-	border-color: var(--color-secondary-15);
-	background-color: var(--color-secondary-10);
-
-	&:not(:disabled):hover {
-		background-color: var(--color-secondary-15);
-		border-color: var(--color-secondary-25);
-	}
-
-	&:not(:disabled):active {
-		background-color: var(--color-secondary-10);
-		border-color: var(--color-secondary-20);
-	}
-
-}
+/* .dark .button-secondary { */
+/* 	border-color: var(--color-secondary-15); */
+/* 	background-color: var(--color-secondary-10); */
+/**/
+/* 	&:not(:disabled):hover { */
+/* 		background-color: var(--color-secondary-15); */
+/* 		border-color: var(--color-secondary-25); */
+/* 	} */
+/**/
+/* 	&:not(:disabled):active { */
+/* 		background-color: var(--color-secondary-10); */
+/* 		border-color: var(--color-secondary-20); */
+/* 	} */
+/**/
+/* } */
 
 .button-empty {
 	--padding-x: calc(var(--spacing) * 5);
@@ -803,15 +763,39 @@ a {
 	}
 }
 
+.pop-up {
+	position: absolute;
+	inset: 0;
+	background-color: rgb(0, 0, 0, 0.4);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .up-pop {
 	--bg-color: var(--color-secondary);
 	--border-color: var(--color-secondary-10);
 	--shadow: var(--color-secondary);
+	/* overflow: hidden; */
+	position: absolute;
 	background: var(--bg-color);
 	border-radius: var(--radius-lg);
 	border: 1px solid var(--border-color);
 	box-shadow: 0px 0px 30px var(--shadow);
 	transition: 0.2s all ease-in-out;
+	animation: animatetop 0.4s
+}
+
+@keyframes animatetop {
+	from {
+		transform: translateY(-300px);
+		opacity: 0
+	}
+
+	to {
+		transform: translateY(0px);
+		opacity: 1
+	}
 }
 
 .up-pop .title-panel {
@@ -828,4 +812,26 @@ a {
 .up-pop .content-panel {
 	--padding-x: 1rem;
 	padding: 0 var(--padding-x);
+}
+
+
+.button-ctl {
+	border-radius: 0.4rem;
+	padding: 0.3rem;
+	width: 2rem;
+	height: 2rem;
+	background-color: transparent;
+
+	&:hover {
+		background-color: var(--color-secondary-10);
+	}
+}
+
+
+
+
+.drop-down {
+	--w: calc(var(--spacing) * 70);
+	width: var(--w);
+
 }

@@ -9,6 +9,7 @@ type DropDownProps = {
 	isLoading?: boolean;
 	error?: string;
 	editable?: boolean;
+	style?: any;
 };
 
 export default function DropDown({
@@ -19,6 +20,7 @@ export default function DropDown({
 	isLoading = false,
 	error,
 	editable = true,
+	style,
 }: DropDownProps) {
 	const [query, setQuery] = createSignal(value || "");
 	const [isOpen, setIsOpen] = createSignal(false);
@@ -152,11 +154,12 @@ export default function DropDown({
 	return (
 		<div
 			ref={dropdownRef}
-			class="group pointer-events-auto relative w-70 h-fit"
+			class="group drop-down pointer-events-auto relative h-fit"
 			role="combobox"
 			aria-expanded={isOpen()}
 			aria-haspopup="listbox"
 			aria-controls="dropdown-list"
+			style={style}
 		>
 			<input
 				ref={inputRef}
@@ -175,7 +178,7 @@ export default function DropDown({
 						? `dropdown-item-${activeIndex()}`
 						: undefined
 				}
-				class="ease h-10 border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary w-full max-w-full appearance-none rounded-md bg-secondary-10/75 py-2 pr-20 pl-3 text-sm shadow-sm  focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
+				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 h-10 w-full max-w-full appearance-none rounded-md py-2 pr-20 pl-3 text-sm shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
 				disabled={isLoading}
 				classList={{
 					"border-red-500": !!error,
@@ -200,9 +203,12 @@ export default function DropDown({
 				<ul
 					ref={listRef}
 					id="dropdown-list"
-					class="bg-secondary-10 p-2 border-secondary fixed z-50  w-70 overflow-x-hidden overflow-y-auto rounded-md text-sm shadow-lg"
+					class="bg-secondary-10 border-secondary fixed z-50 max-h-40 overflow-x-hidden overflow-y-auto rounded-md p-2 text-sm shadow-lg"
 					role="listbox"
-					style={calculateDropdownPosition()}
+					style={{
+						...calculateDropdownPosition(),
+						width: "var(--w)",
+					}}
 				>
 					<Show
 						when={filteredItems().length > 0}
@@ -217,7 +223,7 @@ export default function DropDown({
 								<li
 									id={`dropdown-item-${index()}`}
 									onclick={() => handleSelect(item)}
-									class="hover:bg-primary/10 rounded text-secondary-60 hover:text-primary w-full cursor-pointer bg-transparent px-3 py-2"
+									class="hover:bg-primary/10 text-secondary-60 hover:text-primary w-full cursor-pointer rounded bg-transparent px-3 py-2"
 									classList={{
 										"bg-secondary-10":
 											index() === activeIndex(),

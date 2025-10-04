@@ -50,7 +50,7 @@ export default function SideBar({
 				</button>
 				<button
 					class="button-control"
-					onclick={() => window.hollowManager.emit("show-vault")}
+					onclick={() => window.hollowManager.toggle("show-vault")}
 				>
 					<Vault class="size-5" />
 				</button>

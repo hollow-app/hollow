@@ -1,7 +1,6 @@
 import ColorPick from "@components/ColorPick";
 import { formatDate, timeDifference } from "@managers/manipulation/strings";
 import { Realm } from "@type/Realm";
-import TextareaAutosize from "solid-textarea-autosize";
 import HollowIcon from "@assets/icon-nobg.svg";
 import {
 	CalendarIcon,
@@ -12,35 +11,43 @@ import {
 	RocketIcon,
 	PandaIcon,
 } from "lucide-solid";
-import { Accessor, createSignal, For, Setter, Show } from "solid-js";
+import {
+	Accessor,
+	createResource,
+	createSignal,
+	For,
+	onMount,
+	Setter,
+	Show,
+	Suspense,
+} from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import { confirmThis } from "@managers/manipulation/popups";
 import WindowControl from "@components/ui/WindowControl";
 import DropDown from "@components/DropDown";
 import { Character } from "@type/Character";
-import { importImage } from "@managers/manipulation/images";
-import setStyle from "@hooks/setStyle";
 import { CharacterManager } from "@managers/CharacterManager";
+import { useColor } from "@hooks/useColor";
+import Loading from "@components/Loading";
 
 type SelectorProps = {
 	onSelect: Setter<string | null>;
 };
 
 const themes = [
-	{ name: "Blaze", primary: "#FF6B6B", secondary: "#1A1A1A" },
-	{ name: "Abyss", primary: "#1A535C", secondary: "#F0F5F5" },
-	{ name: "Solar", primary: "#FFD93D", secondary: "#2C2C2C" },
-	{ name: "Mint", primary: "#2EC4B6", secondary: "#0B3D2E" },
-	{ name: "Cherry", primary: "#FF3C38", secondary: "#2E1A1A" },
-	{ name: "Twilight", primary: "#6A4C93", secondary: "#EAE6F8" },
-	{ name: "Amber", primary: "#FFBF69", secondary: "#3C2F1F" },
-	{ name: "Cobalt", primary: "#1982C4", secondary: "#E0F0FA" },
-	{ name: "Onyx", primary: "#1A1A1A", secondary: "#FFB6B6" },
-	{ name: "Lime", primary: "#B8E986", secondary: "#2F3B20" },
+	{ name: "Ocean", primary: "#00B4D8", secondary: "#0A192F" },
+	{ name: "Sunset", primary: "#FF7043", secondary: "#2C1A1A" },
+	{ name: "Golden", primary: "#FFC107", secondary: "#1A1A1A" },
+	{ name: "Arctic", primary: "#00ACC1", secondary: "#0F1B2E" },
+	{ name: "Midnight", primary: "#4FC3F7", secondary: "#F4F6F8" },
+	{ name: "Forest", primary: "#1B5E20", secondary: "#F1F8F4" },
+	{ name: "Plum", primary: "#6A1B9A", secondary: "#F8F3FC" },
+	{ name: "Neon", primary: "#F50057", secondary: "#FDF0F5" },
+	{ name: "Rustic", primary: "#5D4037", secondary: "#FDF5E6" },
+	{ name: "Emerald", primary: "#2E7D32", secondary: "#F1FFF4" },
 ];
 const useRealmManager = () => {
 	const [name, setName] = createSignal("");
-	const [primary, setPrimary] = createSignal("#1ab1ff");
+	const [primary, setPrimary] = createSignal("#FF0033");
 	const [secondary, setSecondary] = createSignal("#000000");
 
 	const createRealm = () => {
@@ -61,19 +68,15 @@ const useRealmManager = () => {
 	};
 
 	const removeRealm = (id: string, setRealms: Setter<Realm[]>) => {
-		const handleDecision = (d: boolean) => {
-			if (d) {
-				window.realmManager.removeRealm(id);
-				setRealms((prev) => prev.filter((r) => r.id !== id));
-			}
+		const handleDecision = () => {
+			window.realmManager.removeRealm(id);
+			setRealms((prev) => prev.filter((r) => r.id !== id));
 		};
-		confirmThis(
-			{
-				type: "warning",
-				message: `Are you sure you want to remove ${window.realmManager.getRealmFromId(id)?.name} Realm?`,
-			},
-			handleDecision,
-		);
+		window.hollowManager.emit("confirm", {
+			type: "warning",
+			message: `Are you sure you want to remove ${window.realmManager.getRealmFromId(id)?.name} Realm?`,
+			decision: handleDecision,
+		});
 	};
 
 	return {
@@ -98,19 +101,19 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 	>
 		<div class="relative flex w-fit flex-col items-center">
 			<div class="rotate-[10deg]">
-				<h1 class="mt-8 text-6xl font-black tracking-tight text-white  ">
+				<h1 class="mt-8 text-6xl font-black tracking-tight text-white">
 					Hello, adventurer!
 				</h1>
-				<h1 class="mt-2 text-lg w-150 tracking-widest text-neutral-400 uppercase">
+				<h1 class="mt-2 w-150 text-lg tracking-widest text-neutral-400 uppercase">
 					Hollow is ready to help you explore, imagine, and create.
 					Let’s dive in!
 				</h1>
 			</div>
 			<button
-				class="button-primary mt-7 ml-auto flex items-center gap-3 text-black "
+				class="button-primary mt-7 ml-auto flex items-center gap-3 text-black"
 				onclick={props.onNext}
 			>
-				<RocketIcon class="size-5 hidden" />
+				<RocketIcon class="hidden size-5" />
 				<span class="relative z-10">Start</span>
 			</button>
 		</div>
@@ -131,9 +134,13 @@ const RealmList = (props: {
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}
-			class="flex h-170 flex-col w-160"
+			class="up-pop flex h-170 w-160 flex-col"
+			style={{
+				"--bg-color": "var(--color-neutral-950)",
+				"--border-color": "var(--color-neutral-900)",
+			}}
 		>
-			<div class="title-panel flex justify-between items-center">
+			<div class="title-panel flex items-center justify-between">
 				<h1>Realms</h1>
 				<button
 					class="button-empty flex items-center gap-1 tracking-wide text-white"
@@ -171,7 +178,7 @@ const RealmList = (props: {
 								<div class="relative flex items-center justify-between">
 									<div class="flex gap-6">
 										<div
-											class="flex h-20 w-12 items-center justify-center border-b-2 rounded-md"
+											class="flex h-20 w-12 items-center justify-center rounded-md border-b-2"
 											style={{
 												background: `color-mix(in oklab, ${realm.colors.secondary}, transparent)`,
 												"border-color":
@@ -186,7 +193,7 @@ const RealmList = (props: {
 												}}
 											/>
 										</div>
-										<div class="flex flex-col my-auto gap-1">
+										<div class="my-auto flex flex-col gap-1">
 											<div class="flex items-center gap-3">
 												<h2 class="text-lg font-medium text-white">
 													{realm.name}
@@ -287,13 +294,23 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 		}
 	};
 
+	const selectTheme = (name: string) => {
+		const t = themes.find((i) => i.name === name);
+		setPrimary(t.primary);
+		setSecondary(t.secondary);
+	};
+
 	return (
 		<Motion
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}
-			class="flex  h-120 w-210 flex-col"
+			class="up-pop flex h-120 w-210 flex-col"
+			style={{
+				"--bg-color": "var(--color-neutral-950)",
+				"--border-color": "var(--color-neutral-900)",
+			}}
 		>
 			<div class="title-panel flex items-center gap-2">
 				<button
@@ -305,9 +322,9 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 				<h1>Create realm</h1>
 			</div>
 
-			<div class="flex flex-1 gap-5 p-8">
+			<div class="flex flex-1 gap-5 p-5">
 				<div class="flex w-[400px] flex-col gap-8">
-					<div class="flex flex-col gap-6 h-full py-5">
+					<div class="flex h-full flex-col gap-6 py-5">
 						<div class="flex flex-col gap-2">
 							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
 								Realm Name
@@ -329,29 +346,40 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								class="rounded-xl bg-white/5 px-4 py-3 text-white placeholder-neutral-500 focus:ring-2 focus:ring-white/20 focus:outline-none"
 							/>
 						</div>
-						<div class="flex justify-between items-center">
+						<div class="flex items-center justify-between">
+							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
+								Themes
+							</label>
+							<DropDown
+								editable={false}
+								items={themes.map((i) => i.name)}
+								placeholder="Select A Theme"
+								onSelect={selectTheme}
+							/>
+						</div>
+						<div class="flex items-center justify-between">
 							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
 								Primary Color
 							</label>
 							<ColorPick
-								color={primary()}
+								color={primary}
 								setColor={setPrimary}
 								borderColor={"var(--color-neutral-800)"}
 							/>
 						</div>
-						<div class="flex justify-between items-center">
+						<div class="flex items-center justify-between">
 							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
 								Secondary Color
 							</label>
 							<ColorPick
-								color={secondary()}
+								color={secondary}
 								setColor={setSecondary}
 								borderColor={"var(--color-neutral-800)"}
 							/>
 						</div>
 					</div>
 					<button
-						class="button-empty ml-auto mt-auto flex items-center gap-1 tracking-wide text-white"
+						class="button-empty mt-auto ml-auto flex items-center gap-1 tracking-wide text-white"
 						style={{
 							"--bg-color": "var(--color-neutral-900)",
 							"--border-color": "var(--color-neutral-800)",
@@ -365,8 +393,8 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 						Create Realm
 					</button>
 				</div>
-				<hr class="border-dashed border-l border-neutral-900 h-full" />
-				<div class="flex items-center h-fit justify-center pt-5">
+				<hr class="h-full border-l border-dashed border-neutral-900" />
+				<div class="flex h-fit items-center justify-center pt-5">
 					<div class="flex flex-col gap-6">
 						<div
 							class="relative h-64 w-96 overflow-hidden rounded-2xl shadow-xl"
@@ -452,8 +480,11 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 	);
 
 	const importAvatar = async () => {
-		const image = (await importImage()) as string;
-		setCharacter((prev) => ({ ...prev, avatar: image }));
+		window.hollowManager.emit("show-vault", {
+			onSelect: (p) => {
+				setCharacter((i) => ({ ...i, avatar: p }));
+			},
+		});
 	};
 
 	const save = () => {
@@ -467,18 +498,22 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}
-			class="flex w-121 flex-col"
+			class="up-pop flex w-121 flex-col"
+			style={{
+				"--bg-color": "var(--color-neutral-950)",
+				"--border-color": "var(--color-neutral-900)",
+			}}
 		>
 			<div class="title-panel flex items-center gap-2">
-				<PandaIcon class="h-5 w-5 m-1 text-secondary-50" />
+				<PandaIcon class="text-secondary-50 m-1 h-5 w-5" />
 				<h1>Character Sheet</h1>
 			</div>
-			<div class="p-3 flex flex-col gap-3">
+			<div class="flex flex-col gap-3 p-3">
 				<div class="flex justify-between">
-					<p class="text-secondary-40 tracking-wider text-sm">
+					<p class="text-secondary-40 text-sm tracking-wider">
 						Wait. You there. Step forward. Who are you?
 					</p>
-					<span class="text-secondary-40 tracking-wider text-sm tool-tip">
+					<span class="text-secondary-40 tool-tip text-sm tracking-wider">
 						<span class="tool-tip-content" data-side="right">
 							The Characters feature is currently experimental. It
 							doesn’t serve a specific purpose yet, but we wanted
@@ -489,17 +524,17 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 						[ i ]
 					</span>
 				</div>
-				<hr class="w-full h-[2px] border-secondary bg-secondary-10/50" />
+				<hr class="border-secondary bg-secondary-10/50 h-[2px] w-full" />
 				<div class="flex gap-5">
 					<div
-						class="p-2 shrink-0 border-secondary-10 rounded border size-40 flex justify-between flex-col"
+						class="border-secondary-10 flex size-40 shrink-0 flex-col justify-between rounded border p-2"
 						style={{
 							"background-image": `url(${character().avatar})`,
 							"background-size": "cover",
 						}}
 					>
 						<Show when={!character().avatar}>
-							<span class="text-secondary-20 tracking-widest text-sm w-full text-center pt-10">
+							<span class="text-secondary-20 w-full pt-10 text-center text-sm tracking-widest">
 								AVATAR
 							</span>
 						</Show>
@@ -511,9 +546,9 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 							import
 						</button>
 					</div>
-					<div class="flex flex-col gap-2 w-ful h-40 justify-around">
+					<div class="w-ful flex h-40 flex-col justify-around gap-2">
 						<div class="w-full">
-							<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
 								Name
 							</h2>
 							<input
@@ -528,7 +563,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 							/>
 						</div>
 						<div class="w-full">
-							<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
 								Title
 							</h2>
 							<DropDown
@@ -546,7 +581,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 					</div>
 				</div>
 				<div>
-					<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+					<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
 						Description
 					</h2>
 					<textarea
@@ -561,22 +596,22 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 					/>
 				</div>
 
-				<hr class="w-full h-[2px] border-secondary bg-secondary-10/50 mx-auto" />
-				<div class="w-full gap-2 flex flex-wrap items-center">
-					<h2 class="text-neutral-500 uppercase tracking-widest text-sm">
+				<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
+				<div class="flex w-full flex-wrap items-center gap-2">
+					<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
 						achievements :
 					</h2>
 					<For each={["🌀 First Step"]}>
 						{(ach) => (
-							<span class="px-2 rounded bg-secondary-10 text-secondary-70">
+							<span class="bg-secondary-10 text-secondary-70 rounded px-2">
 								{ach}
 							</span>
 						)}
 					</For>
 				</div>
-				<hr class="w-full h-[2px] border-secondary bg-secondary-10/50 mx-auto" />
+				<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
 			</div>
-			<div class="flex gap-2 mb-5 mx-5">
+			<div class="mx-5 mb-5 flex gap-2">
 				<button
 					class="button-primary"
 					onclick={save}
@@ -597,6 +632,11 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 }
 
 export default function Selector({ onSelect }: SelectorProps) {
+	const [ready] = createResource(async () => {
+		useColor({ name: "primary", color: "#FF0033", oneTime: true });
+		useColor({ name: "secondary", color: "#000000", oneTime: true });
+		return true;
+	});
 	const [level, setLevel] = createSignal(
 		window.realmManager.realms.length === 0 ? 0 : 1,
 	);
@@ -605,48 +645,47 @@ export default function Selector({ onSelect }: SelectorProps) {
 	);
 
 	return (
-		<div class="flex h-full w-full items-center justify-center bg-neutral-950">
-			<div class="absolute top-2 right-2 z-10">
-				<WindowControl expanded />
-			</div>
-			<div class="h-[90%] w-[95%] flex items-center justify-center">
-				<div
-					class="w-fit h-fit"
-					classList={{ "up-pop": level() !== 0 }}
-					style={{
-						"--bg-color": "var(--color-neutral-950)",
-						"--border-color": "var(--color-neutral-900)",
-					}}
-				>
-					<Presence exitBeforeEnter>
-						<Show when={level() === 0}>
-							<WelcomeScreen onNext={() => setLevel(3)} />
-						</Show>
+		<Suspense fallback={<Loading />}>
+			<Show when={ready()}>
+				<div class="flex h-full w-full items-center justify-center bg-neutral-950">
+					<div class="absolute top-2 right-2 z-10">
+						<WindowControl expanded />
+					</div>
+					<div class="flex h-[90%] w-[95%] items-center justify-center">
+						<div class="h-fit w-fit">
+							<Presence exitBeforeEnter>
+								<Show when={level() === 0}>
+									<WelcomeScreen onNext={() => setLevel(3)} />
+								</Show>
 
-						<Show when={level() === 1}>
-							<RealmList
-								onBack={() => setLevel(2)}
-								onSelect={(id) =>
-									window.realmManager.enterRealm(id)
-								}
-								realms={realms}
-								setRealms={setRealms}
-							/>
-						</Show>
+								<Show when={level() === 1}>
+									<RealmList
+										onBack={() => setLevel(2)}
+										onSelect={(id) =>
+											window.realmManager.enterRealm(id)
+										}
+										realms={realms}
+										setRealms={setRealms}
+									/>
+								</Show>
 
-						<Show when={level() === 2}>
-							<CreateRealm
-								onBack={() => setLevel(1)}
-								onSuccess={() => setLevel(1)}
-							/>
-						</Show>
+								<Show when={level() === 2}>
+									<CreateRealm
+										onBack={() => setLevel(1)}
+										onSuccess={() => setLevel(1)}
+									/>
+								</Show>
 
-						<Show when={level() === 3}>
-							<CreateCharacter onSuccess={() => setLevel(2)} />
-						</Show>
-					</Presence>
+								<Show when={level() === 3}>
+									<CreateCharacter
+										onSuccess={() => setLevel(2)}
+									/>
+								</Show>
+							</Presence>
+						</div>
+					</div>
 				</div>
-			</div>
-		</div>
+			</Show>
+		</Suspense>
 	);
 }

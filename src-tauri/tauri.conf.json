@@ -20,7 +20,11 @@
                         }
                 ],
                 "security": {
-                        "csp": null
+  			"csp": "default-src 'self' ipc:; img-src 'self' asset: asset://*",
+  			"assetProtocol": {
+				"enable": true,
+				"scope": ["$APPDATA/vault/**"]
+			}
                 }
         },
         "bundle": {

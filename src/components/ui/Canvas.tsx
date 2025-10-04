@@ -1,9 +1,11 @@
 import Vault from "@components/Vault";
 import useGrid from "@hooks/useGrid";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import { Opthand } from "@type/Opthand";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
-import { createSignal, For, onMount, Show } from "solid-js";
+import { cover } from "polished";
+import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 
 type CanvasProps = {
 	cards: () => Opthand[];

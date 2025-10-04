@@ -61,10 +61,10 @@ export default function Appearance({}: AppearanceProps) {
 		useGrid([{ name: "offrows", value: n }]);
 	};
 	const setPrimaryColor = (c: string) => {
-		useColor("primary", c);
+		useColor({ name: "primary", color: c });
 	};
 	const setSecondaryColor = (c: string) => {
-		useColor("secondary", c);
+		useColor({ name: "secondary", color: c });
 	};
 	const setBackgroundImg = (img: string) => {
 		useBackground({ data: `url(${img})`, name: "background" });
@@ -221,7 +221,7 @@ export default function Appearance({}: AppearanceProps) {
 							</p>
 						</div>
 						<ColorPick
-							color={primaryColor()}
+							color={primaryColor}
 							setColor={setPrimaryColor}
 						/>
 					</div>
@@ -236,7 +236,7 @@ export default function Appearance({}: AppearanceProps) {
 							</p>
 						</div>
 						<ColorPick
-							color={secondaryColor()}
+							color={secondaryColor}
 							setColor={setSecondaryColor}
 						/>
 					</div>
@@ -338,7 +338,10 @@ export default function Appearance({}: AppearanceProps) {
 								"--bg-color-f": "var(--color-secondary-15)",
 							}}
 						/>
-						<ColorPick color="#151515" setColor={() => {}} />
+						<ColorPick
+							color={() => "#151515"}
+							setColor={() => {}}
+						/>
 					</div>
 					<button class="button-secondary" type="submit">
 						Add

@@ -13,7 +13,13 @@ import { RustManager } from "@managers/RustManager";
 import { CharacterManager } from "./CharacterManager";
 import VaultManager from "./VaultManager";
 
-export async function init() {
+export async function initialization1() {
+	await VaultManager.getSelf().start();
+	// await new Promise((resolve) => setTimeout(resolve, 5_000));
+	return true;
+}
+
+export async function initialization2() {
 	if (!localStorage.platform) {
 		localStorage.platform = await RustManager.getSelf().get_platform();
 	}
@@ -26,8 +32,9 @@ export async function init() {
 	window.hollowManager.on("remove-entry", (id: string) =>
 		window.entryManager.removeEntry(id),
 	);
-	useColor("primary");
-	useColor("secondary");
+	useColor({ name: "primary" });
+	useColor({ name: "secondary" });
+	// ????? this setStyle is for what TODO
 	setStyle([
 		{
 			name: "--static-grid-lines",
@@ -42,13 +49,11 @@ export async function init() {
 	]);
 	useBackground({});
 	useTags();
-	//
 	window.markdownManager = new MarkdownManager();
 	useCodeTheme();
 	window.hotkeysManager = new hotkeysManager();
 	NotifyManager.init();
 	await CharacterManager.getSelf().start();
-	await VaultManager.getSelf().start();
 }
 
 function handleDev() {

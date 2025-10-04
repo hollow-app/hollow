@@ -1,12 +1,12 @@
 import { VaultItem } from "@type/VaultItem";
+import { RustManager } from "./RustManager";
 
 export default class VaultManager {
-	private db: Promise<IDBDatabase>;
+	private db: Promise<IDBDatabase> = this.openDB();
 	private vault: VaultItem[] = [];
 	private static self: VaultManager;
 
 	public async start() {
-		this.db = this.openDB();
 		this.vault = (await this.getFromDB()) ?? [];
 	}
 
@@ -17,13 +17,10 @@ export default class VaultManager {
 		return this.self;
 	}
 
-	public addItem(item: VaultItem) {
-		this.vault.push(item);
-		this.addToDB(item);
-	}
 	public getVault() {
 		return this.vault;
 	}
+
 	public async editItem(editedParts: any) {
 		const db = await this.db;
 		return new Promise<void>((resolve, reject) => {
@@ -45,7 +42,19 @@ export default class VaultManager {
 		});
 	}
 
+	public async addItem(item: VaultItem, source: string) {
+		this.vault = [...this.vault, item];
+		this.addToDB(item);
+		await RustManager.getSelf().vault_add({
+			source: source,
+			name: `${item.id}.${item.type}`,
+		});
+	}
+
 	public async removeItem(id: string) {
+		const target = this.vault.find((i) => i.id === id);
+		const full_name = `${target.id}.${target.type}`;
+		await RustManager.getSelf().vault_remove({ name: full_name });
 		const db = await this.db;
 		return new Promise<void>((resolve, reject) => {
 			const tx = db.transaction("vault", "readwrite");
@@ -61,9 +70,7 @@ export default class VaultManager {
 			const request = indexedDB.open("vault", 1);
 			request.onupgradeneeded = () => {
 				const db = request.result;
-				const store = db.createObjectStore("vault", { keyPath: "id" });
-				store.createIndex("type", "type", { unique: false });
-				store.createIndex("tags", "tags", { multiEntry: true });
+				db.createObjectStore("vault", { keyPath: "id" });
 			};
 			request.onsuccess = () => resolve(request.result);
 			request.onerror = () => reject(request.error);
@@ -75,8 +82,7 @@ export default class VaultManager {
 		return new Promise((resolve, reject) => {
 			const tx = db.transaction("vault", "readonly");
 			const store = tx.objectStore("vault");
-			const index = store.index("type");
-			const req = index.getAll("image");
+			const req = store.getAll();
 			req.onsuccess = () => resolve(req.result ?? null);
 			req.onerror = () => reject(req.error);
 		});

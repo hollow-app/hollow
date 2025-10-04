@@ -1,4 +1,3 @@
-import { confirmThis } from "@managers/manipulation/popups";
 import { createSignal } from "solid-js";
 import { RustManager } from "@managers/RustManager";
 
@@ -23,28 +22,18 @@ export default function Developers() {
 		e: Event & { currentTarget: HTMLInputElement },
 	) => {
 		const state = e.currentTarget.checked;
-		confirmThis(
-			{
-				message: "This action requires the app to restart.",
-				type: "Warning",
+		window.hollowManager.emit("confirm", {
+			message: "This action requires the app to restart.",
+			type: "Warning",
+			decision: () => {
+				setOption((prev) => ({
+					...prev,
+					loadunsigned: state,
+				}));
+				update();
+				RustManager.getSelf().reload();
 			},
-			(d: boolean) => {
-				if (d) {
-					setOption((prev) => ({
-						...prev,
-						loadunsigned: state,
-					}));
-
-					update();
-					RustManager.getSelf().reload();
-				} else {
-					setOption((prev) => ({
-						...prev,
-						loadunsigned: !state,
-					}));
-				}
-			},
-		);
+		});
 	};
 	const update = () => {
 		localStorage.setItem(
@@ -58,7 +47,7 @@ export default function Developers() {
 				Developers
 			</h1>
 			{/*<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />*/}
-			<div class="w-full p-5 pb-9 flex flex-col gap-5">
+			<div class="flex w-full flex-col gap-5 p-5 pb-9">
 				<div class="flex justify-between">
 					<div>
 						<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">

@@ -1,6 +1,5 @@
 import Sidepanel from "@components/animations/Sidepanel";
 import ColorPick from "@components/ColorPick";
-import DropDown from "@components/DropDown";
 import NumberInput from "@components/NumberInput";
 import { KitEditorType } from "@type/KitEdiorType";
 import { PencilRulerIcon } from "lucide-solid";

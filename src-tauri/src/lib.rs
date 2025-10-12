@@ -216,6 +216,7 @@ fn vault_remove(app: AppHandle, name: String) -> Result<(), String> {
     Ok(())
 }
 
+// TODO not needed
 #[tauri::command]
 fn vault_rename(app: AppHandle, name: String, new_name: String) -> Result<PathBuf, String> {
     let vault_dir = get_data_path(&app, "vault")?;

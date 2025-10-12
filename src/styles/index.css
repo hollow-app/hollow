@@ -1,6 +1,7 @@
 @import url("./globals.css");
 @import url("./tooltip.css");
 @import url("./loader.css");
+@import url("./checkbox.css");
 @import url("./markdown-preview.css");
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));

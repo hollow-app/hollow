@@ -602,7 +602,9 @@ a {
 				var(--bg) 50%,
 				transparent);
 		color: var(--c);
-		border-color: var(--bg);
+		border-color: color-mix(in oklab,
+				var(--bg) 50%,
+				transparent);
 	}
 
 	&:active {
@@ -783,7 +785,7 @@ a {
 	border: 1px solid var(--border-color);
 	box-shadow: 0px 0px 30px var(--shadow);
 	transition: 0.2s all ease-in-out;
-	animation: animatetop 0.4s
+	/* animation: animatetop 0.4s */
 }
 
 @keyframes animatetop {

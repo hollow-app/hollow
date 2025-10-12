@@ -137,10 +137,10 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 
 	return (
 		<div class="pop-up">
-			<div class="up-pop pointer-events-auto flex h-[70vh] max-h-[85vh] w-[65vw] max-w-[85vw] flex-col">
+			<div class="up-pop bg-secondary pointer-events-auto absolute flex h-[80%] max-h-[90%] w-6xl max-w-[90%] flex-col items-center gap-0 rounded-xl p-6 text-xl lg:min-w-6xl">
 				{/* Header */}
-				<div class="border-secondary-10 flex h-fit w-full items-center border-b">
-					<div class="flex flex-col justify-center rounded-lg pl-5">
+				<div class="border-secondary-10 flex h-24 w-full items-center">
+					<div class="flex flex-col justify-center rounded-lg">
 						<h1 class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
 							Vault Storage
 						</h1>
@@ -151,15 +151,17 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 					</div>
 					<button
 						class="button-secondary mr-5 ml-auto flex items-center gap-2"
-						style={{ "--padding-x": "calc(var(--spacing) * 2)" }}
+						style={{
+							"--padding-x": "calc(var(--spacing) * 3)",
+							"--padding-y": "calc(var(--spacing) * 2)",
+						}}
 						onClick={addItem}
 					>
 						<ImageUpIcon class="size-5" />
 						Import
 					</button>
-					<div class="border-secondary-10 relative z-1 flex w-fit items-center justify-end gap-3 border-l px-5 py-5">
+					<div class="border-secondary-05 relative z-1 my-5 flex w-fit items-center justify-end gap-3 border-l px-5">
 						<FilterButton
-							label="Filter"
 							configs={[
 								{
 									id: "image-types",
@@ -210,7 +212,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 				{/* Main content: gallery + sidebar */}
 				<div class="flex flex-1 overflow-hidden">
 					{/* Gallery */}
-					<div class="grid grid-cols-6 grid-rows-4 gap-2 p-5">
+					<div class="grid grid-cols-7 grid-rows-5 gap-2 p-0">
 						<For
 							each={[
 								...images().filter(
@@ -232,9 +234,9 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 								>
 									<img
 										src={img.path}
-										class="bg-secondary-10 group-hover:border-secondary-20 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border border-transparent object-contain"
+										class="border-secondary-05 bg-secondary-05/50 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain"
 									/>
-									<span class="w-full truncate font-medium text-ellipsis text-neutral-600 dark:text-neutral-400">
+									<span class="w-full truncate text-sm font-medium text-ellipsis text-neutral-600 dark:text-neutral-400">
 										{img.name}
 									</span>
 								</button>
@@ -244,7 +246,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 
 					{/* Sidebar */}
 					<div
-						class={`border-secondary-10 box-content w-0 shrink-0 border-l opacity-0 transition-all duration-300 ease-in-out`}
+						class={`border-secondary-05 bg-secondary-05/50 box-content w-0 shrink-0 rounded border opacity-0 transition-all duration-300 ease-in-out`}
 						classList={{
 							"w-92 opacity-100 px-5 py-5": !!selectedItem(),
 						}}

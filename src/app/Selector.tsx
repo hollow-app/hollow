@@ -351,7 +351,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								Themes
 							</label>
 							<DropDown
-								editable={false}
+								readonly
 								items={themes.map((i) => i.name)}
 								placeholder="Select A Theme"
 								onSelect={selectTheme}
@@ -575,7 +575,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 										title: s,
 									}))
 								}
-								editable={false}
+								readonly
 							/>
 						</div>
 					</div>

@@ -1,7 +1,11 @@
+import DropDown from "@components/DropDown";
+import FilterButton from "@components/FilterButton";
+import ImportFile from "@components/ImportFile";
 import Vault from "@components/Vault";
 import useGrid from "@hooks/useGrid";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { Opthand } from "@type/Opthand";
+import { Filter } from "lucide-solid";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
 import { cover } from "polished";
@@ -27,7 +31,7 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 	return (
 		<div
 			ref={canvas}
-			class="relative w-full h-full overflow-hidden bg-secondary-05/30 border border-secondary-10 rounded-xl"
+			class="bg-secondary-05/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border"
 		>
 			<div
 				class="absolute top-0 left-0 h-full w-full object-cover"

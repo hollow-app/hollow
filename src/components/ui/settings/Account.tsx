@@ -141,7 +141,7 @@ export default function Account() {
 			<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
 				Account
 			</h1>
-			<div class="w-full p-5 pb-9 flex flex-col gap-5">
+			<div class="flex w-full flex-col gap-5 p-5 pb-9">
 				<div class="flex justify-between">
 					<div>
 						<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
@@ -192,7 +192,7 @@ export default function Account() {
 							items={character().titles}
 							value={character().title}
 							onSelect={changeTitle}
-							editable={false}
+							readonly
 						/>
 					</div>
 				</div>

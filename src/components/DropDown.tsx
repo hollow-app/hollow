@@ -1,4 +1,4 @@
-import { ArrowDownUpIcon } from "lucide-solid";
+import { ArrowDownUpIcon, ChevronDownIcon } from "lucide-solid";
 import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 type DropDownProps = {
@@ -6,9 +6,7 @@ type DropDownProps = {
 	items: string[];
 	onSelect: (v: string) => void;
 	placeholder?: string;
-	isLoading?: boolean;
-	error?: string;
-	editable?: boolean;
+	readonly?: boolean;
 	style?: any;
 };
 
@@ -17,9 +15,7 @@ export default function DropDown({
 	items,
 	onSelect,
 	placeholder,
-	isLoading = false,
-	error,
-	editable = true,
+	readonly = false,
 	style,
 }: DropDownProps) {
 	const [query, setQuery] = createSignal(value || "");
@@ -27,7 +23,6 @@ export default function DropDown({
 	const [filteredItems, setFilteredItems] = createSignal<string[]>(items);
 	const [activeIndex, setActiveIndex] = createSignal(-1);
 	let dropdownRef: HTMLDivElement | undefined;
-	let inputRef: HTMLInputElement | undefined;
 	let listRef: HTMLUListElement | undefined;
 
 	const filterItems = () => {
@@ -125,32 +120,6 @@ export default function DropDown({
 		document.removeEventListener("pointerdown", handleClickOutside);
 	});
 
-	const calculateDropdownPosition = () => {
-		if (!inputRef || !listRef) return {};
-		const inputRect = inputRef.getBoundingClientRect();
-		const dropdownRect = listRef.getBoundingClientRect();
-		const viewportHeight = window.innerHeight;
-
-		// Check if dropdown would go below viewport
-		const spaceBelow = viewportHeight - inputRect.bottom;
-		const spaceAbove = inputRect.top;
-		const dropdownHeight = dropdownRect.height;
-
-		if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
-			// Position above input
-			return {
-				bottom: `${window.innerHeight - inputRect.top + 5}px`,
-				left: `${inputRect.left}px`,
-			};
-		}
-
-		// Position below input
-		return {
-			top: `${inputRect.bottom + 5}px`,
-			left: `${inputRect.left}px`,
-		};
-	};
-
 	return (
 		<div
 			ref={dropdownRef}
@@ -162,7 +131,6 @@ export default function DropDown({
 			style={style}
 		>
 			<input
-				ref={inputRef}
 				type="text"
 				value={query()}
 				oninput={handleChange}
@@ -170,7 +138,7 @@ export default function DropDown({
 				onKeyDown={handleKeyDown}
 				placeholder={placeholder}
 				spellcheck="false"
-				readonly={!editable}
+				readonly={readonly}
 				aria-autocomplete="list"
 				aria-controls="dropdown-list"
 				aria-activedescendant={
@@ -178,35 +146,19 @@ export default function DropDown({
 						? `dropdown-item-${activeIndex()}`
 						: undefined
 				}
-				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 h-10 w-full max-w-full appearance-none rounded-md py-2 pr-20 pl-3 text-sm shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
-				disabled={isLoading}
-				classList={{
-					"border-red-500": !!error,
-					"cursor-pointer": !editable,
-				}}
+				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 h-fit w-full max-w-full cursor-pointer appearance-none rounded-md py-2 pr-20 pl-3 text-xs shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
+				// classList={{
+				// 	"cursor-pointer": readonly,
+				// }}
 			/>
-			{error && (
-				<p class="mt-1 text-xs text-red-500" role="alert">
-					{error}
-				</p>
-			)}
-			<Show
-				when={isOpen() && !isLoading}
-				fallback={
-					isLoading && (
-						<div class="absolute top-1/2 right-10 -translate-y-1/2">
-							<div class="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-						</div>
-					)
-				}
-			>
+			<Show when={isOpen()}>
 				<ul
 					ref={listRef}
 					id="dropdown-list"
-					class="bg-secondary-10 border-secondary fixed z-50 max-h-40 overflow-x-hidden overflow-y-auto rounded-md p-2 text-sm shadow-lg"
+					class="bg-secondary-10 border-secondary absolute z-50 mt-2 max-h-40 overflow-x-hidden overflow-y-auto rounded-md p-1 text-sm shadow-lg"
 					role="listbox"
 					style={{
-						...calculateDropdownPosition(),
+						// ...calculateDropdownPosition(),
 						width: "var(--w)",
 					}}
 				>
@@ -223,7 +175,7 @@ export default function DropDown({
 								<li
 									id={`dropdown-item-${index()}`}
 									onclick={() => handleSelect(item)}
-									class="hover:bg-primary/10 text-secondary-60 hover:text-primary w-full cursor-pointer rounded bg-transparent px-3 py-2"
+									class="hover:bg-primary/10 text-secondary-60 hover:text-primary w-full cursor-pointer rounded bg-transparent px-3 py-2 text-xs"
 									classList={{
 										"bg-secondary-10":
 											index() === activeIndex(),
@@ -238,8 +190,8 @@ export default function DropDown({
 					</Show>
 				</ul>
 			</Show>
-			<ArrowDownUpIcon
-				class="pointer-events-none absolute top-0 right-3 h-full transition duration-300"
+			<ChevronDownIcon
+				class="pointer-events-none absolute top-0 right-1 h-full transition duration-300"
 				classList={{
 					"text-secondary-20": !isOpen(),
 					"text-primary": isOpen(),

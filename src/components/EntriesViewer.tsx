@@ -72,7 +72,7 @@ export default function EntriesViewer() {
 
 	return (
 		<div class="pop-up">
-			<div class="up-pop pointer-events-auto absolute flex h-[80%] max-h-[90%] w-6xl max-w-[90%] flex-col items-center gap-0 rounded-xl p-6 text-xl lg:min-w-6xl">
+			<div class="up-pop bg-secondary pointer-events-auto absolute flex h-[80%] max-h-[90%] w-6xl max-w-[90%] flex-col items-center gap-0 rounded-xl p-6 text-xl lg:min-w-6xl">
 				<Presence exitBeforeEnter>
 					<Show when={!selected()}>
 						<Motion
@@ -94,49 +94,7 @@ export default function EntriesViewer() {
 									</p>
 								</div>
 								<div class="relative z-1 flex flex-1 items-center gap-3">
-									<div class="relative flex-1">
-										<input
-											class="input peer focus:bg-secondary-10 h-fit w-full text-sm transition-all duration-200"
-											value={filter().text}
-											style={{
-												"--border-w": "0px",
-												"--padding-y":
-													"calc(var(--spacing) * 3.5)",
-												"--padding-x":
-													"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
-												"--bg-color-f":
-													"var(--secondary-color-15)",
-											}}
-											placeholder="Search entries..."
-											oninput={(e) =>
-												setFilter((prev) => ({
-													...prev,
-													text: e.currentTarget.value,
-												}))
-											}
-										/>
-										<SearchIcon class="text-secondary-30 peer-focus:text-secondary-90 absolute top-1/2 left-3 w-5 -translate-y-1/2 transition-colors" />
-									</div>
-									{/*<FilterButton
-										tags={[
-											...new Set(
-												entries()
-													.map((i) => i.tags)
-													.flat(),
-											),
-										]}
-										tools={[
-											...new Set(
-												entries().map(
-													(i) => i.source.tool,
-												),
-											),
-										]}
-										filter={filter}
-										setFilter={setFilter}
-									/>*/}
 									<FilterButton
-										label="Filter"
 										configs={[
 											{
 												id: "tool",
@@ -175,6 +133,29 @@ export default function EntriesViewer() {
 											},
 										]}
 									/>
+									<div class="relative flex-1">
+										<input
+											class="input peer focus:bg-secondary-10 h-fit w-full text-sm transition-all duration-200"
+											value={filter().text}
+											style={{
+												"--border-w": "0px",
+												"--padding-y":
+													"calc(var(--spacing) * 3.5)",
+												"--padding-x":
+													"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
+												"--bg-color-f":
+													"var(--secondary-color-15)",
+											}}
+											placeholder="Search entries..."
+											oninput={(e) =>
+												setFilter((prev) => ({
+													...prev,
+													text: e.currentTarget.value,
+												}))
+											}
+										/>
+										<SearchIcon class="text-secondary-30 peer-focus:text-secondary-90 absolute top-1/2 left-3 w-5 -translate-y-1/2 transition-colors" />
+									</div>
 								</div>
 							</div>
 							<div class="bg-secondary-10/30 text-secondary-45 grid w-full grid-cols-4 grid-rows-1 gap-4 rounded-lg p-6 font-bold backdrop-blur-sm">

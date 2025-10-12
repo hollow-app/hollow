@@ -10,6 +10,7 @@ import {
 	createEffect,
 } from "solid-js";
 import DropDown from "./DropDown";
+import { Label } from "@coolicons-dev/solid";
 
 type ConfigItem = {
 	id: string;
@@ -30,7 +31,7 @@ type MultiOptionConfig = ConfigItem & {
 type FilterConfig = DropdownConfig | MultiOptionConfig;
 
 interface FilterButtonProps {
-	label: string;
+	label?: string;
 	configs: FilterConfig[];
 }
 
@@ -91,34 +92,48 @@ export default function FilterButton(props: FilterButtonProps) {
 	});
 
 	onCleanup(() => document.removeEventListener("click", handleClickOutside));
+
 	return (
 		<div class="filter-button-wrapper relative inline-block">
 			<button
 				type="button"
-				class="button-control"
+				class="flex items-center gap-1"
+				classList={{
+					"button-secondary": !!props.label,
+					"button-control": !props.label,
+				}}
+				style={{
+					"--padding-x": "calc(var(--spacing) * 2)",
+				}}
 				onClick={() => setOpen((o) => !o)}
 			>
 				<ListFilterPlusIcon class="size-5" />
+				{props.label}
 			</button>
 
 			<Show when={open()}>
-				<div class="bg-secondary border-secondary-10 absolute z-10 mt-2 min-w-[15rem] rounded-lg border shadow-xl">
-					<div class="flex items-center justify-between p-2">
-						<p class="">{props.label}</p>
+				<div class="bg-secondary-05 border-secondary-10 absolute z-10 mt-2 min-w-[15rem] rounded-lg border pb-2 shadow-xl">
+					<div class="flex items-center justify-between px-4 py-2">
+						<p class="text-lg font-medium text-neutral-500">
+							Filter
+						</p>
 						<button
 							class="button-secondary group"
-							style={{ "--padding-x": "var(--padding-y)" }}
+							style={{
+								"--padding-x": "calc(var(--spacing) * 2)",
+								"--padding-y": "calc(var(--spacing) * 1)",
+							}}
 							onclick={onClear}
 						>
-							<BrushCleaningIcon class="text-secondary-30 group-hover:text-secondary-95 size-5 transition-colors" />
+							Clear
 						</button>
 					</div>
 					<hr class="border-secondary bg-secondary-10 mx-auto my-0.5 h-[2px] w-full" />
 					<For each={props.configs}>
 						{(config) => (
 							<Show when={config.options.length > 0}>
-								<div class="p-2">
-									<p class="my-1 text-xs text-neutral-700 dark:text-neutral-300">
+								<div class="px-4 py-2">
+									<p class="text-sm text-neutral-700 dark:text-neutral-400">
 										{config.label}
 									</p>
 									<Switch>
@@ -138,7 +153,7 @@ export default function FilterButton(props: FilterButtonProps) {
 														.placeholder
 												}
 												style={{
-													"--w": "calc(var(--spacing) * 50)",
+													"--w": "calc(var(--spacing) * 60)",
 												}}
 											/>
 										</Match>
@@ -146,7 +161,7 @@ export default function FilterButton(props: FilterButtonProps) {
 										<Match
 											when={config.type === "multioption"}
 										>
-											<div class="h-fit max-h-50 overflow-hidden overflow-y-auto">
+											<div class="h-fit max-h-40 overflow-hidden overflow-y-auto">
 												<For
 													each={
 														(
@@ -158,6 +173,7 @@ export default function FilterButton(props: FilterButtonProps) {
 														<label class="hover:bg-secondary-10 flex cursor-pointer items-center space-x-2 rounded px-2 py-1">
 															<input
 																type="checkbox"
+																class="checkbox"
 																checked={selectedValues()
 																	.find(
 																		(i) =>
@@ -174,7 +190,7 @@ export default function FilterButton(props: FilterButtonProps) {
 																	)
 																}
 															/>
-															<span>
+															<span class="text-xs">
 																{option}
 															</span>
 														</label>

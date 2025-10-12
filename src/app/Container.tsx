@@ -50,8 +50,8 @@ function Container() {
 		};
 	});
 	return (
-		<div class="bg-secondary flex px-2 pb-2 h-full w-full flex-col text-neutral-950 dark:text-neutral-200">
-			<div class="relative flex flex-1 h-full">
+		<div class="bg-secondary flex h-full w-full flex-col px-2 text-neutral-950 dark:text-neutral-200">
+			<div class="relative flex h-full flex-1">
 				<SideBar
 					{...{
 						isExpand,
@@ -67,9 +67,9 @@ function Container() {
 					<Expand isVisible={isExpand} />
 					<CharacterPanel isVisible={isChara} />
 				</Suspense>
-				<div class="relative flex-1 flex flex-col max-h-full min-w-0">
+				<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
 					<Navbar />
-					<div class="flex-1 flex w-full min-h-0">
+					<div class="flex min-h-0 w-full flex-1 pb-2">
 						<Canvas
 							isGridVisible={() =>
 								isEditor() ||

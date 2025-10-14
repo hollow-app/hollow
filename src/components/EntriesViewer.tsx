@@ -72,7 +72,7 @@ export default function EntriesViewer() {
 
 	return (
 		<div class="pop-up">
-			<div class="up-pop bg-secondary pointer-events-auto absolute flex h-[80%] max-h-[90%] w-6xl max-w-[90%] flex-col items-center gap-0 rounded-xl p-6 text-xl lg:min-w-6xl">
+			<div class="up-pop lvl-1 bg-secondary pointer-events-auto absolute flex flex-col items-center gap-0 rounded-xl p-6 text-xl">
 				<Presence exitBeforeEnter>
 					<Show when={!selected()}>
 						<Motion

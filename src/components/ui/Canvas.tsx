@@ -31,7 +31,7 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 	return (
 		<div
 			ref={canvas}
-			class="bg-secondary-05/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border"
+			class="bg-secondary/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border"
 		>
 			<div
 				class="absolute top-0 left-0 h-full w-full object-cover"

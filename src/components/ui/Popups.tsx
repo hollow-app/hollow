@@ -29,18 +29,6 @@ export default function Popups() {
 	const [vault, setVault] = createSignal<{ onSelect?: (p: string) => void }>(
 		null,
 	);
-	// const visibleShadow = createMemo(
-	// 	() =>
-	// 		(confirm() && "8") ||
-	// 		(color() && "6") ||
-	// 		(emoji() && "6") ||
-	// 		(form() && "4") ||
-	// 		(entries() && "2") ||
-	// 		(vault() && "2") ||
-	// 		(tool() && "2") ||
-	// 		(toolSettings() && "0"),
-	// );
-	//
 	const showEntries = () => {
 		setEntries((prev) => !prev);
 	};
@@ -73,11 +61,6 @@ export default function Popups() {
 			}
 		>
 			<div id="hollow-popup" />
-			{/*<div
-				class="absolute inset-0 bg-black/50 opacity-0"
-				classList={{ "opacity-100": !!visibleShadow() }}
-				style={{ "z-index": visibleShadow() }}
-			/>*/}
 			{toolSettings() && <ToolSettings pluginSettings={toolSettings()} />}
 			{tool() && <ToolPop tool={tool()} setTool={setTool} />}
 			{entries() && <EntriesViewer />}

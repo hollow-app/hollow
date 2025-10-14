@@ -164,91 +164,17 @@ a {
 	}
 }
 
-.selector-grid-lines {
-	--n: 4;
-	--t: 1px;
-	--g: 10px;
 
-	--c: #3e3e3e 25%, #0000 0;
-
-	background:
-		conic-gradient(at var(--g) var(--t), var(--c)) calc((var(--cw) / var(--n) - var(--g) + var(--t)) / 2) 0 / calc(var(--cw) / var(--n)) var(--rh),
-		conic-gradient(from 180deg at var(--t) var(--g), var(--c)) 0 calc((var(--rh) / var(--n) - var(--g) + var(--t)) / 2) / var(--cw) calc(var(--rh) / var(--n));
-}
-
-.mask-image-fade {
-	-webkit-mask-image: linear-gradient(to bottom,
-			rgba(0, 0, 0, 0) 0%,
-			rgba(0, 0, 0, 1) 20%,
-			rgba(0, 0, 0, 1) 80%,
-			rgba(0, 0, 0, 0) 100%);
-	mask-image: linear-gradient(to bottom,
-			rgba(0, 0, 0, 0) 0%,
-			rgba(0, 0, 0, 1) 20%,
-			rgba(0, 0, 0, 1) 80%,
-			rgba(0, 0, 0, 0) 100%);
-}
 
 .os-theme-native {
 	--os-size: 8px !important;
 	--os-handle-bg: var(--secondary-color-05) !important;
 }
 
-.tooltip {
-	--tw-translate-y: calc(var(--spacing) * -10);
-	opacity: 0;
-	text-align: justify;
-	font-size: var(--text-sm);
-	line-height: var(--tw-leading, var(--text-sm--line-height));
-	background-color: var(--color-secondary);
-	border: 1px solid var(--color-secondary-20);
-	color: var(--color-secondary-80);
-	pointer-events: none;
-	position: absolute;
-	z-index: 1;
-	translate: var(--tw-translate-x) var(--tw-translate-y);
-	border-radius: var(--radius-md);
-	padding: calc(var(--spacing) * 2);
-	transition: opacity 0.2s ease;
-	transition-delay: 500ms;
 
-	&:is(:where(.peer):hover ~ *) {
-		@media (hover: hover) {
-			--tw-translate-y: calc(var(--spacing) * 0);
-			translate: var(--tw-translate-x) var(--tw-translate-y);
-			opacity: 1;
-		}
-	}
-}
 
-.hide-scroll::-webkit-scrollbar {
-	display: none;
-}
 
-.mask-gradient {
-	-webkit-mask-image: linear-gradient(to bottom,
-			transparent,
-			white 30%,
-			white 70%,
-			transparent);
-	mask-image: linear-gradient(to bottom,
-			transparent,
-			white 30%,
-			white 70%,
-			transparent);
-}
 
-.no-spinner::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
-}
-
-.pattern-dots {
-	width: 100%;
-	height: 100%;
-	background: transparent radial-gradient(var(--secondary-color-20) 10%, transparent 1%);
-	background-size: 11px 11px;
-}
 
 .react-colorful {
 	width: 100% !important;
@@ -267,6 +193,7 @@ a {
 	--padding-y: calc(var(--spacing) * 2);
 	--border-w: 2px;
 	--bg-color: var(--color-secondary-10);
+	--border-color: var(--color-secondary-15);
 	--w: 100%;
 	width: var(--w);
 	border: 1px solid var(--bg-color);
@@ -277,8 +204,8 @@ a {
 	color: var(--tc-50);
 
 	&:focus {
-		background-color: var(--bg-color);
-		border-color: var(--color-primary);
+		/* background-color: var(--bg-color); */
+		border-color: var(--border-color);
 	}
 
 	&:invalid {
@@ -358,7 +285,6 @@ a {
 }
 
 
-/*class="hover:bg-secondary-15 flex w-full items-center gap-3 rounded-lg px-8 py-2 transition-all active:scale-95"*/
 .button-cm {
 	display: flex;
 	width: calc(100% - calc(var(--spacing) * 6));
@@ -380,7 +306,6 @@ a {
 	}
 }
 
-/* border-secondary-10 my-2 h-px w-full*/
 
 .hr-cm {
 	border-color: var(--secondary-color-10);
@@ -521,13 +446,7 @@ a {
 	}
 }
 
-.shadow-popup {
-	box-shadow: 0 12px 78px rgba(0, 0, 0, 0.25);
-}
 
-.dark .shadow-popup {
-	box-shadow: 0 12px 78px rgba(0, 0, 0, 0.7);
-}
 
 .keyboard-button {
 	--tw-tracking: var(--tracking-widest);
@@ -589,10 +508,10 @@ a {
 	--w: fit-content;
 	width: var(--w);
 	height: fit-content;
-	border-style: solid;
-	border-width: 1px 0 0 0;
-	border-color: transparent;
-	border-radius: var(--radius-md);
+	/* border-style: solid; */
+	/* border-width: 1px 0 0 0; */
+	/* border-color: transparent; */
+	border-radius: var(--radius-lg);
 	padding: calc(var(--spacing) * 2);
 	color: color-mix(in oklab, var(--c) 80%, transparent);
 	transition: all 0.2s ease-in-out;
@@ -631,9 +550,9 @@ a {
 
 .button-control.selected {
 	background-color: color-mix(in oklab,
-			var(--bg) 50%,
+			var(--color-primary) 20%,
 			transparent);
-	color: var(--c);
+	color: var(--color-primary);
 	border-color: var(--bg);
 }
 
@@ -649,7 +568,7 @@ a {
 	border-style: solid;
 	border-color: var(--color-primary-10);
 	background-color: var(--color-primary-20);
-	border-radius: var(--radius-md);
+	border-radius: var(--radius-lg);
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);
 	font-size: var(--text-sm);
@@ -684,7 +603,7 @@ a {
 	border-style: solid;
 	border-color: var(--color-secondary-10);
 	background: var(--color-secondary-05);
-	border-radius: var(--radius-md);
+	border-radius: var(--radius-lg);
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);
 	font-size: var(--text-sm);
@@ -708,21 +627,6 @@ a {
 	}
 }
 
-/* .dark .button-secondary { */
-/* 	border-color: var(--color-secondary-15); */
-/* 	background-color: var(--color-secondary-10); */
-/**/
-/* 	&:not(:disabled):hover { */
-/* 		background-color: var(--color-secondary-15); */
-/* 		border-color: var(--color-secondary-25); */
-/* 	} */
-/**/
-/* 	&:not(:disabled):active { */
-/* 		background-color: var(--color-secondary-10); */
-/* 		border-color: var(--color-secondary-20); */
-/* 	} */
-/**/
-/* } */
 
 .button-empty {
 	--padding-x: calc(var(--spacing) * 5);
@@ -733,7 +637,7 @@ a {
 	--hover-bg-color: var(--color-empty-05, rgba(0, 0, 0, 0.05));
 	--hover-border-color: var(--color-empty, gray);
 	--text-color: var(--color-empty-20, black);
-	--radius: var(--radius-md);
+	--radius: var(--radius-lg);
 	--w: fit-content;
 	width: var(--w);
 	height: fit-content;
@@ -772,12 +676,14 @@ a {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	animation: fadeIn 0.4s ease forwards;
 }
+
 
 .up-pop {
 	--bg-color: var(--color-secondary);
 	--border-color: var(--color-secondary-10);
-	--shadow: var(--color-secondary);
+	--shadow: #212121;
 	/* overflow: hidden; */
 	position: absolute;
 	background: var(--bg-color);
@@ -786,6 +692,10 @@ a {
 	box-shadow: 0px 0px 30px var(--shadow);
 	transition: 0.2s all ease-in-out;
 	/* animation: animatetop 0.4s */
+}
+
+.dark .up-pop {
+	--shadow: black;
 }
 
 @keyframes animatetop {
@@ -816,6 +726,23 @@ a {
 	padding: 0 var(--padding-x);
 }
 
+.up-pop.lvl-1 {
+	/* h-[80%] max-h-[90%] w-6xl max-w-[90%]  lg:min-w-6xl */
+	height: 80%;
+	max-height: 90%;
+	width: var(--container-6xl);
+	max-width: 90%;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
 
 .button-ctl {
 	border-radius: 0.4rem;
@@ -836,4 +763,13 @@ a {
 	--w: calc(var(--spacing) * 70);
 	width: var(--w);
 
+}
+
+
+
+
+@media (min-width: 1024px) {
+	.up-pop.lvl-1 {
+		min-width: var(--container-6xl);
+	}
 }

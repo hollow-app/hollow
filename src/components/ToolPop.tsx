@@ -13,7 +13,7 @@ export default function ToolPop({
 		window.hollowManager.emit("tool-info", null);
 	};
 	return (
-		<div class="bg-secondary border-secondary-15 shadow-popup animate-fadeIn pointer-events-auto absolute h-fit w-fit rounded-xl border-1 z-3">
+		<div class="bg-secondary border-secondary-15 animate-fadeIn pointer-events-auto absolute z-3 h-fit w-fit rounded-xl border-1">
 			<div class="box-border flex h-fit w-[280px] flex-col justify-between gap-4 p-4">
 				<div class="mx-auto flex items-center gap-3">
 					<Icon

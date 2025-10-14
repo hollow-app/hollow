@@ -23,7 +23,7 @@ export default function Navbar() {
 
 	return (
 		<div
-			class="flex items-center w-full ml-auto justify-end duration-300 transition-all overflow-hidden min-h-2"
+			class="titlebar ml-auto flex min-h-2 w-full items-center justify-end overflow-hidden transition-all duration-300"
 			style={{
 				height: visible()
 					? "calc(var(--spacing) * 12)"

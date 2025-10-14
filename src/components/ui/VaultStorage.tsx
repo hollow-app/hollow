@@ -128,6 +128,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 		setFilter((prev) => ({ ...prev, tags: v }));
 	};
 
+	// TODO
 	const nextPage = () => {
 		if (start() + 15 < images().length) setStart(start() + 15);
 	};
@@ -137,7 +138,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 
 	return (
 		<div class="pop-up">
-			<div class="up-pop bg-secondary pointer-events-auto absolute flex h-[80%] max-h-[90%] w-6xl max-w-[90%] flex-col items-center gap-0 rounded-xl p-6 text-xl lg:min-w-6xl">
+			<div class="up-pop lvl-1 bg-secondary pointer-events-auto absolute flex flex-col items-center gap-0 rounded-xl p-6 text-xl">
 				{/* Header */}
 				<div class="border-secondary-10 flex h-24 w-full items-center">
 					<div class="flex flex-col justify-center rounded-lg">
@@ -150,15 +151,13 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 						</p>
 					</div>
 					<button
-						class="button-secondary mr-5 ml-auto flex items-center gap-2"
-						style={{
-							"--padding-x": "calc(var(--spacing) * 3)",
-							"--padding-y": "calc(var(--spacing) * 2)",
-						}}
+						class="button-control tool-tip mr-5 ml-auto"
 						onClick={addItem}
 					>
+						<span class="tool-tip-content" data-side="top">
+							import
+						</span>
 						<ImageUpIcon class="size-5" />
-						Import
 					</button>
 					<div class="border-secondary-05 relative z-1 my-5 flex w-fit items-center justify-end gap-3 border-l px-5">
 						<FilterButton
@@ -234,7 +233,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 								>
 									<img
 										src={img.path}
-										class="border-secondary-05 bg-secondary-05/50 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain"
+										class="border-secondary-10 bg-secondary-05/50 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain"
 									/>
 									<span class="w-full truncate text-sm font-medium text-ellipsis text-neutral-600 dark:text-neutral-400">
 										{img.name}
@@ -253,7 +252,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 					>
 						<Show when={selectedItem()}>
 							<div class="flex h-full flex-col gap-2">
-								<div class="flex items-start justify-between">
+								<div class="flex items-start justify-between text-neutral-800 dark:text-neutral-200">
 									<h2 class="text-xl font-bold">
 										{selectedItem()?.name}
 									</h2>
@@ -285,7 +284,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 								<div class="flex flex-wrap gap-1">
 									<For each={selectedItem()?.tags}>
 										{(t) => (
-											<span class="bg-secondary-10 rounded px-2 py-1 text-xs">
+											<span class="bg-secondary-10 text-secondary-50 rounded px-2 py-1 text-xs">
 												{t}
 											</span>
 										)}

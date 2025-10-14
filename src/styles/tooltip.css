@@ -24,7 +24,7 @@
 	text-align: start;
 	pointer-events: none;
 	transform: translate(0, 0);
-	transition: opacity 1s ease, transform 0.6s ease;
+	/* transition: opacity 1s ease, transform 0.6s ease; */
 	z-index: 10;
 	white-space: normal;
 	word-wrap: break-word;
@@ -43,7 +43,7 @@
 	bottom: 100%;
 	left: 50%;
 	transform: translate(-50%, -6px);
-	border-width: 0 1px 1px 1px;
+	/* border-width: 0 1px 1px 1px; */
 }
 
 .tool-tip:hover .tool-tip-content[data-side="top"] {
@@ -54,7 +54,7 @@
 	top: 100%;
 	left: 50%;
 	transform: translate(-50%, 6px);
-	border-width: 1px 1px 0 1px;
+	/* border-width: 1px 1px 0 1px; */
 }
 
 .tool-tip:hover .tool-tip-content[data-side="bottom"] {
@@ -65,7 +65,7 @@
 	right: 100%;
 	top: 50%;
 	transform: translate(-6px, -50%);
-	border-width: 1px 0 1px 1px;
+	/* border-width: 1px 0 1px 1px; */
 }
 
 .tool-tip:hover .tool-tip-content[data-side="left"] {
@@ -76,7 +76,7 @@
 	left: 100%;
 	top: 50%;
 	transform: translate(6px, -50%);
-	border-width: 1px 1px 1px 0;
+	/* border-width: 1px 1px 1px 0; */
 }
 
 .tool-tip:hover .tool-tip-content[data-side="right"] {

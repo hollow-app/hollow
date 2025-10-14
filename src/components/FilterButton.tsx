@@ -1,4 +1,4 @@
-import { BrushCleaningIcon, ListFilterPlusIcon } from "lucide-solid";
+import { ListFilterPlusIcon } from "lucide-solid";
 import {
 	createSignal,
 	For,
@@ -6,11 +6,10 @@ import {
 	onCleanup,
 	Switch,
 	Match,
-	onMount,
 	createEffect,
+	onMount,
 } from "solid-js";
 import DropDown from "./DropDown";
-import { Label } from "@coolicons-dev/solid";
 
 type ConfigItem = {
 	id: string;
@@ -25,6 +24,7 @@ type DropdownConfig = ConfigItem & {
 
 type MultiOptionConfig = ConfigItem & {
 	type: "multioption";
+	initials: number[];
 	onChange: (values: string[]) => void;
 };
 
@@ -42,7 +42,10 @@ export default function FilterButton(props: FilterButtonProps) {
 	>(
 		props.configs
 			.filter((i) => i.type === "multioption")
-			.map((i) => ({ id: i.id, values: [] })),
+			.map((i) => ({
+				id: i.id,
+				values: i.initials.map((j) => i.options[j]),
+			})),
 	);
 
 	const handleClickOutside = (event: MouseEvent) => {

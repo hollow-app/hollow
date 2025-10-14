@@ -11,7 +11,7 @@ export type FormOption = {
 export type FormType = {
 	id: string;
 	title: string;
-	// hollow-api
+	// TODO hollow-api
 	description?;
 	submit: (submission: any) => void;
 	options: FormOption[];

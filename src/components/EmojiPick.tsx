@@ -23,7 +23,7 @@ export default function EmojiPick({
 		<button
 			onclick={handleEmoji}
 			class={
-				"h-10 w-10 content-center rounded-xl text-center text-2xl text-gray-900 select-none dark:text-gray-50 "
+				"content-center rounded-xl text-center text-gray-900 select-none dark:text-gray-50"
 			}
 		>
 			{emoji()}

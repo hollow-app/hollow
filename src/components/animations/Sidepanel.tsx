@@ -27,7 +27,7 @@ export default function Sidepanel({ children, isVisible }: SidepanelProps) {
 						// margin: "calc(var(--spacing) * 2) 0 0 0",
 					}}
 					transition={{ duration: 0.5 }}
-					class="bg-secondary flex max-h-full flex-col overflow-hidden"
+					class="bg-secondary flex max-h-full flex-col overflow-hidden hover:overflow-visible"
 				>
 					{children}
 				</Motion>

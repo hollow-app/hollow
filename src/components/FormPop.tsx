@@ -24,7 +24,10 @@ export default function FormPop({ form }: FormPopProps) {
 		const submission: any = result();
 		if (
 			!form().options.some((i) => {
-				if (i.type === "text" && i.exclude?.includes(submission[i.key]))
+				if (
+					i.type === "text" &&
+					new RegExp(i.pattern).test(submission[i.key])
+				)
 					return true;
 				if (i.optional) return false;
 				return i.dependsOn
@@ -43,22 +46,22 @@ export default function FormPop({ form }: FormPopProps) {
 	};
 	return (
 		<div class="pop-up">
-			<div class="pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 up-pop p-5">
-				<div class="flex gap-5 items-start border-b border-dashed border-secondary-15 pb-5">
+			<div class="up-pop pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 p-5">
+				<div class="border-secondary-15 flex items-start gap-5 border-b border-dashed pb-5">
 					<div>
-						<h1 class="text-4xl  font-bold text-neutral-900 dark:text-neutral-100">
-							Form{" "}
+						<h1 class="text-4xl font-bold text-neutral-900 dark:text-neutral-100">
+							Form
 							<span class="text-xl font-light text-neutral-500">
-								{form().title}
+								:{form().title}
 							</span>
 						</h1>
-						<h3 class="text-sm rounded bg-secondary-10 px-2 text-neutral-500 tracking-wider font-medium uppercase">
+						<h3 class="bg-secondary-10 rounded px-2 text-sm font-medium tracking-wider text-neutral-500 uppercase">
 							{form().description}
 						</h3>
 					</div>
 				</div>
 
-				<div class="flex flex-col overflow-x-hidden overflow-y-auto ">
+				<div class="flex h-full flex-col overflow-x-hidden overflow-y-auto">
 					<For each={form().options}>
 						{(preOption, index) => {
 							const option = {
@@ -77,7 +80,7 @@ export default function FormPop({ form }: FormPopProps) {
 								);
 							return (
 								<div
-									class="relative transition-all duration-200 ease-in-out"
+									class="relative flex flex-col transition-all duration-200 ease-in-out"
 									classList={{
 										" hidden": dependable(),
 										" my-2": !dependable(),
@@ -85,7 +88,7 @@ export default function FormPop({ form }: FormPopProps) {
 								>
 									<div class="mb-2 flex items-center gap-2">
 										<h2
-											class="text-lg text-neutral-800 flex gap-1 dark:text-neutral-200"
+											class="flex gap-1 text-lg text-neutral-800 dark:text-neutral-200"
 											classList={{
 												"tool-tip":
 													!!option.description,
@@ -94,7 +97,7 @@ export default function FormPop({ form }: FormPopProps) {
 											{option.label}{" "}
 											{option.description && (
 												<>
-													<span class="font-light tracking-widest text-secondary-20">
+													<span class="text-secondary-20 font-light tracking-widest">
 														[i]
 													</span>
 													<span
@@ -118,8 +121,8 @@ export default function FormPop({ form }: FormPopProps) {
 												return (
 													<input
 														type="text"
-														class="input"
-														pattern={`^(?!(${option.exclude?.join("|")})$).*`}
+														class="input w-full"
+														pattern={option.pattern}
 														placeholder={
 															option.placeholder
 														}
@@ -302,7 +305,7 @@ export default function FormPop({ form }: FormPopProps) {
 						}}
 					</For>
 				</div>
-				<div class="bg-secondary-05 mt-auto rounded flex h-fit w-full justify-end gap-5 py-5 px-[3rem]">
+				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded px-[3rem] py-5">
 					<button class="button-primary" onclick={onSave}>
 						{form().update ? "Update" : "Submit"}
 					</button>

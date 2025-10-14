@@ -363,13 +363,13 @@ export class ToolManager {
 		}
 	}
 
-	addCard(name: string, toolName: string): void {
+	addCard(name: string, toolName: string, emoji: string): void {
 		const { tool } = this.getToolAndCard(toolName);
 		if (!tool) return;
 
 		const newCard: CardInfo = {
 			name,
-			emoji: "🪐",
+			emoji: emoji,
 			isPlaced: false,
 			isFavored: false,
 			CreatedDate: new Date().toISOString(),

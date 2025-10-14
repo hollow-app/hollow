@@ -1,4 +1,4 @@
-import { ArrowDownUpIcon, ChevronDownIcon } from "lucide-solid";
+import { ChevronDownIcon } from "lucide-solid";
 import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 type DropDownProps = {
@@ -123,7 +123,7 @@ export default function DropDown({
 	return (
 		<div
 			ref={dropdownRef}
-			class="group drop-down pointer-events-auto relative h-fit"
+			class="group drop-down pointer-events-auto relative h-fit max-w-full"
 			role="combobox"
 			aria-expanded={isOpen()}
 			aria-haspopup="listbox"
@@ -146,10 +146,7 @@ export default function DropDown({
 						? `dropdown-item-${activeIndex()}`
 						: undefined
 				}
-				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 h-fit w-full max-w-full cursor-pointer appearance-none rounded-md py-2 pr-20 pl-3 text-xs shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
-				// classList={{
-				// 	"cursor-pointer": readonly,
-				// }}
+				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 text-md h-fit w-full max-w-full cursor-pointer appearance-none rounded-md py-2 pr-3 pl-3 shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
 			/>
 			<Show when={isOpen()}>
 				<ul

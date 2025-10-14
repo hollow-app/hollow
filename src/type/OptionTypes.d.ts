@@ -1,5 +1,5 @@
 export type TypedOptionMap = {
-	text: { placeholder?: string; exclude?: string[] };
+	text: { placeholder?: string; pattern?: string };
 	longtext: { placeholder?: string };
 	number: { min?: number; max?: number };
 	boolean: {};

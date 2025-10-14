@@ -32,7 +32,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 	return (
 		<div class="pop-up">
 			<div class="up-pop pointer-events-auto flex h-fit max-h-[70%] w-[60%] flex-col overflow-hidden p-5">
-				<div class="flex h-fit gap-10 pb-5 ">
+				<div class="flex h-fit gap-10 pb-5">
 					<span class="bg-secondary-05 flex h-30 w-30 items-center justify-center rounded-lg p-3 text-center text-6xl">
 						{card().emoji}
 					</span>
@@ -51,7 +51,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 						{(option: ToolOption, index) => (
 							<>
 								{option.type !== "custom" ? (
-									<div class="flex w-full justify-between px-3 ">
+									<div class="flex w-full justify-between px-3">
 										<div class="w-full">
 											<h1 class="text-lg font-bold">
 												{option.label}
@@ -98,7 +98,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 										</div>
 
 										{/* Right side */}
-										<div class="w-full flex justify-end h-fit">
+										<div class="flex h-fit w-full justify-end">
 											{(() => {
 												switch (option.type) {
 													case "text":
@@ -109,7 +109,9 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																placeholder={
 																	option.placeholder
 																}
-																pattern={`^(?!(${option.exclude.join("|")})$).*`}
+																pattern={
+																	option.pattern
+																}
 																value={
 																	option.value
 																}
@@ -121,7 +123,9 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																			.currentTarget
 																			.value;
 																	if (
-																		option.exclude?.includes(
+																		new RegExp(
+																			option.pattern,
+																		).test(
 																			v,
 																		)
 																	) {

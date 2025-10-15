@@ -7,6 +7,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { ImageUpIcon, SearchIcon, Trash2Icon } from "lucide-solid";
 import FilterButton from "@components/FilterButton";
 import { EditPencil01 } from "@coolicons-dev/solid";
+import { FormOption } from "hollow-api";
 
 type VaultStorageProps = {
 	onSelect?: (p: string) => void;
@@ -19,7 +20,6 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 	const [selectedItem, setSelectedItem] = createSignal<VaultItem | null>(
 		null,
 	);
-	// const [selectedGroup, setSelectedGroup] = createSignal<string[]>([]);
 	const [filter, setFilter] = createSignal<{
 		search: string;
 		tags: string[];
@@ -75,39 +75,38 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 	const submitForm = (save: (data: any) => void, id?: string) => {
 		const target = selectedItem();
 		const update = !!id;
+		const options: FormOption[] = [
+			{
+				key: "path",
+				label: "Image",
+				type: "file",
+				accept: "image/*",
+				value: target?.path ?? "",
+			},
+			{
+				key: "name",
+				label: "Name",
+				type: "text",
+				value: target?.name ?? "",
+				placeholder: "File Name",
+			},
+			{
+				key: "tags",
+				label: "Tags",
+				optional: true,
+				type: "keywords",
+				value: target?.tags ?? [],
+			},
+		];
+		if (update) {
+			options.shift();
+		}
 		const form: FormType = {
 			id: id ?? "new_file",
 			title: update ? "Update Item" : "Add Image",
 			submit: save,
 			update: update,
-			options: [
-				{
-					...(!update
-						? [
-								{
-									key: "path",
-									label: "Image",
-									type: "file",
-									accept: "image/*",
-									value: target?.path ?? "",
-								},
-							]
-						: []),
-
-					key: "name",
-					label: "Name",
-					type: "text",
-					value: target?.name ?? "",
-					placeholder: "File Name",
-				},
-				{
-					key: "tags",
-					label: "Tags",
-					optional: true,
-					type: "keywords",
-					value: target?.tags ?? [],
-				},
-			],
+			options: options,
 		};
 		window.hollowManager.emit("form", form);
 	};

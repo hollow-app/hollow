@@ -4,9 +4,14 @@ import { Motion, Presence } from "solid-motionone";
 type SidepanelProps = {
 	children: JSX.Element;
 	isVisible: Accessor<boolean>;
+	overflowVisible?: boolean;
 };
 
-export default function Sidepanel({ children, isVisible }: SidepanelProps) {
+export default function Sidepanel({
+	children,
+	isVisible,
+	overflowVisible,
+}: SidepanelProps) {
 	return (
 		<Presence exitBeforeEnter>
 			<Show when={isVisible()}>
@@ -27,7 +32,8 @@ export default function Sidepanel({ children, isVisible }: SidepanelProps) {
 						// margin: "calc(var(--spacing) * 2) 0 0 0",
 					}}
 					transition={{ duration: 0.5 }}
-					class="bg-secondary flex max-h-full flex-col overflow-hidden hover:overflow-visible"
+					class="bg-secondary flex max-h-full shrink-0 flex-col overflow-hidden"
+					classList={{ "hover:overflow-visible": overflowVisible }}
 				>
 					{children}
 				</Motion>

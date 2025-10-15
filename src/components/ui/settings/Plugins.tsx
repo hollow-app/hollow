@@ -261,9 +261,9 @@ function ToolButton({ tool, setSelectedTool, setSelectedMD }: ToolButtonProps) {
 				});
 				tool.verified = tool.verificationDate === rep.updated_at;
 			}
-			const isInstalled = window.toolManager.hand.some(
-				(i) => i.name === tool.name.toLowerCase(),
-			);
+			const isInstalled = window.toolManager
+				.getHand()
+				.some((i) => i.name === tool.name.toLowerCase());
 			setSelectedTool({
 				...tool,
 				installed: isInstalled,

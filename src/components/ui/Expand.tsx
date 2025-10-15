@@ -6,7 +6,7 @@ import { FileAdd } from "@coolicons-dev/solid";
 import { HollowManager } from "@managers/HollowManager";
 import { CardInfo } from "@type/CardInfo";
 import { FormType } from "@type/FormType";
-import { SearchIcon } from "lucide-solid";
+import { SearchIcon, ToolCaseIcon } from "lucide-solid";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
 import { lazy } from "solid-js";
 
@@ -24,7 +24,7 @@ type ExpandProps = {
 };
 
 export default function Expand({ isVisible }: ExpandProps) {
-	const [hand, setHand] = createSignal(window.toolManager.hand);
+	const [hand, setHand] = createSignal(window.toolManager.getHand());
 	const [filter, setFilter] = createSignal<FilterType>({
 		tools: [],
 		favourite: false,
@@ -38,7 +38,14 @@ export default function Expand({ isVisible }: ExpandProps) {
 					filter().tools.length === 0 ||
 					filter().tools.includes(i.name),
 			)
-			.flatMap((i) => i.cards)
+			.flatMap((i) =>
+				i.cards.map((card) => ({
+					...card,
+					tool: i.name,
+					icon: i.icon,
+					title: i.title,
+				})),
+			)
 			.filter((card) => {
 				const f = filter();
 
@@ -57,7 +64,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 				data.tool.toLowerCase(),
 				data.emoji,
 			);
-			setHand([...window.toolManager.hand]);
+			setHand([...window.toolManager.getHand()]);
 		};
 		const form: FormType = {
 			id: "add_new_card",
@@ -80,6 +87,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 				{
 					type: "emoji",
 					label: "Emoji",
+					value: "☂️",
 					description: "Give this card an emoji",
 					key: "emoji",
 				},
@@ -104,29 +112,48 @@ export default function Expand({ isVisible }: ExpandProps) {
 	};
 
 	return (
-		<Sidepanel isVisible={isVisible}>
+		<Sidepanel isVisible={isVisible} overflowVisible>
 			<div class="border-secondary-10 flex h-full flex-col gap-3 border-l py-5">
-				<h1 class="pl-5 text-2xl">Tools</h1>
-				<div class="mt-10 grid h-fit w-[calc(calc(var(--spacing)*104)-40)] shrink-0 grid-cols-8 flex-wrap gap-2 px-5">
-					<For each={hand()}>
-						{(h) => (
-							<button
-								class="tool-tip flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
-								onclick={() => selectTool(h.name)}
-								classList={{
-									"bg-primary/20 text-primary":
-										filter().tools.includes(h.name),
-									"bg-secondary-10/80 text-secondary-30":
-										!filter().tools.includes(h.name),
-								}}
-							>
-								<Icon class="size-4" name={h.icon} />
-								<span class="tool-tip-content" data-side="top">
-									{h.title}
-								</span>
-							</button>
-						)}
-					</For>
+				<div class="flex px-5">
+					<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
+						<ToolCaseIcon class="h-20 w-20 shrink-0" />
+						<div class="h-fit flex-1">
+							<h1 class="text-xl font-medium whitespace-nowrap text-neutral-900 dark:text-neutral-100">
+								Tools & Cards
+							</h1>
+							<div class="grid h-fit w-full shrink-0 grid-cols-6">
+								<For each={hand()}>
+									{(h) => (
+										<button
+											class="tool-tip flex w-fit items-center gap-1 rounded p-2 text-sm font-medium transition-colors"
+											onclick={() => selectTool(h.name)}
+											classList={{
+												"bg-primary/20 text-primary":
+													filter().tools.includes(
+														h.name,
+													),
+												"bg-secondary-10/80 text-secondary-30":
+													!filter().tools.includes(
+														h.name,
+													),
+											}}
+										>
+											<Icon
+												class="size-4"
+												name={h.icon}
+											/>
+											<span
+												class="tool-tip-content"
+												data-side="bottom"
+											>
+												{h.title}
+											</span>
+										</button>
+									)}
+								</For>
+							</div>
+						</div>
+					</div>
 				</div>
 				<div class="flex items-center gap-3 px-5">
 					<div class="relative flex-1">
@@ -183,9 +210,13 @@ export default function Expand({ isVisible }: ExpandProps) {
 					/>
 					<div class="flex h-[calc(100%-2px)] flex-col gap-1 overflow-hidden overflow-y-auto px-5">
 						<For each={cards()}>
-							{(c: CardInfo & { tool: string }) => (
-								<Card myCard={c} setHand={setHand} />
-							)}
+							{(
+								c: CardInfo & {
+									tool: string;
+									icon: string;
+									title: string;
+								},
+							) => <Card myCard={c} setHand={setHand} />}
 						</For>
 					</div>
 					<hr

@@ -567,7 +567,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 								Title
 							</h2>
 							<DropDown
-								value="Elder"
+								value={() => "Elder"}
 								items={["Elder", "The Original Few"]}
 								onSelect={(s) =>
 									setCharacter((prev) => ({

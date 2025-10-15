@@ -1,7 +1,15 @@
 import Canvas from "@components/ui/Canvas";
 import Navbar from "@components/ui/Navbar";
 import { Opthand } from "@type/Opthand";
-import { createSignal, lazy, onMount, Show, Suspense } from "solid-js";
+import {
+	createSignal,
+	onCleanup,
+	lazy,
+	onMount,
+	Show,
+	Suspense,
+	createEffect,
+} from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import Notifications from "@components/ui/Notifications";
 import SideBar from "@components/ui/SideBar";
@@ -34,10 +42,11 @@ function Container() {
 		}
 		setChara((prev) => !prev);
 	};
-
+	const toggleEditor = () => {
+		setEditor((prev) => !prev);
+	};
 	onMount(() => {
 		window.toolManager.setHand = setHand;
-		window.setEditor = setEditor;
 		window.hotkeysManager.events["Toggle Settings"] = () =>
 			setSettings((prev) => !prev);
 		window.hotkeysManager.events["Toggle Notifications"] = () =>
@@ -61,6 +70,8 @@ function Container() {
 						setDrag,
 						isDrag,
 						setNotifications,
+						isEditor,
+						toggleEditor,
 					}}
 				/>
 				<Suspense>
@@ -80,7 +91,10 @@ function Container() {
 							cards={hand}
 						/>
 						<Suspense>
-							<Editor isVisible={isEditor} />
+							<Editor
+								isVisible={isEditor}
+								setVisible={setEditor}
+							/>
 						</Suspense>
 					</div>
 				</div>

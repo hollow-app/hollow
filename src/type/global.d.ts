@@ -6,7 +6,7 @@ import { RealmManager } from "@managers/RealmManager";
 import { ToolManager } from "@managers/ToolManager";
 import { DataBase, HollowEvent } from "hollow-api";
 import { Setter } from "solid-js";
-import { KitEditorType } from "./KitEdiorType";
+import { EditorKitType } from "./EditorKitType";
 
 export {};
 
@@ -21,9 +21,9 @@ declare global {
 		realmManager: RealmManager;
 		toolManager: ToolManager;
 		entryManager: EntryManager;
-		editorKit: Setter<KitEditorType>;
+		// editorKit: Setter<KitEditorType>;
 		markdownManager: MarkdownManager;
 		hotkeysManager: hotkeysManager;
-		setEditor: (b: boolean) => void;
+		// setEditor: (b: boolean) => void;
 	}
 }

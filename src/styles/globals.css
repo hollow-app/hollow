@@ -506,13 +506,12 @@ a {
 	--c: var(--tc-50);
 	--bg: var(--color-secondary-20);
 	--w: fit-content;
+	--p: 2;
+	--border-radius: var(--radius-md);
 	width: var(--w);
 	height: fit-content;
-	/* border-style: solid; */
-	/* border-width: 1px 0 0 0; */
-	/* border-color: transparent; */
-	border-radius: var(--radius-lg);
-	padding: calc(var(--spacing) * 2);
+	border-radius: var(--border-radius);
+	padding: calc(var(--spacing) * var(--p));
 	color: color-mix(in oklab, var(--c) 80%, transparent);
 	transition: all 0.2s ease-in-out;
 

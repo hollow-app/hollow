@@ -26,7 +26,8 @@ export default function FormPop({ form }: FormPopProps) {
 			!form().options.some((i) => {
 				if (
 					i.type === "text" &&
-					new RegExp(i.pattern).test(submission[i.key])
+					i.pattern &&
+					!new RegExp(i.pattern).test(submission[i.key])
 				)
 					return true;
 				if (i.optional) return false;
@@ -244,7 +245,7 @@ export default function FormPop({ form }: FormPopProps) {
 											case "dropdown":
 												return (
 													<DropDown
-														value={
+														value={() =>
 															option.value ??
 															option.options[0]
 														}

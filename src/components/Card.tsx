@@ -9,12 +9,13 @@ import {
 import { createSignal, Setter, Show } from "solid-js";
 import EmojiPick from "./EmojiPick";
 import Icon from "./Icon";
+import { timeDifference } from "@managers/manipulation/strings";
 
 export default function Card({
 	myCard,
 	setHand,
 }: {
-	myCard: CardInfo & { tool: string };
+	myCard: CardInfo & { tool: string; icon: string; title: string };
 	setHand: Setter<HandType[]>;
 }) {
 	const [isPlaced, setPlaced] = createSignal(myCard.isPlaced);
@@ -25,7 +26,7 @@ export default function Card({
 	};
 	const handleDelete = async () => {
 		await window.toolManager.deleteCard(myCard.name, myCard.tool);
-		setHand([...window.toolManager.hand]);
+		setHand([...window.toolManager.getHand()]);
 	};
 	const onEmojiChanged = (newEmoji: string) => {
 		window.toolManager.changeEmoji(newEmoji, myCard.name, myCard.tool);
@@ -39,8 +40,8 @@ export default function Card({
 					<div>
 						<div class="w-fit">
 							<div class="text-secondary-25 flex w-fit items-center gap-1 p-1">
-								<Icon name={myCard.tool} class="size-4" />
-								<span class="text-xs">{myCard.tool}</span>
+								<Icon name={myCard.icon} class="size-4" />
+								<span class="text-xs">{myCard.title}</span>
 							</div>
 							<hr
 								class="h-px w-full shrink-0 border-0"
@@ -73,7 +74,9 @@ export default function Card({
 					</div>
 				</div>
 				<div class="text-xs text-neutral-500">
-					<p>Created: {myCard.CreatedDate}</p>
+					<p title={myCard.CreatedDate}>
+						Created: {timeDifference(myCard.CreatedDate)}
+					</p>
 				</div>
 				<div class="ml-auto flex w-fit gap-2">
 					<button class="button-control red" onclick={handleDelete}>

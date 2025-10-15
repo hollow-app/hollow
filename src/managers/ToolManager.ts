@@ -13,6 +13,7 @@ import { ToolDataBase } from "./ToolDataBase";
 import { HollowManager } from "./HollowManager";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { RustManager } from "@managers/RustManager";
+import { EditorKitType } from "@type/EditorKitType";
 
 type ToolMethods = {
 	name: string;
@@ -30,13 +31,14 @@ const CORE_TOOLS = ["image", "notebook", "kanban", "embed"];
 type CoreTool = (typeof CORE_TOOLS)[number];
 
 export class ToolManager {
-	public hand: HandType[];
+	private hand: HandType[];
+	private editorKits: EditorKitType[] = [];
 	private tools: ToolMethods[];
 	private toolMap: ToolMap;
 	private handMap: HandMap;
 	public setHand: Setter<Opthand[]>;
 	public toolsEvent: { [toolName: string]: HollowEvent } = {};
-	public realm = window.realmManager.currentRealmId;
+	private realm = window.realmManager.currentRealmId;
 
 	private constructor() {
 		this.toolMap = new Map();
@@ -279,7 +281,7 @@ export class ToolManager {
 				off: happ.off.bind(happ),
 				emit: happ.emit.bind(happ),
 				clear: happ.clear.bind(happ),
-				reverse: happ.reverse.bind(happ),
+				reverse: happ.toggle.bind(happ),
 				getCurrentData: happ.getCurrentData.bind(happ),
 			});
 		}
@@ -384,8 +386,8 @@ export class ToolManager {
 				xyz: { x: 0, y: 0, z: 0 },
 				extra: {
 					fontSize: "1em",
-					innerMargin: "calc(var(--spacing) * 6)",
-					outerMargin: "calc(var(--spacing) * 6)",
+					innerMargin: "calc(var(--spacing) * 4)",
+					outerMargin: "calc(var(--spacing) * 4)",
 				},
 			},
 		};
@@ -411,6 +413,12 @@ export class ToolManager {
 			targetCard.kit = kit;
 			this.update();
 		}
+		const target = this.editorKits.find(
+			(i) => i.tool === tool && i.card === card,
+		);
+		if (target) {
+			target.it = kit;
+		}
 	}
 
 	private updateToolMetadata(toolName: string, metadata: ToolMetadata): void {
@@ -426,6 +434,19 @@ export class ToolManager {
 			? tool?.cards.find((card) => card.name === cardName)
 			: undefined;
 		return { tool, card };
+	}
+
+	public getEditorKit(toolName: string, cardName: string) {
+		return this.editorKits.find(
+			(i) => i.tool === toolName && i.card === cardName,
+		);
+	}
+	public addEditorKit(kit: EditorKitType) {
+		this.editorKits.push(kit);
+	}
+
+	public getHand() {
+		return this.hand;
 	}
 
 	private update() {

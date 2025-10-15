@@ -278,11 +278,6 @@ export default function EntriesViewer() {
 																				?.background ??
 																			"var(--color-secondary-95)"
 																		}
-																		foreground={() =>
-																			target()
-																				?.foreground ??
-																			"var(--color-secondary)"
-																		}
 																	/>
 																</>
 															);
@@ -295,9 +290,6 @@ export default function EntriesViewer() {
 															}
 															background={() =>
 																"var(--color-secondary-20)"
-															}
-															foreground={() =>
-																"var(--color-secondary-80)"
 															}
 															title={entry.tags
 																.slice(3)

@@ -13,7 +13,8 @@ type ToolSettingsProps = {
 };
 export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 	const card = createMemo(() =>
-		window.toolManager.hand
+		window.toolManager
+			.getHand()
 			.find((i) => i.name === pluginSettings.tool.toLowerCase())
 			.cards.find((i) => i.name == pluginSettings.card),
 	);
@@ -123,7 +124,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																			.currentTarget
 																			.value;
 																	if (
-																		new RegExp(
+																		!new RegExp(
 																			option.pattern,
 																		).test(
 																			v,
@@ -245,7 +246,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 													case "dropdown":
 														return (
 															<DropDown
-																value={
+																value={() =>
 																	option.value
 																}
 																onSelect={(v) =>

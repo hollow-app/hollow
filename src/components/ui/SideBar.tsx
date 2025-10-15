@@ -1,13 +1,15 @@
 import Hollow from "@assets/icon-nobg.svg";
 import { NotifyManager } from "@managers/NotifyManager";
-import { ToolCaseIcon, Vault } from "lucide-solid";
+import { PencilRulerIcon, ToolCaseIcon, Vault } from "lucide-solid";
 import { onMount, Setter } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import { Settings, Layers, BellNotification, Move } from "@coolicons-dev/solid";
 type SideBarProps = {
 	toggleChara: () => void;
 	isExpand: Accessor<boolean>;
+	isEditor: Accessor<boolean>;
 	toggleExpand: () => void;
+	toggleEditor: () => void;
 	setSettings: Setter<boolean>;
 	isDrag: Accessor<boolean>;
 	setDrag: Setter<boolean>;
@@ -15,11 +17,13 @@ type SideBarProps = {
 };
 export default function SideBar({
 	isExpand,
+	isEditor,
 	setDrag,
 	isDrag,
 	setSettings,
 	toggleChara,
 	toggleExpand,
+	toggleEditor,
 	setNotifications,
 }: SideBarProps) {
 	const toggleDragAndDrop = () => {
@@ -35,18 +39,18 @@ export default function SideBar({
 		window.hollowManager.on("notify-status", setAlert);
 	});
 	return (
-		<div class="w-14 mr-2 bg-secondary-10/0 gap-4 flex flex-col rounded-xl py-4">
+		<div class="bg-secondary-10/0 mr-2 flex w-14 flex-col gap-4 rounded-xl py-4">
 			<button class="" onclick={() => toggleChara()}>
-				<Hollow class="size-8 mx-auto hollow-effect" />
+				<Hollow class="hollow-effect mx-auto size-8" />
 			</button>
-			<hr class="w-10 h-px border-t border-secondary-10 mx-auto bg-secondary " />
-			<div class="flex-1 mx-auto flex flex-col gap-3">
+			<hr class="border-secondary-10 bg-secondary mx-auto h-px w-10 border-t" />
+			<div class="mx-auto flex flex-1 flex-col gap-3">
 				<button
 					class="button-control"
 					classList={{ selected: isExpand() }}
-					onclick={() => toggleExpand()}
+					onclick={toggleExpand}
 				>
-					<ToolCaseIcon class="size-5 m-auto" />
+					<ToolCaseIcon class="m-auto size-5" />
 				</button>
 				<button
 					class="button-control"
@@ -59,6 +63,13 @@ export default function SideBar({
 					onclick={() => window.hollowManager.emit("show-entries")}
 				>
 					<Layers class="size-5" />
+				</button>
+				<button
+					class="button-control"
+					classList={{ selected: isEditor() }}
+					onclick={toggleEditor}
+				>
+					<PencilRulerIcon class="size-5" />
 				</button>
 			</div>
 			<div class="mx-auto flex flex-col gap-2">
@@ -79,7 +90,7 @@ export default function SideBar({
 					onclick={() => setNotifications((prev) => !prev)}
 				>
 					<BellNotification
-						class="notify-status-bell size-5 "
+						class="notify-status-bell size-5"
 						classList={{ "fill-primary": alert() }}
 					/>
 				</button>

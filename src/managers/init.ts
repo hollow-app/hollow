@@ -26,7 +26,7 @@ export async function initialization2() {
 	const devData = handleDev();
 	window.toolManager = await ToolManager.create(devData.loadunsigned);
 	window.entryManager = new EntryManager();
-	window.hollowManager.on("receive-entry", (entry: EntryData) =>
+	window.hollowManager.on("send-entry", (entry: EntryData) =>
 		window.entryManager.receiveEntry(entry),
 	);
 	window.hollowManager.on("remove-entry", (id: string) =>

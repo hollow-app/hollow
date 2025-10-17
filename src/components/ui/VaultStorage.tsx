@@ -4,7 +4,7 @@ import { VaultItem } from "@type/VaultItem";
 import { createSignal, For, Show } from "solid-js";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { ImageUpIcon, SearchIcon, Trash2Icon } from "lucide-solid";
+import { CopyIcon, ImageUpIcon, SearchIcon, Trash2Icon } from "lucide-solid";
 import FilterButton from "@components/FilterButton";
 import { EditPencil01 } from "@coolicons-dev/solid";
 import { FormOption } from "hollow-api";
@@ -45,6 +45,10 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 			setImages((prev) => [...prev, item]);
 		};
 		submitForm(save);
+	};
+
+	const copyItem = () => {
+		navigator.clipboard.writeText(selectedItem().path);
 	};
 
 	const editItem = () => {
@@ -137,7 +141,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 
 	return (
 		<div class="pop-up">
-			<div class="up-pop lvl-1 bg-secondary pointer-events-auto absolute flex flex-col items-center gap-0 rounded-xl p-6 text-xl">
+			<div class="up-pop lvl-1 bg-secondary pointer-events-auto absolute flex flex-col items-center gap-0 rounded-xl px-6 py-4 text-xl">
 				{/* Header */}
 				<div class="border-secondary-10 flex h-24 w-full items-center">
 					<div class="flex flex-col justify-center rounded-lg">
@@ -208,7 +212,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 					</div>
 				</div>
 				{/* Main content: gallery + sidebar */}
-				<div class="flex flex-1 overflow-hidden">
+				<div class="flex flex-1 overflow-hidden pb-4">
 					{/* Gallery */}
 					<div class="grid grid-cols-7 grid-rows-5 gap-2 p-0">
 						<For
@@ -306,6 +310,12 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 									<div class="ml-auto space-x-2">
 										<button
 											class="button-control"
+											onclick={copyItem}
+										>
+											<CopyIcon class="size-5" />
+										</button>
+										<button
+											class="button-control"
 											onclick={editItem}
 										>
 											<EditPencil01 class="size-5" />
@@ -321,6 +331,17 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 							</div>
 						</Show>
 					</div>
+				</div>
+				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-between gap-5 rounded p-5">
+					<div>pages...</div>
+					<button
+						class="button-secondary"
+						onclick={() =>
+							window.hollowManager.toggle("show-vault")
+						}
+					>
+						Close
+					</button>
 				</div>
 			</div>
 		</div>

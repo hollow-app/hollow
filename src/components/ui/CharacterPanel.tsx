@@ -33,7 +33,7 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 	return (
 		<Sidepanel isVisible={isVisible}>
 			<div class="h-full py-2">
-				<div class="border-secondary-05 from-secondary-05 to-secondary h-full w-102 overflow-hidden rounded-xl border bg-linear-to-tl">
+				<div class="border-secondary-10 bg-secondary h-full w-102 overflow-hidden rounded-xl border">
 					<div class="group relative h-32 w-full">
 						<Show when={character()?.banner}>
 							<img
@@ -43,10 +43,10 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 							/>
 						</Show>
 						<button
-							class="bg-secondary-05/60 absolute top-2 right-2 flex rounded px-1 tracking-widest opacity-0 transition-opacity group-hover:opacity-100"
+							class="bg-secondary-05/60 hover:bg-secondary-05 absolute top-2 right-2 flex items-center rounded p-1 text-xs opacity-0 transition-opacity group-hover:opacity-100"
 							onclick={() => import_image("banner")}
 						>
-							<ImageUpIcon class="p-1" />
+							<ImageUpIcon class="size-5 pr-1" /> Import
 						</button>
 					</div>
 
@@ -87,7 +87,7 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 									{character()?.username}
 								</h2>
 								<Show when={character()?.title}>
-									<div class="bg-secondary-10 border-secondary-25 w-fit rounded border-1 px-1 text-xs tracking-widest">
+									<div class="bg-secondary-10 border-secondary-25 w-fit rounded border-0 px-1 text-xs tracking-wide">
 										{character().title}
 									</div>
 								</Show>

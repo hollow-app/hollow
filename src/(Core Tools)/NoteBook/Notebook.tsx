@@ -1,15 +1,7 @@
 import Tag from "@components/Tag";
 import { TagType } from "@type/TagType";
-import { DataBase, HollowEvent, ICard } from "hollow-api";
-import {
-	AlignJustifyIcon,
-	FilePlusIcon,
-	FolderCheck,
-	FolderEdit,
-	NotebookTabsIcon,
-	PenLineIcon,
-	SaveIcon,
-} from "lucide-solid";
+import { HollowEvent, ICard } from "hollow-api";
+import { FolderCheck, FolderEdit, NotebookTabsIcon } from "lucide-solid";
 import {
 	Accessor,
 	createMemo,
@@ -18,6 +10,7 @@ import {
 	lazy,
 	onCleanup,
 	onMount,
+	Setter,
 	Show,
 } from "solid-js";
 import { ContextMenuItem } from "@type/ContextMenuItem";
@@ -30,7 +23,6 @@ import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
 import { FileDocument, FolderAdd, FolderDocument } from "@coolicons-dev/solid";
 import { timeDifference } from "@managers/manipulation/strings";
-import { updatePath } from "solid-js/store/types/store.js";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
 const WordInput = lazy(() => import("@components/WordInput"));
@@ -298,7 +290,7 @@ export default function Notebook({
 						class="flex min-h-0 w-full flex-1 flex-col"
 					>
 						<div
-							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-lg border opacity-100 transition-all group-hover:opacity-100"
+							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded border opacity-100 transition-all group-hover:opacity-100"
 							style={{
 								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${selected().banner})`,
 								"background-size": "cover",
@@ -316,7 +308,7 @@ export default function Notebook({
 								}}
 							>
 								<input
-									class="border-secondary-10 w-full max-w-full overflow-hidden rounded text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-gray-900 dark:text-gray-50"
+									class="focus:border-secondary-10 w-full max-w-full overflow-hidden rounded border-transparent text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-gray-900 dark:text-gray-50"
 									value={selected().title}
 									onchange={(e) =>
 										setSelected((prev) => ({
@@ -408,39 +400,73 @@ export default function Notebook({
 				</Show>
 				{/* Notes List */}
 				<Show when={panel() === 1}>
-					<Motion
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						transition={{ duration: 0.3 }}
-						class="bg-secondary flex h-full w-full flex-wrap justify-center p-5"
-					>
-						<For each={book().notes}>
-							{(note) => (
-								<NotePreview
-									{...{ note, hollowTags }}
-									setSelected={changeSelected}
-								/>
-							)}
-						</For>
-					</Motion>
+					<NoteList {...{ book, hollowTags, changeSelected }} />
 				</Show>
 			</Presence>
 		</div>
 	);
 }
 
+type NoteListProps = {
+	book: Accessor<NotebookType>;
+	hollowTags: Accessor<TagType[]>;
+	changeSelected: (id: string) => void;
+};
+function NoteList({ book, hollowTags, changeSelected }: NoteListProps) {
+	const [selectedGroup, setSelectedGroup] = createSignal([]);
+
+	const removeGroup = () => {
+		// TODO send confirm message
+	};
+	return (
+		<Motion
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			transition={{ duration: 0.3 }}
+			class="bg-secondary flex h-full w-full flex-wrap justify-center p-5"
+		>
+			<For each={book().notes}>
+				{(note) => (
+					<NotePreview
+						{...{ note, changeSelected, setSelectedGroup }}
+					/>
+				)}
+			</For>
+		</Motion>
+	);
+}
+
 type NotePreviewProps = {
 	note: NoteType;
-	hollowTags: Accessor<TagType[]>;
-	setSelected: (id: string) => void;
+	changeSelected: (id: string) => void;
+	setSelectedGroup: Setter<string[]>;
 };
-function NotePreview({ note, hollowTags, setSelected }: NotePreviewProps) {
+function NotePreview({
+	note,
+	changeSelected,
+	setSelectedGroup,
+}: NotePreviewProps) {
+	const handleCheckMark = (
+		e: Event & { currentTarget: HTMLInputElement },
+	) => {
+		e.stopPropagation();
+		setSelectedGroup((prev) =>
+			prev.includes(note.id)
+				? prev.filter((i) => i !== note.id)
+				: [...prev, note.id],
+		);
+	};
 	return (
 		<div
-			class="group bg-secondary-05 hover:border-secondary-10 flex h-fit w-50 cursor-pointer flex-col overflow-hidden rounded-lg border border-transparent shadow-sm transition-all hover:shadow-md"
-			onclick={() => setSelected(note.id)}
+			class="group bg-secondary-05 hover:border-secondary-10 relative flex h-fit w-50 cursor-pointer flex-col overflow-hidden rounded-lg border border-transparent shadow-sm transition-all hover:shadow-md"
+			onclick={() => changeSelected(note.id)}
 		>
+			<input
+				type="checkbox"
+				class="absolute top-1 left-1 size-5 opacity-0 group-hover:opacity-100"
+				onclick={handleCheckMark}
+			/>
 			<Show
 				when={note.banner}
 				fallback={

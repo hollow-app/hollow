@@ -26,12 +26,6 @@ export async function initialization2() {
 	const devData = handleDev();
 	window.toolManager = await ToolManager.create(devData.loadunsigned);
 	window.entryManager = new EntryManager();
-	window.hollowManager.on("send-entry", (entry: EntryData) =>
-		window.entryManager.receiveEntry(entry),
-	);
-	window.hollowManager.on("remove-entry", (id: string) =>
-		window.entryManager.removeEntry(id),
-	);
 	useColor({ name: "primary" });
 	useColor({ name: "secondary" });
 	// ????? this setStyle is for what TODO
@@ -54,6 +48,23 @@ export async function initialization2() {
 	window.hotkeysManager = new hotkeysManager();
 	NotifyManager.init();
 	await CharacterManager.getSelf().start();
+	handleEvents();
+}
+
+function handleEvents() {
+	window.hollowManager.on("send-entry", (entry: EntryData) =>
+		window.entryManager.receiveEntry(entry),
+	);
+	window.hollowManager.on("remove-entry", (id: string) =>
+		window.entryManager.removeEntry(id),
+	);
+
+	// returns Promise
+	window.hollowManager.on(
+		"render-markdown",
+		({ id, text }: { id: string; text: string }) =>
+			window.markdownManager.renderMarkdown(text, id),
+	);
 }
 
 function handleDev() {

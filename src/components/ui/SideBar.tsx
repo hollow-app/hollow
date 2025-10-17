@@ -1,4 +1,4 @@
-import Hollow from "@assets/icon-nobg.svg";
+import Hollow from "@assets/logo.svg";
 import { NotifyManager } from "@managers/NotifyManager";
 import { PencilRulerIcon, ToolCaseIcon, Vault } from "lucide-solid";
 import { onMount, Setter } from "solid-js";
@@ -41,7 +41,7 @@ export default function SideBar({
 	return (
 		<div class="bg-secondary-10/0 mr-2 flex w-14 flex-col gap-4 rounded-xl py-4">
 			<button class="" onclick={() => toggleChara()}>
-				<Hollow class="hollow-effect mx-auto size-8" />
+				<Hollow class="orbit mx-auto size-8" />
 			</button>
 			<hr class="border-secondary-10 bg-secondary mx-auto h-px w-10 border-t" />
 			<div class="mx-auto flex flex-1 flex-col gap-3">

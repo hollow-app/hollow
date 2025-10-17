@@ -423,11 +423,16 @@ a {
 }
 
 .hollow-effect {
+	overflow: visible;
 
 	&:hover .circle.c1,
 	&:hover .circle.c2 {
 		transform: rotate(360deg) rotateX(70deg);
 	}
+
+	/* &:hover .circle.core { */
+	/* 	transform: scale(200%); */
+	/* } */
 
 	& .circle.c1 {
 		transition: 0.5s transform ease;
@@ -442,6 +447,8 @@ a {
 	}
 
 	& .circle.core {
+		transition: 1s transform ease;
+		transform-origin: center;
 		fill: var(--color-secondary-90);
 	}
 }
@@ -483,20 +490,62 @@ a {
 
 
 
+.orbit {
+
+	.ring-1,
+	.ring-2 {
+		transition: 1s transform ease;
+		transform-origin: center;
+	}
+}
+
+.orbit:hover {
+	.ring-1 {
+		transform: rotate(360deg);
+	}
+
+	.ring-2 {
+		transform: rotate(-360deg);
+	}
+}
 
 
 
 
 
+/* .saturn { */
+/* 	overflow: visible; */
+/**/
+/* 	.ring { */
+/* 		transition: 1s transform ease; */
+/* 		transform: rotate(-45deg); */
+/* 	} */
+/**/
+/* } */
+/**/
+/* .saturn:hover { */
+/* 	.core { */
+/* 		animation: 1s saturn-life forwards; */
+/* 	} */
+/**/
+/* 	.ring { */
+/* 		transform: rotate(315deg); */
+/* 	} */
+/* } */
 
+@keyframes saturn-life {
+	0% {
+		transform: scale(1);
+	}
 
+	50% {
+		transform: scale(1.2);
+	}
 
-
-
-
-
-
-
+	100% {
+		transform: scale(1);
+	}
+}
 
 
 /* UI */
@@ -600,8 +649,8 @@ a {
 	color: color-contrast(var(--color-secondary-20) vs white, black);
 	border-width: var(--border-w);
 	border-style: solid;
-	border-color: var(--color-secondary-10);
-	background: var(--color-secondary-05);
+	border-color: var(--color-secondary-15);
+	background: var(--color-secondary-10);
 	border-radius: var(--radius-lg);
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);

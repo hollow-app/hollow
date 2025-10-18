@@ -42,9 +42,6 @@ export default function Appearance({}: AppearanceProps) {
 			};
 		})(),
 	);
-	const [tags, setTags] = createSignal<TagType[]>(
-		JSON.parse(localStorage.getItem(`${realm()}-tags`)),
-	);
 	const codeTheme = createMemo(() =>
 		localStorage.getItem(`${realm()}-code-theme`),
 	);
@@ -66,36 +63,14 @@ export default function Appearance({}: AppearanceProps) {
 	const setSecondaryColor = (c: string) => {
 		useColor({ name: "secondary", color: c });
 	};
-	const setBackgroundImg = (img: string) => {
-		useBackground({ data: `url(${img})`, name: "background" });
+	const selectBg = () => {
+		window.hollowManager.emit("show-vault", { onSelect: setBackgroundImg });
+	};
+	const setBackgroundImg = (path: string) => {
+		useBackground({ path: `url(${path})` });
 	};
 	const setBackgroundOpacity = () => {
 		useBackground({ opacity: `${background().opacity / 100}` });
-	};
-	const onSubmitTag = (e: SubmitEvent) => {
-		e.preventDefault();
-		const formData = new FormData(e.target as HTMLFormElement);
-		const values = Object.fromEntries(formData.entries());
-		const { tagName, colorPicked } = values;
-		if (
-			tagName !== "" &&
-			!tags()
-				.map((i) => i.name)
-				.includes(`${tagName}`)
-		) {
-			toTags((prev) => [
-				...prev,
-				{
-					name: `${tagName}`,
-					background: `${colorPicked}`,
-					foreground: readableColor(`${colorPicked}`),
-				},
-			]);
-		}
-	};
-	const toTags = (v: TagType[] | ((prev: TagType[]) => TagType[])) => {
-		setTags(typeof v === "function" ? v : () => v);
-		useTags(tags());
 	};
 	const setCodeTheme = (v: string) => {
 		useCodeTheme(v);
@@ -257,11 +232,9 @@ export default function Appearance({}: AppearanceProps) {
 								The background image of the canvas.
 							</p>
 						</div>
-						<ImportFile
-							accepts={"image/*"}
-							onChange={setBackgroundImg}
-							xfile={background().name}
-						/>
+						<button class="button-secondary" onclick={selectBg}>
+							Select
+						</button>
 					</div>
 					<div class="flex justify-between">
 						<div>
@@ -318,40 +291,84 @@ export default function Appearance({}: AppearanceProps) {
 			<p class="pt-2 text-sm text-neutral-600 dark:text-neutral-400">
 				Custom tags that will be used by tools.{" "}
 			</p>
+			<TagsEditor realm={realm()} />
+		</div>
+	);
+}
 
-			<div class="w-full py-4">
-				<form
-					class="bg-secondary-10/40 flex h-fit w-full items-center justify-between rounded p-3"
-					onsubmit={onSubmitTag}
-				>
-					<h3 class="font-bold text-neutral-950 dark:text-neutral-50">
-						New Tag
-					</h3>
-					<div class="flex items-center gap-2">
-						<input
-							class="input"
-							type="tag-name"
-							name="tagName"
-							placeholder="Name"
-							style={{
-								"--bg-color": "var(--color-secondary-10)",
-								"--bg-color-f": "var(--color-secondary-15)",
-							}}
-						/>
-						<ColorPick
-							color={() => "#151515"}
-							setColor={() => {}}
-						/>
-					</div>
-					<button class="button-secondary" type="submit">
-						Add
-					</button>
-				</form>
-				<div class="flex flex-wrap justify-center gap-3 pt-5 pb-60">
-					<For each={tags()}>
-						{(tag) => <TagEditor tag={tag} setTags={toTags} />}
-					</For>
+type TagsEditorProps = {
+	realm: string;
+};
+function TagsEditor({ realm }: TagsEditorProps) {
+	const [newTag, setNewTag] = createSignal<TagType>({
+		name: "",
+		foreground: "",
+		background: "#151515",
+	});
+	const [tags, setTags] = createSignal<TagType[]>(
+		JSON.parse(localStorage.getItem(`${realm}-tags`)),
+	);
+	const submit = () => {
+		const { name, background } = newTag();
+		if (
+			name !== "" &&
+			!tags()
+				.map((i) => i.name)
+				.includes(`${name}`)
+		) {
+			toTags((prev) => [
+				...prev,
+				{
+					name,
+					background,
+					foreground: readableColor(background),
+				},
+			]);
+			setNewTag({ name: "", background: "#151515", foreground: "" });
+		}
+	};
+	const toTags = (v: TagType[] | ((prev: TagType[]) => TagType[])) => {
+		setTags(typeof v === "function" ? v : () => v);
+		useTags(tags());
+	};
+	return (
+		<div class="w-full py-4">
+			<div class="bg-secondary-10/40 flex h-fit w-full items-center justify-between rounded p-3">
+				<h3 class="font-bold text-neutral-950 dark:text-neutral-50">
+					New Tag
+				</h3>
+				<div class="flex items-center gap-2">
+					<input
+						class="input"
+						type="tag-name"
+						name="tagName"
+						placeholder="Name"
+						style={{
+							"--bg-color": "var(--color-secondary-10)",
+							"--bg-color-f": "var(--color-secondary-15)",
+						}}
+						oninput={(e) =>
+							setNewTag((prev) => ({
+								...prev,
+								name: e.currentTarget.value,
+							}))
+						}
+					/>
+					<ColorPick
+						color={() => newTag().background}
+						setColor={(c) =>
+							setNewTag((prev) => ({ ...prev, background: c }))
+						}
+					/>
 				</div>
+				<button class="button-secondary" onclick={submit}>
+					Add
+				</button>
+			</div>
+			<div class="flex flex-wrap justify-center gap-3 pt-5 pb-60">
+				<For each={tags()}>
+					{(tag) => <TagEditor tag={tag} setTags={toTags} />}
+				</For>
 			</div>
 		</div>
 	);

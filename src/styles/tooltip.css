@@ -9,12 +9,14 @@
 
 /* Tooltip content */
 .tool-tip-content {
+	--padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2);
+	--font-size: var(--text-xs);
+	padding: var(--padding);
 	position: absolute;
 	max-width: 20rem;
-	padding: 6px 10px;
 	background-color: var(--color-secondary-10);
 	color: var(--tc-300);
-	font-size: 14px;
+	font-size: var(--font-size);
 	border-color: var(--color-secondary-15);
 	border-style: solid;
 	border-radius: 7px;

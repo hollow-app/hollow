@@ -8,8 +8,6 @@ export type KitType = {
 	shadow: boolean;
 	xyz: { x: number; y: number; z: number };
 	extra?: {
-		fontSize: string;
-		innerMargin: string;
 		outerMargin: string;
-	};
+	} & JSX.CSSProperties;
 };

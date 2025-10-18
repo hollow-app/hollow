@@ -5,14 +5,9 @@ import { open } from "@tauri-apps/plugin-dialog";
 
 type ImportFileProps = {
 	xfile?: string;
-	accepts?: string;
 	onChange: (img: string) => void;
 };
-export default function ImportFile({
-	accepts,
-	onChange,
-	xfile,
-}: ImportFileProps) {
+export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 	const [file, setFile] = createSignal(xfile);
 
 	const onImport = async () => {

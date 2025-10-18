@@ -4,6 +4,6 @@ export type NoteType = {
 	title: string;
 	content: string;
 	tags: string[];
-	dates?: { created: string; modified: string };
+	dates: { createdAt: string; updatedAt?: string };
 	banner?: string;
 };

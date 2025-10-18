@@ -256,9 +256,11 @@ export default function FormPop({ form }: FormPopProps) {
 													/>
 												);
 											case "file":
+												{
+													/* TODO this is not how to handle selecting an image, it needs to be from vault, also the vault uses this to get the path, so maybe keep this and add a image selector */
+												}
 												return (
 													<ImportFile
-														accepts={option.accept}
 														xfile={option.value}
 														onChange={
 															option.onChange

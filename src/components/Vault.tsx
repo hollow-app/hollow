@@ -116,7 +116,6 @@ export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
 				"z-index": dragInfo ? "999" : kit().xyz.z,
 				cursor: dragInfo() ? "move" : "default",
 				"pointer-events": dragInfo() ? "none" : "auto",
-				"font-size": kit().extra?.fontSize ?? "1em",
 				padding: kit().extra?.outerMargin ?? "0",
 			}}
 			oncontextmenu={onContextMenu}
@@ -126,12 +125,15 @@ export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
 				id={`${tool}-${card}`}
 				class="border-secondary-20 h-full w-full rounded-lg border-1"
 				style={{
-					"border-radius": `${kit().corner}px`,
-					"border-color": kit().border.c,
+					"--opacity": `${kit().opacity * 100}%`,
+					"--border-radius": `${kit().corner}px`,
+					"--border-color": kit().border.c,
+					"--border-width": `${kit().border.n}px`,
+					"border-radius": "var(--border-radius)",
+					"border-color": "var(--border-color)",
 					"border-style": "solid",
-					"border-width": `${kit().border.n}px`,
-					"background-color": `rgba(var(--secondary-rgb), ${kit().opacity})`,
-					padding: kit().extra?.innerMargin ?? "0",
+					"border-width": "var(--border-width)",
+					...kit().extra,
 				}}
 				classList={{
 					"backdrop-blur-sm": kit().glass,

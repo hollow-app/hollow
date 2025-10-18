@@ -11,7 +11,10 @@ export class NotebookManager {
 	async addNotebook(notebook: NotebookType): Promise<void> {
 		const store = await this.tx("notebooks", "readwrite");
 		return new Promise((resolve, reject) => {
-			const req = store.add({ ...notebook, last: notebook.last ?? null });
+			const req = store.add({
+				...notebook,
+				last: notebook.last ?? null,
+			});
 			req.onsuccess = () => resolve();
 			req.onerror = () => reject(req.error);
 		});
@@ -42,14 +45,13 @@ export class NotebookManager {
 		const notesStore = tx.objectStore("notes");
 		const index = notesStore.index("by_notebook");
 
-		// Delete the notebook itself
 		notebooksStore.delete(id);
 
-		// Delete related notes
 		const range = IDBKeyRange.only(id);
-		const req = index.openKeyCursor(range);
-		req.onsuccess = () => {
-			const cursor = req.result;
+		const cursorReq = index.openKeyCursor(range);
+
+		cursorReq.onsuccess = () => {
+			const cursor = cursorReq.result;
 			if (cursor) {
 				notesStore.delete(cursor.primaryKey);
 				cursor.continue();
@@ -80,19 +82,11 @@ export class NotebookManager {
 		});
 	}
 
-	// async getNote(id: string): Promise<NoteType | null> {
-	// 	const store = await this.tx("notes", "readonly");
-	// 	return new Promise((resolve, reject) => {
-	// 		const req = store.get(id);
-	// 		req.onsuccess = () => resolve(req.result ?? null);
-	// 		req.onerror = () => reject(req.error);
-	// 	});
-	// }
-
 	async getNotesForNotebook(notebookId: string): Promise<NoteType[]> {
 		const store = await this.tx("notes", "readonly");
 		const index = store.index("by_notebook");
 		const range = IDBKeyRange.only(notebookId);
+
 		return new Promise((resolve, reject) => {
 			const req = index.getAll(range);
 			req.onsuccess = () => resolve(req.result ?? []);
@@ -109,25 +103,6 @@ export class NotebookManager {
 		});
 	}
 
-	// async deleteNotesForNotebook(notebookId: string): Promise<void> {
-	// 	const store = await this.tx("notes", "readwrite");
-	// 	const index = store.index("by_notebook");
-	// 	const range = IDBKeyRange.only(notebookId);
-	// 	return new Promise((resolve, reject) => {
-	// 		const req = index.openKeyCursor(range);
-	// 		req.onsuccess = () => {
-	// 			const cursor = req.result;
-	// 			if (cursor) {
-	// 				store.delete(cursor.primaryKey);
-	// 				cursor.continue();
-	// 			}
-	// 		};
-	// 		req.onerror = () => reject(req.error);
-	// 		store.transaction.oncomplete = () => resolve();
-	// 	});
-	// }
-
-	// --- Open or create the database ---
 	private openDB(): Promise<IDBDatabase> {
 		return new Promise((resolve, reject) => {
 			const request = indexedDB.open("notebookDB", 1);
@@ -136,10 +111,7 @@ export class NotebookManager {
 				const db = request.result;
 
 				if (!db.objectStoreNames.contains("notebooks")) {
-					db.createObjectStore("notebooks", {
-						keyPath: "id",
-						autoIncrement: true,
-					});
+					db.createObjectStore("notebooks", { keyPath: "id" });
 				}
 
 				if (!db.objectStoreNames.contains("notes")) {

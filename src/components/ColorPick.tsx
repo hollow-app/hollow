@@ -11,17 +11,17 @@ export default function ColorPick({
 	setColor,
 	borderColor,
 }: ColorPickProps) {
-	// const [myColor, setMyColor] = createSignal(color);
+	const [myColor, setMyColor] = createSignal(color());
 
 	const pick = () => {
 		window.hollowManager.emit("color-picker", {
-			color: color(),
+			color: myColor(),
 			setColor: saveNewColor,
 		});
 	};
 	const saveNewColor = (c: string) => {
 		if (c !== color()) {
-			// setMyColor(c);
+			setMyColor(c);
 			setColor(c);
 		}
 	};
@@ -31,7 +31,7 @@ export default function ColorPick({
 				class="h-8 w-8 shrink-0 rounded-[30%] border-4"
 				type="button"
 				style={{
-					background: color(),
+					background: myColor(),
 					"border-color": borderColor ?? "var(--secondary-color-15)",
 				}}
 				onClick={pick}

@@ -74,8 +74,8 @@ export default function Notebook({
 			tags: [],
 			content: book().structure,
 			dates: {
-				created: new Date().toISOString(),
-				modified: new Date().toISOString(),
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
 			},
 		};
 		setSelected(note);
@@ -83,7 +83,10 @@ export default function Notebook({
 	};
 
 	const onSave = () => {
-		const note = selected();
+		const note: NoteType = {
+			...selected(),
+			dates: { ...selected().dates, updatedAt: new Date().toISOString() },
+		};
 		if (note.title) {
 			const trgt = book().notes.findIndex((i) => i.id === note.id);
 			setBook((prev: NotebookType) => ({
@@ -233,7 +236,7 @@ export default function Notebook({
 		>
 			{/* Header */}
 			<div class="bg-secondary-05 hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded px-2 @xs:flex">
-				<h1 class="text-sm font-medium text-gray-900 dark:text-gray-50">
+				<h1 class="text-sm font-medium">
 					{book().name} <span class="text-secondary-40">Book</span>
 				</h1>
 				<div class="flex gap-2">
@@ -490,7 +493,7 @@ function NotePreview({
 					Tags: {note.tags.join(", ")}
 				</span>
 				<span class="truncate">
-					Created: {timeDifference(note.dates.created)}
+					Created: {timeDifference(note.dates.createdAt)}
 				</span>
 			</div>
 		</div>

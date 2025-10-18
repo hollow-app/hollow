@@ -385,9 +385,10 @@ export class ToolManager {
 				shadow: false,
 				xyz: { x: 0, y: 0, z: 0 },
 				extra: {
-					fontSize: "1em",
-					innerMargin: "calc(var(--spacing) * 4)",
+					padding: "calc(var(--spacing) * 4)",
 					outerMargin: "calc(var(--spacing) * 4)",
+					background:
+						"color-mix(in oklab, var(--color-secondary) var(--opacity), transparent)",
 				},
 			},
 		};

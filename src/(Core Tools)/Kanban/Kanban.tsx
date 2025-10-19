@@ -11,8 +11,15 @@ import {
 import { EntryData } from "@type/EntryData";
 import { TagType } from "@type/TagType";
 import { ToolOptions } from "@type/ToolOptions";
-import { FormType, HollowEvent, ICard } from "hollow-api";
-import { createMemo, createSignal, For, onCleanup, onMount } from "solid-js";
+import { ContextMenuItem, FormType, HollowEvent, ICard } from "hollow-api";
+import {
+	createMemo,
+	createSignal,
+	For,
+	onCleanup,
+	onMount,
+	Show,
+} from "solid-js";
 
 import { KanbanColumnType } from "./KanbanColumnType";
 import { KanbanManager } from "./KanbanManager";
@@ -30,14 +37,17 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 	let listDiv: HTMLDivElement;
 	const [kanban, setKanban] = createSignal(data);
 	const [activeItem, setActiveItem] = createSignal<string | null>(null);
+	const [selectedGroup, setSelectedGroup] = createSignal([]);
 	const [meta, setMeta] = createSignal(
 		(card.toolEvent.getCurrentData("metadata") as ToolMetadata).cards.find(
 			(i) => i.name === card.name,
 		),
 	);
+
 	const percentage = createMemo(
 		() => (kanban().items.length * 100) / kanban().max,
 	);
+
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
 		app.getCurrentData("tags"),
 	);
@@ -160,6 +170,18 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 	};
 
 	// mini
+
+	const handleContextMenu = () => {
+		// const cm: ContextMenuItem = {
+		// 	id: `kanban-column-${kanban().id}`,
+		// 	header: "Kanban",
+		// 	items: [
+		// 		{
+		//
+		// 		}
+		// 	],
+		// };
+	};
 	const showForm = (onSubmit: (data: any) => void, item?: KanbanItemType) => {
 		const form: FormType = {
 			id: "kanban-new-item",
@@ -247,6 +269,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		<div
 			class="@container relative box-border flex h-full flex-col gap-2"
 			style={{ "--accent-color": kanban().accent }}
+			onContextMenu={handleContextMenu}
 		>
 			{/* Bar */}
 			<div class="box-border flex h-fit shrink-0 items-center gap-3">
@@ -294,6 +317,8 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 												`${listDiv.scrollWidth}px`
 											}
 											showForm={showForm}
+											selectedGroup={selectedGroup}
+											setSelectedGroup={setSelectedGroup}
 										/>
 									</Sortable>
 								)}
@@ -302,7 +327,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 					</div>
 					<DragOverlay>
 						<div class="sortable">
-							{activeItem() && (
+							<Show when={activeItem()}>
 								<KanbanItem
 									item={() =>
 										kanban().items.find(
@@ -319,7 +344,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 											: "100%"
 									}
 								/>
-							)}
+							</Show>
 						</div>
 					</DragOverlay>
 				</DragDropProvider>
@@ -348,6 +373,7 @@ function ControlButtons({ app, addItem, showForm }: ControlButtonsProps) {
 				dates: { createdAt: new Date().toISOString() },
 			}),
 		);
+		setOpen(false);
 	};
 
 	return (

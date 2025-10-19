@@ -59,7 +59,7 @@ function Container() {
 		};
 	});
 	return (
-		<div class="bg-secondary flex h-full w-full flex-col px-2 text-neutral-950 dark:text-neutral-200">
+		<div class="bg-secondary flex h-full w-full flex-col px-2">
 			<div class="relative flex h-full flex-1">
 				<SideBar
 					{...{

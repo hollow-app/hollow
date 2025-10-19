@@ -21,8 +21,14 @@ import { EntryData } from "@type/EntryData";
 import { NotebookType } from "./NotebookType";
 import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
-import { FileDocument, FolderAdd, FolderDocument } from "@coolicons-dev/solid";
 import { timeDifference } from "@managers/manipulation/strings";
+import {
+	IconFileCheckFilled,
+	IconFileDescriptionFilled,
+	IconFilePencilFilled,
+	IconFilePlus,
+	IconFolderFilled,
+} from "@tabler/icons-solidjs";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
 const WordInput = lazy(() => import("@components/WordInput"));
@@ -254,9 +260,11 @@ export default function Notebook({
 						>
 							<Show
 								when={editMode()}
-								fallback={<FolderEdit class="size-5" />}
+								fallback={
+									<IconFilePencilFilled class="size-5" />
+								}
 							>
-								<FolderCheck class="size-5" />
+								<IconFileCheckFilled class="size-5" />
 							</Show>
 						</button>
 					</Show>
@@ -268,7 +276,7 @@ export default function Notebook({
 							"--border-radius": "var(--radius-sm)",
 						}}
 					>
-						<FolderAdd class="size-5" />
+						<IconFilePlus class="size-5" />
 					</button>
 					<button
 						class="button-control"
@@ -278,7 +286,7 @@ export default function Notebook({
 							"--border-radius": "var(--radius-sm)",
 						}}
 					>
-						<FolderDocument class="size-5" />
+						<IconFolderFilled class="size-5" />
 					</button>
 				</div>
 			</div>
@@ -474,7 +482,7 @@ function NotePreview({
 				when={note.banner}
 				fallback={
 					<div class="bg-secondary-10 flex h-28 w-full items-center justify-center">
-						<FileDocument class="size-8 text-neutral-400" />
+						<IconFileDescriptionFilled class="size-8 text-neutral-400" />
 					</div>
 				}
 			>

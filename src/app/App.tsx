@@ -51,7 +51,7 @@ export default function App() {
 		}
 	};
 	return (
-		<main class="app-container">
+		<main class="app-container text-black dark:text-white">
 			<Suspense fallback={<Loading />}>
 				<Show when={step1()}>
 					<Show

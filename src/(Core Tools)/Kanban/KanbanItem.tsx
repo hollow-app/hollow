@@ -1,4 +1,4 @@
-import { Accessor, createMemo, createSignal, For } from "solid-js";
+import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
 import Tag from "../../components/Tag";
 import { Clock8Icon, PenLineIcon } from "lucide-solid";
 import { TagType } from "@type/TagType";
@@ -20,6 +20,8 @@ type KanbanItemProps = {
 	accentColor: () => string;
 	parentWidth: () => string;
 	showForm?: (onSubmit: (data: any) => void, item?: KanbanItemType) => void;
+	selectedGroup?: Accessor<string[]>;
+	setSelectedGroup?: Setter<string[]>;
 };
 export default function KanbanItem({
 	toolEvent,
@@ -32,8 +34,9 @@ export default function KanbanItem({
 	accentColor,
 	parentWidth,
 	showForm,
+	selectedGroup,
+	setSelectedGroup,
 }: KanbanItemProps) {
-	const [editMode, setEditMode] = createSignal(false);
 	const tagColors = createMemo(() => {
 		const tags = item().tags;
 		return tags.map((tag) => {
@@ -66,55 +69,71 @@ export default function KanbanItem({
 				};
 				return cmItem;
 			});
+		const menuItems: any = [
+			{
+				icon: "Trash2",
+				label: "Delete",
+				onclick: () => removeItem(item().id, true),
+			},
+		];
+		if (columns.length > 0) {
+			menuItems.unshift({
+				icon: "Send",
+				label: "Send",
+				children: columns,
+			});
+		}
 		const cm: ContextMenuItem = {
 			id: `kanban-item-cm-${item().id}`,
 			header: "Task",
-			items: [
-				{
-					icon: "Send",
-					label: "Send",
-					children: columns,
-				},
-				{
-					icon: "Trash2",
-					label: "Delete",
-					onclick: () => removeItem(item().id, true),
-				},
-			],
+			items: menuItems,
 		};
 		window.hollowManager.emit("context-menu-extend", cm);
 	};
 
 	return (
 		<div
-			class="group bg-secondary relative box-border h-fit rounded-xl border shadow-md transition-colors"
+			class="group border-secondary-10 bg-secondary relative box-border h-fit rounded-xl border text-black shadow-md transition-colors dark:text-white"
 			style={{
-				"border-color":
-					isActive || editMode()
-						? accentColor()
-						: "var(--color-secondary-10)",
+				// "border-color": isActive
+				// 	? accentColor()
+				// 	: "var(--color-secondary-10)",
 				"line-height": "normal",
 				width: isActive ? parentWidth() : "100%",
 			}}
+			classList={{ "cursor-pointer select-none": isActive }}
 			oncontextmenu={handleContextMenu}
 		>
-			<div class="absolute top-2.5 right-2 opacity-0 transition-opacity group-hover:opacity-100">
-				<input
-					type="checkbox"
-					class="checkbox"
-					style={{ "--accent-color": accentColor() }}
-				/>
-			</div>
+			<Show when={!isActive}>
+				<div
+					class="absolute top-2.5 right-2 opacity-0 transition-opacity group-hover:opacity-100"
+					classList={{
+						"opacity-100": selectedGroup()?.includes(item().id),
+					}}
+				>
+					<input
+						type="checkbox"
+						class="checkbox"
+						style={{ "--accent-color": accentColor() }}
+						onclick={() => {
+							setSelectedGroup((prev) =>
+								prev.includes(item().id)
+									? prev.filter((i) => i !== item().id)
+									: [...prev, item().id],
+							);
+						}}
+					/>
+				</div>
+			</Show>
 			<div class="">
 				<p class="border-secondary-10 truncate border-b border-dashed p-3 text-sm">
 					<span class="text-neutral-500">Title: </span>
 					{item().title}
 				</p>
-				<p class="p-3">{item().content}</p>
+				<p class="p-3 text-sm">{item().content}</p>
 				<Show when={item().tags.length > 0}>
 					<div
 						class="flex flex-wrap gap-1.5 px-3"
-						classList={{ hidden: editMode() }}
 						style={{
 							"font-size": "0.8rem",
 						}}

@@ -60,7 +60,9 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 							items={window.toolManager
 								.getHand()
 								.flatMap((i) =>
-									i.cards.map((j) => `${i.title}: ${j.name}`),
+									i.cards
+										.filter((j) => j.isPlaced)
+										.map((j) => `${i.title}: ${j.name}`),
 								)}
 							value={() =>
 								kit()

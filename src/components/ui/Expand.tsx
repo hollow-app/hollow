@@ -2,15 +2,15 @@ import Sidepanel from "@components/animations/Sidepanel";
 import Card from "@components/Card";
 import DropDown from "@components/DropDown";
 import FilterButton from "@components/FilterButton";
-import { FileAdd } from "@coolicons-dev/solid";
 import { HollowManager } from "@managers/HollowManager";
 import { CardInfo } from "@type/CardInfo";
 import { FormType } from "@type/FormType";
-import { SearchIcon, ToolCaseIcon } from "lucide-solid";
+import { PlusIcon, SearchIcon } from "lucide-solid";
+import ToolCaseIcon from "@assets/icons/tool-case.svg";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
 import { lazy } from "solid-js";
 
-const Icon = lazy(() => import("@components/Icon"));
+const IconInner = lazy(() => import("@components/Icon"));
 
 type FilterType = {
 	tools: string[];
@@ -138,7 +138,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 													),
 											}}
 										>
-											<Icon
+											<IconInner
 												class="size-4"
 												name={h.icon}
 											/>
@@ -196,7 +196,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 						class="button-control border-secondary-10 border"
 						onclick={addNewCard}
 					>
-						<FileAdd class="size-5 -rotate-90" />
+						<PlusIcon class="size-5 -rotate-90" />
 					</button>
 				</div>
 

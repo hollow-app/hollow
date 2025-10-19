@@ -1,14 +1,12 @@
 import Sidepanel from "@components/animations/Sidepanel";
-import Icon from "@components/Icon";
-import { CloseMD, CloseSM } from "@coolicons-dev/solid";
+import IconInner from "@components/Icon";
 import { CharacterManager } from "@managers/CharacterManager";
-import { Check, ImageUpIcon, SaveIcon } from "lucide-solid";
+import { Check, ImageUpIcon, SaveIcon, XIcon } from "lucide-solid";
 import { Character } from "@type/Character";
 import { For, onMount, Setter } from "solid-js";
 import { onCleanup } from "solid-js";
 import { createSignal, Show } from "solid-js";
 import { Accessor } from "solid-js";
-import { initialization1 } from "@managers/init";
 
 type CharacterPanelProps = {
 	isVisible: Accessor<boolean>;
@@ -173,7 +171,7 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 												{(m) => (
 													<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1">
 														<Show when={m.icon}>
-															<Icon
+															<IconInner
 																name={m.icon}
 																class="size-4"
 															/>
@@ -311,7 +309,7 @@ function ProgressBar({
 	return (
 		<div class="relative flex items-center gap-2">
 			<div class="bg-secondary-10 flex items-center gap-1 rounded p-1">
-				<Icon name={icon} class="size-4" style={{ color }} />
+				<IconInner name={icon} class="size-4" style={{ color }} />
 				<Show when={label}>
 					<h3 class="text-secondary-40 text-sm font-medium uppercase">
 						{label}
@@ -349,7 +347,7 @@ function ProgressBar({
 							style={{ "--padding-x": "var(--padding-y)" }}
 							onclick={onCancel}
 						>
-							<CloseMD class="size-4" />
+							<XIcon class="size-4" />
 						</button>
 					</div>
 				</Show>

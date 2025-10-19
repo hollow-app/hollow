@@ -1,9 +1,15 @@
 import Hollow from "@assets/logo.svg";
+import GearIcon from "@assets/icons/gear.svg";
+import BellIcon from "@assets/icons/bell.svg";
+import ToolCaseIcon from "@assets/icons/tool-case.svg";
+import PenRulerIcon from "@assets/icons/pen-ruler.svg";
 import { NotifyManager } from "@managers/NotifyManager";
-import { PencilRulerIcon, ToolCaseIcon, Vault } from "lucide-solid";
+import { PencilRulerIcon, Move } from "lucide-solid";
 import { onMount, Setter } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
-import { Settings, Layers, BellNotification, Move } from "@coolicons-dev/solid";
+import VaultIcon from "@assets/icons/vault.svg";
+import { IconServer2 } from "@tabler/icons-solidjs";
+
 type SideBarProps = {
 	toggleChara: () => void;
 	isExpand: Accessor<boolean>;
@@ -54,22 +60,16 @@ export default function SideBar({
 				</button>
 				<button
 					class="button-control"
-					onclick={() => window.hollowManager.toggle("show-vault")}
-				>
-					<Vault class="size-5" />
-				</button>
-				<button
-					class="button-control"
 					onclick={() => window.hollowManager.emit("show-entries")}
 				>
-					<Layers class="size-5" />
+					<IconServer2 class="size-5" />
 				</button>
 				<button
 					class="button-control"
 					classList={{ selected: isEditor() }}
 					onclick={toggleEditor}
 				>
-					<PencilRulerIcon class="size-5" />
+					<PenRulerIcon class="size-5" />
 				</button>
 			</div>
 			<div class="mx-auto flex flex-col gap-2">
@@ -87,18 +87,29 @@ export default function SideBar({
 				</button>
 				<button
 					class="button-control"
+					onclick={() => window.hollowManager.toggle("show-vault")}
+				>
+					<VaultIcon class="size-5" />
+				</button>
+
+				<button
+					class="button-control"
 					onclick={() => setNotifications((prev) => !prev)}
 				>
-					<BellNotification
+					<BellIcon
 						class="notify-status-bell size-5"
-						classList={{ "fill-primary": alert() }}
+						style={{
+							"--fill": alert()
+								? "var(--color-primary)"
+								: "currentColor",
+						}}
 					/>
 				</button>
 				<button
 					class="button-control"
 					onclick={() => setSettings((prev) => !prev)}
 				>
-					<Settings class="size-5" />
+					<GearIcon class="size-5" />
 				</button>
 			</div>
 		</div>

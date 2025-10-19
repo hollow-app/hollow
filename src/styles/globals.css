@@ -287,18 +287,19 @@ a {
 
 .button-cm {
 	display: flex;
-	width: calc(100% - calc(var(--spacing) * 6));
+	width: 100%;
 	align-items: center;
 	gap: calc(var(--spacing) * 3);
-	padding-block: calc(var(--spacing) * 2);
-	border-radius: 0.5em;
+	padding-block: calc(var(--spacing) * 1.5);
+	border-radius: var(--radius-md);
 	transition: 0.3s all ease;
-	padding-left: calc(var(--spacing) * 8);
-	padding-right: var(--spacing);
+	padding-inline: calc(var(--spacing) * 2.5);
 	margin-inline: auto;
+	color: var(--tc-400);
 
 	&:hover {
-		background: var(--secondary-color-15);
+		background: var(--secondary-color-10);
+		color: var(--tc-50);
 	}
 
 	&.active-cm:active {
@@ -308,7 +309,7 @@ a {
 
 
 .hr-cm {
-	border-color: var(--secondary-color-10);
+	border-color: var(--secondary-color-05);
 	margin-block: calc(var(--spacing) * 2);
 	width: 100%;
 }
@@ -611,7 +612,8 @@ a {
 	--w: fit-content;
 	width: var(--w);
 	height: fit-content;
-	color: color-contrast(var(--color-primary-20) vs white, black);
+	/* color: color-contrast(var(--color-primary-20) vs white, black); */
+	color: color-mix(in oklab, var(--color-primary-20), var(--tc-50) 80%);
 	border-width: var(--border-w);
 	border-style: solid;
 	border-color: var(--color-primary-10);

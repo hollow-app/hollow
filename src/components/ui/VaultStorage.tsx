@@ -4,9 +4,14 @@ import { VaultItem } from "@type/VaultItem";
 import { createSignal, For, Show } from "solid-js";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { CopyIcon, ImageUpIcon, SearchIcon, Trash2Icon } from "lucide-solid";
+import {
+	CopyIcon,
+	ImageUpIcon,
+	PencilIcon,
+	SearchIcon,
+	Trash2Icon,
+} from "lucide-solid";
 import FilterButton from "@components/FilterButton";
-import { EditPencil01 } from "@coolicons-dev/solid";
 import { FormOption } from "hollow-api";
 
 type VaultStorageProps = {
@@ -318,7 +323,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 											class="button-control"
 											onclick={editItem}
 										>
-											<EditPencil01 class="size-5" />
+											<PencilIcon class="size-5" />
 										</button>
 										<button
 											class="button-control red"

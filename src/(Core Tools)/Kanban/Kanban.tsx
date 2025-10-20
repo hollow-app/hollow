@@ -25,7 +25,8 @@ import { KanbanColumnType } from "./KanbanColumnType";
 import { KanbanManager } from "./KanbanManager";
 import { KanbanItemType } from "./KanbanItemType";
 import { ToolMetadata } from "@type/ToolMetadata";
-import { ChevronDownIcon, PlusIcon } from "lucide-solid";
+import { PlusIcon } from "lucide-solid";
+import KanbanItemMini from "./KanbanItemMini";
 
 type KanbanProps = {
 	data: KanbanColumnType;
@@ -161,30 +162,92 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		};
 		app.emit("tool-settings", settings);
 	};
-	const handleReceiveTask = (task: KanbanItemType | KanbanItemType[]) => {
+	const handleReceiveTask = (tasks: KanbanItemType[]) => {
 		setKanban((prev: KanbanColumnType) => ({
 			...prev,
-			items: [...(Array.isArray(task) ? task : [task]), ...prev.items],
+			items: [...prev.items, ...tasks],
 		}));
 		updateKanban();
 	};
 
 	// mini
-
+	const removeSelected = () => {
+		setKanban((prev) => ({
+			...prev,
+			items: prev.items.filter((i) => !selectedGroup().includes(i.id)),
+		}));
+	};
 	const handleContextMenu = () => {
-		// const cm: ContextMenuItem = {
-		// 	id: `kanban-column-${kanban().id}`,
-		// 	header: "Kanban",
-		// 	items: [
-		// 		{
-		//
-		// 		}
-		// 	],
-		// };
+		if (kanban().items.length > 0) {
+			const menuItems: any = [
+				{
+					icon: "CheckCheck",
+					label: "Select All",
+					onclick: () =>
+						setSelectedGroup(kanban().items.map((i) => i.id)),
+				},
+				...(selectedGroup().length > 0
+					? [
+							{
+								icon: "X",
+								label: "UnSelect All",
+								onclick: () => setSelectedGroup([]),
+							},
+						]
+					: []),
+			];
+			if (selectedGroup().length > 0) {
+				const nSelected = selectedGroup().length;
+				const metadata: ToolMetadata =
+					card.toolEvent.getCurrentData("metadata");
+				metadata.cards.some((i) => i.name !== card.name) &&
+					menuItems.push({
+						icon: "Send",
+						label: `Send (${nSelected})`,
+						children: metadata.cards
+							.filter((i) => i.name !== card.name)
+							.map((i) => ({
+								icon: "BetweenHorizontalStart",
+								label: i.name,
+								onclick: () => {
+									card.toolEvent.emit(
+										`${i.name}-receive-task`,
+										kanban().items.filter((i) =>
+											selectedGroup().includes(i.id),
+										),
+									);
+									removeSelected();
+									updateKanban();
+								},
+							})),
+					});
+
+				menuItems.push({
+					icon: "Trash2",
+					label: `Delete (${nSelected})`,
+					onclick: () => {
+						app.emit("confirm", {
+							type: "Warning",
+							message: `You sure you want to remove (${nSelected}) items`,
+							onAccept: () => {
+								removeSelected();
+								updateKanban();
+							},
+						});
+					},
+				});
+			}
+			const cm: ContextMenuItem = {
+				id: `kanban-column-${kanban().id}`,
+				header: "Kanban",
+				items: menuItems,
+			};
+			app.emit("context-menu-extend", cm);
+		}
 	};
 	const showForm = (onSubmit: (data: any) => void, item?: KanbanItemType) => {
 		const form: FormType = {
-			id: "kanban-new-item",
+			id: item?.id ?? crypto.randomUUID(),
 			title: "New Item",
 			update: !!item,
 			options: [
@@ -235,7 +298,11 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 	const sendEntry = (entry: KanbanItemType) => {
 		const entr: EntryData = {
 			...entry,
-			meta: { ...entry.dates },
+			meta: {
+				...entry.dates,
+				progress: `${entry.progress}%`,
+				priority: entry.priority,
+			},
 			source: { card: card.name, tool: "kanban" },
 		};
 		app.emit("send-entry", entr);
@@ -313,9 +380,6 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 											accentColor={() => kanban().accent}
 											toolEvent={card.toolEvent}
 											cardName={card.name}
-											parentWidth={() =>
-												`${listDiv.scrollWidth}px`
-											}
 											showForm={showForm}
 											selectedGroup={selectedGroup}
 											setSelectedGroup={setSelectedGroup}
@@ -328,16 +392,13 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 					<DragOverlay>
 						<div class="sortable">
 							<Show when={activeItem()}>
-								<KanbanItem
+								<KanbanItemMini
 									item={() =>
 										kanban().items.find(
 											(i) => i.id == activeItem(),
 										)
 									}
 									hollowTags={hollowTags}
-									updateItem={updateItem}
-									isActive={true}
-									accentColor={() => kanban().accent}
 									parentWidth={() =>
 										listDiv.scrollWidth
 											? `${listDiv.scrollWidth}px`
@@ -358,46 +419,27 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 }
 
 type ControlButtonsProps = {
-	app: HollowEvent;
 	addItem: (item: KanbanItemType) => void;
 	showForm: (onSubmit: (data: any) => void, item?: KanbanItemType) => void;
 };
-function ControlButtons({ app, addItem, showForm }: ControlButtonsProps) {
-	const [open, setOpen] = createSignal(false);
-
+function ControlButtons({ addItem, showForm }: ControlButtonsProps) {
 	const onNewItem = () => {
 		showForm((data) =>
 			addItem({
 				...data,
-				id: crypto.randomUUID(),
 				dates: { createdAt: new Date().toISOString() },
 			}),
 		);
-		setOpen(false);
 	};
 
 	return (
 		<div class="relative ml-auto">
 			<button
 				class="hover:bg-secondary-10 rounded p-1 active:scale-90"
-				onclick={() => setOpen((prev) => !prev)}
+				onclick={onNewItem}
 			>
-				<ChevronDownIcon class="size-4" />
+				<PlusIcon class="size-4" />
 			</button>
-			<div
-				class="bg-secondary-05 border-secondary-10 absolute z-10 mt-1 h-20 origin-top scale-90 rounded border opacity-0 transition-all"
-				classList={{ "opacity-100 scale-100": open() }}
-			>
-				<button
-					class="tool-tip hover:bg-secondary-10 rounded p-1 active:scale-90"
-					onclick={onNewItem}
-				>
-					<span class="tool-tip-content" data-side="left">
-						Add Item
-					</span>
-					<PlusIcon class="size-4" />
-				</button>
-			</div>
 		</div>
 	);
 }

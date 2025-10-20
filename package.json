@@ -15,7 +15,6 @@
 		"@codemirror/lang-markdown": "^6.3.2",
 		"@codemirror/view": "^6.36.2",
 		"@lezer/highlight": "^1.2.1",
-		"@tabler/icons-solidjs": "^3.35.0",
 		"@tailwindcss/vite": "^4.1.11",
 		"@tauri-apps/api": "^2.8.0",
 		"@tauri-apps/plugin-dialog": "^2.4.0",

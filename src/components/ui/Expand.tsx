@@ -67,7 +67,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 			setHand([...window.toolManager.getHand()]);
 		};
 		const form: FormType = {
-			id: "add_new_card",
+			id: crypto.randomUUID(),
 			title: "New Card",
 			options: [
 				{

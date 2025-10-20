@@ -60,7 +60,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 											message:
 												"Switching realms requires a restart of the application.\nWould you like to proceed?",
 
-											decision: () =>
+											onAccept: () =>
 												window.realmManager.toggleRealm(),
 										})
 									}

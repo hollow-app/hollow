@@ -1,4 +1,5 @@
 // KanbanManager.ts
+import { ContextMenuItem } from "hollow-api";
 import { KanbanColumnType } from "./KanbanColumnType";
 
 export class KanbanManager {
@@ -47,13 +48,13 @@ export class KanbanManager {
 		});
 	}
 
-	async sendItemToColumn(
-		itemId: string,
-		targetColumnId: string,
-	): Promise<void> {
-		// TODO: Send the item to another column using the app's API
-		// Example: await api.moveItemToColumn(item, targetColumnId);
-	}
+	// async sendItemToColumn(
+	// 	itemsId: string[],
+	// 	targetColumnId: string,
+	// ): Promise<void> {
+	// 	// TODO: Send the item to another column using the app's API
+	//
+	// }
 
 	/** Clears this column completely */
 	async clearColumn(column: KanbanColumnType): Promise<void> {

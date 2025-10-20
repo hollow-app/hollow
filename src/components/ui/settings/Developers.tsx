@@ -25,7 +25,7 @@ export default function Developers() {
 		window.hollowManager.emit("confirm", {
 			message: "This action requires the app to restart.",
 			type: "Warning",
-			decision: () => {
+			onAccept: () => {
 				setOption((prev) => ({
 					...prev,
 					loadunsigned: state,

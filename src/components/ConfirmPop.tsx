@@ -1,19 +1,13 @@
+import { ConfirmType } from "@type/ConfirmType";
 import { marked } from "marked";
 import { createResource, onMount, Suspense } from "solid-js";
-
 type ConfirmPopProps = {
-	pack: {
-		type: string;
-		message: string;
-		decision: () => void;
-		accLabel?: string;
-		refLabel?: string;
-	};
+	pack: ConfirmType;
 };
 
 export default function ConfirmPop({ pack }: ConfirmPopProps) {
 	const decision = (d: boolean) => {
-		d && pack.decision();
+		d && pack.onAccept();
 		window.hollowManager.emit("confirm", null);
 	};
 

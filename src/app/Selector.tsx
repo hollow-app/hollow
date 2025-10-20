@@ -75,7 +75,7 @@ const useRealmManager = () => {
 		window.hollowManager.emit("confirm", {
 			type: "warning",
 			message: `Are you sure you want to remove ${window.realmManager.getRealmFromId(id)?.name} Realm?`,
-			decision: handleDecision,
+			onAccept: handleDecision,
 		});
 	};
 

@@ -102,6 +102,38 @@ export class NotebookManager {
 			req.onerror = () => reject(req.error);
 		});
 	}
+	async deleteNotesFromNotebook(
+		notebookId: string,
+		noteIds: string[],
+	): Promise<void> {
+		if (!noteIds.length) return;
+
+		const db = await this.getDB();
+		const tx = db.transaction("notes", "readwrite");
+		const notesStore = tx.objectStore("notes");
+		const index = notesStore.index("by_notebook");
+		const range = IDBKeyRange.only(notebookId);
+
+		const req = index.getAll(range);
+
+		return new Promise((resolve, reject) => {
+			req.onsuccess = () => {
+				const allNotes = req.result ?? [];
+				const toDelete = allNotes.filter((note) =>
+					noteIds.includes(note.id),
+				);
+
+				for (const note of toDelete) {
+					notesStore.delete(note.id);
+				}
+
+				tx.oncomplete = () => resolve();
+				tx.onerror = () => reject(tx.error);
+			};
+
+			req.onerror = () => reject(req.error);
+		});
+	}
 
 	private openDB(): Promise<IDBDatabase> {
 		return new Promise((resolve, reject) => {

@@ -3,7 +3,8 @@ import ColorPick from "@components/ColorPick";
 import DropDown from "@components/DropDown";
 import NumberInput from "@components/NumberInput";
 import { EditorKitType } from "@type/EditorKitType";
-import { PencilRulerIcon, TentTreeIcon } from "lucide-solid";
+import { TentTreeIcon } from "lucide-solid";
+import PenRulerIcon from "@assets/icons/pen-ruler.svg";
 import {
 	Accessor,
 	createSignal,
@@ -51,7 +52,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 		<Sidepanel isVisible={isVisible}>
 			<div class="px-5 py-3">
 				<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
-					<PencilRulerIcon class="h-20 w-20 shrink-0" />
+					<PenRulerIcon class="h-20 w-20 shrink-0" />
 					<div class="flex-1 space-y-1">
 						<h1 class="text-xl font-bold text-neutral-900 dark:text-neutral-100">
 							Editor
@@ -257,7 +258,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 										setValue={(n) =>
 											kit().setIt((prev) => ({
 												...prev,
-												xyz: { ...prev.xyz, x: n },
+												xyz: { ...prev.xyz, y: n },
 											}))
 										}
 										direct
@@ -272,7 +273,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 										setValue={(n) =>
 											kit().setIt((prev) => ({
 												...prev,
-												xyz: { ...prev.xyz, x: n },
+												xyz: { ...prev.xyz, z: n },
 											}))
 										}
 										direct

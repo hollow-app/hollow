@@ -1,5 +1,7 @@
 .checkbox[type="checkbox"] {
 	--accent-color: var(--color-primary-20);
+	--position: relative;
+	--margin: 0 10px 0 0;
 	appearance: none;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -7,10 +9,10 @@
 	height: 14px;
 	border: 1px solid var(--color-secondary-15);
 	border-radius: 2px;
-	position: relative;
+	position: var(--position);
 	cursor: pointer;
 	vertical-align: middle;
-	margin-right: 10px;
+	margin: var(--margin);
 	transition: background-color 0.15s ease-in-out;
 	box-shadow: 0 0 1px 1px var(--color-neutral-900);
 }

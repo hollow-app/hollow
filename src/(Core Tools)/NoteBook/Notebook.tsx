@@ -1,7 +1,13 @@
 import Tag from "@components/Tag";
+import FileCheckIcon from "@assets/icons/files/file-check.svg";
+import FilePenIcon from "@assets/icons/files/file-pen.svg";
+import FilePlusIcon from "@assets/icons/files/file-plus.svg";
+import FileDescriptionIcon from "@assets/icons/files/file-description.svg";
+import FolderOpenIcon from "@assets/icons/folder-open.svg";
+import FolderCloseIcon from "@assets/icons/folder-close.svg";
 import { TagType } from "@type/TagType";
 import { HollowEvent, ICard } from "hollow-api";
-import { FolderCheck, FolderEdit, NotebookTabsIcon } from "lucide-solid";
+import { NotebookTabsIcon } from "lucide-solid";
 import {
 	Accessor,
 	createMemo,
@@ -22,13 +28,6 @@ import { NotebookType } from "./NotebookType";
 import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
 import { timeDifference } from "@managers/manipulation/strings";
-import {
-	IconFileCheckFilled,
-	IconFileDescriptionFilled,
-	IconFilePencilFilled,
-	IconFilePlus,
-	IconFolderFilled,
-} from "@tabler/icons-solidjs";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
 const WordInput = lazy(() => import("@components/WordInput"));
@@ -236,10 +235,7 @@ export default function Notebook({
 	});
 
 	return (
-		<div
-			class="@container relative flex h-full w-full flex-col items-center"
-			oncontextmenu={onContextMenu}
-		>
+		<div class="@container relative flex h-full w-full flex-col items-center">
 			{/* Header */}
 			<div class="bg-secondary-05 hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded px-2 @xs:flex">
 				<h1 class="text-sm font-medium">
@@ -260,11 +256,9 @@ export default function Notebook({
 						>
 							<Show
 								when={editMode()}
-								fallback={
-									<IconFilePencilFilled class="size-5" />
-								}
+								fallback={<FilePenIcon class="size-5" />}
 							>
-								<IconFileCheckFilled class="size-5" />
+								<FileCheckIcon class="size-5" />
 							</Show>
 						</button>
 					</Show>
@@ -276,7 +270,7 @@ export default function Notebook({
 							"--border-radius": "var(--radius-sm)",
 						}}
 					>
-						<IconFilePlus class="size-5" />
+						<FilePlusIcon class="size-5" />
 					</button>
 					<button
 						class="button-control"
@@ -286,7 +280,12 @@ export default function Notebook({
 							"--border-radius": "var(--radius-sm)",
 						}}
 					>
-						<IconFolderFilled class="size-5" />
+						<Show
+							when={expand()}
+							fallback={<FolderCloseIcon class="size-5" />}
+						>
+							<FolderOpenIcon class="size-5" />
+						</Show>
 					</button>
 				</div>
 			</div>
@@ -299,6 +298,7 @@ export default function Notebook({
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3 }}
 						class="flex min-h-0 w-full flex-1 flex-col"
+						oncontextmenu={onContextMenu}
 					>
 						<div
 							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded border opacity-100 transition-all group-hover:opacity-100"
@@ -411,7 +411,7 @@ export default function Notebook({
 				</Show>
 				{/* Notes List */}
 				<Show when={panel() === 1}>
-					<NoteList {...{ book, hollowTags, changeSelected }} />
+					<NoteList {...{ app, book, changeSelected, manager }} />
 				</Show>
 			</Presence>
 		</div>
@@ -419,28 +419,52 @@ export default function Notebook({
 }
 
 type NoteListProps = {
+	app: HollowEvent;
 	book: Accessor<NotebookType>;
-	hollowTags: Accessor<TagType[]>;
 	changeSelected: (id: string) => void;
+	manager: NotebookManager;
 };
-function NoteList({ book, hollowTags, changeSelected }: NoteListProps) {
+function NoteList({ app, book, changeSelected, manager }: NoteListProps) {
 	const [selectedGroup, setSelectedGroup] = createSignal([]);
 
 	const removeGroup = () => {
-		// TODO send confirm message
+		manager.deleteNotesFromNotebook(book().id, selectedGroup());
 	};
+	const onContextMenu = () => {
+		if (selectedGroup().length > 0) {
+			const cm: ContextMenuItem = {
+				id: "notebook-list",
+				header: "notebook",
+				items: [
+					{
+						icon: "Trash2",
+						label: `Remove (${selectedGroup().length})`,
+						onclick: removeGroup,
+					},
+				],
+			};
+			app.emit("context-menu-extend", cm);
+		}
+	};
+
 	return (
 		<Motion
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}
-			class="bg-secondary flex h-full w-full flex-wrap justify-center p-5"
+			oncontextmenu={onContextMenu}
+			class="bg-secondary grid h-full w-full [grid-template-columns:repeat(auto-fit,minmax(12rem,1fr))] justify-center p-5"
 		>
 			<For each={book().notes}>
 				{(note) => (
 					<NotePreview
-						{...{ note, changeSelected, setSelectedGroup }}
+						{...{
+							note,
+							changeSelected,
+							setSelectedGroup,
+							selectedGroup,
+						}}
 					/>
 				)}
 			</For>
@@ -452,12 +476,15 @@ type NotePreviewProps = {
 	note: NoteType;
 	changeSelected: (id: string) => void;
 	setSelectedGroup: Setter<string[]>;
+	selectedGroup: Accessor<string[]>;
 };
 function NotePreview({
 	note,
 	changeSelected,
+	selectedGroup,
 	setSelectedGroup,
 }: NotePreviewProps) {
+	const selected = createMemo(() => selectedGroup().includes(note.id));
 	const handleCheckMark = (
 		e: Event & { currentTarget: HTMLInputElement },
 	) => {
@@ -470,19 +497,24 @@ function NotePreview({
 	};
 	return (
 		<div
-			class="group bg-secondary-05 hover:border-secondary-10 relative flex h-fit w-50 cursor-pointer flex-col overflow-hidden rounded-lg border border-transparent shadow-sm transition-all hover:shadow-md"
+			class="group bg-secondary-05 border-primary relative flex h-fit w-full max-w-50 cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
 			onclick={() => changeSelected(note.id)}
+			classList={{
+				"border-transparent hover:border-secondary-10": !selected(),
+			}}
 		>
 			<input
 				type="checkbox"
-				class="absolute top-1 left-1 size-5 opacity-0 group-hover:opacity-100"
+				class="checkbox top-1 right-1 opacity-0 group-hover:opacity-100"
+				classList={{ "opacity-100": selected() }}
+				style={{ "--position": "absolute", "--margin": "0" }}
 				onclick={handleCheckMark}
 			/>
 			<Show
 				when={note.banner}
 				fallback={
 					<div class="bg-secondary-10 flex h-28 w-full items-center justify-center">
-						<IconFileDescriptionFilled class="size-8 text-neutral-400" />
+						<FileDescriptionIcon class="size-8 text-neutral-400" />
 					</div>
 				}
 			>

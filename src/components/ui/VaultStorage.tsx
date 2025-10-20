@@ -34,14 +34,13 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 	const addItem = () => {
 		const save = async (data: any) => {
 			const appData = await appDataDir();
-			const id = crypto.randomUUID();
 			const type = data.path.split(".").pop();
 			const item: VaultItem = {
-				id: id,
+				id: data.id,
 				type: type,
 				name: data.name,
 				path: convertFileSrc(
-					await join(appData, "vault", `${id}.${type}`),
+					await join(appData, "vault", `${data.id}.${type}`),
 				),
 				tags: data.tags ?? [],
 				uploadedAt: new Date(),
@@ -72,7 +71,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 		window.hollowManager.emit("confirm", {
 			type: `Delete ${selectedItem().name}`,
 			message: "You sure ?",
-			decision: () => {
+			onAccept: () => {
 				setImages((prev) => [
 					...prev.filter((i) => i.id === selectedItem().id),
 				]);
@@ -111,7 +110,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 			options.shift();
 		}
 		const form: FormType = {
-			id: id ?? "new_file",
+			id: id ?? crypto.randomUUID(),
 			title: update ? "Update Item" : "Add Image",
 			submit: save,
 			update: update,

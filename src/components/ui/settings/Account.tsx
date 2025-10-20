@@ -17,13 +17,12 @@ export default function Account() {
 
 	const addMeta = () => {
 		const save = (data: any) => {
-			const item = { ...data, id: crypto.randomUUID() };
 			setCharacter((prev) => ({
 				...prev,
-				meta: [...prev.meta, item],
+				meta: [...prev.meta, data],
 			}));
 
-			CharacterManager.getSelf().setMeta(item);
+			CharacterManager.getSelf().setMeta(data);
 		};
 		submitForm(save);
 	};
@@ -49,7 +48,7 @@ export default function Account() {
 			? character().meta.find((item) => item.id === id)
 			: null;
 		const form: FormType = {
-			id: id ?? "meta",
+			id: id ?? crypto.randomUUID(),
 			title: id ? "Update Meta" : "Add Meta",
 			submit: save,
 			update: !!id,

@@ -18,7 +18,6 @@ type KanbanItemProps = {
 	removeItem?: (id: string, byItemComponent?: boolean) => void;
 	isActive?: boolean;
 	accentColor: () => string;
-	parentWidth: () => string;
 	showForm?: (onSubmit: (data: any) => void, item?: KanbanItemType) => void;
 	selectedGroup?: Accessor<string[]>;
 	setSelectedGroup?: Setter<string[]>;
@@ -32,11 +31,11 @@ export default function KanbanItem({
 	removeItem,
 	isActive,
 	accentColor,
-	parentWidth,
 	showForm,
 	selectedGroup,
 	setSelectedGroup,
 }: KanbanItemProps) {
+	const selected = createMemo(() => selectedGroup().includes(item().id));
 	const tagColors = createMemo(() => {
 		const tags = item().tags;
 		return tags.map((tag) => {
@@ -59,11 +58,7 @@ export default function KanbanItem({
 					icon: "BetweenHorizontalStart",
 					label: i.name,
 					onclick: () => {
-						toolEvent.emit(`${i.name}-receive-task`, {
-							id: item().id,
-							content: item().content,
-							tags: item().tags,
-						});
+						toolEvent.emit(`${i.name}-receive-task`, [item()]);
 						removeItem(item().id);
 					},
 				};
@@ -74,6 +69,15 @@ export default function KanbanItem({
 				icon: "Trash2",
 				label: "Delete",
 				onclick: () => removeItem(item().id, true),
+			},
+			{
+				icon: "PenLine",
+				label: "Edit",
+				onclick: () => {
+					showForm((data) => {
+						updateItem({ ...item(), ...data });
+					}, item());
+				},
 			},
 		];
 		if (columns.length > 0) {
@@ -93,20 +97,19 @@ export default function KanbanItem({
 
 	return (
 		<div
-			class="group border-secondary-10 bg-secondary relative box-border h-fit rounded-xl border text-black shadow-md transition-colors dark:text-white"
+			class="group border-secondary-10 bg-secondary relative box-border h-fit w-full rounded-xl border text-black shadow-md transition-colors dark:text-white"
 			style={{
-				// "border-color": isActive
-				// 	? accentColor()
-				// 	: "var(--color-secondary-10)",
+				"border-color": selected()
+					? accentColor()
+					: "var(--color-secondary-10)",
 				"line-height": "normal",
-				width: isActive ? parentWidth() : "100%",
 			}}
 			classList={{ "cursor-pointer select-none": isActive }}
 			oncontextmenu={handleContextMenu}
 		>
 			<Show when={!isActive}>
 				<div
-					class="absolute top-2.5 right-2 opacity-0 transition-opacity group-hover:opacity-100"
+					class="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100"
 					classList={{
 						"opacity-100": selectedGroup()?.includes(item().id),
 					}}
@@ -114,7 +117,11 @@ export default function KanbanItem({
 					<input
 						type="checkbox"
 						class="checkbox"
-						style={{ "--accent-color": accentColor() }}
+						style={{
+							"--accent-color": accentColor(),
+							"--margin": 0,
+						}}
+						checked={selected()}
 						onclick={() => {
 							setSelectedGroup((prev) =>
 								prev.includes(item().id)
@@ -125,7 +132,7 @@ export default function KanbanItem({
 					/>
 				</div>
 			</Show>
-			<div class="">
+			<div>
 				<p class="border-secondary-10 truncate border-b border-dashed p-3 text-sm">
 					<span class="text-neutral-500">Title: </span>
 					{item().title}

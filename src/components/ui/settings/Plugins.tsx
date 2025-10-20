@@ -43,7 +43,7 @@ export default function Plugins({}: PluginsProps) {
 				message:
 					"Installing unverified plugins may pose security risks.\nOnly install plugins that you trust and are sure are safe.",
 
-				decision: () => {
+				onAccept: () => {
 					checkUnverified(true);
 				},
 			});

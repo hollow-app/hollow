@@ -3,12 +3,12 @@ import GearIcon from "@assets/icons/gear.svg";
 import BellIcon from "@assets/icons/bell.svg";
 import ToolCaseIcon from "@assets/icons/tool-case.svg";
 import PenRulerIcon from "@assets/icons/pen-ruler.svg";
+import ServerIcon from "@assets/icons/server.svg";
 import { NotifyManager } from "@managers/NotifyManager";
-import { PencilRulerIcon, Move } from "lucide-solid";
+import { Move } from "lucide-solid";
 import { onMount, Setter } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import VaultIcon from "@assets/icons/vault.svg";
-import { IconServer2 } from "@tabler/icons-solidjs";
 
 type SideBarProps = {
 	toggleChara: () => void;
@@ -62,7 +62,7 @@ export default function SideBar({
 					class="button-control"
 					onclick={() => window.hollowManager.emit("show-entries")}
 				>
-					<IconServer2 class="size-5" />
+					<ServerIcon class="size-5" />
 				</button>
 				<button
 					class="button-control"

@@ -1,11 +1,17 @@
 import { Accessor, createMemo, For } from "solid-js";
 import Tag from "../../components/Tag";
 import { Clock8Icon } from "lucide-solid";
-import { TagType } from "@type/TagType";
+import { TagType } from "@type/hollow";
 import { KanbanItemType } from "./KanbanItemType";
 import { Show } from "solid-js";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
 
+const priorityColors: Record<string, string> = {
+	low: "#16a34a",
+	medium: "#ca8a04",
+	high: "#dc2626",
+	urgent: "#b91c1c",
+};
 type KanbanItemMiniProps = {
 	item: () => KanbanItemType;
 	hollowTags: Accessor<TagType[]>;
@@ -90,6 +96,13 @@ export default function KanbanItemMini({
 					<span class="pl-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400">
 						{item().progress}%
 					</span>
+					<span
+						class="border-secondary-10 ml-2 border-l pl-2 text-xs font-medium"
+						style={{ color: priorityColors[item().priority] }}
+					>
+						{item().priority}
+					</span>
+
 					<div class="ml-auto flex items-center text-neutral-500">
 						<Clock8Icon class="size-3" />
 						<span class="pl-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400">

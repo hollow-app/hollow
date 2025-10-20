@@ -1,4 +1,4 @@
-import { DataBase } from "hollow-api";
+import { DataBase } from "@type/hollow";
 
 export class ToolDataBase implements DataBase {
 	private readonly dbName: string;

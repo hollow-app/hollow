@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { HandType } from "@type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { DataBase, HollowEvent, ICard, IPlugin } from "hollow-api";
+import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
 
 const PLUGIN_FILES = ["index.js", "manifest.json"] as const;
 

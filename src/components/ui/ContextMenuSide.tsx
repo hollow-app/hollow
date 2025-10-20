@@ -1,4 +1,4 @@
-import { Item } from "@type/ContextMenuItem";
+import { ContextMenuItemButton } from "@type/hollow";
 import { ChevronRightIcon } from "lucide-solid";
 import { createSignal, For, Show, createEffect, Suspense } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
@@ -10,7 +10,9 @@ export default function ContextMenuSide({
 	label,
 	children,
 	position,
-}: Item & { position: () => { xflip: boolean; yflip: boolean } }) {
+}: ContextMenuItemButton & {
+	position: () => { xflip: boolean; yflip: boolean };
+}) {
 	const [hovered, setHovered] = createSignal(false);
 	let timeoutId: ReturnType<typeof setTimeout> | null = null;
 	const handleMouseOver = () => {
@@ -65,12 +67,14 @@ export default function ContextMenuSide({
 										);
 									}}
 								>
-									<Suspense>
-										<Icon
-											name={child.icon}
-											class="h-4 w-4"
-										/>
-									</Suspense>
+									<Show when={child.icon}>
+										<Suspense>
+											<Icon
+												name={child.icon}
+												class="h-4 w-4"
+											/>
+										</Suspense>
+									</Show>
 									{child.label}
 								</button>
 							)}

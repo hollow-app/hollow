@@ -3,8 +3,7 @@ import Card from "@components/Card";
 import DropDown from "@components/DropDown";
 import FilterButton from "@components/FilterButton";
 import { HollowManager } from "@managers/HollowManager";
-import { CardInfo } from "@type/CardInfo";
-import { FormType } from "@type/FormType";
+import { FormType, CardType } from "@type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
 import ToolCaseIcon from "@assets/icons/tool-case.svg";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
@@ -211,7 +210,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 					<div class="flex h-[calc(100%-2px)] flex-col gap-1 overflow-hidden overflow-y-auto px-5">
 						<For each={cards()}>
 							{(
-								c: CardInfo & {
+								c: CardType & {
 									tool: string;
 									icon: string;
 									title: string;

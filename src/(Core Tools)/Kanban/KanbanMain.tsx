@@ -1,4 +1,4 @@
-import { DataBase, HollowEvent, ICard, IPlugin } from "hollow-api";
+import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot, lazy } from "solid-js";
 import { KanbanColumnType } from "./KanbanColumnType";
@@ -13,7 +13,6 @@ export class KanbanMain implements IPlugin {
 	async onCreate(name: string): Promise<boolean> {
 		this.manager.saveColumn({
 			id: name,
-			icon: "Apple",
 			name: name,
 			items: [],
 			max: 10,

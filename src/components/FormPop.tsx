@@ -1,4 +1,4 @@
-import { FormType } from "@type/FormType";
+import { FormType } from "@type/hollow";
 import { Accessor, For } from "solid-js";
 import { createSignal } from "solid-js";
 import ColorPick from "./ColorPick";

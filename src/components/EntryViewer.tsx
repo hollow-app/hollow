@@ -1,4 +1,4 @@
-import { EntryData } from "@type/EntryData";
+import { EntryType } from "@type/hollow";
 import {
 	BookTextIcon,
 	ChevronLeftIcon,
@@ -7,7 +7,7 @@ import {
 } from "lucide-solid";
 import { Motion, Presence } from "solid-motionone";
 import Tag from "./Tag";
-import { TagType } from "@type/TagType";
+import { TagType } from "@type/hollow";
 import {
 	Accessor,
 	createResource,
@@ -22,10 +22,10 @@ import { lazy } from "solid-js";
 const Icon = lazy(() => import("@components/Icon"));
 
 type EntryViewerProps = {
-	selected: Accessor<EntryData>;
-	setSelected: (v: EntryData) => void;
+	selected: Accessor<EntryType>;
+	setSelected: (v: EntryType) => void;
 	hollowTags: TagType[];
-	setEntries: Setter<EntryData[]>;
+	setEntries: Setter<EntryType[]>;
 };
 export default function EntryViewer({
 	selected,
@@ -33,7 +33,7 @@ export default function EntryViewer({
 	hollowTags,
 	setEntries,
 }: EntryViewerProps) {
-	const [visiRow, setvisiRow] = createSignal(-1);
+	const [visiRow, setvisiRow] = createSignal(0);
 	const [isEditing, setIsEditing] = createSignal(false);
 	const [parsedMd] = createResource(selected().content, () =>
 		window.markdownManager.renderMarkdown(selected().content, "entry"),
@@ -43,27 +43,22 @@ export default function EntryViewer({
 		window.toolManager.toolsEvent[
 			selected().source.tool.toLowerCase()
 		].emit(`${selected().source.card}-remove-entry`, id);
-		setEntries((prev: EntryData[]) => [...prev.filter((i) => i.id !== id)]);
+		setEntries((prev: EntryType[]) => [...prev.filter((i) => i.id !== id)]);
 		window.entryManager.removeEntry(id);
 		setSelected(null);
 	};
 	const editEntry = () => {};
 
 	return (
-		<Motion
-			initial={{ opacity: "0" }}
-			animate={{ opacity: "1" }}
-			exit={{ opacity: "0" }}
-			class="flex min-h-0 w-full flex-1 flex-col gap-2 pb-4 text-gray-950 dark:text-gray-50"
-		>
-			<div class="bg-secondary-10 flex w-full items-center rounded-lg px-6 py-3">
+		<div class="flex min-h-0 w-full flex-1 flex-col gap-2 pb-4 text-gray-950 dark:text-gray-50">
+			<div class="bg-secondary-05 flex w-full items-center rounded-lg px-6 py-3">
 				<button
 					class="button-control"
 					onclick={() => setSelected(null)}
 				>
 					<ChevronLeftIcon class="m-auto" />
 				</button>
-				<div class="bg-secondary-10 ml-4 flex h-fit items-center gap-2 rounded-xl p-3">
+				<div class="ml-4 flex h-fit items-center gap-2 rounded-xl p-3">
 					<Suspense>
 						<Icon
 							name={selected().source.icon}
@@ -187,7 +182,7 @@ export default function EntryViewer({
 								}}
 								class="flex min-h-0 flex-1 origin-top flex-col overflow-hidden"
 							>
-								<div class="bg-secondary-10 min-h-0 w-full flex-1 overflow-hidden rounded-xl p-6 shadow-inner">
+								<div class="bg-secondary-05 min-h-0 w-full flex-1 overflow-hidden rounded-xl p-6 shadow-inner">
 									<Suspense
 										fallback={
 											<div class="flex h-full w-full items-center justify-center p-8">
@@ -254,39 +249,6 @@ export default function EntryViewer({
 					</Presence>
 				</div>
 			</div>
-		</Motion>
+		</div>
 	);
 }
-//const exampleEntry: EntryData = {
-//        id: 'entry-001',
-//        source: {
-//          tool: 'notepad',
-//          card: 'card-123',
-//          icon: '📝'
-//        },
-//        title: 'Example Entry',
-//        content: 'This is an example content body.',
-//        tags: ['example', 'demo'],
-//        createdAt: new Date().toISOString(),
-//        modifiedAt: new Date().toISOString(),
-//        meta: {
-//          author: 'ryusuke',
-//          wordCount: 124,
-//          color: '#FFD700',
-//          relatedCardId: 'card-456',
-//          editable: true,
-//          views: 57,
-//          lastSynced: new Date().toISOString()
-//        },
-//        type: 'note',
-//        archived: false,
-//        pinned: true,
-//        importance: 0.8,
-//        frequency: 0.3,
-//        scoreboard: {
-//          clarity: 7,
-//          impact: 5
-//        },
-//        customRadarKey: 'group-1'
-//      };
-//

@@ -1,4 +1,4 @@
-import { NotifyType } from "@type/NotifyType";
+import { NotifyType } from "@type/hollow";
 import { Accessor, lazy, Suspense } from "solid-js";
 import {
 	createEffect,

@@ -1,13 +1,20 @@
 import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
 import Tag from "../../components/Tag";
 import { Clock8Icon, PenLineIcon } from "lucide-solid";
-import { TagType } from "@type/TagType";
-import { HollowEvent } from "hollow-api";
-import { ContextMenuItem, Item } from "@type/ContextMenuItem";
+import { TagType } from "@type/hollow";
+import { HollowEvent } from "@type/hollow";
+import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { KanbanItemType } from "./KanbanItemType";
 import { Show } from "solid-js";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
+
+const priorityColors: Record<string, string> = {
+	low: "#16a34a",
+	medium: "#ca8a04",
+	high: "#dc2626",
+	urgent: "#b91c1c",
+};
 
 type KanbanItemProps = {
 	toolEvent?: HollowEvent;
@@ -47,16 +54,21 @@ export default function KanbanItem({
 			};
 		});
 	});
-
+	const onSelect = () => {
+		setSelectedGroup((prev) =>
+			prev.includes(item().id)
+				? prev.filter((i) => i !== item().id)
+				: [...prev, item().id],
+		);
+	};
 	// context menu
 	const handleContextMenu = () => {
 		const metadata: ToolMetadata = toolEvent.getCurrentData("metadata");
 		const columns = metadata.cards
 			.filter((i) => i.name !== cardName)
 			.map((i) => {
-				const cmItem: Item = {
-					icon: "BetweenHorizontalStart",
-					label: i.name,
+				const cmItem: ContextMenuItemButton = {
+					label: `${i.emoji} ${i.name}`,
 					onclick: () => {
 						toolEvent.emit(`${i.name}-receive-task`, [item()]);
 						removeItem(item().id);
@@ -106,37 +118,33 @@ export default function KanbanItem({
 			}}
 			classList={{ "cursor-pointer select-none": isActive }}
 			oncontextmenu={handleContextMenu}
+			onclick={(e) => e.ctrlKey && onSelect()}
 		>
-			<Show when={!isActive}>
-				<div
-					class="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100"
-					classList={{
-						"opacity-100": selectedGroup()?.includes(item().id),
-					}}
-				>
-					<input
-						type="checkbox"
-						class="checkbox"
-						style={{
-							"--accent-color": accentColor(),
-							"--margin": 0,
-						}}
-						checked={selected()}
-						onclick={() => {
-							setSelectedGroup((prev) =>
-								prev.includes(item().id)
-									? prev.filter((i) => i !== item().id)
-									: [...prev, item().id],
-							);
-						}}
-					/>
-				</div>
-			</Show>
 			<div>
-				<p class="border-secondary-10 truncate border-b border-dashed p-3 text-sm">
-					<span class="text-neutral-500">Title: </span>
-					{item().title}
-				</p>
+				<div class="border-secondary-10 flex justify-between border-b border-dashed p-3 text-sm">
+					<p class="truncate">
+						<span class="text-neutral-500">Title: </span>
+						{item().title}
+					</p>
+
+					<div
+						class="opacity-0 transition-opacity group-hover:opacity-100"
+						classList={{
+							"opacity-100": selectedGroup()?.includes(item().id),
+						}}
+					>
+						<input
+							type="checkbox"
+							class="checkbox"
+							style={{
+								"--accent-color": accentColor(),
+								"--margin": 0,
+							}}
+							checked={selected()}
+							onclick={onSelect}
+						/>
+					</div>
+				</div>
 				<p class="p-3 text-sm">{item().content}</p>
 				<Show when={item().tags.length > 0}>
 					<div
@@ -176,7 +184,6 @@ export default function KanbanItem({
 								r="14"
 								class="text-secondary-50 stroke-current"
 								fill="none"
-								//stroke={accentColor()}
 								stroke-width="6"
 								stroke-dasharray="100"
 								stroke-dashoffset={100 - item().progress}
@@ -187,6 +194,13 @@ export default function KanbanItem({
 					<span class="pl-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400">
 						{item().progress}%
 					</span>
+					<span
+						class="border-secondary-10 ml-2 border-l pl-2 text-xs font-medium"
+						style={{ color: priorityColors[item().priority] }}
+					>
+						{item().priority}
+					</span>
+
 					<div class="ml-auto flex items-center text-neutral-500">
 						<Clock8Icon class="size-3" />
 						<span class="pl-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400">

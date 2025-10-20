@@ -4,7 +4,7 @@ import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import { RealmManager } from "@managers/RealmManager";
 import { ToolManager } from "@managers/ToolManager";
-import { DataBase, HollowEvent } from "hollow-api";
+import { DataBase, HollowEvent } from "@type/hollow";
 import { Setter } from "solid-js";
 import { EditorKitType } from "./EditorKitType";
 

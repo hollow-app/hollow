@@ -3,7 +3,7 @@ import { useBackground } from "@hooks/useBackground";
 import useCodeTheme from "@hooks/useCodeTheme";
 import { useColor } from "@hooks/useColor";
 import useTags from "@hooks/useTags";
-import { EntryData } from "@type/EntryData";
+import { EntryType } from "@type/hollow";
 import { EntryManager } from "./EntryManager";
 import { hotkeysManager } from "./HotkeysManager";
 import { MarkdownManager } from "./MarkdownManager";
@@ -52,7 +52,7 @@ export async function initialization2() {
 }
 
 function handleEvents() {
-	window.hollowManager.on("send-entry", (entry: EntryData) =>
+	window.hollowManager.on("send-entry", (entry: EntryType) =>
 		window.entryManager.receiveEntry(entry),
 	);
 	window.hollowManager.on("remove-entry", (id: string) =>

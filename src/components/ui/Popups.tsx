@@ -1,4 +1,4 @@
-import { FormType } from "@type/FormType";
+import { FormType } from "@type/hollow";
 import { HandType } from "@type/HandType";
 import { createMemo, createSignal, lazy, onCleanup, onMount } from "solid-js";
 import ContextMenu from "./ContextMenu";

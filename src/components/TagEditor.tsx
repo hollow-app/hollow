@@ -1,4 +1,4 @@
-import { TagType } from "@type/TagType";
+import { TagType } from "@type/hollow";
 import { Trash2Icon } from "lucide-solid";
 import { readableColor } from "polished";
 import { Setter } from "solid-js";

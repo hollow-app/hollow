@@ -1,4 +1,4 @@
-import { CardInfo } from "./CardInfo";
+import { CardType } from "./hollow";
 
 export type HandType = {
 	version: string;
@@ -12,6 +12,6 @@ export type HandType = {
 	author: string;
 	authorUrl: string;
 	dbVersion: number;
-	cards: CardInfo[];
+	cards: CardType[];
 	signed?: boolean;
 };

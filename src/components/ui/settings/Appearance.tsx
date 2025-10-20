@@ -6,7 +6,7 @@ import { useColor } from "@hooks/useColor";
 import useCodeTheme from "@hooks/useCodeTheme";
 import useGrid from "@hooks/useGrid";
 import { createMemo, createSignal, For } from "solid-js";
-import { TagType } from "@type/TagType";
+import { TagType } from "@type/hollow";
 import useTags from "@hooks/useTags";
 import DropDown from "@components/DropDown";
 import { readableColor } from "polished";

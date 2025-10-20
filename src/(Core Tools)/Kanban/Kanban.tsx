@@ -8,10 +8,16 @@ import {
 	SortableProvider,
 	DragEventHandler,
 } from "@thisbeyond/solid-dnd";
-import { EntryData } from "@type/EntryData";
-import { TagType } from "@type/TagType";
-import { ToolOptions } from "@type/ToolOptions";
-import { ContextMenuItem, FormType, HollowEvent, ICard } from "hollow-api";
+import {
+	ContextMenuItem,
+	FormType,
+	HollowEvent,
+	ICard,
+	ToolOptions,
+	TagType,
+	EntryType,
+	AppEvents,
+} from "@type/hollow";
 import {
 	createMemo,
 	createSignal,
@@ -31,7 +37,7 @@ import KanbanItemMini from "./KanbanItemMini";
 type KanbanProps = {
 	data: KanbanColumnType;
 	card: ICard;
-	app: HollowEvent;
+	app: HollowEvent<AppEvents>;
 	manager: KanbanManager;
 };
 export default function Kanban({ card, data, app, manager }: KanbanProps) {
@@ -168,6 +174,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 			items: [...prev.items, ...tasks],
 		}));
 		updateKanban();
+		sendEntry(tasks);
 	};
 
 	// mini
@@ -207,8 +214,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 						children: metadata.cards
 							.filter((i) => i.name !== card.name)
 							.map((i) => ({
-								icon: "BetweenHorizontalStart",
-								label: i.name,
+								label: `${i.emoji} ${i.name}`,
 								onclick: () => {
 									card.toolEvent.emit(
 										`${i.name}-receive-task`,
@@ -218,6 +224,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 									);
 									removeSelected();
 									updateKanban();
+									setSelectedGroup([]);
 								},
 							})),
 					});
@@ -232,6 +239,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 							onAccept: () => {
 								removeSelected();
 								updateKanban();
+								setSelectedGroup([]);
 							},
 						});
 					},
@@ -295,8 +303,9 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 	const updateKanban = () => {
 		manager.saveColumn(kanban());
 	};
-	const sendEntry = (entry: KanbanItemType) => {
-		const entr: EntryData = {
+	const sendEntry = (e: KanbanItemType | KanbanItemType[]) => {
+		const entries = Array.isArray(e) ? e : [e];
+		const entr: EntryType[] = entries.map((entry: KanbanItemType) => ({
 			...entry,
 			meta: {
 				...entry.dates,
@@ -304,7 +313,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 				priority: entry.priority,
 			},
 			source: { card: card.name, tool: "kanban" },
-		};
+		}));
 		app.emit("send-entry", entr);
 	};
 	const removeEntry = (id: string) => {
@@ -315,7 +324,10 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		setHollowTags(newTags);
 	};
 	const updateMeta = (m: ToolMetadata) => {
-		setMeta(m.cards.find((i) => i.name === card.name));
+		const t = m.cards.find((i) => i.name === card.name);
+		if (t) {
+			setMeta(t);
+		}
 	};
 	onMount(() => {
 		app.on("tags", updateHollowTags);
@@ -352,7 +364,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 				<ControlButtons {...{ app, addItem, showForm }} />
 			</div>
 			{/* List */}
-			<div class="box-border w-full flex-1 overflow-hidden overflow-y-auto pt-2">
+			<div class="scrollbar-hidden box-border w-full flex-1 overflow-hidden overflow-y-auto pt-2">
 				<DragDropProvider
 					onDragStart={onDragStart}
 					onDragEnd={onDragEnd}

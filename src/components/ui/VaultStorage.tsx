@@ -1,5 +1,5 @@
 import VaultManager from "@managers/VaultManager";
-import { FormType } from "@type/FormType";
+import { FormType, FormOption } from "@type/hollow";
 import { VaultItem } from "@type/VaultItem";
 import { createSignal, For, Show } from "solid-js";
 import { appDataDir, join } from "@tauri-apps/api/path";
@@ -12,7 +12,6 @@ import {
 	Trash2Icon,
 } from "lucide-solid";
 import FilterButton from "@components/FilterButton";
-import { FormOption } from "hollow-api";
 
 type VaultStorageProps = {
 	onSelect?: (p: string) => void;

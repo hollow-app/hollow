@@ -3,5 +3,5 @@ export type ConfirmType = {
 	message: string;
 	onAccept: () => void;
 	accLabel?: string;
-	refLebel?: string;
+	refLabel?: string;
 };

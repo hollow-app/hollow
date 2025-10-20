@@ -1,6 +1,6 @@
-import { ContextMenuItem } from "@type/ContextMenuItem";
+import { ContextMenuItem } from "@type/hollow";
 import { EditorKitType } from "@type/EditorKitType";
-import { KitType } from "@type/KitType";
+import { KitType } from "@type/hollow";
 import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
 type VaultProps = {

@@ -1,13 +1,11 @@
 import { HandType } from "@type/HandType";
-import { HollowEvent, ICard, IPlugin } from "hollow-api";
+import { HollowEvent, ICard, IPlugin, CardType, KitType } from "@type/hollow";
 import { Setter } from "solid-js";
 import { initialStack } from "./initalStack";
-import { CardInfo } from "@type/CardInfo";
 import { ImageMain } from "@coretools/Image/ImageMain";
 import { NotebookMain } from "@coretools/NoteBook/NotebookMain";
 import { KanbanMain } from "@coretools/Kanban/KanbanMain";
 import { EmbedMain } from "@coretools/Embed/EmbedMain";
-import { KitType } from "@type/KitType";
 import { Opthand } from "@type/Opthand";
 import { ToolDataBase } from "./ToolDataBase";
 import { HollowManager } from "./HollowManager";
@@ -281,7 +279,7 @@ export class ToolManager {
 				off: happ.off.bind(happ),
 				emit: happ.emit.bind(happ),
 				clear: happ.clear.bind(happ),
-				reverse: happ.toggle.bind(happ),
+				toggle: happ.toggle.bind(happ),
 				getCurrentData: happ.getCurrentData.bind(happ),
 			});
 		}
@@ -302,7 +300,7 @@ export class ToolManager {
 		this.updateToolMetadata(toolName, metadata);
 	}
 
-	private placeCard(tool: HandType, card: CardInfo): void {
+	private placeCard(tool: HandType, card: CardType): void {
 		this.setHand((prev) => {
 			const nList = [...prev];
 			const target = nList.find(
@@ -315,7 +313,7 @@ export class ToolManager {
 		this.update();
 	}
 
-	private unPlaceCard(tool: HandType, card: CardInfo): void {
+	private unPlaceCard(tool: HandType, card: CardType): void {
 		const toolInstance = this.toolMap.get(tool.name);
 		toolInstance?.onUnload(card.name);
 
@@ -369,7 +367,7 @@ export class ToolManager {
 		const { tool } = this.getToolAndCard(toolName);
 		if (!tool) return;
 
-		const newCard: CardInfo = {
+		const newCard: CardType = {
 			name,
 			emoji: emoji,
 			isPlaced: false,
@@ -429,7 +427,7 @@ export class ToolManager {
 	private getToolAndCard(
 		toolName: string,
 		cardName?: string,
-	): { tool: HandType | undefined; card: CardInfo | undefined } {
+	): { tool: HandType | undefined; card: CardType | undefined } {
 		const tool = this.handMap.get(toolName);
 		const card = cardName
 			? tool?.cards.find((card) => card.name === cardName)

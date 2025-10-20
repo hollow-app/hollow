@@ -1,5 +1,5 @@
 import Notifications from "@components/ui/Notifications";
-import { NotifyType } from "@type/NotifyType";
+import { NotifyType } from "@type/hollow";
 import data from "emojibase-data/en/compact.json";
 import { Setter } from "solid-js";
 import { isExpired, weekOld } from "./manipulation/strings";

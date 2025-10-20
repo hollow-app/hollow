@@ -5,8 +5,13 @@ import FilePlusIcon from "@assets/icons/files/file-plus.svg";
 import FileDescriptionIcon from "@assets/icons/files/file-description.svg";
 import FolderOpenIcon from "@assets/icons/folder-open.svg";
 import FolderCloseIcon from "@assets/icons/folder-close.svg";
-import { TagType } from "@type/TagType";
-import { HollowEvent, ICard } from "hollow-api";
+import {
+	HollowEvent,
+	ICard,
+	ContextMenuItem,
+	TagType,
+	AppEvents,
+} from "@type/hollow";
 import { NotebookTabsIcon } from "lucide-solid";
 import {
 	Accessor,
@@ -19,12 +24,11 @@ import {
 	Setter,
 	Show,
 } from "solid-js";
-import { ContextMenuItem } from "@type/ContextMenuItem";
-import { ToolOptions } from "@type/ToolOptions";
+import { ToolOptions } from "@type/hollow";
 import TextareaAutosize from "solid-textarea-autosize";
 import { Motion, Presence } from "solid-motionone";
-import { EntryData } from "@type/EntryData";
 import { NotebookType } from "./NotebookType";
+import { EntryType } from "@type/hollow";
 import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
 import { timeDifference } from "@managers/manipulation/strings";
@@ -34,7 +38,7 @@ const WordInput = lazy(() => import("@components/WordInput"));
 
 type NotebookProps = {
 	card: ICard;
-	app: HollowEvent;
+	app: HollowEvent<AppEvents>;
 	noteBook: NotebookType;
 	manager: NotebookManager;
 };
@@ -116,7 +120,7 @@ export default function Notebook({
 			});
 		}
 	};
-	const sendEntry = (entry: EntryData) => {
+	const sendEntry = (entry: EntryType) => {
 		app.emit("send-entry", entry);
 	};
 	const removeEntry = (id: string) => {

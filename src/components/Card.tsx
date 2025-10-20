@@ -1,4 +1,4 @@
-import { CardInfo } from "@type/CardInfo";
+import { CardType } from "@type/hollow";
 import { HandType } from "@type/HandType";
 import {
 	Grid2X2PlusIcon,
@@ -15,7 +15,7 @@ export default function Card({
 	myCard,
 	setHand,
 }: {
-	myCard: CardInfo & { tool: string; icon: string; title: string };
+	myCard: CardType & { tool: string; icon: string; title: string };
 	setHand: Setter<HandType[]>;
 }) {
 	const [isPlaced, setPlaced] = createSignal(myCard.isPlaced);

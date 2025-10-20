@@ -1,5 +1,5 @@
 // KanbanManager.ts
-import { ContextMenuItem } from "hollow-api";
+import { ContextMenuItem } from "@type/hollow";
 import { KanbanColumnType } from "./KanbanColumnType";
 
 export class KanbanManager {

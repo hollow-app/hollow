@@ -8,7 +8,7 @@ import {
 	Suspense,
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import { ContextMenuItem } from "@type/ContextMenuItem";
+import { ContextMenuItem } from "@type/hollow";
 import ContextMenuSide from "./ContextMenuSide";
 import { lazy } from "solid-js";
 const Icon = lazy(() => import("@components/Icon"));
@@ -175,13 +175,18 @@ export default function ContextMenu() {
 										</div>
 										<div>
 											<For each={group.items}>
-												{(item) =>
-													item.children ? (
-														<ContextMenuSide
-															{...item}
-															position={position}
-														/>
-													) : (
+												{(item) => (
+													<Show
+														when={!item.children}
+														fallback={
+															<ContextMenuSide
+																{...item}
+																position={
+																	position
+																}
+															/>
+														}
+													>
 														<button
 															class="button-cm active-cm"
 															onclick={() => {
@@ -192,19 +197,22 @@ export default function ContextMenu() {
 																);
 															}}
 														>
-															<Suspense>
-																{" "}
-																<Icon
-																	name={
-																		item.icon
-																	}
-																	class="h-4 w-4"
-																/>
-															</Suspense>
+															<Show
+																when={item.icon}
+															>
+																<Suspense>
+																	<Icon
+																		name={
+																			item.icon
+																		}
+																		class="h-4 w-4"
+																	/>
+																</Suspense>
+															</Show>
 															{item.label}
 														</button>
-													)
-												}
+													</Show>
+												)}
 											</For>
 										</div>
 									</>

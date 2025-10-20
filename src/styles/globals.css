@@ -97,6 +97,19 @@
 	visibility: hidden;
 }
 
+
+.scrollbar-hidden::-webkit-scrollbar {
+	display: none;
+}
+
+.scrollbar-hidden {
+	scrollbar-width: none;
+}
+
+.scrollbar-hidden {
+	-ms-overflow-style: none;
+}
+
 .os-scrollbar {
 	right: 1px !important;
 	bottom: 1px !important;

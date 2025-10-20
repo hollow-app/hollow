@@ -24,7 +24,6 @@
 		"emojibase-data": "^16.0.2",
 		"github-slugger": "^2.0.0",
 		"highlight.js": "^11.11.1",
-		"hollow-api": "^1.1.1",
 		"katex": "^0.16.22",
 		"lucide-solid": "^0.525.0",
 		"marked": "^15.0.7",

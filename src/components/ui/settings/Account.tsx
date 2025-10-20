@@ -1,7 +1,7 @@
 import DropDown from "@components/DropDown";
 import { CharacterManager } from "@managers/CharacterManager";
 import { Character } from "@type/Character";
-import { FormType } from "hollow-api";
+import { FormType } from "@type/hollow";
 import { SquarePenIcon, Trash2Icon } from "lucide-solid";
 import { For } from "solid-js";
 import { createMemo, createSignal } from "solid-js";

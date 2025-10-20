@@ -1,56 +1,132 @@
-import { EntryData } from "@type/EntryData";
+import { EntryType } from "@type/hollow";
 
 export class EntryManager {
-	public entries: EntryData[];
-	constructor() {
-		this.entries = JSON.parse(
-			localStorage.getItem(
-				`${window.realmManager.currentRealmId}-entry`,
-			) ?? "[]",
-		);
-		window.hollowManager.emit("entries", this.entries);
-	}
-	public receiveEntry(entry: EntryData) {
-		let index = this.entries.findIndex((i) => i.id === entry.id);
-		const date = new Date().toISOString();
-		if (index !== -1) {
-			const prev = this.entries[index];
-			this.entries[index] = {
-				...entry,
-				source: {
-					...entry.source,
-					icon: prev.source.icon,
-				},
-				createdAt: prev.createdAt,
-				modifiedAt: date,
-			};
-		} else {
-			this.entries.push({
-				...entry,
-				source: {
-					...entry.source,
-					icon:
-						entry.source.icon ??
-						window.toolManager
-							.getHand()
-							.find((i) => i.name === entry.source.tool).icon,
-				},
-				createdAt: date,
-				modifiedAt: date,
-			});
+	public entries: EntryType[] = [];
+	private dbName: string;
+	private db: IDBDatabase | null = null;
+	private static self: EntryManager;
+
+	static getSelf() {
+		if (!this.self) {
+			this.self = new EntryManager();
 		}
-		this.update();
+		return this.self;
 	}
-	public removeEntry(id: string | string[]) {
+	async start() {
+		this.dbName = `${window.realmManager.currentRealmId}-entry`;
+		this.initDB().then(() => this.loadEntries());
+	}
+
+	private async initDB(): Promise<void> {
+		return new Promise((resolve, reject) => {
+			const request = indexedDB.open(this.dbName, 1);
+
+			request.onupgradeneeded = (event) => {
+				const db = (event.target as IDBOpenDBRequest).result;
+				if (!db.objectStoreNames.contains("entries")) {
+					const store = db.createObjectStore("entries", {
+						keyPath: "id",
+					});
+					store.createIndex("id", "id", { unique: true });
+				}
+			};
+
+			request.onsuccess = (event) => {
+				this.db = (event.target as IDBOpenDBRequest).result;
+				resolve();
+			};
+
+			request.onerror = (event) => {
+				console.error("IndexedDB error:", request.error);
+				reject(event);
+			};
+		});
+	}
+
+	private async loadEntries(): Promise<void> {
+		if (!this.db) return;
+		const tx = this.db.transaction("entries", "readonly");
+		const store = tx.objectStore("entries");
+		const request = store.getAll();
+
+		request.onsuccess = () => {
+			this.entries = request.result ?? [];
+			window.hollowManager.emit("entries", this.entries);
+		};
+	}
+
+	public async receiveEntry(e: EntryType | EntryType[]): Promise<void> {
+		const entries = Array.isArray(e) ? e : [e];
+		const date = new Date().toISOString();
+
+		for (const entry of entries) {
+			const existing = this.entries.find((i) => i.id === entry.id);
+			if (existing) {
+				Object.assign(existing, {
+					...entry,
+					source: {
+						...entry.source,
+						icon: existing.source.icon,
+					},
+					createdAt: existing.createdAt,
+					modifiedAt: date,
+				});
+			} else {
+				this.entries.push({
+					...entry,
+					source: {
+						...entry.source,
+						icon:
+							entry.source.icon ??
+							window.toolManager
+								.getHand()
+								.find((i) => i.name === entry.source.tool).icon,
+					},
+					createdAt: date,
+					modifiedAt: date,
+				});
+			}
+		}
+
+		await this.update();
+	}
+
+	public async removeEntry(id: string | string[]): Promise<void> {
 		const ids = typeof id === "string" ? [id] : id;
 		this.entries = this.entries.filter((i) => !ids.includes(i.id));
-		this.update();
+		await this.update();
+
+		if (!this.db) return;
+		const tx = this.db.transaction("entries", "readwrite");
+		const store = tx.objectStore("entries");
+		for (const entryId of ids) {
+			store.delete(entryId);
+		}
 	}
-	private update() {
-		localStorage.setItem(
-			`${window.realmManager.currentRealmId}-entry`,
-			JSON.stringify(this.entries),
-		);
-		window.hollowManager.emit("entries", this.entries);
+
+	private async update(): Promise<void> {
+		if (!this.db) return;
+
+		return new Promise((resolve, reject) => {
+			const tx = this.db!.transaction("entries", "readwrite");
+			const store = tx.objectStore("entries");
+
+			for (const entry of this.entries) {
+				store.put(entry);
+			}
+
+			tx.oncomplete = () => {
+				window.hollowManager.emit("entries", this.entries);
+				resolve();
+			};
+			tx.onerror = () => {
+				console.error("IndexedDB update error:", tx.error);
+				reject(tx.error);
+			};
+			tx.onabort = () => {
+				console.warn("IndexedDB transaction aborted");
+				reject(tx.error);
+			};
+		});
 	}
 }

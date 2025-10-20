@@ -5,7 +5,7 @@ import ImportFile from "@components/ImportFile";
 import NumberInput from "@components/NumberInput";
 import Slider from "@components/Slider";
 import WordInput from "@components/WordInput";
-import { ToolOption, ToolOptions } from "@type/ToolOptions";
+import { ToolOption, ToolOptions } from "@type/hollow";
 import { createMemo, For } from "solid-js";
 
 type ToolSettingsProps = {
@@ -263,9 +263,6 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 													case "file":
 														return (
 															<ImportFile
-																accepts={
-																	option.accept
-																}
 																xfile={
 																	option.value
 																}

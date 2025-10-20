@@ -1,5 +1,5 @@
-import { CardInfo } from "./CardInfo";
+import { CardType } from "./hollow";
 
 export type ToolMetadata = {
-        cards: CardInfo[];
+	cards: CardType[];
 };

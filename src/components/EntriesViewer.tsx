@@ -1,10 +1,8 @@
-import { EntryData } from "@type/EntryData";
-import { TagType } from "@type/TagType";
+import { TagType } from "@type/hollow";
 import { For, createMemo, createSignal, Show, Suspense } from "solid-js";
 import Tag from "./Tag";
 import { ChevronsUpDownIcon, SearchIcon } from "lucide-solid";
 import FilterButton from "./FilterButton";
-import { Motion, Presence } from "solid-motionone";
 import EntryViewer from "./EntryViewer";
 import { lazy } from "solid-js";
 const Icon = lazy(() => import("@components/Icon"));
@@ -73,15 +71,10 @@ export default function EntriesViewer() {
 	return (
 		<div class="pop-up">
 			<div class="up-pop lvl-1 bg-secondary pointer-events-auto absolute flex flex-col items-center gap-0 rounded-xl p-6 text-xl">
-				<Presence exitBeforeEnter>
-					<Show when={!selected()}>
-						<Motion
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 0 }}
-							transition={{ duration: 0.4 }}
-							class="w-full"
-						>
+				<Show
+					when={selected()}
+					fallback={
+						<div class="w-full">
 							<div class="mb-8 flex h-24 w-full items-center gap-6">
 								<div class="flex w-[65%] flex-col justify-center rounded-lg">
 									<h1 class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
@@ -309,17 +302,16 @@ export default function EntriesViewer() {
 									)}
 								</For>
 							</div>
-						</Motion>
-					</Show>
-					<Show when={selected()}>
-						<EntryViewer
-							selected={selected}
-							setEntries={setEntries}
-							setSelected={setSelected}
-							hollowTags={[...hollowTags()]}
-						/>
-					</Show>
-				</Presence>
+						</div>
+					}
+				>
+					<EntryViewer
+						selected={selected}
+						setEntries={setEntries}
+						setSelected={setSelected}
+						hollowTags={[...hollowTags()]}
+					/>
+				</Show>
 			</div>
 		</div>
 	);

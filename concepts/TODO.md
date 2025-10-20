@@ -8,7 +8,8 @@
 - [ ] the secondary/p colors going to cause a problem when selector is opened mid realm. the best option is making the selector async and setColors to the predefined theme for selector.
 # L2
 - [ ] code themes should only include 2 themes. others can be downloaded once the user selects them.
-
+- [ ] replace certain types with hollow-api.d.ts file.
+- [ ] opt
 # BUGS
 
 - [x] the emoji and the tool info in the expanded panel are above the settings window!

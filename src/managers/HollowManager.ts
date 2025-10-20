@@ -1,4 +1,4 @@
-import { HollowEvent } from "hollow-api";
+import { HollowEvent } from "@type/hollow";
 
 type Listener<T> = (data?: T) => void;
 

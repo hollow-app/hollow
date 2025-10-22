@@ -25,7 +25,8 @@ export async function initialization2() {
 	}
 	const devData = handleDev();
 	window.toolManager = await ToolManager.create(devData.loadunsigned);
-	window.entryManager = new EntryManager();
+	window.entryManager = EntryManager.getSelf();
+	await window.entryManager.start();
 	useColor({ name: "primary" });
 	useColor({ name: "secondary" });
 	// ????? this setStyle is for what TODO

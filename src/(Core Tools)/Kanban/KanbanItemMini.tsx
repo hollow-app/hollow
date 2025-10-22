@@ -6,12 +6,6 @@ import { KanbanItemType } from "./KanbanItemType";
 import { Show } from "solid-js";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
 
-const priorityColors: Record<string, string> = {
-	low: "#16a34a",
-	medium: "#ca8a04",
-	high: "#dc2626",
-	urgent: "#b91c1c",
-};
 type KanbanItemMiniProps = {
 	item: () => KanbanItemType;
 	hollowTags: Accessor<TagType[]>;
@@ -98,7 +92,12 @@ export default function KanbanItemMini({
 					</span>
 					<span
 						class="border-secondary-10 ml-2 border-l pl-2 text-xs font-medium"
-						style={{ color: priorityColors[item().priority] }}
+						classList={{
+							"text-green-400": item().priority === "low",
+							"text-yellow-400": item().priority === "medium",
+							"text-orange-400": item().priority === "high",
+							"text-red-400": item().priority === "urgent",
+						}}
 					>
 						{item().priority}
 					</span>

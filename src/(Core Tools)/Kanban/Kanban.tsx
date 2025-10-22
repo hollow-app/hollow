@@ -19,6 +19,7 @@ import {
 	AppEvents,
 } from "@type/hollow";
 import {
+	Accessor,
 	createMemo,
 	createSignal,
 	For,
@@ -51,13 +52,18 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		),
 	);
 
-	const percentage = createMemo(
-		() => (kanban().items.length * 100) / kanban().max,
-	);
-
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
 		app.getCurrentData("tags"),
 	);
+
+	const footer = createMemo(() => {
+		const total = kanban().items.length;
+		const avgPercentage =
+			total !== 0
+				? kanban().items.reduce((a, c) => c.progress + a, 0) / total
+				: 0;
+		return `Total: ${total} (${(total * 100) / kanban().max}%) | avgProgress: ${avgPercentage}%`;
+	});
 
 	// Items Management
 	const updateItem = (item: KanbanItemType) => {
@@ -82,7 +88,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		updateKanban();
 	};
 	const addItem = (item: KanbanItemType) => {
-		if (percentage() < 100) {
+		if (kanban().items.length / kanban().max < 1) {
 			setKanban((prev: KanbanColumnType) => ({
 				...prev,
 				items: [...prev.items, item],
@@ -422,10 +428,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 					</DragOverlay>
 				</DragDropProvider>
 			</div>
-			{/* Add */}
-			<div class="border-secondary-10 border-t pt-1 text-xs text-neutral-500 opacity-0 @min-[10rem]:opacity-100">
-				Total: {kanban().items.length} -
-			</div>
+			<Footer kanban={kanban} />
 		</div>
 	);
 }
@@ -452,6 +455,57 @@ function ControlButtons({ addItem, showForm }: ControlButtonsProps) {
 			>
 				<PlusIcon class="size-4" />
 			</button>
+		</div>
+	);
+}
+
+type FooterProps = {
+	kanban: Accessor<KanbanColumnType>;
+};
+function Footer({ kanban }: FooterProps) {
+	const total = createMemo(() => kanban().items.length);
+
+	const fillPercentage = createMemo(() =>
+		kanban().max > 0 ? (total() * 100) / kanban().max : 0,
+	);
+
+	const avgProgress = createMemo(() => {
+		const items = kanban().items;
+		if (items.length === 0) return 0;
+		return (
+			items.reduce((sum, item) => sum + item.progress, 0) / items.length
+		);
+	});
+
+	const priorityStats = createMemo(() => {
+		const counts = { low: 0, medium: 0, high: 0, urgent: 0 };
+		for (const item of kanban().items) {
+			if (item.priority) counts[item.priority]++;
+		}
+		return counts;
+	});
+
+	return (
+		<div class="border-secondary-05 flex items-center justify-between border-t pt-1 font-mono text-xs text-neutral-500 opacity-0 @min-[10rem]:opacity-100">
+			<div class="flex items-center gap-1" title="Total">
+				<span>
+					{total()} / {kanban().max}
+				</span>
+				<span>({fillPercentage().toFixed(0)}%)</span>
+			</div>
+			<div class="flex items-center gap-1" title="avgProgress">
+				<span>{avgProgress().toFixed(0)}%</span>
+			</div>
+			<div class="flex items-center gap-2">
+				<div class="flex gap-1">
+					<span class="text-green-400">{priorityStats().low}</span>
+					<span class="text-yellow-400">
+						{priorityStats().medium}
+					</span>
+					<span class="text-orange-400">{priorityStats().high}</span>
+					<span class="text-red-500">{priorityStats().urgent}</span>
+				</div>
+			</div>
 		</div>
 	);
 }

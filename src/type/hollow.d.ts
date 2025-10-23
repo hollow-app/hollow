@@ -362,6 +362,7 @@ export type TypedOptionMap = {
 	emoji: {};
 	dropdown: { options: string[] };
 	file: { accept?: string };
+	image: {};
 	range: { min: number; max: number; step?: number };
 	keywords: { placeholder?: string };
 };

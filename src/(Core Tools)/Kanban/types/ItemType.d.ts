@@ -1,4 +1,4 @@
-export type KanbanItemType = {
+export type ItemType = {
 	id: string;
 	title: string;
 	content: string;

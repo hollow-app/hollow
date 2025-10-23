@@ -1,6 +1,4 @@
-// KanbanManager.ts
-import { ContextMenuItem } from "@type/hollow";
-import { KanbanColumnType } from "./KanbanColumnType";
+import { ColumnType } from "./types/ColumnType";
 
 export class KanbanManager {
 	private dbPromise: Promise<IDBDatabase> | null = null;
@@ -25,7 +23,7 @@ export class KanbanManager {
 		});
 	}
 
-	async getColumn(columnId: string): Promise<KanbanColumnType | null> {
+	async getColumn(columnId: string): Promise<ColumnType | null> {
 		const db = await this.dbPromise;
 		return new Promise((resolve, reject) => {
 			const tx = db!.transaction("columns", "readonly");
@@ -37,7 +35,7 @@ export class KanbanManager {
 		});
 	}
 
-	async saveColumn(column: KanbanColumnType): Promise<void> {
+	async saveColumn(column: ColumnType): Promise<void> {
 		const db = await this.dbPromise;
 		return new Promise((resolve, reject) => {
 			const tx = db!.transaction("columns", "readwrite");
@@ -48,16 +46,7 @@ export class KanbanManager {
 		});
 	}
 
-	// async sendItemToColumn(
-	// 	itemsId: string[],
-	// 	targetColumnId: string,
-	// ): Promise<void> {
-	// 	// TODO: Send the item to another column using the app's API
-	//
-	// }
-
-	/** Clears this column completely */
-	async clearColumn(column: KanbanColumnType): Promise<void> {
+	async clearColumn(column: ColumnType): Promise<void> {
 		const emptyColumn = {
 			...column,
 			items: [],

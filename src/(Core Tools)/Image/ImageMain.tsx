@@ -2,30 +2,17 @@ import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
+import { ImageManager } from "./ImageManager";
+import { ImageType } from "./ImageType";
 
 const Image = lazy(() => import("./Image"));
 
-export type ImageData = {
-	url: string;
-	caption?: string;
-	alt?: string;
-	objectFit: "contain" | "cover" | "fill" | "none" | "scale-down";
-	position?: {
-		x: number;
-		y: number;
-	};
-};
-
 export class ImageMain implements IPlugin {
-	private db: DataBase = null;
 	private roots: Map<string, () => void> = new Map();
 
-	constructor(db?: DataBase) {
-		this.db = db;
-	}
-
 	async onCreate(name: string): Promise<boolean> {
-		this.db.putData(name, {
+		await ImageManager.getSelf().saveImage({
+			id: name,
 			url: "",
 			caption: "",
 			alt: "",
@@ -36,26 +23,20 @@ export class ImageMain implements IPlugin {
 	}
 
 	async onDelete(name: string): Promise<boolean> {
-		this.db.deleteData(name);
+		await ImageManager.getSelf().removeImage(name);
 		return true;
 	}
 
 	async onLoad(card: ICard, app?: HollowEvent): Promise<boolean> {
 		const targetContainer = document.getElementById(card.containerID);
-		const data: ImageData = (await this.db.getData(card.name)) ?? {
-			url: "",
-			caption: "",
-			alt: "",
-			objectFit: "contain",
-			position: { x: 50, y: 50 },
-		};
+		const data: ImageType = await ImageManager.getSelf().getImage(
+			card.name,
+		);
 
 		if (targetContainer && !this.roots.has(card.name)) {
 			const dispose = createRoot((dispose) => {
 				render(
-					() => (
-						<Image card={card} app={app} data={data} db={this.db} />
-					),
+					() => <Image card={card} app={app} data={data} />,
 					targetContainer,
 				);
 				return dispose;

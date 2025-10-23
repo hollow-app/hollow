@@ -1,10 +1,10 @@
-import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
+import { AppEvents, HollowEvent, ICard, IPlugin } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot, lazy } from "solid-js";
-import { KanbanColumnType } from "./KanbanColumnType";
+import { ColumnType } from "./types/ColumnType";
 import { KanbanManager } from "./KanbanManager";
 
-const Kanban = lazy(() => import("./Kanban"));
+const Column = lazy(() => import("./components/Column"));
 
 export class KanbanMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
@@ -26,16 +26,14 @@ export class KanbanMain implements IPlugin {
 		return true;
 	}
 
-	async onLoad(card: ICard, app?: HollowEvent): Promise<boolean> {
+	async onLoad(card: ICard, app?: HollowEvent<AppEvents>): Promise<boolean> {
 		const targetContainer = document.getElementById(card.containerID);
 		if (targetContainer && !this.roots.has(card.name)) {
-			const data: KanbanColumnType = await this.manager.getColumn(
-				card.name,
-			);
+			const data: ColumnType = await this.manager.getColumn(card.name);
 			const dispose = createRoot((dispose) => {
 				render(
 					() => (
-						<Kanban
+						<Column
 							card={card}
 							data={data}
 							app={app}

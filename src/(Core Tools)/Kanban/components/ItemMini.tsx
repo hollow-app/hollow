@@ -1,21 +1,21 @@
 import { Accessor, createMemo, For } from "solid-js";
-import Tag from "../../components/Tag";
+import Tag from "../../../components/Tag";
 import { Clock8Icon } from "lucide-solid";
 import { TagType } from "@type/hollow";
-import { KanbanItemType } from "./KanbanItemType";
+import { ItemType } from "../types/ItemType";
 import { Show } from "solid-js";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
 
-type KanbanItemMiniProps = {
-	item: () => KanbanItemType;
+type ItemMiniProps = {
+	item: () => ItemType;
 	hollowTags: Accessor<TagType[]>;
 	parentWidth: () => string;
 };
-export default function KanbanItemMini({
+export default function ItemMini({
 	item,
 	hollowTags,
 	parentWidth,
-}: KanbanItemMiniProps) {
+}: ItemMiniProps) {
 	const tagColors = createMemo(() => {
 		const tags = item().tags;
 		return tags.map((tag) => {

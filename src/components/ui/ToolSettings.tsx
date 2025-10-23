@@ -58,9 +58,6 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 												{option.label}
 											</h1>
 											<h3 class="text-secondary-40">
-												{/*
-                                                                                                option.description
-                                                                                        */}
 												<For
 													each={option.description.split(
 														/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,
@@ -271,7 +268,23 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																}
 															/>
 														);
-
+													case "image":
+														return (
+															<button
+																class="button-primary"
+																onclick={() => {
+																	window.hollowManager(
+																		"show-vault",
+																		{
+																			onSelect:
+																				option.onChange,
+																		},
+																	);
+																}}
+															>
+																Vault
+															</button>
+														);
 													case "range":
 														return (
 															<Slider

@@ -1,4 +1,5 @@
-import KanbanItem from "@coretools/Kanban/KanbanItem";
+import KanbanItem from "@coretools/Kanban/components/Item";
+import Footer from "@coretools/Kanban/components/Footer";
 import Sortable from "@components/Sortable";
 import {
 	closestCenter,
@@ -28,20 +29,20 @@ import {
 	Show,
 } from "solid-js";
 
-import { KanbanColumnType } from "./KanbanColumnType";
-import { KanbanManager } from "./KanbanManager";
-import { KanbanItemType } from "./KanbanItemType";
+import { ColumnType } from "../types/ColumnType";
+import { KanbanManager } from "../KanbanManager";
+import { ItemType } from "../types/ItemType";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { PlusIcon } from "lucide-solid";
-import KanbanItemMini from "./KanbanItemMini";
+import ItemMini from "./ItemMini";
 
-type KanbanProps = {
-	data: KanbanColumnType;
+type ColumnProps = {
+	data: ColumnType;
 	card: ICard;
 	app: HollowEvent<AppEvents>;
 	manager: KanbanManager;
 };
-export default function Kanban({ card, data, app, manager }: KanbanProps) {
+export default function Column({ card, data, app, manager }: ColumnProps) {
 	let listDiv: HTMLDivElement;
 	const [kanban, setKanban] = createSignal(data);
 	const [activeItem, setActiveItem] = createSignal<string | null>(null);
@@ -56,18 +57,9 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		app.getCurrentData("tags"),
 	);
 
-	const footer = createMemo(() => {
-		const total = kanban().items.length;
-		const avgPercentage =
-			total !== 0
-				? kanban().items.reduce((a, c) => c.progress + a, 0) / total
-				: 0;
-		return `Total: ${total} (${(total * 100) / kanban().max}%) | avgProgress: ${avgPercentage}%`;
-	});
-
 	// Items Management
-	const updateItem = (item: KanbanItemType) => {
-		setKanban((prev: KanbanColumnType) => ({
+	const updateItem = (item: ItemType) => {
+		setKanban((prev: ColumnType) => ({
 			...prev,
 			items: prev.items.map((i) => (i.id === item.id ? item : i)),
 		}));
@@ -81,15 +73,15 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		});
 	};
 	const removeItem = (id: string) => {
-		setKanban((prev: KanbanColumnType) => ({
+		setKanban((prev: ColumnType) => ({
 			...prev,
 			items: prev.items.filter((i) => i.id !== id),
 		}));
 		updateKanban();
 	};
-	const addItem = (item: KanbanItemType) => {
+	const addItem = (item: ItemType) => {
 		if (kanban().items.length / kanban().max < 1) {
-			setKanban((prev: KanbanColumnType) => ({
+			setKanban((prev: ColumnType) => ({
 				...prev,
 				items: [...prev.items, item],
 			}));
@@ -174,8 +166,8 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 		};
 		app.emit("tool-settings", settings);
 	};
-	const handleReceiveTask = (tasks: KanbanItemType[]) => {
-		setKanban((prev: KanbanColumnType) => ({
+	const handleReceiveTask = (tasks: ItemType[]) => {
+		setKanban((prev: ColumnType) => ({
 			...prev,
 			items: [...prev.items, ...tasks],
 		}));
@@ -259,7 +251,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 			app.emit("context-menu-extend", cm);
 		}
 	};
-	const showForm = (onSubmit: (data: any) => void, item?: KanbanItemType) => {
+	const showForm = (onSubmit: (data: any) => void, item?: ItemType) => {
 		const form: FormType = {
 			id: item?.id ?? crypto.randomUUID(),
 			title: "New Item",
@@ -309,9 +301,9 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 	const updateKanban = () => {
 		manager.saveColumn(kanban());
 	};
-	const sendEntry = (e: KanbanItemType | KanbanItemType[]) => {
+	const sendEntry = (e: ItemType | ItemType[]) => {
 		const entries = Array.isArray(e) ? e : [e];
-		const entr: EntryType[] = entries.map((entry: KanbanItemType) => ({
+		const entr: EntryType[] = entries.map((entry: ItemType) => ({
 			...entry,
 			meta: {
 				...entry.dates,
@@ -410,7 +402,7 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 					<DragOverlay>
 						<div class="sortable">
 							<Show when={activeItem()}>
-								<KanbanItemMini
+								<ItemMini
 									item={() =>
 										kanban().items.find(
 											(i) => i.id == activeItem(),
@@ -434,8 +426,8 @@ export default function Kanban({ card, data, app, manager }: KanbanProps) {
 }
 
 type ControlButtonsProps = {
-	addItem: (item: KanbanItemType) => void;
-	showForm: (onSubmit: (data: any) => void, item?: KanbanItemType) => void;
+	addItem: (item: ItemType) => void;
+	showForm: (onSubmit: (data: any) => void, item?: ItemType) => void;
 };
 function ControlButtons({ addItem, showForm }: ControlButtonsProps) {
 	const onNewItem = () => {
@@ -455,57 +447,6 @@ function ControlButtons({ addItem, showForm }: ControlButtonsProps) {
 			>
 				<PlusIcon class="size-4" />
 			</button>
-		</div>
-	);
-}
-
-type FooterProps = {
-	kanban: Accessor<KanbanColumnType>;
-};
-function Footer({ kanban }: FooterProps) {
-	const total = createMemo(() => kanban().items.length);
-
-	const fillPercentage = createMemo(() =>
-		kanban().max > 0 ? (total() * 100) / kanban().max : 0,
-	);
-
-	const avgProgress = createMemo(() => {
-		const items = kanban().items;
-		if (items.length === 0) return 0;
-		return (
-			items.reduce((sum, item) => sum + item.progress, 0) / items.length
-		);
-	});
-
-	const priorityStats = createMemo(() => {
-		const counts = { low: 0, medium: 0, high: 0, urgent: 0 };
-		for (const item of kanban().items) {
-			if (item.priority) counts[item.priority]++;
-		}
-		return counts;
-	});
-
-	return (
-		<div class="border-secondary-05 flex items-center justify-between border-t pt-1 font-mono text-xs text-neutral-500 opacity-0 @min-[10rem]:opacity-100">
-			<div class="flex items-center gap-1" title="Total">
-				<span>
-					{total()} / {kanban().max}
-				</span>
-				<span>({fillPercentage().toFixed(0)}%)</span>
-			</div>
-			<div class="flex items-center gap-1" title="avgProgress">
-				<span>{avgProgress().toFixed(0)}%</span>
-			</div>
-			<div class="flex items-center gap-2">
-				<div class="flex gap-1">
-					<span class="text-green-400">{priorityStats().low}</span>
-					<span class="text-yellow-400">
-						{priorityStats().medium}
-					</span>
-					<span class="text-orange-400">{priorityStats().high}</span>
-					<span class="text-red-500">{priorityStats().urgent}</span>
-				</div>
-			</div>
 		</div>
 	);
 }

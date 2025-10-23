@@ -4,7 +4,7 @@ import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import { RealmManager } from "@managers/RealmManager";
 import { ToolManager } from "@managers/ToolManager";
-import { DataBase, HollowEvent } from "@type/hollow";
+import { AppEvents, DataBase, HollowEvent } from "@type/hollow";
 import { Setter } from "solid-js";
 import { EditorKitType } from "./EditorKitType";
 
@@ -17,7 +17,7 @@ declare global {
 		onCopy: () => void;
 		onCut: () => void;
 		onPaste: () => void;
-		hollowManager: HollowManager;
+		hollowManager: HollowManager<AppEvents>;
 		realmManager: RealmManager;
 		toolManager: ToolManager;
 		entryManager: EntryManager;

@@ -1,28 +1,28 @@
-import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
-import Tag from "../../components/Tag";
-import { Clock8Icon, PenLineIcon } from "lucide-solid";
+import { Accessor, createMemo, For, Setter } from "solid-js";
+import Tag from "../../../components/Tag";
+import { Clock8Icon } from "lucide-solid";
 import { TagType } from "@type/hollow";
 import { HollowEvent } from "@type/hollow";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
 import { ToolMetadata } from "@type/ToolMetadata";
-import { KanbanItemType } from "./KanbanItemType";
+import { ItemType } from "../types/ItemType";
 import { Show } from "solid-js";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
 
-type KanbanItemProps = {
+type ItemProps = {
 	toolEvent?: HollowEvent;
 	cardName?: string;
-	item: () => KanbanItemType;
+	item: () => ItemType;
 	hollowTags: Accessor<TagType[]>;
-	updateItem?: (item: KanbanItemType) => void;
+	updateItem?: (item: ItemType) => void;
 	removeItem?: (id: string, byItemComponent?: boolean) => void;
 	isActive?: boolean;
 	accentColor: () => string;
-	showForm?: (onSubmit: (data: any) => void, item?: KanbanItemType) => void;
+	showForm?: (onSubmit: (data: any) => void, item?: ItemType) => void;
 	selectedGroup?: Accessor<string[]>;
 	setSelectedGroup?: Setter<string[]>;
 };
-export default function KanbanItem({
+export default function Item({
 	toolEvent,
 	cardName,
 	item,
@@ -34,7 +34,7 @@ export default function KanbanItem({
 	showForm,
 	selectedGroup,
 	setSelectedGroup,
-}: KanbanItemProps) {
+}: ItemProps) {
 	const selected = createMemo(() => selectedGroup().includes(item().id));
 	const tagColors = createMemo(() => {
 		const tags = item().tags;

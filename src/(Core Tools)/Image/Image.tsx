@@ -1,24 +1,17 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { DataBase, HollowEvent, ICard } from "@type/hollow";
-import { ImageData } from "./ImageMain";
+import { HollowEvent, ICard } from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
+import { ImageType } from "./ImageType";
+import { ImageManager } from "./ImageManager";
 
 type ImageProps = {
-	data: ImageData;
+	data: ImageType;
 	card: ICard;
 	app: HollowEvent;
-	db: DataBase;
 };
-
-export default function Image({ data, card, app, db }: ImageProps) {
-	const [url, setUrl] = createSignal(data.url);
-	const [caption, setCaption] = createSignal(data.caption || "");
-	const [alt, setAlt] = createSignal(data.alt || "");
-	const [objectFit, setObjectFit] = createSignal(data.objectFit);
-	const [position, setPosition] = createSignal(
-		data.position || { x: 50, y: 50 },
-	);
+export default function Image({ data, card, app }: ImageProps) {
+	const [image, setImage] = createSignal(data);
 	const [isDragging, setIsDragging] = createSignal(false);
 	const [startPos, setStartPos] = createSignal({ x: 0, y: 0 });
 	const [showControls, setShowControls] = createSignal(false);
@@ -27,7 +20,7 @@ export default function Image({ data, card, app, db }: ImageProps) {
 		e: MouseEvent,
 		direction: "up" | "down" | "left" | "right",
 	) => {
-		if (objectFit() === "cover") {
+		if (image().objectFit === "cover") {
 			setIsDragging(true);
 			setStartPos({ x: e.clientX, y: e.clientY });
 
@@ -35,27 +28,31 @@ export default function Image({ data, card, app, db }: ImageProps) {
 				const deltaX = e.clientX - startPos().x;
 				const deltaY = e.clientY - startPos().y;
 
-				setPosition((prev) => ({
-					x: Math.max(
-						0,
-						Math.min(
-							100,
-							prev.x -
-								(direction === "left" || direction === "right"
-									? deltaX / 5
-									: 0),
+				setImage((prev) => ({
+					...prev,
+					position: {
+						x: Math.max(
+							0,
+							Math.min(
+								100,
+								prev.position.x -
+									(direction === "left" ||
+									direction === "right"
+										? deltaX / 5
+										: 0),
+							),
 						),
-					),
-					y: Math.max(
-						0,
-						Math.min(
-							100,
-							prev.y -
-								(direction === "up" || direction === "down"
-									? deltaY / 5
-									: 0),
+						y: Math.max(
+							0,
+							Math.min(
+								100,
+								prev.position.y -
+									(direction === "up" || direction === "down"
+										? deltaY / 5
+										: 0),
+							),
 						),
-					),
+					},
 				}));
 
 				setStartPos({ x: e.clientX, y: e.clientY });
@@ -65,69 +62,42 @@ export default function Image({ data, card, app, db }: ImageProps) {
 				setIsDragging(false);
 				document.removeEventListener("mousemove", handleMove);
 				document.removeEventListener("mouseup", handleUp);
-				// Save the new position
-				db.putData(card.name, {
-					url: url(),
-					caption: caption(),
-					alt: alt(),
-					objectFit: objectFit(),
-					position: position(),
-				});
+				updateImage();
 			};
 
 			document.addEventListener("mousemove", handleMove);
 			document.addEventListener("mouseup", handleUp);
 		}
 	};
-
-	const setImage = (file: File | string) => {
-		if (typeof file !== "string" && file) {
-			const reader = new FileReader();
-			reader.onload = () => {
-				setUrl(reader.result as string);
-			};
-			reader.readAsDataURL(file);
-		} else {
-			setUrl(file as string);
-		}
+	const updateImage = async () => {
+		await ImageManager.getSelf().saveImage(image());
 	};
-
 	const setSettingsVisible = () => {
-		const ini: ToolOptions = {
+		const settings: ToolOptions = {
 			tool: "Image",
 			card: card.name,
-			save: () => {
-				db.putData(card.name, {
-					url: url(),
-					caption: caption(),
-					alt: alt(),
-					objectFit: objectFit(),
-					position: position(),
-				});
-			},
+			save: updateImage,
 			options: [
 				{
 					label: "Image",
 					description: "Upload or provide image URL",
-					type: "file",
+					type: "image",
 					onChange: setImage,
-					value: url(),
-					accept: "image/*",
+					value: image().url,
 				},
 				{
 					type: "dropdown",
 					label: "Fit Mode",
 					description: "How the image should fit in its container",
-					value: objectFit(),
+					value: image().objectFit,
 					onChange: (value) => {
-						setObjectFit(value);
-						// Reset position when switching to cover
-						if (value === "cover") {
-							setPosition({
-								x: 50,
-								y: 50,
-							});
-						}
+						setImage((prev) => ({
+							...prev,
+							objectFit: value,
+							...(value === "cover"
+								? { position: { x: 50, y: 50 } }
+								: {}),
+						}));
 					},
 					options: ["contain", "cover", "fill", "none", "scale-down"],
 				},
@@ -135,19 +105,20 @@ export default function Image({ data, card, app, db }: ImageProps) {
 					type: "text",
 					label: "Caption",
 					description: "Add a caption to your image",
-					value: caption(),
-					onChange: setCaption,
+					value: image().caption,
+					onChange: (v) =>
+						setImage((prev) => ({ ...prev, caption: v })),
 				},
 				{
 					type: "text",
 					label: "Alt Text",
 					description: "Add alternative text for accessibility",
-					value: alt(),
-					onChange: setAlt,
+					value: image().alt,
+					onChange: (v) => setImage((prev) => ({ ...prev, alt: v })),
 				},
 			],
 		};
-		app.emit("tool-settings", ini);
+		app.emit("tool-settings", settings);
 	};
 
 	onMount(() => {
@@ -166,29 +137,31 @@ export default function Image({ data, card, app, db }: ImageProps) {
 				onMouseLeave={() => setShowControls(false)}
 			>
 				<Show
-					when={url()}
+					when={image().url}
 					fallback={
 						<ImageIcon class="h-16 w-16 text-gray-900 opacity-50 dark:text-gray-50" />
 					}
 				>
 					<img
-						src={url()}
-						alt={alt()}
+						src={image().url}
+						alt={image().alt}
 						class="h-full w-full"
 						classList={{
 							"cursor-move":
-								objectFit() === "cover" && isDragging(),
+								image().objectFit === "cover" && isDragging(),
 						}}
 						style={{
-							"object-fit": objectFit(),
+							"object-fit": image().objectFit,
 							"object-position":
-								objectFit() === "cover"
-									? `${position().x}% ${position().y}%`
+								image().objectFit === "cover"
+									? `${image().position.x}% ${image().position.y}%`
 									: "center",
 							"-webkit-user-drag": "none",
 						}}
 					/>
-					<Show when={objectFit() === "cover" && showControls()}>
+					<Show
+						when={image().objectFit === "cover" && showControls()}
+					>
 						<div class="pointer-events-none absolute inset-0 bg-black/10 transition-opacity duration-200" />
 						<button
 							class="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white transition-all duration-200 hover:bg-black/70"
@@ -197,9 +170,11 @@ export default function Image({ data, card, app, db }: ImageProps) {
 							<MoveIcon size={16} />
 						</button>
 					</Show>
-					<Show when={caption()}>
+					<Show when={image().caption}>
 						<div class="bg-secondary/50 absolute bottom-2 left-2 size-fit rounded px-2 py-1 text-center backdrop-blur-sm">
-							<p class="text-secondary-95 text-sm">{caption()}</p>
+							<p class="text-secondary-95 text-sm">
+								{image().caption}
+							</p>
 						</div>
 					</Show>
 				</Show>

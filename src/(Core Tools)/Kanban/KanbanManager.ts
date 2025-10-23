@@ -1,51 +1,42 @@
+import { ToolDataBase } from "@managers/ToolDataBase";
 import { ColumnType } from "./types/ColumnType";
+import { DataBase, DataBaseRequest } from "@type/hollow";
 
 export class KanbanManager {
-	private dbPromise: Promise<IDBDatabase> | null = null;
+	private db: DataBase = null;
+	private static self: KanbanManager;
 
-	constructor() {
-		this.dbPromise = this.openDB();
+	static getSelf() {
+		if (!this.self) {
+			this.self = new KanbanManager();
+		}
+		return this.self;
 	}
 
-	private openDB(): Promise<IDBDatabase> {
-		return new Promise((resolve, reject) => {
-			const request = indexedDB.open("kanbanDB", 1);
-
-			request.onupgradeneeded = () => {
-				const db = request.result;
-				if (!db.objectStoreNames.contains("columns")) {
-					db.createObjectStore("columns", { keyPath: "id" });
-				}
-			};
-
-			request.onsuccess = () => resolve(request.result);
-			request.onerror = () => reject(request.error);
-		});
+	constructor() {
+		const request: DataBaseRequest = {
+			pluginName: "kanbanDB",
+			version: 1,
+			stores: [
+				{
+					name: "columns",
+				},
+			],
+			callback: (db) => {
+				this.db = db;
+			},
+		};
+		window.hollowManager.emit("database", request);
 	}
 
 	async getColumn(columnId: string): Promise<ColumnType | null> {
-		const db = await this.dbPromise;
-		return new Promise((resolve, reject) => {
-			const tx = db!.transaction("columns", "readonly");
-			const store = tx.objectStore("columns");
-			const request = store.get(columnId);
-
-			request.onsuccess = () => resolve(request.result || null);
-			request.onerror = () => reject(request.error);
-		});
+		const column = await this.db.getData<ColumnType>("columns", columnId);
+		return column ?? null;
 	}
 
 	async saveColumn(column: ColumnType): Promise<void> {
-		const db = await this.dbPromise;
-		return new Promise((resolve, reject) => {
-			const tx = db!.transaction("columns", "readwrite");
-			const store = tx.objectStore("columns");
-			store.put(column);
-			tx.oncomplete = () => resolve();
-			tx.onerror = () => reject(tx.error);
-		});
+		await this.db.putData("columns", column.id, column);
 	}
-
 	async clearColumn(column: ColumnType): Promise<void> {
 		const emptyColumn = {
 			...column,
@@ -55,14 +46,6 @@ export class KanbanManager {
 	}
 
 	async removeColumn(columnId: string): Promise<void> {
-		const db = await this.dbPromise;
-		return new Promise((resolve, reject) => {
-			const tx = db!.transaction("columns", "readwrite");
-			const store = tx.objectStore("columns");
-			const request = store.delete(columnId);
-
-			request.onsuccess = () => resolve();
-			request.onerror = () => reject(request.error);
-		});
+		await this.db.deleteData("columns", columnId);
 	}
 }

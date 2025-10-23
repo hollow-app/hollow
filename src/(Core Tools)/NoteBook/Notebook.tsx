@@ -5,13 +5,7 @@ import FilePlusIcon from "@assets/icons/files/file-plus.svg";
 import FileDescriptionIcon from "@assets/icons/files/file-description.svg";
 import FolderOpenIcon from "@assets/icons/folder-open.svg";
 import FolderCloseIcon from "@assets/icons/folder-close.svg";
-import {
-	HollowEvent,
-	ICard,
-	ContextMenuItem,
-	TagType,
-	AppEvents,
-} from "@type/hollow";
+import { HollowEvent, ICard, ContextMenuItem, TagType } from "@type/hollow";
 import { NotebookTabsIcon } from "lucide-solid";
 import {
 	Accessor,
@@ -38,16 +32,9 @@ const WordInput = lazy(() => import("@components/WordInput"));
 
 type NotebookProps = {
 	card: ICard;
-	app: HollowEvent<AppEvents>;
 	noteBook: NotebookType;
-	manager: NotebookManager;
 };
-export default function Notebook({
-	card,
-	noteBook,
-	app,
-	manager,
-}: NotebookProps) {
+export default function Notebook({ card, noteBook }: NotebookProps) {
 	const [expand, setExpand] = createSignal(false);
 	const [editMode, setEditMode] = createSignal(false);
 	const [book, setBook] = createSignal<NotebookType>(noteBook);
@@ -68,16 +55,16 @@ export default function Notebook({
 		}
 	});
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		app.getCurrentData("tags"),
+		card.app.getCurrentData("tags"),
 	);
 
 	const updateBook = () => {
-		manager.updateNotebook({ ...book(), notes: null });
+		NotebookManager.getSelf().updateNotebook({ ...book(), notes: null });
 	};
 
 	const onNewNote = () => {
 		const note: NoteType = {
-			notebookId: card.name,
+			notebookId: card.id,
 			id: crypto.randomUUID(),
 			title: "",
 			tags: [],
@@ -108,7 +95,7 @@ export default function Notebook({
 							)
 						: [...prev.notes, note],
 			}));
-			manager.updateNote(note);
+			NotebookManager.getSelf().updateNote(note);
 			updateBook();
 			sendEntry({
 				id: note.id,
@@ -121,10 +108,10 @@ export default function Notebook({
 		}
 	};
 	const sendEntry = (entry: EntryType) => {
-		app.emit("send-entry", entry);
+		card.app.emit("send-entry", entry);
 	};
 	const removeEntry = (id: string) => {
-		app.emit("remove-entry", id);
+		card.app.emit("remove-entry", id);
 	};
 	const changeBanner = async () => {
 		window.hollowManager.emit("show-vault", {
@@ -136,7 +123,7 @@ export default function Notebook({
 					),
 				}));
 				setSelected((prev) => ({ ...prev, banner: url }));
-				manager.updateNote(selected());
+				NotebookManager.getSelf().updateNote(selected());
 			},
 		});
 	};
@@ -150,7 +137,7 @@ export default function Notebook({
 			last: null,
 			notes: prev.notes.filter((i) => i.id !== id),
 		}));
-		manager.deleteNote(id);
+		NotebookManager.getSelf().deleteNote(id);
 	};
 	//
 	const onContextMenu = () => {
@@ -177,7 +164,7 @@ export default function Notebook({
 					: []),
 			],
 		};
-		app.emit("context-menu-extend", cmItems);
+		card.app.emit("context-menu-extend", cmItems);
 	};
 	const showSettings = () => {
 		const settings: ToolOptions = {
@@ -217,7 +204,7 @@ export default function Notebook({
 				},
 			],
 		};
-		app.emit("tool-settings", settings);
+		card.app.emit("tool-settings", settings);
 	};
 
 	const changeSelected = (id: string) => {
@@ -228,13 +215,13 @@ export default function Notebook({
 	};
 
 	onMount(() => {
-		app.on(`notebook-${card.name}-settings`, showSettings);
-		app.on("tags", setHollowTags);
+		card.app.on(`notebook-${card.name}-settings`, showSettings);
+		card.app.on("tags", setHollowTags);
 		card.toolEvent.on(`${card.name}-remove-entry`, removeNote);
 	});
 	onCleanup(() => {
-		app.off(`notebook-${card.name}-settings`, showSettings);
-		app.off("tags", setHollowTags);
+		card.app.off(`notebook-${card.name}-settings`, showSettings);
+		card.app.off("tags", setHollowTags);
 		card.toolEvent.off(`${card.name}-remove-entry`, removeNote);
 	});
 
@@ -415,7 +402,7 @@ export default function Notebook({
 				</Show>
 				{/* Notes List */}
 				<Show when={panel() === 1}>
-					<NoteList {...{ app, book, changeSelected, manager }} />
+					<NoteList {...{ app: card.app, book, changeSelected }} />
 				</Show>
 			</Presence>
 		</div>
@@ -426,13 +413,15 @@ type NoteListProps = {
 	app: HollowEvent;
 	book: Accessor<NotebookType>;
 	changeSelected: (id: string) => void;
-	manager: NotebookManager;
 };
-function NoteList({ app, book, changeSelected, manager }: NoteListProps) {
+function NoteList({ app, book, changeSelected }: NoteListProps) {
 	const [selectedGroup, setSelectedGroup] = createSignal([]);
 
 	const removeGroup = () => {
-		manager.deleteNotesFromNotebook(book().id, selectedGroup());
+		NotebookManager.getSelf().deleteNotesFromNotebook(
+			book().id,
+			selectedGroup(),
+		);
 	};
 	const onContextMenu = () => {
 		if (selectedGroup().length > 0) {

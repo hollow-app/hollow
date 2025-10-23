@@ -1,3 +1,6 @@
+# S
+- [ ] each card needs an id key and use it instead of card name, and maybe include with it more options like emoji... in the onLoad props.
+
 # L1
 - [x] the form ui is trash, opt global.css.
 - [-] the creation of a theme should have an option to select some predefined themes, and in the settings should have the predefined themes and the ability to edit them.

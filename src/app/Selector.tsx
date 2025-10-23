@@ -138,6 +138,7 @@ const RealmList = (props: {
 			style={{
 				"--bg-color": "var(--color-neutral-950)",
 				"--border-color": "var(--color-neutral-900)",
+				"--position": "relative",
 			}}
 		>
 			<div class="title-panel flex items-center justify-between">
@@ -310,6 +311,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 			style={{
 				"--bg-color": "var(--color-neutral-950)",
 				"--border-color": "var(--color-neutral-900)",
+				"--position": "relative",
 			}}
 		>
 			<div class="title-panel flex items-center gap-2">
@@ -502,6 +504,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 			style={{
 				"--bg-color": "var(--color-neutral-950)",
 				"--border-color": "var(--color-neutral-900)",
+				"--position": "relative",
 			}}
 		>
 			<div class="title-panel flex items-center gap-2">

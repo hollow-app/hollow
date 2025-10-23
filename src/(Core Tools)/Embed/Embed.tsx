@@ -6,9 +6,8 @@ type EmbedProps = {
 	card: ICard;
 	data: EmbedData;
 	db: DataBase;
-	app: HollowEvent;
 };
-export default function Embed({ card, data, db, app }: EmbedProps) {
+export default function Embed({ card, data, db }: EmbedProps) {
 	const [embed, setEmbed] = createSignal(data);
 
 	const setSettingsVisible = () => {
@@ -16,7 +15,7 @@ export default function Embed({ card, data, db, app }: EmbedProps) {
 			tool: "Embed",
 			card: card.name,
 			save: () => {
-				db.putData(card.name, {
+				db.putData("cards", card.name, {
 					src: embed().src,
 				});
 			},
@@ -36,15 +35,15 @@ export default function Embed({ card, data, db, app }: EmbedProps) {
 				},
 			],
 		};
-		app.emit("tool-settings", ini);
+		card.app.emit("tool-settings", ini);
 	};
 
 	onMount(() => {
-		app.on(`embed-${card.name}-settings`, setSettingsVisible);
+		card.app.on(`embed-${card.name}-settings`, setSettingsVisible);
 	});
 
 	onCleanup(() => {
-		app.off(`embed-${card.name}-settings`, setSettingsVisible);
+		card.app.off(`embed-${card.name}-settings`, setSettingsVisible);
 	});
 	return (
 		<div class="h-full w-full">

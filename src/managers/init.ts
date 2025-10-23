@@ -3,7 +3,7 @@ import { useBackground } from "@hooks/useBackground";
 import useCodeTheme from "@hooks/useCodeTheme";
 import { useColor } from "@hooks/useColor";
 import useTags from "@hooks/useTags";
-import { EntryType } from "@type/hollow";
+import { DataBaseRequest, EntryType } from "@type/hollow";
 import { EntryManager } from "./EntryManager";
 import { hotkeysManager } from "./HotkeysManager";
 import { MarkdownManager } from "./MarkdownManager";
@@ -12,9 +12,12 @@ import { ToolManager } from "./ToolManager";
 import { RustManager } from "@managers/RustManager";
 import { CharacterManager } from "./CharacterManager";
 import VaultManager from "./VaultManager";
+import Tool from "@components/Tool";
+import { ToolDataBase } from "./ToolDataBase";
 
 export async function initialization1() {
 	await VaultManager.getSelf().start();
+	await CharacterManager.getSelf().start();
 	// await new Promise((resolve) => setTimeout(resolve, 5_000));
 	return true;
 }
@@ -29,7 +32,6 @@ export async function initialization2() {
 	await window.entryManager.start();
 	useColor({ name: "primary" });
 	useColor({ name: "secondary" });
-	// ????? this setStyle is for what TODO
 	setStyle([
 		{
 			name: "--static-grid-lines",
@@ -48,7 +50,6 @@ export async function initialization2() {
 	useCodeTheme();
 	window.hotkeysManager = new hotkeysManager();
 	NotifyManager.init();
-	await CharacterManager.getSelf().start();
 	handleEvents();
 }
 
@@ -66,6 +67,18 @@ function handleEvents() {
 		({ id, text }: { id: string; text: string }) =>
 			window.markdownManager.renderMarkdown(text, id),
 	);
+	window.hollowManager.on("database", (request: DataBaseRequest) => {
+		const {
+			pluginName,
+			version = 1,
+			stores = [{ name: "cards" }],
+			callback,
+		} = request;
+
+		const pluginDB = new ToolDataBase(pluginName, version, stores);
+
+		callback(pluginDB);
+	});
 }
 
 function handleDev() {

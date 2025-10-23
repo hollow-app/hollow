@@ -71,14 +71,9 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 						}}
 					>
 						<For each={cards().filter((i) => i.isPlaced)}>
-							{({ card, tool, kit }) => {
+							{(card) => {
 								return (
-									<Vault
-										canvas={container}
-										card={card}
-										tool={tool}
-										cardKit={kit}
-									/>
+									<Vault canvas={container} cardInfo={card} />
 								);
 							}}
 						</For>

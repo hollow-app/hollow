@@ -1,16 +1,7 @@
 import Canvas from "@components/ui/Canvas";
 import Navbar from "@components/ui/Navbar";
 import { Opthand } from "@type/Opthand";
-import {
-	createSignal,
-	onCleanup,
-	lazy,
-	onMount,
-	Show,
-	Suspense,
-	createEffect,
-} from "solid-js";
-import { Motion, Presence } from "solid-motionone";
+import { createSignal, lazy, onMount, Show, Suspense } from "solid-js";
 import Notifications from "@components/ui/Notifications";
 import SideBar from "@components/ui/SideBar";
 import CharacterPanel from "@components/ui/CharacterPanel";

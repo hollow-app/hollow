@@ -8,12 +8,11 @@ const Column = lazy(() => import("./components/Column"));
 
 export class KanbanMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
-	private manager: KanbanManager = new KanbanManager();
 
-	async onCreate(name: string): Promise<boolean> {
-		this.manager.saveColumn({
-			id: name,
-			name: name,
+	async onCreate(card: ICard): Promise<boolean> {
+		KanbanManager.getSelf().saveColumn({
+			id: card.id,
+			name: card.name,
 			items: [],
 			max: 10,
 			accent: "#278ee9",
@@ -21,25 +20,20 @@ export class KanbanMain implements IPlugin {
 		return true;
 	}
 
-	async onDelete(name: string): Promise<boolean> {
-		this.manager.removeColumn(name);
+	async onDelete(card: ICard): Promise<boolean> {
+		KanbanManager.getSelf().removeColumn(card.id);
 		return true;
 	}
 
-	async onLoad(card: ICard, app?: HollowEvent<AppEvents>): Promise<boolean> {
-		const targetContainer = document.getElementById(card.containerID);
+	async onLoad(card: ICard): Promise<boolean> {
+		const targetContainer = document.getElementById(card.id);
 		if (targetContainer && !this.roots.has(card.name)) {
-			const data: ColumnType = await this.manager.getColumn(card.name);
+			const data: ColumnType = await KanbanManager.getSelf().getColumn(
+				card.id,
+			);
 			const dispose = createRoot((dispose) => {
 				render(
-					() => (
-						<Column
-							card={card}
-							data={data}
-							app={app}
-							manager={this.manager}
-						/>
-					),
+					() => <Column card={card} data={data} />,
 					targetContainer,
 				);
 				return dispose;

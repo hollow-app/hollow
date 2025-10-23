@@ -22,8 +22,8 @@ export class CharacterManager {
 			},
 		],
 	};
-	public setUiCharacter: Setter<Character>;
-	static self: CharacterManager;
+	public setUiCharacter: Setter<Character> = null;
+	private static self: CharacterManager;
 	private db: Promise<IDBDatabase>;
 
 	public async start() {
@@ -105,7 +105,9 @@ export class CharacterManager {
 	}
 
 	private async update(): Promise<void> {
-		if (this.setUiCharacter) this.setUiCharacter({ ...this.character });
+		if (this.setUiCharacter) {
+			this.setUiCharacter({ ...this.character });
+		}
 		await this.setInDB(this.character);
 	}
 

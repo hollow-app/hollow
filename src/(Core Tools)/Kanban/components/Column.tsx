@@ -39,10 +39,8 @@ import ItemMini from "./ItemMini";
 type ColumnProps = {
 	data: ColumnType;
 	card: ICard;
-	app: HollowEvent<AppEvents>;
-	manager: KanbanManager;
 };
-export default function Column({ card, data, app, manager }: ColumnProps) {
+export default function Column({ card, data }: ColumnProps) {
 	let listDiv: HTMLDivElement;
 	const [kanban, setKanban] = createSignal(data);
 	const [activeItem, setActiveItem] = createSignal<string | null>(null);
@@ -54,7 +52,7 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 	);
 
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		app.getCurrentData("tags"),
+		card.app.getCurrentData("tags"),
 	);
 
 	// Items Management
@@ -164,7 +162,7 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 				},
 			],
 		};
-		app.emit("tool-settings", settings);
+		card.app.emit("tool-settings", settings);
 	};
 	const handleReceiveTask = (tasks: ItemType[]) => {
 		setKanban((prev: ColumnType) => ({
@@ -231,7 +229,7 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 					icon: "Trash2",
 					label: `Delete (${nSelected})`,
 					onclick: () => {
-						app.emit("confirm", {
+						card.app.emit("confirm", {
 							type: "Warning",
 							message: `You sure you want to remove (${nSelected}) items`,
 							onAccept: () => {
@@ -248,7 +246,7 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 				header: "Kanban",
 				items: menuItems,
 			};
-			app.emit("context-menu-extend", cm);
+			card.app.emit("context-menu-extend", cm);
 		}
 	};
 	const showForm = (onSubmit: (data: any) => void, item?: ItemType) => {
@@ -296,10 +294,10 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 			],
 			submit: onSubmit,
 		};
-		app.emit("form", form);
+		card.app.emit("form", form);
 	};
 	const updateKanban = () => {
-		manager.saveColumn(kanban());
+		KanbanManager.getSelf().saveColumn(kanban());
 	};
 	const sendEntry = (e: ItemType | ItemType[]) => {
 		const entries = Array.isArray(e) ? e : [e];
@@ -312,10 +310,10 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 			},
 			source: { card: card.name, tool: "kanban" },
 		}));
-		app.emit("send-entry", entr);
+		card.app.emit("send-entry", entr);
 	};
 	const removeEntry = (id: string) => {
-		app.emit("remove-entry", id);
+		card.app.emit("remove-entry", id);
 	};
 	//
 	const updateHollowTags = (newTags: TagType[]) => {
@@ -328,15 +326,15 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 		}
 	};
 	onMount(() => {
-		app.on("tags", updateHollowTags);
-		app.on(`kanban-${card.name}-settings`, showSettings);
+		card.app.on("tags", updateHollowTags);
+		card.app.on(`kanban-${card.name}-settings`, showSettings);
 		card.toolEvent.on(`${card.name}-receive-task`, handleReceiveTask);
 		card.toolEvent.on(`${card.name}-remove-entry`, removeItem);
 		card.toolEvent.on("metadata", updateMeta);
 	});
 	onCleanup(() => {
-		app.off("tags", updateHollowTags);
-		app.off(`kanban-${card.name}-settings`, showSettings);
+		card.app.off("tags", updateHollowTags);
+		card.app.off(`kanban-${card.name}-settings`, showSettings);
 		card.toolEvent.off(`${card.name}-receive-task`, handleReceiveTask);
 		card.toolEvent.off(`${card.name}-remove-entry`, removeItem);
 		card.toolEvent.off("metadata", updateMeta);
@@ -359,7 +357,7 @@ export default function Column({ card, data, app, manager }: ColumnProps) {
 					{meta().emoji}
 				</div>
 				<h1 class="text-2xl font-medium">{kanban().name}</h1>
-				<ControlButtons {...{ app, addItem, showForm }} />
+				<ControlButtons {...{ app: card.app, addItem, showForm }} />
 			</div>
 			{/* List */}
 			<div class="scrollbar-hidden box-border w-full flex-1 overflow-hidden overflow-y-auto pt-2">

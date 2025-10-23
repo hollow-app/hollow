@@ -1,4 +1,11 @@
-import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
+import {
+	AppEvents,
+	DataBase,
+	DataBaseRequest,
+	HollowEvent,
+	ICard,
+	IPlugin,
+} from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
@@ -13,29 +20,27 @@ export class EmbedMain implements IPlugin {
 	private db: DataBase = null;
 	private roots: Map<string, () => void> = new Map();
 
-	constructor(db?: DataBase) {
-		this.db = db;
+	constructor(app: HollowEvent<AppEvents>) {
+		this.getDB(app);
 	}
 
-	async onCreate(name: string): Promise<boolean> {
-		this.db.putData(name, { src: null });
+	async onCreate(card: ICard): Promise<boolean> {
+		this.db.putData("cards", card.id, { src: null });
 		return true;
 	}
 
-	async onDelete(name: string): Promise<boolean> {
-		this.db.deleteData(name);
+	async onDelete(card: ICard): Promise<boolean> {
+		this.db.deleteData("cards", card.id);
 		return true;
 	}
 
-	async onLoad(card: ICard, app?: HollowEvent): Promise<boolean> {
-		const data: EmbedData = await this.db.getData(card.name);
-		const targetContainer = document.getElementById(card.containerID);
+	async onLoad(card: ICard): Promise<boolean> {
+		const data: EmbedData = await this.db.getData("cards", card.id);
+		const targetContainer = document.getElementById(card.id);
 		if (targetContainer && !this.roots.has(card.name)) {
 			const dispose = createRoot((dispose) => {
 				render(
-					() => (
-						<Embed data={data} db={this.db} app={app} card={card} />
-					),
+					() => <Embed data={data} db={this.db} card={card} />,
 					targetContainer,
 				);
 				return dispose;
@@ -51,5 +56,19 @@ export class EmbedMain implements IPlugin {
 			dispose();
 			this.roots.delete(name);
 		}
+	}
+
+	private getDB(app: HollowEvent<AppEvents>) {
+		const request: DataBaseRequest = {
+			pluginName: "embedDB",
+			version: 1,
+			stores: [
+				{
+					name: "cards",
+				},
+			],
+			callback: (db) => (this.db = db),
+		};
+		app.emit("database", request);
 	}
 }

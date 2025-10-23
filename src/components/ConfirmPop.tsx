@@ -1,5 +1,5 @@
-import { ConfirmType } from "@type/ConfirmType";
-import { createResource, onMount, Suspense } from "solid-js";
+import { ConfirmType } from "@type/hollow";
+import { onMount } from "solid-js";
 type ConfirmPopProps = {
 	pack: ConfirmType;
 };

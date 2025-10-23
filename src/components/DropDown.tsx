@@ -1,5 +1,4 @@
 import { ChevronDownIcon } from "lucide-solid";
-import { setOptions } from "marked";
 import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 type DropDownProps = {
@@ -19,7 +18,7 @@ export default function DropDown({
 	readonly = false,
 	style,
 }: DropDownProps) {
-	const [query, setQuery] = createSignal(value() || "");
+	const [query, setQuery] = createSignal(value ? value() : "");
 	const [isOpen, setIsOpen] = createSignal(false);
 	const [filteredItems, setFilteredItems] = createSignal<string[]>(items);
 	let dropdownRef: HTMLDivElement | undefined;
@@ -48,12 +47,12 @@ export default function DropDown({
 	};
 
 	const handleChange = (e: Event) => {
-		const value = (e.target as HTMLInputElement).value;
-		setQuery(value);
+		const ivalue = (e.target as HTMLInputElement).value;
+		setQuery(ivalue);
 		setIsOpen(true);
 		filterItems();
-		if (items.includes(value)) {
-			onSelect(value);
+		if (items.includes(ivalue)) {
+			onSelect(ivalue);
 		}
 	};
 
@@ -80,7 +79,7 @@ export default function DropDown({
 		>
 			<input
 				type="text"
-				value={readonly ? value() : query()}
+				value={query()}
 				oninput={handleChange}
 				onClick={() => setIsOpen(!isOpen())}
 				placeholder={placeholder}

@@ -1,5 +1,13 @@
 import { HandType } from "@type/HandType";
-import { HollowEvent, ICard, IPlugin, CardType, KitType } from "@type/hollow";
+import {
+	HollowEvent,
+	ICard,
+	IPlugin,
+	CardType,
+	KitType,
+	ToolEvents,
+	AppEvents,
+} from "@type/hollow";
 import { Setter } from "solid-js";
 import { initialStack } from "./initalStack";
 import { ImageMain } from "@coretools/Image/ImageMain";
@@ -15,11 +23,11 @@ import { EditorKitType } from "@type/EditorKitType";
 
 type ToolMethods = {
 	name: string;
-	onCreate(name: string): Promise<boolean>;
-	onDelete(name: string): Promise<boolean>;
-	onLoad(card: ICard, app: HollowEvent): Promise<boolean>;
+	onCreate(card: ICard): Promise<boolean>;
+	onDelete(card: ICard): Promise<boolean>;
+	onLoad(card: ICard): Promise<boolean>;
 	onUnload(name: string): void;
-	toolEvent: HollowEvent;
+	toolEvent: HollowEvent<ToolEvents>;
 };
 
 type ToolMap = Map<string, ToolMethods>;
@@ -99,8 +107,7 @@ export class ToolManager {
 		tool: HandType,
 	): Promise<ToolMethods | null> {
 		if (CORE_TOOLS.includes(tool.name as CoreTool)) {
-			const db = new ToolDataBase(tool.name, tool.dbVersion);
-			const toolClass = this.createCoreTool(tool.name as CoreTool, db);
+			const toolClass = this.createCoreTool(tool.name as CoreTool);
 			if (!toolClass) return null;
 
 			return {
@@ -109,20 +116,23 @@ export class ToolManager {
 				onDelete: toolClass.onDelete.bind(toolClass),
 				onLoad: toolClass.onLoad.bind(toolClass),
 				onUnload: toolClass.onUnload.bind(toolClass),
-				toolEvent: new HollowManager(),
+				toolEvent: new HollowManager() as HollowEvent<ToolEvents>,
 			};
 		}
 		return this.loadTool(tool);
 	}
 
-	private createCoreTool(name: CoreTool, db: ToolDataBase): IPlugin | null {
-		const toolMap: Record<CoreTool, new (db: ToolDataBase) => IPlugin> = {
+	private createCoreTool(name: CoreTool): IPlugin | null {
+		const toolMap: Record<
+			CoreTool,
+			new (app: HollowEvent<AppEvents>) => IPlugin
+		> = {
 			image: ImageMain,
 			notebook: NotebookMain,
 			kanban: KanbanMain,
 			embed: EmbedMain,
 		};
-		return new toolMap[name](db);
+		return new toolMap[name](window.hollowManager);
 	}
 
 	async start(loadUnsigned?: boolean): Promise<void> {
@@ -150,31 +160,31 @@ export class ToolManager {
 				this.handMap.set(newTool.name, newTool);
 				this.toolMap.set(newTool.name, loadRequest);
 				// TODO ??
-				this.setHand((prev) => [
-					...prev,
-					{
-						tool: newTool.name,
-						card: "",
-						isPlaced: false,
-						kit: {
-							width: 2,
-							height: 2,
-							corner: 10,
-							opacity: 1,
-							border: {
-								c: "#3d3d3d",
-								n: 2,
-							},
-							glass: false,
-							shadow: false,
-							xyz: {
-								x: 0,
-								y: 0,
-								z: 0,
-							},
-						},
-					},
-				]);
+				// this.setHand((prev) => [
+				// 	...prev,
+				// 	{
+				// 		tool: newTool.name,
+				// 		card: "",
+				// 		isPlaced: false,
+				// 		kit: {
+				// 			width: 2,
+				// 			height: 2,
+				// 			corner: 10,
+				// 			opacity: 1,
+				// 			border: {
+				// 				c: "#3d3d3d",
+				// 				n: 2,
+				// 			},
+				// 			glass: false,
+				// 			shadow: false,
+				// 			xyz: {
+				// 				x: 0,
+				// 				y: 0,
+				// 				z: 0,
+				// 			},
+				// 		},
+				// 	},
+				// ]);
 				this.update();
 			}
 		}
@@ -235,6 +245,10 @@ export class ToolManager {
 				putData: db.putData.bind(db),
 				getData: db.getData.bind(db),
 				deleteData: db.deleteData.bind(db),
+				getAllData: db.getAllData.bind(db),
+				clearStore: db.clearStore.bind(db),
+				getDBInstance: db.getDBInstance.bind(db),
+				deleteDatabase: db.deleteDatabase.bind(db),
 			},
 		});
 
@@ -246,7 +260,7 @@ export class ToolManager {
 			onDelete: toolClass.onDelete.bind(toolClass),
 			onLoad: toolClass.onLoad.bind(toolClass),
 			onUnload: toolClass.onUnload.bind(toolClass),
-			toolEvent: new HollowManager(),
+			toolEvent: new HollowManager() as HollowEvent<ToolEvents>,
 		};
 	}
 
@@ -254,35 +268,33 @@ export class ToolManager {
 		return this.hand.flatMap(({ name, cards }) =>
 			cards.map((i) => ({
 				tool: name,
-				card: i.name,
-				kit: i.kit,
-				isPlaced: i.isPlaced,
+				...i,
 			})),
 		);
 	}
-
-	async loadCard(name: string, toolName: string): Promise<void> {
-		const tool = this.toolMap.get(toolName);
-		if (!tool) return;
-
+	private getICard(toolName: string, cardName: string) {
+		const methods = this.toolMap.get(toolName);
+		const card = this.hand
+			.find((i) => i.name === toolName)
+			.cards.find((i) => i.name === cardName);
+		const happ = window.hollowManager;
 		const cardobj: ICard = {
-			name,
-			containerID: `${toolName}-${name}`,
-			toolEvent: tool.toolEvent,
-		};
-
-		const { tool: handTool, card } = this.getToolAndCard(toolName, name);
-		if (handTool && card) {
-			const happ = window.hollowManager;
-			tool.onLoad(cardobj, {
+			...card,
+			app: {
 				on: happ.on.bind(happ),
 				off: happ.off.bind(happ),
 				emit: happ.emit.bind(happ),
 				clear: happ.clear.bind(happ),
 				toggle: happ.toggle.bind(happ),
 				getCurrentData: happ.getCurrentData.bind(happ),
-			});
-		}
+			},
+			toolEvent: methods.toolEvent,
+		};
+		return cardobj;
+	}
+	async loadCard(cardInfo: CardType, toolName: string): Promise<void> {
+		const tool = this.toolMap.get(toolName);
+		tool.onLoad(this.getICard(toolName, cardInfo.name));
 	}
 	togglePlacement(name: string, toolName: string) {
 		const { tool, card } = this.getToolAndCard(toolName, name);
@@ -304,7 +316,7 @@ export class ToolManager {
 		this.setHand((prev) => {
 			const nList = [...prev];
 			const target = nList.find(
-				(i) => i.tool === tool.name && i.card === card.name,
+				(i) => i.tool === tool.name && i.name === card.name,
 			);
 			if (target) target.isPlaced = true;
 			return nList;
@@ -320,7 +332,7 @@ export class ToolManager {
 		this.setHand((prev) => {
 			const nList = [...prev];
 			const target = nList.find(
-				(i) => i.tool === tool.name && i.card === card.name,
+				(i) => i.tool === tool.name && i.name === card.name,
 			);
 			if (target) target.isPlaced = false;
 			return nList;
@@ -339,11 +351,11 @@ export class ToolManager {
 			toolInstance?.onUnload(name);
 		}
 
-		await toolInstance?.onDelete(name);
+		await toolInstance?.onDelete(this.getICard(toolName, name));
 		tool.cards = tool.cards.filter((i) => i.name !== name);
 
 		this.setHand((prev) =>
-			prev.filter((i) => !(i.card === name && i.tool === toolName)),
+			prev.filter((i) => !(i.name === name && i.tool === toolName)),
 		);
 
 		const entries = window.entryManager.entries.filter(
@@ -368,6 +380,7 @@ export class ToolManager {
 		if (!tool) return;
 
 		const newCard: CardType = {
+			id: crypto.randomUUID(),
 			name,
 			emoji: emoji,
 			isPlaced: false,
@@ -392,13 +405,11 @@ export class ToolManager {
 		};
 
 		tool.cards = [...tool.cards, newCard];
-		this.toolMap.get(toolName)?.onCreate(name);
+		this.toolMap.get(toolName)?.onCreate(this.getICard(toolName, name));
 
 		const newOptCard: Opthand = {
-			card: name,
+			...newCard,
 			tool: toolName,
-			isPlaced: false,
-			kit: newCard.kit,
 		};
 
 		this.setHand((prev) => [...prev, newOptCard]);

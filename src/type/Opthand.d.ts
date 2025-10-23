@@ -1,8 +1,5 @@
-import { KitType } from "./hollow";
+import { CardType, KitType } from "./hollow";
 
-export type Opthand = {
-	card: string;
+export type Opthand = CardType & {
 	tool: string;
-	isPlaced: boolean;
-	kit: KitType;
 };

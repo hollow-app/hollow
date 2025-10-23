@@ -1,5 +1,3 @@
-import { ConfirmType } from "./ConfirmType";
-
 // Represents a plugin with lifecycle methods that interact with cards and the app.
 export interface IPlugin {
 	/**
@@ -7,14 +5,14 @@ export interface IPlugin {
 	 * @param name - The name of the card being created.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onCreate(name: string): Promise<boolean>;
+	onCreate(card: ICard): Promise<boolean>;
 
 	/**
 	 * Called when a card is deleted.
 	 * @param name - The name of the card being deleted.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onDelete(name: string): Promise<boolean>;
+	onDelete(card: ICard): Promise<boolean>;
 
 	/**
 	 * Called when a card is loaded.
@@ -22,7 +20,7 @@ export interface IPlugin {
 	 * @param app - The HollowEvent instance for interacting with the app.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onLoad(card: ICard, app: HollowEvent): Promise<boolean>;
+	onLoad(card: ICard): Promise<boolean>;
 
 	/**
 	 * Called when a card is unloaded.
@@ -33,22 +31,17 @@ export interface IPlugin {
 }
 
 // Represents a card in the app, with properties and methods for interaction.
-export interface ICard {
+export type ICard = {
 	/**
-	 * The name of the card.
+	 * The HollowEvent instance of the whole app.
 	 */
-	name: string;
-
-	/**
-	 * The ID of the container where the card resides.
-	 */
-	containerID: string;
+	app: HollowEvent<AppEvents>;
 
 	/**
 	 * The HollowEvent instance for cards of the same tool to interacting with each other.
 	 */
-	toolEvent: HollowEvent;
-}
+	toolEvent: HollowEvent<ToolEvents>;
+} & Omit<CardType, "kit">;
 
 // A type representing an event listener callback.
 type Listener<T> = (data?: T) => void;
@@ -120,6 +113,7 @@ export type AppEvents = {
 	"emoji-picker": { emoji: string; setEmoji: (c: string) => void };
 	"show-vault": { onSelect?: (url: string) => void };
 	"context-menu-extend": ContextMenuItem;
+	database: DataBaseRequest;
 } & {
 	[key: string]: any;
 };
@@ -131,33 +125,65 @@ export type ToolEvents = {
 };
 
 /**
- * Represents a simple database interface for storing and retrieving data.
- * @deprecated This type is deprecated and will be removed in a future version.
+ * Represents an advanced IndexedDB-like database interface.
+ * Supports multiple object stores, indexed queries, and management utilities.
  */
 export interface DataBase {
 	/**
-	 * Stores data in the database.
+	 * Stores or updates data in a specific store.
+	 * @param storeName - The name of the object store.
 	 * @param key - The key for the data.
 	 * @param value - The value to store.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	putData<T>(key: string, value: T): Promise<boolean>;
+	putData<T>(storeName: string, key: string, value: T): Promise<boolean>;
 
 	/**
-	 * Retrieves data from the database.
+	 * Retrieves data by key from a specific store.
+	 * @param storeName - The name of the object store.
 	 * @param key - The key for the data to retrieve.
 	 * @returns A promise that resolves to the data or undefined if not found.
 	 */
-	getData<T>(key: string): Promise<T | undefined>;
+	getData<T>(storeName: string, key: string): Promise<T | undefined>;
 
 	/**
-	 * Deletes data from the database.
+	 * Deletes data from a specific store.
+	 * @param storeName - The name of the object store.
 	 * @param key - The key for the data to delete.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	deleteData(key: string): Promise<boolean>;
-}
+	deleteData(storeName: string, key: string): Promise<boolean>;
 
+	/**
+	 * Retrieves all data entries from a specific store.
+	 * @param storeName - The name of the object store.
+	 * @returns A promise that resolves to an array of all stored data.
+	 */
+	getAllData<T>(storeName: string): Promise<T[]>;
+
+	/**
+	 * Clears all data from a specific store.
+	 * @param storeName - The name of the object store to clear.
+	 * @returns A promise that resolves to a boolean indicating success.
+	 */
+	clearStore(storeName: string): Promise<boolean>;
+
+	/**
+	 * Deletes the entire database and all its stores.
+	 * @returns A promise that resolves to a boolean indicating success.
+	 */
+	deleteDatabase(): Promise<boolean>;
+	/**
+	 *
+	 */
+	getDBInstance(): Promise<IDBDatabase>;
+}
+export type DataBaseRequest = {
+	pluginName: string;
+	version?: number;
+	stores?: StoreSchema[];
+	callback: (db: DataBase) => void;
+};
 /*
  * Represents a group of context menu buttons emitted to Hollow's context menu.
  * This allows extending the menu with custom functionality based on the item triggered.
@@ -241,6 +267,9 @@ export type NotifyType = {
 	 */
 	type: "achievement" | "reminder" | "error" | "info" | "warning" | "update";
 
+	/**
+	 * TODO
+	 */
 	visible?: boolean;
 };
 
@@ -552,6 +581,9 @@ export type KitType = {
  * Represents information about a card.
  */
 export type CardType = {
+	/** Unique identifier */
+	id: string;
+
 	/** Name of the card. */
 	name: string;
 
@@ -569,4 +601,12 @@ export type CardType = {
 
 	/** Configuration of the card's kit. */
 	kit: KitType;
+};
+
+export type ConfirmType = {
+	type: string;
+	message: string;
+	onAccept: () => void;
+	accLabel?: string;
+	refLabel?: string;
 };

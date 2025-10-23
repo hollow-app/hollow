@@ -1,16 +1,15 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { HollowEvent, ICard } from "@type/hollow";
+import { DataBase, HollowEvent, ICard } from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
 import { ImageType } from "./ImageType";
-import { ImageManager } from "./ImageManager";
 
 type ImageProps = {
 	data: ImageType;
+	db: DataBase;
 	card: ICard;
-	app: HollowEvent;
 };
-export default function Image({ data, card, app }: ImageProps) {
+export default function Image({ data, card, db }: ImageProps) {
 	const [image, setImage] = createSignal(data);
 	const [isDragging, setIsDragging] = createSignal(false);
 	const [startPos, setStartPos] = createSignal({ x: 0, y: 0 });
@@ -70,7 +69,7 @@ export default function Image({ data, card, app }: ImageProps) {
 		}
 	};
 	const updateImage = async () => {
-		await ImageManager.getSelf().saveImage(image());
+		await db.putData("images", card.id, image());
 	};
 	const setSettingsVisible = () => {
 		const settings: ToolOptions = {
@@ -118,15 +117,15 @@ export default function Image({ data, card, app }: ImageProps) {
 				},
 			],
 		};
-		app.emit("tool-settings", settings);
+		card.app.emit("tool-settings", settings);
 	};
 
 	onMount(() => {
-		app.on(`image-${card.name}-settings`, setSettingsVisible);
+		card.app.on(`image-${card.name}-settings`, setSettingsVisible);
 	});
 
 	onCleanup(() => {
-		app.off(`image-${card.name}-settings`, setSettingsVisible);
+		card.app.off(`image-${card.name}-settings`, setSettingsVisible);
 	});
 
 	return (

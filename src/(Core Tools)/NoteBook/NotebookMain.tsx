@@ -1,4 +1,4 @@
-import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
+import { ICard, IPlugin } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
@@ -9,42 +9,35 @@ const Notebook = lazy(() => import("./Notebook"));
 
 export class NotebookMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
-	private notebookManager = new NotebookManager();
 
-	async onCreate(name: string): Promise<boolean> {
+	async onCreate(card: ICard): Promise<boolean> {
 		const book: NotebookType = {
-			id: name,
-			name: name,
+			id: card.id,
+			name: card.name,
 			last: null,
 			structure: defaultStruture,
 		};
-		this.notebookManager.addNotebook(book);
+		NotebookManager.getSelf().addNotebook(book);
 		return true;
 	}
 
-	async onDelete(name: string): Promise<boolean> {
-		this.notebookManager.deleteNotebook(name);
+	async onDelete(card: ICard): Promise<boolean> {
+		NotebookManager.getSelf().deleteNotebook(card.id);
 		return true;
 	}
 
-	async onLoad(card: ICard, app?: HollowEvent): Promise<boolean> {
-		const book: NotebookType = {
-			...(await this.notebookManager.getNotebook(card.name)),
-			notes: await this.notebookManager.getNotesForNotebook(card.name),
-		};
-
-		const targetContainer = document.getElementById(card.containerID);
+	async onLoad(card: ICard): Promise<boolean> {
+		const targetContainer = document.getElementById(card.id);
 		if (targetContainer && !this.roots.has(card.name)) {
+			const book: NotebookType = {
+				...(await NotebookManager.getSelf().getNotebook(card.id)),
+				notes: await NotebookManager.getSelf().getNotesForNotebook(
+					card.id,
+				),
+			};
 			const dispose = createRoot((dispose) => {
 				render(
-					() => (
-						<Notebook
-							card={card}
-							noteBook={book}
-							app={app}
-							manager={this.notebookManager}
-						/>
-					),
+					() => <Notebook card={card} noteBook={book} />,
 					targetContainer,
 				);
 				return dispose;

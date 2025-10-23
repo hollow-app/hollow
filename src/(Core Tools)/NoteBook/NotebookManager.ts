@@ -1,174 +1,128 @@
 import { NoteType } from "./NoteType";
 import { NotebookType } from "./NotebookType";
+import { DataBase, DataBaseRequest } from "@type/hollow";
 
 export class NotebookManager {
-	private dbPromise: Promise<IDBDatabase> | null = null;
+	private db: DataBase;
+	private static self: NotebookManager;
+
+	static getSelf() {
+		if (!this.self) {
+			this.self = new NotebookManager();
+		}
+		return this.self;
+	}
 
 	constructor() {
-		this.dbPromise = this.openDB();
+		const request: DataBaseRequest = {
+			pluginName: "notebookDB",
+			version: 1,
+			stores: [
+				{
+					name: "notebooks",
+				},
+				{
+					name: "notes",
+					indexes: [{ name: "by_notebook", keyPath: "notebookId" }],
+				},
+			],
+			callback: (db) => (this.db = db),
+		};
+		window.hollowManager.emit("database", request);
 	}
 
 	async addNotebook(notebook: NotebookType): Promise<void> {
-		const store = await this.tx("notebooks", "readwrite");
-		return new Promise((resolve, reject) => {
-			const req = store.add({
-				...notebook,
-				last: notebook.last ?? null,
-			});
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
+		await this.db.putData("notebooks", notebook.id, {
+			...notebook,
+			last: notebook.last ?? null,
 		});
 	}
 
 	async updateNotebook(notebook: NotebookType): Promise<void> {
-		const store = await this.tx("notebooks", "readwrite");
-		return new Promise((resolve, reject) => {
-			const req = store.put(notebook);
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
-		});
+		await this.db.putData("notebooks", notebook.id, notebook);
 	}
 
 	async getNotebook(id: string): Promise<NotebookType | null> {
-		const store = await this.tx("notebooks", "readonly");
-		return new Promise((resolve, reject) => {
-			const req = store.get(id);
-			req.onsuccess = () => resolve(req.result ?? null);
-			req.onerror = () => reject(req.error);
-		});
+		const notebook = await this.db.getData<NotebookType>("notebooks", id);
+		return notebook ?? null;
 	}
 
-	async deleteNotebook(id: string): Promise<void> {
-		const db = await this.getDB();
-		const tx = db.transaction(["notebooks", "notes"], "readwrite");
-		const notebooksStore = tx.objectStore("notebooks");
-		const notesStore = tx.objectStore("notes");
-		const index = notesStore.index("by_notebook");
-
-		notebooksStore.delete(id);
-
-		const range = IDBKeyRange.only(id);
-		const cursorReq = index.openKeyCursor(range);
-
-		cursorReq.onsuccess = () => {
-			const cursor = cursorReq.result;
-			if (cursor) {
-				notesStore.delete(cursor.primaryKey);
-				cursor.continue();
-			}
-		};
+	async deleteNotebook(notebookId: string): Promise<void> {
+		await this.db.deleteData("notebooks", notebookId);
+		const db = await this.db.getDBInstance();
+		const tx = db.transaction("notes", "readwrite");
+		const store = tx.objectStore("notes");
+		const index = store.index("by_notebook");
+		const range = IDBKeyRange.only(notebookId);
+		const cursorRequest = index.openKeyCursor(range);
 
 		return new Promise((resolve, reject) => {
-			tx.oncomplete = () => resolve();
-			tx.onerror = () => reject(tx.error);
+			cursorRequest.onsuccess = () => {
+				const cursor = cursorRequest.result;
+				if (cursor) {
+					store.delete(cursor.primaryKey);
+					cursor.continue();
+				} else {
+					tx.oncomplete = () => resolve();
+					tx.onerror = () => reject(tx.error);
+				}
+			};
+			cursorRequest.onerror = () => reject(cursorRequest.error);
 		});
 	}
 
 	async addNote(note: NoteType): Promise<void> {
-		const store = await this.tx("notes", "readwrite");
-		return new Promise((resolve, reject) => {
-			const req = store.add(note);
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
-		});
+		await this.db.putData("notes", note.id, note);
 	}
 
 	async updateNote(note: NoteType): Promise<void> {
-		const store = await this.tx("notes", "readwrite");
-		return new Promise((resolve, reject) => {
-			const req = store.put(note);
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
-		});
+		await this.db.putData("notes", note.id, note);
 	}
 
 	async getNotesForNotebook(notebookId: string): Promise<NoteType[]> {
-		const store = await this.tx("notes", "readonly");
+		const db = await this.db.getDBInstance();
+		const tx = db.transaction("notes", "readonly");
+		const store = tx.objectStore("notes");
 		const index = store.index("by_notebook");
-		const range = IDBKeyRange.only(notebookId);
 
 		return new Promise((resolve, reject) => {
-			const req = index.getAll(range);
-			req.onsuccess = () => resolve(req.result ?? []);
+			const req = index.getAll(notebookId);
+			req.onsuccess = () => resolve(req.result as NoteType[]);
 			req.onerror = () => reject(req.error);
 		});
 	}
 
 	async deleteNote(id: string): Promise<void> {
-		const store = await this.tx("notes", "readwrite");
-		return new Promise((resolve, reject) => {
-			const req = store.delete(id);
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
-		});
+		await this.db.deleteData("notes", id);
 	}
+
 	async deleteNotesFromNotebook(
 		notebookId: string,
 		noteIds: string[],
 	): Promise<void> {
 		if (!noteIds.length) return;
 
-		const db = await this.getDB();
+		const db = await this.db.getDBInstance();
 		const tx = db.transaction("notes", "readwrite");
-		const notesStore = tx.objectStore("notes");
-		const index = notesStore.index("by_notebook");
+		const store = tx.objectStore("notes");
+		const index = store.index("by_notebook");
 		const range = IDBKeyRange.only(notebookId);
-
-		const req = index.getAll(range);
+		const cursorRequest = index.openCursor(range);
 
 		return new Promise((resolve, reject) => {
-			req.onsuccess = () => {
-				const allNotes = req.result ?? [];
-				const toDelete = allNotes.filter((note) =>
-					noteIds.includes(note.id),
-				);
-
-				for (const note of toDelete) {
-					notesStore.delete(note.id);
-				}
-
-				tx.oncomplete = () => resolve();
-				tx.onerror = () => reject(tx.error);
-			};
-
-			req.onerror = () => reject(req.error);
-		});
-	}
-
-	private openDB(): Promise<IDBDatabase> {
-		return new Promise((resolve, reject) => {
-			const request = indexedDB.open("notebookDB", 1);
-
-			request.onupgradeneeded = () => {
-				const db = request.result;
-
-				if (!db.objectStoreNames.contains("notebooks")) {
-					db.createObjectStore("notebooks", { keyPath: "id" });
-				}
-
-				if (!db.objectStoreNames.contains("notes")) {
-					const notesStore = db.createObjectStore("notes", {
-						keyPath: "id",
-					});
-					notesStore.createIndex("by_notebook", "notebookId");
+			cursorRequest.onsuccess = () => {
+				const cursor = cursorRequest.result;
+				if (cursor) {
+					if (noteIds.includes(cursor.value.id)) {
+						store.delete(cursor.primaryKey);
+					}
+					cursor.continue();
+				} else {
+					tx.oncomplete = () => resolve();
+					tx.onerror = () => reject(tx.error);
 				}
 			};
-
-			request.onsuccess = () => resolve(request.result);
-			request.onerror = () => reject(request.error);
+			cursorRequest.onerror = () => reject(cursorRequest.error);
 		});
-	}
-
-	private async getDB(): Promise<IDBDatabase> {
-		if (!this.dbPromise) this.dbPromise = this.openDB();
-		return this.dbPromise;
-	}
-
-	private async tx(
-		storeName: string,
-		mode: IDBTransactionMode,
-	): Promise<IDBObjectStore> {
-		const db = await this.getDB();
-		return db.transaction(storeName, mode).objectStore(storeName);
 	}
 }

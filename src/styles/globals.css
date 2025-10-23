@@ -747,13 +747,14 @@ a {
 	--bg-color: var(--color-secondary);
 	--border-color: var(--color-secondary-10);
 	--shadow: #212121;
+	--position: absolute;
 	/* overflow: hidden; */
-	position: absolute;
+	position: var(--position);
 	background: var(--bg-color);
 	border-radius: var(--radius-lg);
 	border: 1px solid var(--border-color);
 	box-shadow: 0px 0px 30px var(--shadow);
-	transition: 0.2s all ease-in-out;
+	/* transition: 0.2s all ease-in-out; */
 	/* animation: animatetop 0.4s */
 }
 

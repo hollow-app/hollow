@@ -1,24 +1,24 @@
-import { ContextMenuItem } from "@type/hollow";
+import { CardType, ContextMenuItem } from "@type/hollow";
 import { EditorKitType } from "@type/EditorKitType";
 import { KitType } from "@type/hollow";
 import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { Opthand } from "@type/Opthand";
 
 type VaultProps = {
-	card: string;
-	tool: string;
+	cardInfo: Opthand;
 	canvas: HTMLDivElement;
-	cardKit: KitType;
 };
 
-export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
+export default function Vault({ cardInfo, canvas }: VaultProps) {
 	let vault!: HTMLDivElement;
-	const [kit, setKit] = createSignal<KitType>(cardKit);
+	const [kit, setKit] = createSignal<KitType>(cardInfo.kit);
 	const editorKit = createMemo<EditorKitType>(() => ({
-		tool: tool,
-		card: card,
-		it: cardKit,
+		tool: cardInfo.tool,
+		card: cardInfo.name,
+		it: cardInfo.kit,
 		setIt: setKit,
-		save: () => window.toolManager.changeKit(kit(), card, tool),
+		save: () =>
+			window.toolManager.changeKit(kit(), cardInfo.name, cardInfo.tool),
 	}));
 	const [dragInfo, setDragInfo] = createSignal(null);
 
@@ -44,7 +44,7 @@ export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
 			canvas.removeEventListener("mouseup", onMouseUp);
 			setDragInfo(null);
 			// TODO hm
-			window.toolManager.changeKit(kit(), card, tool);
+			window.toolManager.changeKit(kit(), cardInfo.name, cardInfo.tool);
 		}
 	};
 
@@ -89,7 +89,7 @@ export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
 
 	const showSettings = () => {
 		window.hollowManager.emit(
-			`${tool.toLowerCase()}-${card}-settings`,
+			`${cardInfo.tool.toLowerCase()}-${cardInfo.name}-settings`,
 			true,
 		);
 		window.hollowManager.emit("context-menu", false);
@@ -102,7 +102,7 @@ export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
 
 	onMount(async () => {
 		window.toolManager.addEditorKit(editorKit());
-		window.toolManager.loadCard(card, tool);
+		window.toolManager.loadCard(cardInfo, cardInfo.tool);
 	});
 	return (
 		<div
@@ -122,7 +122,7 @@ export default function Vault({ card, tool, canvas, cardKit }: VaultProps) {
 			onPointerDown={onMouseDown}
 		>
 			<div
-				id={`${tool}-${card}`}
+				id={cardInfo.id}
 				class="border-secondary-20 h-full w-full rounded-lg border-1"
 				style={{
 					"--opacity": `${kit().opacity * 100}%`,

@@ -1,3 +1,4 @@
+import VaultIcon from "@assets/icons/vault.svg";
 import VaultManager from "@managers/VaultManager";
 import { FormType, FormOption } from "@type/hollow";
 import { VaultItem } from "@type/VaultItem";
@@ -12,7 +13,8 @@ import {
 	Trash2Icon,
 } from "lucide-solid";
 import FilterButton from "@components/FilterButton";
-
+import PopupWrapper from "./PopupWrapper";
+const dt = new Date();
 type VaultStorageProps = {
 	onSelect?: (p: string) => void;
 };
@@ -134,38 +136,29 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 		setFilter((prev) => ({ ...prev, tags: v }));
 	};
 
-	// TODO
-	const nextPage = () => {
-		if (start() + 15 < images().length) setStart(start() + 15);
-	};
-	const prevPage = () => {
-		if (start() - 15 >= 0) setStart(start() - 15);
-	};
-
 	return (
-		<div class="pop-up">
-			<div class="up-pop lvl-1 bg-secondary pointer-events-auto absolute flex flex-col items-center gap-0 rounded-xl px-6 py-4 text-xl">
-				{/* Header */}
-				<div class="border-secondary-10 flex h-24 w-full items-center">
-					<div class="flex flex-col justify-center rounded-lg">
-						<h1 class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-							Vault Storage
-						</h1>
-						<p class="mt-1 text-sm font-medium text-neutral-500">
-							Storage for images — and more to come | Total:{" "}
-							{images().length}.
-						</p>
-					</div>
-					<button
-						class="button-control tool-tip mr-5 ml-auto"
-						onClick={addItem}
-					>
-						<span class="tool-tip-content" data-side="top">
-							import
-						</span>
-						<ImageUpIcon class="size-5" />
-					</button>
-					<div class="border-secondary-05 relative z-1 my-5 flex w-fit items-center justify-end gap-3 border-l px-5">
+		<PopupWrapper
+			Icon={VaultIcon}
+			title="Vault Storage"
+			onClose={() => window.hollowManager.toggle("show-vault")}
+		>
+			<div class="lvl-1 flex flex-col gap-0 px-3 pb-3">
+				<div class="flex items-center pb-3">
+					<p class="text-secondary-40 px-3 text-sm tracking-wider">
+						Storage for images — and more to come | Total:{" "}
+						{images().length}.
+					</p>
+
+					<div class="relative z-1 ml-auto flex h-fit w-fit items-center justify-end gap-3 pr-3">
+						<button
+							class="button-control tool-tip"
+							onClick={addItem}
+						>
+							<span class="tool-tip-content" data-side="top">
+								import
+							</span>
+							<ImageUpIcon class="size-5" />
+						</button>
 						<FilterButton
 							configs={[
 								{
@@ -192,32 +185,33 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 								},
 							]}
 						/>
-						<div class="relative w-80">
-							<input
-								class="input peer focus:bg-secondary-10 ml-auto h-fit max-w-full text-sm transition-all duration-200"
-								style={{
-									"--border-w": "0px",
-									"--padding-y": "calc(var(--spacing) * 3.5)",
-									"--padding-x":
-										"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
-									"--bg-color-f": "var(--secondary-color-15)",
-								}}
-								onInput={(e) =>
-									setFilter((prev) => ({
-										...prev,
-										search: e.currentTarget.value,
-									}))
-								}
-								placeholder="Search images..."
-							/>
-							<SearchIcon class="text-secondary-30 peer-focus:text-secondary-90 absolute top-1/2 left-3 w-5 -translate-y-1/2 transition-colors" />
-						</div>
+					</div>
+					<div class="relative w-80">
+						<input
+							class="input peer focus:bg-secondary-10 ml-auto h-fit max-w-full text-sm transition-all duration-200"
+							style={{
+								"--border-w": "0px",
+								"--padding-y": "calc(var(--spacing) * 3.5)",
+								"--padding-x":
+									"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
+								"--bg-color-f": "var(--secondary-color-15)",
+							}}
+							onInput={(e) =>
+								setFilter((prev) => ({
+									...prev,
+									search: e.currentTarget.value,
+								}))
+							}
+							placeholder="Search images..."
+						/>
+						<SearchIcon class="text-secondary-30 peer-focus:text-secondary-90 absolute top-1/2 left-3 w-5 -translate-y-1/2 transition-colors" />
 					</div>
 				</div>
+				<hr class="border-secondary bg-secondary-10/50 h-[2px] w-full" />
 				{/* Main content: gallery + sidebar */}
-				<div class="flex flex-1 overflow-hidden pb-4">
+				<div class="flex min-h-0 w-full flex-1 overflow-hidden">
 					{/* Gallery */}
-					<div class="grid grid-cols-7 grid-rows-5 gap-2 p-0">
+					<div class="grid w-full grid-cols-7 grid-rows-5 gap-2 py-3">
 						<For
 							each={[
 								...images().filter(
@@ -230,7 +224,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 												i.tags.includes(j),
 											)),
 								),
-							].slice(start(), start() + 15)}
+							].slice(start(), start() + 35)}
 						>
 							{(img) => (
 								<button
@@ -251,9 +245,9 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 
 					{/* Sidebar */}
 					<div
-						class={`border-secondary-05 bg-secondary-05/50 box-content w-0 shrink-0 rounded border opacity-0 transition-all duration-300 ease-in-out`}
+						class="border-secondary-05 box-content w-0 shrink-0 border-l opacity-0 transition-all duration-300 ease-in-out"
 						classList={{
-							"w-92 opacity-100 px-5 py-5": !!selectedItem(),
+							"w-92 opacity-100 pl-3 py-3": !!selectedItem(),
 						}}
 					>
 						<Show when={selectedItem()}>
@@ -335,18 +329,26 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 						</Show>
 					</div>
 				</div>
-				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-between gap-5 rounded p-5">
-					<div>pages...</div>
-					<button
-						class="button-secondary"
-						onclick={() =>
-							window.hollowManager.toggle("show-vault")
-						}
-					>
-						Close
-					</button>
+				<div class="bg-secondary-05 flex h-fit w-full justify-center gap-5 rounded p-5">
+					<For each={[...new Array(Math.ceil(images().length / 35))]}>
+						{(_, index) => (
+							<button
+								class="button-control"
+								classList={{
+									selected: start() === index() * 35,
+								}}
+								onclick={() => {
+									if (start() !== index() * 35) {
+										setStart(index() * 35);
+									}
+								}}
+							>
+								<p class="size-6">{index() + 1}</p>
+							</button>
+						)}
+					</For>
 				</div>
 			</div>
-		</div>
+		</PopupWrapper>
 	);
 }

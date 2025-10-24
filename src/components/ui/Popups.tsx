@@ -1,6 +1,6 @@
 import { FormType } from "@type/hollow";
 import { HandType } from "@type/HandType";
-import { createMemo, createSignal, lazy, onCleanup, onMount } from "solid-js";
+import { createSignal, lazy, onCleanup, onMount } from "solid-js";
 import ContextMenu from "./ContextMenu";
 import VaultStorage from "./VaultStorage";
 
@@ -17,12 +17,12 @@ export default function Popups() {
 	const [emoji, setEmoji] = createSignal<{
 		emoji: string;
 		setEmoji: (e: string) => void;
-	}>();
+	}>(null);
 	const [color, setColor] = createSignal<{
 		color: string;
 		setColor: (c: string) => void;
 	}>(null);
-	const [entries, setEntries] = createSignal<boolean>(null);
+	const [entries, setEntries] = createSignal<boolean>(false);
 	const [form, setForm] = createSignal<FormType>(null);
 	const [confirm, setConfirm] = createSignal(null);
 	const [toolSettings, setToolSettings] = createSignal(null);

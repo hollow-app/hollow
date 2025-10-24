@@ -188,10 +188,9 @@ export default function Account() {
 					</div>
 					<div>
 						<DropDown
-							items={character().titles}
+							items={() => character().titles}
 							value={() => character().title}
 							onSelect={changeTitle}
-							readonly
 						/>
 					</div>
 				</div>

@@ -1,10 +1,12 @@
 import { TagType } from "@type/hollow";
+import ServerIcon from "@assets/icons/server.svg";
 import { For, createMemo, createSignal, Show, Suspense } from "solid-js";
 import Tag from "./Tag";
 import { ChevronsUpDownIcon, SearchIcon } from "lucide-solid";
 import FilterButton from "./FilterButton";
 import EntryViewer from "./EntryViewer";
 import { lazy } from "solid-js";
+import PopupWrapper from "./ui/PopupWrapper";
 const Icon = lazy(() => import("@components/Icon"));
 
 type filterType = {
@@ -69,23 +71,21 @@ export default function EntriesViewer() {
 	});
 
 	return (
-		<div class="pop-up">
-			<div class="up-pop lvl-1 bg-secondary pointer-events-auto absolute flex flex-col items-center gap-0 rounded-xl p-6 text-xl">
+		<PopupWrapper
+			Icon={ServerIcon}
+			title="Entries Viewer"
+			onClose={() => window.hollowManager.toggle("show-entries")}
+		>
+			<div class="lvl-1 flex flex-col gap-3">
 				<Show
 					when={selected()}
 					fallback={
-						<div class="w-full">
-							<div class="mb-8 flex h-24 w-full items-center gap-6">
-								<div class="flex w-[65%] flex-col justify-center rounded-lg">
-									<h1 class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-										Entries Viewer
-									</h1>
-									<p class="mt-1 text-sm font-medium text-neutral-500">
-										A unified table that displays entries
-										collected from tools across your
-										workspace.
-									</p>
-								</div>
+						<div class="flex w-full flex-col gap-3 px-3">
+							<div class="flex h-fit w-full items-center gap-6">
+								<p class="text-secondary-40 px-3 text-sm tracking-wider">
+									A unified table that displays entries
+									collected from tools across your workspace.
+								</p>
 								<div class="relative z-1 flex flex-1 items-center gap-3">
 									<FilterButton
 										configs={[
@@ -151,6 +151,7 @@ export default function EntriesViewer() {
 									</div>
 								</div>
 							</div>
+							<hr class="border-secondary bg-secondary-10/50 h-[2px] w-full" />
 							<div class="bg-secondary-10/30 text-secondary-45 grid w-full grid-cols-4 grid-rows-1 gap-4 rounded-lg p-6 font-bold backdrop-blur-sm">
 								<div class="flex items-center gap-2">
 									<h1 class="text-sm tracking-wider uppercase">
@@ -313,6 +314,6 @@ export default function EntriesViewer() {
 					/>
 				</Show>
 			</div>
-		</div>
+		</PopupWrapper>
 	);
 }

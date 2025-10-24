@@ -1,4 +1,5 @@
 import { NotifyType } from "@type/hollow";
+import BellIcon from "@assets/icons/bell.svg";
 import { Accessor, lazy, Suspense } from "solid-js";
 import {
 	createEffect,
@@ -16,6 +17,7 @@ import {
 } from "lucide-solid";
 import { Motion, Presence } from "solid-motionone";
 import { NotifyManager } from "@managers/NotifyManager";
+import PopupWrapper from "./PopupWrapper";
 const Icon = lazy(() => import("@components/Icon"));
 
 type NotificationsProps = {
@@ -100,7 +102,7 @@ export default function Notifications({
 	});
 
 	return (
-		<div class="pointer-events-none fixed right-5 bottom-5 z-10 h-[calc(100%-calc(var(--spacing)*20))] w-120 max-w-full">
+		<div class="pointer-events-none fixed top-5 right-5 z-10 h-[calc(100%-calc(var(--spacing)*10))] w-120 max-w-full">
 			<Show when={visibleNotyList().length > 0 && !isVisible()}>
 				<div class="pointer-events-none h-full space-y-4 overflow-hidden overflow-y-auto">
 					<For each={visibleNotyList()}>
@@ -143,42 +145,54 @@ export default function Notifications({
 						animate={{ x: "0%" }}
 						exit={{ x: "100%" }}
 						transition={{ duration: 0.4 }}
-						class="bg-secondary-05 border-secondary-10 pointer-events-auto flex h-full flex-col overflow-hidden rounded-xl border p-4"
+						class="h-full w-full"
 					>
-						<div class="mb-4 flex h-15 items-center justify-between">
-							<h1 class="text-3xl font-bold tracking-tight text-neutral-700 dark:text-neutral-300">
-								Notifications
-							</h1>
-							<Show when={notifications().length > 0}>
-								<div class="flex w-full p-2">
-									<button
-										onclick={clearAll}
-										class="button-secondary ml-auto"
-									>
-										Clear All
-									</button>
+						<PopupWrapper
+							Icon={BellIcon}
+							title="Notifications"
+							onClose={() => setVisible(false)}
+							shadow={false}
+						>
+							<div class="flex h-[calc(100vh-calc(var(--spacing)*24))] w-120 flex-col gap-3 px-3">
+								<div class="flex items-center justify-between">
+									<p class="text-secondary-40 px-3 text-sm tracking-wider">
+										Notifications
+									</p>
+									<Show when={notifications().length > 0}>
+										<div class="flex w-full p-2">
+											<button
+												onclick={clearAll}
+												class="button-secondary ml-auto"
+											>
+												Clear All
+											</button>
+										</div>
+									</Show>
 								</div>
-							</Show>
-						</div>
-						<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
-							<For each={notifications()}>
-								{(noti) => {
-									const tp = getIconFromType(noti.type);
-									return (
-										<Noty
-											noti={noti}
-											tp={tp}
-											removeNoty={removeNoty}
-										/>
-									);
-								}}
-							</For>
-							<Show when={notifications().length === 0}>
-								<span class="text-secondary-50 m-auto text-center tracking-tighter">
-									You have no notifications
-								</span>
-							</Show>
-						</div>
+								<hr class="border-secondary bg-secondary-10 h-[2px] w-full" />
+								<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
+									<For each={notifications()}>
+										{(noti) => {
+											const tp = getIconFromType(
+												noti.type,
+											);
+											return (
+												<Noty
+													noti={noti}
+													tp={tp}
+													removeNoty={removeNoty}
+												/>
+											);
+										}}
+									</For>
+									<Show when={notifications().length === 0}>
+										<span class="text-secondary-50 m-auto text-center tracking-tighter">
+											You have no notifications
+										</span>
+									</Show>
+								</div>
+							</div>
+						</PopupWrapper>
 					</Motion>
 				</Show>
 			</Presence>
@@ -200,10 +214,10 @@ function Noty({
 	const [expand, setExpand] = createSignal(false);
 	return (
 		<div
-			class="pointer-events-auto h-fit w-full rounded-xl border p-2"
+			class="bg-secondary-05 pointer-events-auto h-fit w-full rounded-xl border p-2"
 			classList={{
-				"bg-secondary-05 border-secondary-10": external,
-				"bg-secondary-10/60 border-secondary-15/60": !external,
+				"border-secondary-10": external,
+				"border-secondary-15/60": !external,
 			}}
 		>
 			<div

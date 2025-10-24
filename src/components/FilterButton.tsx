@@ -143,7 +143,7 @@ export default function FilterButton(props: FilterButtonProps) {
 											when={config.type === "dropdown"}
 										>
 											<DropDown
-												items={config.options}
+												items={() => config.options}
 												onSelect={(v) => {
 													setOpen(false);
 													(

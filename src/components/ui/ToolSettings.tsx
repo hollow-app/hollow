@@ -251,7 +251,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																		v,
 																	)
 																}
-																items={
+																items={() =>
 																	option.options
 																}
 															/>

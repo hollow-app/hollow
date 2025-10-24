@@ -142,7 +142,7 @@ const RealmList = (props: {
 			}}
 		>
 			<div class="title-panel flex items-center justify-between">
-				<h1>Realms</h1>
+				<h1 class="h1-title">Realms</h1>
 				<button
 					class="button-empty flex items-center gap-1 tracking-wide text-white"
 					style={{
@@ -321,7 +321,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 				>
 					<ArrowLeftIcon class="h-5 w-5" />
 				</button>
-				<h1>Create realm</h1>
+				<h1 class="h1-title">Create realm</h1>
 			</div>
 
 			<div class="flex flex-1 gap-5 p-5">
@@ -353,8 +353,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								Themes
 							</label>
 							<DropDown
-								readonly
-								items={themes.map((i) => i.name)}
+								items={() => themes.map((i) => i.name)}
 								placeholder="Select A Theme"
 								onSelect={selectTheme}
 							/>
@@ -509,7 +508,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 		>
 			<div class="title-panel flex items-center gap-2">
 				<PandaIcon class="text-secondary-50 m-1 h-5 w-5" />
-				<h1>Character Sheet</h1>
+				<h1 class="h1-title">Character Sheet</h1>
 			</div>
 			<div class="flex flex-col gap-3 p-3">
 				<div class="flex justify-between">
@@ -571,14 +570,13 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 							</h2>
 							<DropDown
 								value={() => "Elder"}
-								items={["Elder", "The Original Few"]}
+								items={() => ["Elder", "The Original Few"]}
 								onSelect={(s) =>
 									setCharacter((prev) => ({
 										...prev,
 										title: s,
 									}))
 								}
-								readonly
 							/>
 						</div>
 					</div>

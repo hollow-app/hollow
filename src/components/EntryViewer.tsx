@@ -50,7 +50,7 @@ export default function EntryViewer({
 	const editEntry = () => {};
 
 	return (
-		<div class="flex min-h-0 w-full flex-1 flex-col gap-2 pb-4 text-gray-950 dark:text-gray-50">
+		<div class="flex min-h-0 w-full flex-1 flex-col gap-2 px-3 pb-3 text-gray-950 dark:text-gray-50">
 			<div class="bg-secondary-05 flex w-full items-center rounded-lg px-6 py-3">
 				<button
 					class="button-control"

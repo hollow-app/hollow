@@ -34,7 +34,8 @@ export class NotifyManager {
 		} else {
 			this.update();
 		}
-		this.checkRepo();
+		// TODO needs to check network
+		// this.checkRepo();
 	}
 
 	addNoty(noty: NotifyType) {

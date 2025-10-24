@@ -10,7 +10,7 @@ import {
 	PandaIcon,
 } from "lucide-solid";
 import { createSignal, Setter, Show, Suspense } from "solid-js";
-import HollowIcon from "@assets/icon-nobg.svg";
+import HollowIcon from "@assets/logo.svg";
 
 import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
@@ -29,13 +29,13 @@ export default function Settings({ setSettings }: SettingsProps) {
 	const [selected, setSelected] = createSignal(0);
 
 	return (
-		<div class="pop-up">
+		<div class="pop-up" style={{ "--animation": "none" }}>
 			<div class="up-pop absolute top-[calc(var(--spacing)*11+5%)] left-[5%] flex h-[calc(90%-calc(var(--spacing)*11))] w-[90%]">
 				<div class="flex h-full w-full">
 					<div class="bg-secondary-10/30 box-border flex h-full w-[25%] flex-col justify-between px-5 pt-5 pb-10">
 						<div class="flex flex-col gap-2">
 							<div class="bg-secondary-10 mb-5 box-border flex overflow-hidden rounded px-3 py-5">
-								<HollowIcon class="fill-secondary-20 hollow-effect my-auto mr-2 size-12 shrink-0 transition-transform duration-300" />
+								<HollowIcon class="fill-secondary-20 orbit my-auto mr-2 size-12 shrink-0 transition-transform duration-300" />
 								<div class="flex min-w-0 flex-1 flex-col">
 									<h1 class="my-auto text-xl font-bold text-neutral-950 dark:text-neutral-50">
 										{

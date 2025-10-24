@@ -280,7 +280,7 @@ export default function Appearance({}: AppearanceProps) {
 				</div>
 				<DropDown
 					value={() => codeTheme()}
-					items={codeThemes}
+					items={() => codeThemes}
 					onSelect={setCodeTheme}
 				/>
 			</div>

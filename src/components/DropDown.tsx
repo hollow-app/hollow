@@ -3,10 +3,9 @@ import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 type DropDownProps = {
 	value?: () => string;
-	items: string[];
+	items: () => string[];
 	onSelect: (v: string) => void;
 	placeholder?: string;
-	readonly?: boolean;
 	style?: any;
 };
 
@@ -15,45 +14,15 @@ export default function DropDown({
 	items,
 	onSelect,
 	placeholder,
-	readonly = false,
 	style,
 }: DropDownProps) {
-	const [query, setQuery] = createSignal(value ? value() : "");
 	const [isOpen, setIsOpen] = createSignal(false);
-	const [filteredItems, setFilteredItems] = createSignal<string[]>(items);
 	let dropdownRef: HTMLDivElement | undefined;
-	let listRef: HTMLUListElement | undefined;
-
-	const filterItems = () => {
-		const searchTerm = query().toLowerCase();
-		setFilteredItems(
-			items.filter((item) => {
-				const itemLower = item.toLowerCase();
-				let lastIndex = -1;
-				for (const char of searchTerm) {
-					const index = itemLower.indexOf(char, lastIndex + 1);
-					if (index === -1) return false;
-					lastIndex = index;
-				}
-				return true;
-			}),
-		);
-	};
+	let inputRef: HTMLInputElement | undefined;
 
 	const handleSelect = (item: string) => {
-		setQuery(item);
 		setIsOpen(false);
 		onSelect(item);
-	};
-
-	const handleChange = (e: Event) => {
-		const ivalue = (e.target as HTMLInputElement).value;
-		setQuery(ivalue);
-		setIsOpen(true);
-		filterItems();
-		if (items.includes(ivalue)) {
-			onSelect(ivalue);
-		}
 	};
 
 	const handleClickOutside = (e: PointerEvent) => {
@@ -78,32 +47,31 @@ export default function DropDown({
 			style={style}
 		>
 			<input
+				ref={inputRef}
 				type="text"
-				value={query()}
-				oninput={handleChange}
+				value={value()}
 				onClick={() => setIsOpen(!isOpen())}
 				placeholder={placeholder}
 				spellcheck="false"
-				readonly={readonly}
+				readonly
 				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 text-md h-fit w-full max-w-full cursor-pointer appearance-none rounded-md py-2 pr-3 pl-3 shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
 			/>
 			<Show when={isOpen()}>
 				<ul
-					ref={listRef}
 					class="bg-secondary-10 border-secondary absolute z-50 mt-2 max-h-40 overflow-x-hidden overflow-y-auto rounded-md p-1 text-sm shadow-lg"
 					style={{
-						width: "var(--w)",
+						width: `${inputRef.getBoundingClientRect().width}px`,
 					}}
 				>
 					<Show
-						when={filteredItems().length > 0}
+						when={items().length > 0}
 						fallback={
 							<li class="text-secondary-40 px-3 py-2">
 								No results found
 							</li>
 						}
 					>
-						<For each={filteredItems()}>
+						<For each={items().sort()}>
 							{(item, index) => (
 								<li
 									id={`dropdown-item-${index()}`}

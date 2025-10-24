@@ -62,9 +62,10 @@ export default function App() {
 							<Container />
 						</Suspense>
 					</Show>
-					<Popups />
 				</Show>
 			</Suspense>
+
+			<Popups />
 		</main>
 	);
 }

@@ -5,7 +5,7 @@ import { createSignal, lazy, onMount, Show, Suspense } from "solid-js";
 import Notifications from "@components/ui/Notifications";
 import SideBar from "@components/ui/SideBar";
 import CharacterPanel from "@components/ui/CharacterPanel";
-const Settings = lazy(() => import("@components/ui/Settings"));
+const Settings = lazy(async () => import("@components/ui/Settings"));
 const Expand = lazy(() => import("@components/ui/Expand"));
 const Editor = lazy(() => import("@components/ui/Editor"));
 
@@ -91,7 +91,9 @@ function Container() {
 				</div>
 			</div>
 			<Show when={isSettings()}>
-				<Settings setSettings={setSettings} />
+				<Suspense>
+					<Settings setSettings={setSettings} />
+				</Suspense>
 			</Show>
 			<Notifications
 				isVisible={isNotifications}

@@ -114,6 +114,9 @@ export type AppEvents = {
 	"show-vault": { onSelect?: (url: string) => void };
 	"context-menu-extend": ContextMenuItem;
 	database: DataBaseRequest;
+	"character-add-achievement": string;
+	"character-add-xp": number;
+	notify: NotifyType;
 } & {
 	[key: string]: any;
 };
@@ -268,7 +271,7 @@ export type NotifyType = {
 	type: "achievement" | "reminder" | "error" | "info" | "warning" | "update";
 
 	/**
-	 * TODO
+	 * @ignore
 	 */
 	visible?: boolean;
 };

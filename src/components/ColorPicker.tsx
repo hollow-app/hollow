@@ -1,7 +1,9 @@
+import ColorPickerIcon from "@assets/icons/color-picker.svg";
 import { isHexColor } from "@managers/manipulation/colors";
 import { PaintBucketIcon } from "lucide-solid";
 import { HexColorPicker } from "solid-colorful";
 import { createMemo, createSignal, For } from "solid-js";
+import PopupWrapper from "./ui/PopupWrapper";
 
 type ColorPickerProps = {
 	p: { color: string; setColor: (c: string) => void };
@@ -49,9 +51,9 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 		}
 	};
 	return (
-		<div class="pop-up">
-			<div class="pointer-events-auto up-pop flex h-fit w-100 flex-col items-center gap-4 p-7">
-				<div class="flex w-full items-center gap-2">
+		<PopupWrapper Icon={ColorPickerIcon} title="Color Picker">
+			<div class="flex flex-col gap-3 px-5 pb-5">
+				<div class="flex h-fit w-100 items-center gap-2">
 					<div
 						class="border-secondary-10 relative size-12 shrink-0 rounded-xl border-[6px] transition-transform hover:scale-105"
 						style={{
@@ -106,7 +108,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 					</For>
 				</div>
 
-				<div class="flex w-full justify-end gap-3 border-t border-secondary-15 border-dashed pt-5">
+				<div class="border-secondary-15 flex w-full justify-end gap-3 border-t border-dashed pt-5">
 					<button
 						onclick={onSave}
 						type="button"
@@ -125,6 +127,6 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 					</button>
 				</div>
 			</div>
-		</div>
+		</PopupWrapper>
 	);
 }

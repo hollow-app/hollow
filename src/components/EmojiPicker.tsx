@@ -1,5 +1,7 @@
+import EmojiIcon from "@assets/icons/mood-smile.svg";
 import { createResource, createSignal, For, Show } from "solid-js";
 import { SearchIcon } from "lucide-solid";
+import PopupWrapper from "./ui/PopupWrapper";
 
 type EmojiPickerProps = {
 	p: { emoji: string; setEmoji: (e: string) => void };
@@ -22,8 +24,8 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 		window.hollowManager.emit("emoji-picker", null);
 	};
 	return (
-		<div class="pop-up">
-			<div class="up-pop pointer-events-auto flex h-fit w-fit flex-col items-center gap-5 p-6">
+		<PopupWrapper Icon={EmojiIcon} title="Emoji Picker">
+			<div class="flex flex-col gap-3 px-5 pb-5">
 				<div class="flex w-full gap-2">
 					<div class="bg-secondary-10/70 flex items-center rounded">
 						<span class="flex size-12 shrink-0 items-center justify-center text-center text-2xl">
@@ -56,7 +58,7 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 				>
 					{(data) => (
 						<div class="border-secondary-20 border-t border-b border-dashed">
-							<div class=" flex h-70 w-90 flex-wrap justify-center gap-1 overflow-hidden overflow-y-scroll p-1">
+							<div class="flex h-70 w-90 flex-wrap justify-center gap-1 overflow-hidden overflow-y-scroll p-1">
 								<For
 									each={data()
 										.slice(26)
@@ -64,7 +66,7 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 											i.tags.some((tag) =>
 												tag.includes(search()),
 											),
-										) // search filter
+										)
 										.map((i) => i.unicode)}
 								>
 									{(i) => (
@@ -98,6 +100,6 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 					</button>
 				</div>
 			</div>
-		</div>
+		</PopupWrapper>
 	);
 }

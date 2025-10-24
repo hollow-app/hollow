@@ -7,6 +7,7 @@ import { TentTreeIcon } from "lucide-solid";
 import PenRulerIcon from "@assets/icons/pen-ruler.svg";
 import {
 	Accessor,
+	createMemo,
 	createSignal,
 	onCleanup,
 	onMount,
@@ -32,8 +33,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 		window.hollowManager.emit("editor", null);
 	};
 
-	const selectCard = (v: string) => {
-		const [tool, card] = v.split(":");
+	const selectCard = (tool: string, card: string) => {
 		setKit(
 			window.toolManager.getEditorKit(tool.toLowerCase(), card.trim()),
 		);
@@ -51,32 +51,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 	return (
 		<Sidepanel isVisible={isVisible}>
 			<div class="px-5 py-3">
-				<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
-					<PenRulerIcon class="h-20 w-20 shrink-0" />
-					<div class="flex-1 space-y-1">
-						<h1 class="text-xl font-bold text-neutral-900 dark:text-neutral-100">
-							Editor
-						</h1>
-						<DropDown
-							items={window.toolManager
-								.getHand()
-								.flatMap((i) =>
-									i.cards
-										.filter((j) => j.isPlaced)
-										.map((j) => `${i.title}: ${j.name}`),
-								)}
-							value={() =>
-								kit()
-									? `${window.toolManager.getHand().find((i) => i.name === kit().tool).title}: ${kit().card}`
-									: ""
-							}
-							readonly
-							onSelect={selectCard}
-							placeholder="--card--"
-							style={{ "--w": "100%" }}
-						/>
-					</div>
-				</div>
+				<Header selectCard={selectCard} />
 			</div>
 			<Show
 				when={kit()}
@@ -294,5 +269,51 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 				</>
 			</Show>
 		</Sidepanel>
+	);
+}
+
+type HeaderProps = {
+	selectCard: (tool: string, card: string) => void;
+};
+function Header({ selectCard }: HeaderProps) {
+	const [selected, setSelected] = createSignal({ tool: null, card: null });
+	const cards = createMemo<string[]>(() =>
+		selected().tool
+			? window.toolManager
+					.getHand()
+					.find((i) => i.name === selected().tool)
+					.cards.map((i) => i.name)
+			: [],
+	);
+
+	return (
+		<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
+			<div class="flex-1 space-y-1">
+				<h1 class="text-xl font-bold text-neutral-900 dark:text-neutral-100">
+					Editor
+				</h1>
+				<div class="flex gap-2">
+					<DropDown
+						items={() =>
+							window.toolManager.getHand().map((i) => i.name)
+						}
+						value={() => selected().tool}
+						onSelect={(v) => setSelected({ tool: v, card: null })}
+						placeholder="--tool--"
+						style={{ "--w": "50%" }}
+					/>
+					<DropDown
+						items={cards}
+						value={() => selected().card}
+						onSelect={(v) => {
+							setSelected((prev) => ({ ...prev, card: v }));
+							selectCard(selected().tool, selected().card);
+						}}
+						placeholder="--card--"
+						style={{ "--w": "50%" }}
+					/>
+				</div>
+			</div>
+		</div>
 	);
 }

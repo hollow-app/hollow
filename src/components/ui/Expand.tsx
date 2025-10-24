@@ -115,16 +115,15 @@ export default function Expand({ isVisible }: ExpandProps) {
 			<div class="border-secondary-10 flex h-full flex-col gap-3 border-l py-5">
 				<div class="flex px-5">
 					<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
-						<ToolCaseIcon class="h-20 w-20 shrink-0" />
 						<div class="h-fit flex-1">
 							<h1 class="text-xl font-medium whitespace-nowrap text-neutral-900 dark:text-neutral-100">
 								Tools & Cards
 							</h1>
-							<div class="grid h-fit w-full shrink-0 grid-cols-6">
+							<div class="flex h-fit w-84 shrink-0 flex-wrap gap-2 pt-2">
 								<For each={hand()}>
 									{(h) => (
 										<button
-											class="tool-tip flex w-fit items-center gap-1 rounded p-2 text-sm font-medium transition-colors"
+											class="flex w-fit items-center gap-1 rounded p-1.5 text-sm font-medium transition-colors"
 											onclick={() => selectTool(h.name)}
 											classList={{
 												"bg-primary/20 text-primary":
@@ -141,12 +140,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 												class="size-4"
 												name={h.icon}
 											/>
-											<span
-												class="tool-tip-content"
-												data-side="bottom"
-											>
-												{h.title}
-											</span>
+											{h.title}
 										</button>
 									)}
 								</For>

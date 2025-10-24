@@ -733,13 +733,14 @@ a {
 }
 
 .pop-up {
+	--animation: fadeIn 0.4s ease forwards;
 	position: absolute;
 	inset: 0;
 	background-color: rgb(0, 0, 0, 0.4);
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	animation: fadeIn 0.4s ease forwards;
+	animation: var(--animation);
 }
 
 
@@ -754,6 +755,7 @@ a {
 	border-radius: var(--radius-lg);
 	border: 1px solid var(--border-color);
 	box-shadow: 0px 0px 30px var(--shadow);
+	overflow: hidden;
 	/* transition: 0.2s all ease-in-out; */
 	/* animation: animatetop 0.4s */
 }
@@ -777,9 +779,9 @@ a {
 .up-pop .title-panel {
 	--padding-x: 1rem;
 	padding: 0.5rem var(--padding-x);
-	background-color: color-mix(in oklab, var(--color-secondary-10) 100%, transparent 60%);
+	background-color: var(--color-secondary-05);
 
-	&>h1 {
+	& .h1-title {
 		color: var(--tc-400);
 		letter-spacing: var(--tracking-wide);
 	}
@@ -790,12 +792,12 @@ a {
 	padding: 0 var(--padding-x);
 }
 
-.up-pop.lvl-1 {
+.up-pop .lvl-1 {
 	/* h-[80%] max-h-[90%] w-6xl max-w-[90%]  lg:min-w-6xl */
-	height: 80%;
-	max-height: 90%;
+	height: 70vh;
+	max-height: 90vh;
 	width: var(--container-6xl);
-	max-width: 90%;
+	max-width: 90vw;
 }
 
 @keyframes fadeIn {

@@ -38,7 +38,7 @@ export class CharacterManager {
 			"character-add-achievement",
 			this.addAchievement,
 		);
-		window.hollowManager.on("character-level-up", this.levelUp);
+		// window.hollowManager.on("character-level-up", this.levelUp);
 		window.hollowManager.on("character-add-xp", this.addXp);
 	}
 	static getSelf() {
@@ -94,10 +94,15 @@ export class CharacterManager {
 	}
 
 	public addXp(amount: number): void {
-		const xp = (this.character.xp ?? 0) + amount;
-		if (xp === this.character.level * 100) {
-			this.character.xp = 0;
-			this.levelUp();
+		let xp = (this.character.xp ?? 0) + amount;
+		let lvlAmount = 0;
+		while (xp >= (this.character.level + lvlAmount) * 100) {
+			xp -= (this.character.level + lvlAmount) * 100;
+			lvlAmount++;
+		}
+		this.character.xp = xp;
+		if (lvlAmount > 0) {
+			this.levelUp(lvlAmount);
 		} else {
 			this.character.xp = xp;
 			this.update();

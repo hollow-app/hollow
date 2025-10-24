@@ -252,7 +252,9 @@ export default function FormPop({ form }: FormPopProps) {
 														onSelect={(v) =>
 															option.onChange(v)
 														}
-														items={option.options}
+														items={() =>
+															option.options
+														}
 													/>
 												);
 											case "file":

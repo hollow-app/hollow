@@ -1,5 +1,7 @@
 import { createSignal } from "solid-js";
 import { RustManager } from "@managers/RustManager";
+import { RealmManager } from "@managers/RealmManager";
+import { hollow } from "hollow";
 
 // jk
 export default function Developers() {
@@ -8,7 +10,9 @@ export default function Developers() {
 		loadunsigned: boolean;
 	}>(
 		JSON.parse(
-			localStorage.getItem(`${window.realmManager.currentRealmId}-dev`),
+			localStorage.getItem(
+				`${RealmManager.getSelf().currentRealmId}-dev`,
+			),
 		),
 	);
 
@@ -22,7 +26,7 @@ export default function Developers() {
 		e: Event & { currentTarget: HTMLInputElement },
 	) => {
 		const state = e.currentTarget.checked;
-		window.hollowManager.emit("confirm", {
+		hollow.events.emit("confirm", {
 			message: "This action requires the app to restart.",
 			type: "Warning",
 			onAccept: () => {
@@ -37,7 +41,7 @@ export default function Developers() {
 	};
 	const update = () => {
 		localStorage.setItem(
-			`${window.realmManager.currentRealmId}-dev`,
+			`${RealmManager.getSelf().currentRealmId}-dev`,
 			JSON.stringify(options()),
 		);
 	};

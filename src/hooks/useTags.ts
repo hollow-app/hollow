@@ -1,7 +1,9 @@
+import { RealmManager } from "@managers/RealmManager";
 import { TagType } from "@type/hollow";
+import { hollow } from "hollow";
 
 export default function useTags(tags?: TagType[]) {
-	const key = `${window.realmManager.currentRealmId}-tags`;
+	const key = `${RealmManager.getSelf().currentRealmId}-tags`;
 	const savedData = localStorage.getItem(key);
 	let parsedData: TagType[] = [];
 	if (savedData) {
@@ -10,5 +12,5 @@ export default function useTags(tags?: TagType[]) {
 	} else if (!savedData) {
 		localStorage.setItem(key, JSON.stringify(parsedData));
 	}
-	window.hollowManager.emit("tags", parsedData);
+	hollow.events.emit("tags", parsedData);
 }

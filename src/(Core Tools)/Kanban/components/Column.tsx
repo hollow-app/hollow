@@ -208,7 +208,7 @@ export default function Column({ card, data }: ColumnProps) {
 						icon: "Send",
 						label: `Send (${nSelected})`,
 						children: metadata.cards
-							.filter((i) => i.name !== card.name)
+							.filter((i) => i.name !== card.name && i.isPlaced)
 							.map((i) => ({
 								label: `${i.emoji} ${i.name}`,
 								onclick: () => {
@@ -418,7 +418,17 @@ export default function Column({ card, data }: ColumnProps) {
 					</DragOverlay>
 				</DragDropProvider>
 			</div>
-			<Footer kanban={kanban} />
+			<div>
+				<button
+					class="button-secondary"
+					style={{ "--w": "100%" }}
+					onclick={() =>
+						KanbanManager.getSelf().showInsight(kanban(), card.app)
+					}
+				>
+					Summary
+				</button>
+			</div>
 		</div>
 	);
 }

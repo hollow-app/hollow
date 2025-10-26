@@ -114,7 +114,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 		card.app.emit("remove-entry", id);
 	};
 	const changeBanner = async () => {
-		window.hollowManager.emit("show-vault", {
+		card.app.emit("show-vault", {
 			onSelect: (url: string) => {
 				setBook((prev) => ({
 					...prev,
@@ -292,7 +292,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 						oncontextmenu={onContextMenu}
 					>
 						<div
-							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded border opacity-100 transition-all group-hover:opacity-100"
+							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 transition-all group-hover:opacity-100"
 							style={{
 								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${selected().banner})`,
 								"background-size": "cover",

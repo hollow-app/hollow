@@ -1,54 +1,98 @@
-import { HollowEvent } from "@type/hollow";
+import { hollow } from "hollow";
+import { CharacterManager } from "./CharacterManager";
+import VaultManager from "./VaultManager";
+import { RustManager } from "./RustManager";
+import { ToolManager } from "./ToolManager";
+import { EntryManager } from "./EntryManager";
+import { useColor } from "@hooks/useColor";
+import setStyle from "@hooks/setStyle";
+import { RealmManager } from "./RealmManager";
+import { useBackground } from "@hooks/useBackground";
+import useTags from "@hooks/useTags";
+import { NotifyManager } from "./NotifyManager";
+import { DataBaseRequest } from "@type/hollow";
+import { ToolDataBase } from "./ToolDataBase";
+import { hotkeysManager } from "./HotkeysManager";
 
-type Listener<T> = (data?: T) => void;
+export class HollowManager {
+	private static self: HollowManager;
 
-export class HollowManager implements HollowEvent {
-	private listeners: { [eventName: string]: Listener<any>[] } = {};
-	private currentData: { [eventName: string]: any } = {};
-
-	// register a listener for a specific event
-	on<T>(eventName: string, listener: Listener<T>): void {
-		if (!this.listeners[eventName]) {
-			this.listeners[eventName] = [];
+	static getSelf() {
+		if (!this.self) {
+			this.self = new HollowManager();
 		}
-		if (!this.listeners[eventName].includes(listener)) {
-			this.listeners[eventName].push(listener);
+		return this.self;
+	}
+
+	constructor() {}
+
+	async preRealmSelection() {
+		hotkeysManager.init();
+		await VaultManager.getSelf().start();
+		await CharacterManager.getSelf().start();
+		return true;
+	}
+
+	async postRealmSelection() {
+		if (!localStorage.platform) {
+			localStorage.platform = await RustManager.getSelf().get_platform();
 		}
+		const devData = this.handleDev();
+		hollow.toolManager = await ToolManager.create(devData.loadunsigned);
+		await EntryManager.getSelf().start();
+		useColor({ name: "primary" });
+		useColor({ name: "secondary" });
+		setStyle([
+			{
+				name: "--static-grid-lines",
+				value: JSON.parse(
+					localStorage.getItem(
+						`${RealmManager.getSelf().currentRealmId}-static-grid-lines`,
+					) ?? "false",
+				)
+					? "var(--secondary-color-15)"
+					: "transparent",
+			},
+		]);
+		useBackground({});
+		useTags();
+		NotifyManager.init();
+		this.handleEvents();
 	}
 
-	// unregister a lis'ener for a specific event
-	off<T>(eventName: string, listener: Listener<T>): void {
-		if (!this.listeners[eventName]) return;
-		this.listeners[eventName] = this.listeners[eventName].filter(
-			(l) => l !== listener,
-		);
+	private handleEvents() {
+		// returns Promise
+		hollow.events.on("database", (request: DataBaseRequest) => {
+			const {
+				pluginName,
+				version = 1,
+				stores = [{ name: "cards" }],
+				callback,
+			} = request;
+
+			const pluginDB = new ToolDataBase(pluginName, version, stores);
+
+			callback(pluginDB);
+		});
 	}
 
-	// emit an event with data, notifying all listeners
-	emit<T>(eventName: string, data?: T): void {
-		this.currentData[eventName] = data;
-		const eventListeners = this.listeners[eventName];
-		if (eventListeners) {
-			eventListeners.forEach((listener) => listener(data));
+	private handleDev() {
+		const key = `${RealmManager.getSelf().currentRealmId}-dev`;
+		const savedData: string | undefined = localStorage.getItem(key);
+		let iniData = {
+			devtools: false,
+			loadunsigned: false,
+		};
+
+		if (savedData) {
+			const parsedData: { devtools: boolean; loadunsigned: boolean } =
+				JSON.parse(savedData);
+			// parsedData.devtools &&
+			//         RustManager.getSelf().devtools_status({ state: true });
+			iniData = parsedData;
+		} else {
+			localStorage.setItem(key, JSON.stringify(iniData));
 		}
-	}
-
-	// Get the listeners for a specific event.
-	getCurrentData<T>(eventName: string): T | undefined {
-		return this.currentData[eventName];
-	}
-
-	clear(eventName: string): void {
-		if (!this.listeners[eventName]) return;
-		this.listeners[eventName] = null;
-	}
-
-	toggle(eventName: string): void {
-		const eventListeners = this.listeners[eventName];
-		if (eventListeners) {
-			const data = !this.currentData[eventName];
-			this.currentData[eventName] = data;
-			eventListeners.forEach((listener) => listener(data));
-		}
+		return iniData;
 	}
 }

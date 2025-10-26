@@ -1,3 +1,4 @@
+import { hollow } from "hollow";
 import { NoteType } from "./NoteType";
 import { NotebookType } from "./NotebookType";
 import { DataBase, DataBaseRequest } from "@type/hollow";
@@ -28,7 +29,7 @@ export class NotebookManager {
 			],
 			callback: (db) => (this.db = db),
 		};
-		window.hollowManager.emit("database", request);
+		hollow.events.emit("database", request);
 	}
 
 	async addNotebook(notebook: NotebookType): Promise<void> {

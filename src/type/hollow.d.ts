@@ -117,6 +117,7 @@ export type AppEvents = {
 	"character-add-achievement": string;
 	"character-add-xp": number;
 	notify: NotifyType;
+	insight: InsightType;
 } & {
 	[key: string]: any;
 };
@@ -612,4 +613,18 @@ export type ConfirmType = {
 	onAccept: () => void;
 	accLabel?: string;
 	refLabel?: string;
+};
+
+export type InsightType = {
+	title: string;
+	message?: string;
+	items?: {
+		label: string;
+		value?: string | number;
+		tooltip?: string;
+	}[];
+	source?: {
+		tool: string;
+		card: string;
+	};
 };

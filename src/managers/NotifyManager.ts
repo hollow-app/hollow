@@ -3,6 +3,8 @@ import { NotifyType } from "@type/hollow";
 import data from "emojibase-data/en/compact.json";
 import { Setter } from "solid-js";
 import { isExpired, weekOld } from "./manipulation/strings";
+import { RealmManager } from "./RealmManager";
+import { hollow } from "hollow";
 
 type NotificationData = {
 	lastUpdated: string;
@@ -11,7 +13,7 @@ type NotificationData = {
 
 export class NotifyManager {
 	private static self: NotifyManager;
-	private key = `${window.realmManager.currentRealmId}-notifications`;
+	private key = `${RealmManager.getSelf().currentRealmId}-notifications`;
 	public system: NotificationData = {
 		lastUpdated: new Date().toISOString(),
 		notifications: [],
@@ -40,7 +42,7 @@ export class NotifyManager {
 
 	addNoty(noty: NotifyType) {
 		this.system.notifications.push(noty);
-		window.hollowManager.emit("notify-status", true);
+		hollow.events.emit("notify-status", true);
 		this.update();
 	}
 	removeNoty(id: string) {
@@ -48,13 +50,13 @@ export class NotifyManager {
 			(i) => i.id !== id,
 		);
 		if (this.system.notifications.length === 0) {
-			window.hollowManager.emit("notify-status", false);
+			hollow.events.emit("notify-status", false);
 		}
 		this.update();
 	}
 	clearAll() {
 		this.system.notifications = [];
-		window.hollowManager.emit("notify-status", false);
+		hollow.events.emit("notify-status", false);
 		this.update();
 	}
 
@@ -76,7 +78,7 @@ export class NotifyManager {
 						n.id === "HX1-rS4v") &&
 					!this.system.notifications.some((i) => i.id === n.id)
 				) {
-					window.hollowManager.emit("notify", n);
+					hollow.events.emit("notify", n);
 				}
 			});
 		} catch (e) {

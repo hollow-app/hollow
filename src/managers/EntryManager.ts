@@ -1,8 +1,10 @@
 import { EntryType } from "@type/hollow";
+import { RealmManager } from "./RealmManager";
+import { hollow } from "hollow";
 
 export class EntryManager {
 	public entries: EntryType[] = [];
-	private dbName: string;
+	private dbName: string = `${RealmManager.getSelf().currentRealmId}-entry`;
 	private db: IDBDatabase | null = null;
 	private static self: EntryManager;
 
@@ -13,8 +15,13 @@ export class EntryManager {
 		return this.self;
 	}
 	async start() {
-		this.dbName = `${window.realmManager.currentRealmId}-entry`;
 		this.initDB().then(() => this.loadEntries());
+	}
+	constructor() {
+		hollow.events.on("send-entry", (entry: EntryType) =>
+			this.receiveEntry(entry),
+		);
+		hollow.events.on("remove-entry", (id: string) => this.removeEntry(id));
 	}
 
 	private async initDB(): Promise<void> {
@@ -51,7 +58,7 @@ export class EntryManager {
 
 		request.onsuccess = () => {
 			this.entries = request.result ?? [];
-			window.hollowManager.emit("entries", this.entries);
+			hollow.events.emit("entries", this.entries);
 		};
 	}
 
@@ -78,7 +85,7 @@ export class EntryManager {
 						...entry.source,
 						icon:
 							entry.source.icon ??
-							window.toolManager
+							hollow.toolManager
 								.getHand()
 								.find((i) => i.name === entry.source.tool).icon,
 					},
@@ -116,7 +123,7 @@ export class EntryManager {
 			}
 
 			tx.oncomplete = () => {
-				window.hollowManager.emit("entries", this.entries);
+				hollow.events.emit("entries", this.entries);
 				resolve();
 			};
 			tx.onerror = () => {

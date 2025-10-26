@@ -1,5 +1,6 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
+import { RustManager } from "./RustManager";
 
 export class RealmManager {
 	public realms: Realm[] = [];
@@ -9,11 +10,12 @@ export class RealmManager {
 
 	static getSelf() {
 		if (!this.self) {
-			return this.self;
+			this.self = new RealmManager();
 		}
+		return this.self;
 	}
 
-	constructor(setCurrentRealm: Setter<string>) {
+	public init(setCurrentRealm: Setter<string>) {
 		const savedRealms = localStorage.getItem("realms") ?? "[]";
 		this.realms = JSON.parse(savedRealms);
 		this.currentRealmId = localStorage.currentRealmId;
@@ -23,8 +25,8 @@ export class RealmManager {
 	public enterRealm(realmId: string) {
 		this.currentRealmId = realmId;
 		localStorage.currentRealmId = realmId;
-		this.setCurrentRealm(realmId);
 		// reload the app or open it in a new window.
+		RustManager.getSelf().reload();
 	}
 	public addRealm(nRealm: Realm) {
 		this.realms.push(nRealm);

@@ -11,6 +11,8 @@ import { Motion, Presence } from "solid-motionone";
 import { ContextMenuItem } from "@type/hollow";
 import ContextMenuSide from "./ContextMenuSide";
 import { lazy } from "solid-js";
+import { RealmManager } from "@managers/RealmManager";
+import { hollow } from "hollow";
 const Icon = lazy(() => import("@components/Icon"));
 
 export default function ContextMenu() {
@@ -38,18 +40,18 @@ export default function ContextMenu() {
 			!target.disabled
 		) {
 			if (selectedText) {
-				window.onCut = () => {
+				hollow.onCut = () => {
 					const start = target.selectionStart;
 					const end = target.selectionEnd;
 					target.value =
 						target.value.slice(0, start) + target.value.slice(end);
 					target.setSelectionRange(start, start);
 					navigator.clipboard.writeText(selectedText);
-					window.onCut = null;
+					hollow.onCut = null;
 					setVisible(false);
 				};
 			}
-			window.onPaste = async () => {
+			hollow.onPaste = async () => {
 				const copiedValue = await navigator.clipboard.readText();
 				const start = target.selectionStart;
 				const end = target.selectionEnd;
@@ -58,22 +60,22 @@ export default function ContextMenu() {
 					copiedValue +
 					target.value.slice(end);
 				target.setSelectionRange(start, start);
-				window.onPaste = null;
+				hollow.onPaste = null;
 				setVisible(false);
 			};
 		} else {
-			window.onPaste = null;
+			hollow.onPaste = null;
 		}
 
 		if (selectedText) {
-			window.onCopy = () => {
+			hollow.onCopy = () => {
 				navigator.clipboard.writeText(selectedText);
-				window.onCopy = null;
+				hollow.onCopy = null;
 				setVisible(false);
 			};
 		} else {
-			window.onCopy = null;
-			window.onCut = null;
+			hollow.onCopy = null;
+			hollow.onCut = null;
 		}
 
 		const x = e.clientX;
@@ -107,12 +109,12 @@ export default function ContextMenu() {
 	};
 	onMount(() => {
 		document.body.oncontextmenu = onContextMenu;
-		window.hollowManager.on("context-menu", showContextMenu);
-		window.hollowManager.on("context-menu-extend", addItems);
+		hollow.events.on("context-menu", showContextMenu);
+		hollow.events.on("context-menu-extend", addItems);
 	});
 	onCleanup(() => {
-		window.hollowManager.off("context-menu", showContextMenu);
-		window.hollowManager.off("context-menu-extend", addItems);
+		hollow.events.off("context-menu", showContextMenu);
+		hollow.events.off("context-menu-extend", addItems);
 	});
 	const showContextMenu = (b: boolean) => setVisible(b);
 
@@ -135,30 +137,30 @@ export default function ContextMenu() {
 					transition={{ duration: 0.3 }}
 					onMotionComplete={() => !isVisible() && setItems([])}
 				>
-					<Show when={window.onCopy}>
+					<Show when={hollow.onCopy}>
 						<>
-							<Show when={window.onCut}>
+							<Show when={hollow.onCut}>
 								<button
 									class="button-cm"
-									onclick={window.onCut}
+									onclick={hollow.onCut}
 								>
 									<ScissorsIcon class="h-4 w-4" />
 									Cut
 								</button>
 							</Show>
-							<button class="button-cm" onclick={window.onCopy}>
+							<button class="button-cm" onclick={hollow.onCopy}>
 								<CopyIcon class="h-4 w-4" />
 								Copy
 							</button>
 						</>
 					</Show>
-					<Show when={window.onPaste}>
-						<button class="button-cm" onclick={window.onPaste}>
+					<Show when={hollow.onPaste}>
+						<button class="button-cm" onclick={hollow.onPaste}>
 							<ClipboardPasteIcon class="h-4 w-4" />
 							Paste
 						</button>
 					</Show>
-					{/* <Show when={window.onPaste || window.onCopy}> */}
+					{/* <Show when={hollow.onPaste || hollow.onCopy}> */}
 					{/* 	<hr class="hr-cm" /> */}
 					{/* </Show> */}
 					<div id="context-menu-tool" class="space-y-2">
@@ -191,7 +193,7 @@ export default function ContextMenu() {
 															class="button-cm active-cm"
 															onclick={() => {
 																item.onclick();
-																window.hollowManager.emit(
+																hollow.events.emit(
 																	"context-menu",
 																	false,
 																);
@@ -223,8 +225,8 @@ export default function ContextMenu() {
 					<div id="context-menu-vault"></div>
 					<p class="text-secondary-40 border-secondary-10 border-t px-0 pt-1 text-xs tracking-wide">
 						{
-							window.realmManager.getRealmFromId(
-								window.realmManager.currentRealmId,
+							RealmManager.getSelf().getRealmFromId(
+								RealmManager.getSelf().currentRealmId,
 							).name
 						}
 						{" Realm"}

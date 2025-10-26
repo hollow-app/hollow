@@ -1,4 +1,5 @@
 import { Character } from "@type/Character";
+import { hollow } from "hollow";
 import { Setter } from "solid-js";
 
 export class CharacterManager {
@@ -34,12 +35,9 @@ export class CharacterManager {
 		} else {
 			this.update();
 		}
-		window.hollowManager.on(
-			"character-add-achievement",
-			this.addAchievement,
-		);
-		// window.hollowManager.on("character-level-up", this.levelUp);
-		window.hollowManager.on("character-add-xp", this.addXp);
+		hollow.events.on("character-add-achievement", this.addAchievement);
+		// hollow.events.on("character-level-up", this.levelUp);
+		hollow.events.on("character-add-xp", this.addXp);
 	}
 	static getSelf() {
 		if (!this.self) {

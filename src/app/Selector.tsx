@@ -22,12 +22,14 @@ import {
 	Suspense,
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import WindowControl from "@components/ui/WindowControl";
+import WindowControl from "@components/WindowControl";
 import DropDown from "@components/DropDown";
 import { Character } from "@type/Character";
 import { CharacterManager } from "@managers/CharacterManager";
 import { useColor } from "@hooks/useColor";
 import Loading from "@components/Loading";
+import { RealmManager } from "@managers/RealmManager";
+import { hollow } from "hollow";
 
 type SelectorProps = {
 	onSelect: Setter<string | null>;
@@ -63,18 +65,18 @@ const useRealmManager = () => {
 				secondary: secondary(),
 			},
 		};
-		window.realmManager.addRealm(newRealm);
+		RealmManager.getSelf().addRealm(newRealm);
 		return true;
 	};
 
 	const removeRealm = (id: string, setRealms: Setter<Realm[]>) => {
 		const handleDecision = () => {
-			window.realmManager.removeRealm(id);
+			RealmManager.getSelf().removeRealm(id);
 			setRealms((prev) => prev.filter((r) => r.id !== id));
 		};
-		window.hollowManager.emit("confirm", {
+		hollow.events.emit("confirm", {
 			type: "warning",
-			message: `Are you sure you want to remove ${window.realmManager.getRealmFromId(id)?.name} Realm?`,
+			message: `Are you sure you want to remove ${RealmManager.getSelf().getRealmFromId(id)?.name} Realm?`,
 			onAccept: handleDecision,
 		});
 	};
@@ -481,7 +483,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 	);
 
 	const importAvatar = async () => {
-		window.hollowManager.emit("show-vault", {
+		hollow.events.emit("show-vault", {
 			onSelect: (p) => {
 				setCharacter((i) => ({ ...i, avatar: p }));
 			},
@@ -639,10 +641,10 @@ export default function Selector({ onSelect }: SelectorProps) {
 		return true;
 	});
 	const [level, setLevel] = createSignal(
-		window.realmManager.realms.length === 0 ? 0 : 1,
+		RealmManager.getSelf().realms.length === 0 ? 0 : 1,
 	);
 	const [realms, setRealms] = createSignal<Realm[]>(
-		window.realmManager.realms,
+		RealmManager.getSelf().realms,
 	);
 
 	return (
@@ -663,7 +665,9 @@ export default function Selector({ onSelect }: SelectorProps) {
 									<RealmList
 										onBack={() => setLevel(2)}
 										onSelect={(id) =>
-											window.realmManager.enterRealm(id)
+											RealmManager.getSelf().enterRealm(
+												id,
+											)
 										}
 										realms={realms}
 										setRealms={setRealms}

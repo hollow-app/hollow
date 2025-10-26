@@ -18,6 +18,7 @@ import {
 import { Motion, Presence } from "solid-motionone";
 import { NotifyManager } from "@managers/NotifyManager";
 import PopupWrapper from "./PopupWrapper";
+import { hollow } from "hollow";
 const Icon = lazy(() => import("@components/Icon"));
 
 type NotificationsProps = {
@@ -98,7 +99,7 @@ export default function Notifications({
 	});
 
 	onMount(() => {
-		window.hollowManager.on("notify", addNoty);
+		hollow.events.on("notify", addNoty);
 	});
 
 	return (

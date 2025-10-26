@@ -2,7 +2,7 @@
 .tool-tip {
 	--pos: relative;
 	position: var(--pos);
-	display: inline-block;
+	/* display: inline-block; */
 	overflow: visible;
 }
 

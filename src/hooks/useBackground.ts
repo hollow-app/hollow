@@ -1,8 +1,9 @@
 import { Property } from "@type/Property";
 import setStyle from "./setStyle";
+import { RealmManager } from "@managers/RealmManager";
 
 export function useBackground(pack: { path?: string; opacity?: string }) {
-	const key = `${window.realmManager.currentRealmId}-canvas-bg`;
+	const key = `${RealmManager.getSelf().currentRealmId}-canvas-bg`;
 	const savedData = localStorage.getItem(key);
 
 	const vars: Property[] = [];

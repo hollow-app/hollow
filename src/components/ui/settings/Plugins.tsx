@@ -1,4 +1,5 @@
 import { RustManager } from "@managers/RustManager";
+import { hollow } from "hollow";
 import {
 	ChevronLeftIcon,
 	ShieldAlertIcon,
@@ -38,7 +39,7 @@ export default function Plugins({}: PluginsProps) {
 	) => {
 		if (!unverified()) {
 			e.preventDefault();
-			window.hollowManager.emit("confirm", {
+			hollow.events.emit("confirm", {
 				type: "warning",
 				message:
 					"Installing unverified plugins may pose security risks.\nOnly install plugins that you trust and are sure are safe.",
@@ -71,7 +72,7 @@ export default function Plugins({}: PluginsProps) {
 		const isInstalled = selectedTool().installed;
 		setSelectedTool((prev) => ({ ...prev, installed: null }));
 		if (isInstalled) {
-			const request = await window.toolManager.uninstallTool(
+			const request = await hollow.toolManager.uninstallTool(
 				selectedTool().name,
 			);
 			request &&
@@ -80,7 +81,7 @@ export default function Plugins({}: PluginsProps) {
 					installed: false,
 				}));
 		} else {
-			const request = await window.toolManager.installTool(
+			const request = await hollow.toolManager.installTool(
 				selectedTool().name,
 				selectedTool().repo,
 			);
@@ -261,7 +262,7 @@ function ToolButton({ tool, setSelectedTool, setSelectedMD }: ToolButtonProps) {
 				});
 				tool.verified = tool.verificationDate === rep.updated_at;
 			}
-			const isInstalled = window.toolManager
+			const isInstalled = hollow.toolManager
 				.getHand()
 				.some((i) => i.name === tool.name.toLowerCase());
 			setSelectedTool({

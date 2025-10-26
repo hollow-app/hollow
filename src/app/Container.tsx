@@ -1,17 +1,19 @@
 import Canvas from "@components/ui/Canvas";
-import Navbar from "@components/ui/Navbar";
+import Navbar from "@components/ui/sidebars/Navbar";
 import { Opthand } from "@type/Opthand";
 import { createSignal, lazy, onMount, Show, Suspense } from "solid-js";
 import Notifications from "@components/ui/Notifications";
 import SideBar from "@components/ui/SideBar";
-import CharacterPanel from "@components/ui/CharacterPanel";
+import CharacterPanel from "@components/ui/sidebars/CharacterPanel";
+import { hotkeysManager } from "@managers/HotkeysManager";
+import { hollow } from "hollow";
 const Settings = lazy(async () => import("@components/ui/Settings"));
-const Expand = lazy(() => import("@components/ui/Expand"));
-const Editor = lazy(() => import("@components/ui/Editor"));
+const Expand = lazy(() => import("@components/ui/sidebars/Expand"));
+const Editor = lazy(() => import("@components/ui/sidebars/Editor"));
 
 function Container() {
 	const [hand, setHand] = createSignal<Opthand[] | null>(
-		window.toolManager.optimizeHand(),
+		hollow.toolManager.optimizeHand(),
 	);
 
 	const [isChara, setChara] = createSignal(false);
@@ -37,14 +39,14 @@ function Container() {
 		setEditor((prev) => !prev);
 	};
 	onMount(() => {
-		window.toolManager.setHand = setHand;
-		window.hotkeysManager.events["Toggle Settings"] = () =>
+		hollow.toolManager.setHand = setHand;
+		hotkeysManager.getSelf().events["Toggle Settings"] = () =>
 			setSettings((prev) => !prev);
-		window.hotkeysManager.events["Toggle Notifications"] = () =>
+		hotkeysManager.getSelf().events["Toggle Notifications"] = () =>
 			setNotifications((prev) => !prev);
-		window.hotkeysManager.events["Toggle Expand"] = () =>
+		hotkeysManager.getSelf().events["Toggle Expand"] = () =>
 			setExpand((prev) => !prev);
-		window.hotkeysManager.events["Toggle Drag and Drop Mode"] = () => {
+		hotkeysManager.getSelf().events["Toggle Drag and Drop Mode"] = () => {
 			document.getElementById("root").classList.toggle("dnd-mode");
 			setDrag((prev) => !prev);
 		};

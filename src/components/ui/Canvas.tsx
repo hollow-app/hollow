@@ -1,15 +1,10 @@
-import DropDown from "@components/DropDown";
-import FilterButton from "@components/FilterButton";
-import ImportFile from "@components/ImportFile";
-import Vault from "@components/Vault";
+import Vault from "@components/ui/Vault";
 import useGrid from "@hooks/useGrid";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { Opthand } from "@type/Opthand";
-import { Filter } from "lucide-solid";
+import { hollow } from "hollow";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
-import { cover } from "polished";
-import { createMemo, createSignal, For, onMount, Show } from "solid-js";
+import { createSignal, For, onMount, Show } from "solid-js";
 
 type CanvasProps = {
 	cards: () => Opthand[];
@@ -22,8 +17,8 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 	const [size, setSize] = createSignal(null);
 	onMount(() => {
 		const { width, height } = canvas.getBoundingClientRect();
-		(window as any).canvas_size = { w: width, h: height };
-		(window as any).canvas_grid = { cw: 0, rh: 0 };
+		hollow.canvas_size = { w: width, h: height };
+		hollow.canvas_grid = { cw: 0, rh: 0 };
 		useGrid();
 		setSize({ w: width, h: height });
 	});

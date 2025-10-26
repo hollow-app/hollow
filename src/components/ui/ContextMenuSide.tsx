@@ -3,6 +3,7 @@ import { ChevronRightIcon } from "lucide-solid";
 import { createSignal, For, Show, createEffect, Suspense } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import { lazy } from "solid-js";
+import { hollow } from "hollow";
 const Icon = lazy(() => import("@components/Icon"));
 
 export default function ContextMenuSide({
@@ -61,7 +62,7 @@ export default function ContextMenuSide({
 									class="button-cm active-cm"
 									onclick={() => {
 										child.onclick();
-										window.hollowManager.emit(
+										hollow.events.emit(
 											"context-menu",
 											false,
 										);

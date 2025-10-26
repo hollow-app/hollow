@@ -15,6 +15,7 @@ import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { syntaxHighlighting } from "@codemirror/language";
 import highlightStyle from "@managers/markdown/highlightStyle";
 import { Show } from "solid-js";
+import { MarkdownManager } from "@managers/MarkdownManager";
 
 const codemirrorSetup = (() => [
 	highlightSpecialChars(),
@@ -39,7 +40,7 @@ export default function MarkdownEditor({
 	uniqueNote,
 }: MarkdownEditorProps) {
 	const [parsedMd] = createResource(value, () =>
-		window.markdownManager.renderMarkdown(value(), uniqueNote()),
+		MarkdownManager.getSelf().renderMarkdown(value(), uniqueNote()),
 	);
 	const [inValue, setInValue] = createSignal(value());
 

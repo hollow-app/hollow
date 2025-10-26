@@ -10,6 +10,7 @@ import { createSignal, Setter, Show } from "solid-js";
 import EmojiPick from "./EmojiPick";
 import Icon from "./Icon";
 import { timeDifference } from "@managers/manipulation/strings";
+import { hollow } from "hollow";
 
 export default function Card({
 	myCard,
@@ -21,16 +22,16 @@ export default function Card({
 	const [isPlaced, setPlaced] = createSignal(myCard.isPlaced);
 
 	const handlePlacement = () => {
-		window.toolManager.togglePlacement(myCard.name, myCard.tool);
+		hollow.toolManager.togglePlacement(myCard.name, myCard.tool);
 		setPlaced(!isPlaced());
 	};
 	const handleDelete = async () => {
-		await window.toolManager.deleteCard(myCard.name, myCard.tool);
-		setHand([...window.toolManager.getHand()]);
+		await hollow.toolManager.deleteCard(myCard.name, myCard.tool);
+		setHand([...hollow.toolManager.getHand()]);
 	};
 	const onEmojiChanged = (newEmoji: string) => {
-		window.toolManager.changeEmoji(newEmoji, myCard.name, myCard.tool);
-		window.hollowManager.off("emoji-picker-changed", onEmojiChanged);
+		hollow.toolManager.changeEmoji(newEmoji, myCard.name, myCard.tool);
+		hollow.events.off("emoji-picker-changed", onEmojiChanged);
 	};
 
 	return (

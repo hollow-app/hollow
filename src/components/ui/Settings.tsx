@@ -16,6 +16,8 @@ import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
 import Account from "./settings/Account";
+import { RealmManager } from "@managers/RealmManager";
+import { hollow } from "hollow";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
 const Modifier = lazy(() => import("./settings/Modifier"));
@@ -30,7 +32,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 
 	return (
 		<div class="pop-up" style={{ "--animation": "none" }}>
-			<div class="up-pop absolute top-[calc(var(--spacing)*11+5%)] left-[5%] flex h-[calc(90%-calc(var(--spacing)*11))] w-[90%]">
+			<div class="up-pop flex h-[calc(90%-calc(var(--spacing)*11))] w-[90%]">
 				<div class="flex h-full w-full">
 					<div class="bg-secondary-10/30 box-border flex h-full w-[25%] flex-col justify-between px-5 pt-5 pb-10">
 						<div class="flex flex-col gap-2">
@@ -39,8 +41,8 @@ export default function Settings({ setSettings }: SettingsProps) {
 								<div class="flex min-w-0 flex-1 flex-col">
 									<h1 class="my-auto text-xl font-bold text-neutral-950 dark:text-neutral-50">
 										{
-											window.realmManager.getRealmFromId(
-												window.realmManager
+											RealmManager.getSelf().getRealmFromId(
+												RealmManager.getSelf()
 													.currentRealmId,
 											)?.name
 										}{" "}
@@ -48,20 +50,23 @@ export default function Settings({ setSettings }: SettingsProps) {
 									</h1>
 									<div class="flex flex-1">
 										<p class="text-secondary-50 max-w-[50%] overflow-hidden text-sm text-ellipsis whitespace-nowrap">
-											{window.realmManager.currentRealmId}
+											{
+												RealmManager.getSelf()
+													.currentRealmId
+											}
 										</p>
 									</div>
 								</div>
 								<button
 									class="button-control my-auto ml-auto shrink-0"
 									onclick={() =>
-										window.hollowManager.emit("confirm", {
+										hollow.events.emit("confirm", {
 											type: "Warning",
 											message:
 												"Switching realms requires a restart of the application.\nWould you like to proceed?",
 
 											onAccept: () =>
-												window.realmManager.toggleRealm(),
+												RealmManager.getSelf().toggleRealm(),
 										})
 									}
 								>

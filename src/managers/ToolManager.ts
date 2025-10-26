@@ -16,10 +16,13 @@ import { KanbanMain } from "@coretools/Kanban/KanbanMain";
 import { EmbedMain } from "@coretools/Embed/EmbedMain";
 import { Opthand } from "@type/Opthand";
 import { ToolDataBase } from "./ToolDataBase";
-import { HollowManager } from "./HollowManager";
+import { EventsManager } from "./EventsManager";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { RustManager } from "@managers/RustManager";
 import { EditorKitType } from "@type/EditorKitType";
+import { RealmManager } from "./RealmManager";
+import { EntryManager } from "./EntryManager";
+import { hollow } from "hollow";
 
 type ToolMethods = {
 	name: string;
@@ -44,7 +47,7 @@ export class ToolManager {
 	private handMap: HandMap;
 	public setHand: Setter<Opthand[]>;
 	public toolsEvent: { [toolName: string]: HollowEvent } = {};
-	private realm = window.realmManager.currentRealmId;
+	private realm = RealmManager.getSelf().currentRealmId;
 
 	private constructor() {
 		this.toolMap = new Map();
@@ -116,7 +119,7 @@ export class ToolManager {
 				onDelete: toolClass.onDelete.bind(toolClass),
 				onLoad: toolClass.onLoad.bind(toolClass),
 				onUnload: toolClass.onUnload.bind(toolClass),
-				toolEvent: new HollowManager() as HollowEvent<ToolEvents>,
+				toolEvent: new EventsManager() as HollowEvent<ToolEvents>,
 			};
 		}
 		return this.loadTool(tool);
@@ -132,7 +135,7 @@ export class ToolManager {
 			kanban: KanbanMain,
 			embed: EmbedMain,
 		};
-		return new toolMap[name](window.hollowManager);
+		return new toolMap[name](hollow.events);
 	}
 
 	async start(loadUnsigned?: boolean): Promise<void> {
@@ -218,8 +221,8 @@ export class ToolManager {
 
 	private isToolUsedByOtherRealms(name: string): boolean {
 		return (
-			window.realmManager.realms
-				.map(
+			RealmManager.getSelf()
+				.realms.map(
 					(r) =>
 						JSON.parse(
 							localStorage.getItem(`${r.id}-tools`) || "[]",
@@ -260,7 +263,7 @@ export class ToolManager {
 			onDelete: toolClass.onDelete.bind(toolClass),
 			onLoad: toolClass.onLoad.bind(toolClass),
 			onUnload: toolClass.onUnload.bind(toolClass),
-			toolEvent: new HollowManager() as HollowEvent<ToolEvents>,
+			toolEvent: new EventsManager() as HollowEvent<ToolEvents>,
 		};
 	}
 
@@ -277,7 +280,7 @@ export class ToolManager {
 		const card = this.hand
 			.find((i) => i.name === toolName)
 			.cards.find((i) => i.name === cardName);
-		const happ = window.hollowManager;
+		const happ = hollow.events;
 		const cardobj: ICard = {
 			...card,
 			app: {
@@ -358,10 +361,10 @@ export class ToolManager {
 			prev.filter((i) => !(i.name === name && i.tool === toolName)),
 		);
 
-		const entries = window.entryManager.entries.filter(
+		const entries = EntryManager.getSelf().entries.filter(
 			(e) => e.source.card === name,
 		);
-		window.entryManager.removeEntry(entries.map((i) => i.id));
+		EntryManager.getSelf().removeEntry(entries.map((i) => i.id));
 
 		this.update();
 		this.updateToolMetadata(toolName, { cards: tool.cards });

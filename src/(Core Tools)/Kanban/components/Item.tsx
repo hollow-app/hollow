@@ -8,6 +8,7 @@ import { ToolMetadata } from "@type/ToolMetadata";
 import { ItemType } from "../types/ItemType";
 import { Show } from "solid-js";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
+import { hollow } from "hollow";
 
 type ItemProps = {
 	toolEvent?: HollowEvent;
@@ -58,7 +59,7 @@ export default function Item({
 	const handleContextMenu = () => {
 		const metadata: ToolMetadata = toolEvent.getCurrentData("metadata");
 		const columns = metadata.cards
-			.filter((i) => i.name !== cardName)
+			.filter((i) => i.name !== cardName && i.isPlaced)
 			.map((i) => {
 				const cmItem: ContextMenuItemButton = {
 					label: `${i.emoji} ${i.name}`,
@@ -97,7 +98,8 @@ export default function Item({
 			header: "Task",
 			items: menuItems,
 		};
-		window.hollowManager.emit("context-menu-extend", cm);
+		//TODO card.app
+		hollow.events.emit("context-menu-extend", cm);
 	};
 
 	return (

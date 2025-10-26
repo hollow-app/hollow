@@ -2,6 +2,7 @@ import DropDown from "@components/DropDown";
 import { CharacterManager } from "@managers/CharacterManager";
 import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
+import { hollow } from "hollow";
 import { SquarePenIcon, Trash2Icon } from "lucide-solid";
 import { For } from "solid-js";
 import { createMemo, createSignal } from "solid-js";
@@ -133,7 +134,7 @@ export default function Account() {
 			],
 		};
 
-		window.hollowManager.emit("form", form);
+		hollow.events.emit("form", form);
 	};
 	return (
 		<div class="h-fit w-full p-10">

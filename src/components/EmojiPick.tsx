@@ -1,3 +1,4 @@
+import { hollow } from "hollow";
 import { createSignal } from "solid-js";
 
 export default function EmojiPick({
@@ -9,7 +10,7 @@ export default function EmojiPick({
 }) {
 	const [emoji, setEmoji] = createSignal(emo);
 	const handleEmoji = () => {
-		window.hollowManager.emit("emoji-picker", {
+		hollow.events.emit("emoji-picker", {
 			emoji: emoji(),
 			setEmoji: onEmojiChanged,
 		});

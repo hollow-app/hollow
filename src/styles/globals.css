@@ -747,7 +747,7 @@ a {
 .up-pop {
 	--bg-color: var(--color-secondary);
 	--border-color: var(--color-secondary-10);
-	--shadow: #212121;
+	--shadow: #4d4d4d;
 	--position: absolute;
 	/* overflow: hidden; */
 	position: var(--position);

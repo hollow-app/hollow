@@ -9,6 +9,7 @@ import { Move } from "lucide-solid";
 import { onMount, Setter } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import VaultIcon from "@assets/icons/vault.svg";
+import { hollow } from "hollow";
 
 type SideBarProps = {
 	toggleChara: () => void;
@@ -42,12 +43,15 @@ export default function SideBar({
 	);
 
 	onMount(() => {
-		window.hollowManager.on("notify-status", setAlert);
+		hollow.events.on("notify-status", setAlert);
 	});
 	return (
 		<div class="bg-secondary-10/0 mr-2 flex w-14 flex-col gap-4 rounded-xl py-4">
-			<button class="" onclick={() => toggleChara()}>
-				<Hollow class="orbit mx-auto size-8" />
+			<button
+				class="bg-secondary-05 border-secondary-10 hover:text-secondary-95 text-secondary-70 mx-auto w-fit rounded-lg border p-1"
+				onclick={() => toggleChara()}
+			>
+				<Hollow class="orbit mx-auto size-7" />
 			</button>
 			<hr class="border-secondary-10 bg-secondary mx-auto h-px w-10 border-t" />
 			<div class="mx-auto flex flex-1 flex-col gap-3">
@@ -60,7 +64,7 @@ export default function SideBar({
 				</button>
 				<button
 					class="button-control"
-					onclick={() => window.hollowManager.emit("show-entries")}
+					onclick={() => hollow.events.toggle("show-entries")}
 				>
 					<ServerIcon class="size-5" />
 				</button>
@@ -87,7 +91,7 @@ export default function SideBar({
 				</button>
 				<button
 					class="button-control"
-					onclick={() => window.hollowManager.toggle("show-vault")}
+					onclick={() => hollow.events.toggle("show-vault")}
 				>
 					<VaultIcon class="size-5" />
 				</button>

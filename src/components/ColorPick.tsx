@@ -1,3 +1,4 @@
+import { hollow } from "hollow";
 import { createSignal } from "solid-js";
 
 type ColorPickProps = {
@@ -14,7 +15,7 @@ export default function ColorPick({
 	const [myColor, setMyColor] = createSignal(color());
 
 	const pick = () => {
-		window.hollowManager.emit("color-picker", {
+		hollow.events.emit("color-picker", {
 			color: myColor(),
 			setColor: saveNewColor,
 		});

@@ -13,10 +13,11 @@ import { NotifyManager } from "./NotifyManager";
 import { DataBaseRequest } from "@type/hollow";
 import { ToolDataBase } from "./ToolDataBase";
 import { hotkeysManager } from "./HotkeysManager";
+import { CodeThemeManager } from "./CodeThemeManager";
 
 export class HollowManager {
 	private static self: HollowManager;
-
+	private isOnline: boolean;
 	static getSelf() {
 		if (!this.self) {
 			this.self = new HollowManager();
@@ -24,7 +25,18 @@ export class HollowManager {
 		return this.self;
 	}
 
-	constructor() {}
+	constructor() {
+		this.isOnline = navigator.onLine;
+		hollow.events.emit("network-state", this.isOnline);
+		window.addEventListener("offline", () => {
+			this.isOnline = false;
+			hollow.events.emit("network-state", false);
+		});
+		window.addEventListener("online", () => {
+			this.isOnline = true;
+			hollow.events.emit("network-state", true);
+		});
+	}
 
 	async preRealmSelection() {
 		hotkeysManager.init();
@@ -57,6 +69,7 @@ export class HollowManager {
 		useBackground({});
 		useTags();
 		NotifyManager.init();
+		CodeThemeManager.init();
 		this.handleEvents();
 	}
 

@@ -118,6 +118,7 @@ export type AppEvents = {
 	"character-add-xp": number;
 	notify: NotifyType;
 	insight: InsightType;
+	"network-state": boolean;
 } & {
 	[key: string]: any;
 };
@@ -393,7 +394,7 @@ export type TypedOptionMap = {
 	button: {};
 	color: {};
 	emoji: {};
-	dropdown: { options: string[] };
+	dropdown: { options: DropdownOption[] };
 	file: { accept?: string };
 	image: {};
 	range: { min: number; max: number; step?: number };
@@ -627,4 +628,16 @@ export type InsightType = {
 		tool: string;
 		card: string;
 	};
+};
+
+type DropdownItem = {
+	label: string;
+	checked?: boolean;
+};
+
+export type DropdownOption = {
+	title?: string;
+	isCheckBox?: boolean;
+	items: DropdownItem[];
+	onSelect: (v: string[] | string) => void;
 };

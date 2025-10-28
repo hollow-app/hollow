@@ -247,14 +247,19 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																value={() =>
 																	option.value
 																}
-																onSelect={(v) =>
-																	option.onChange(
-																		v,
-																	)
-																}
-																items={() =>
-																	option.options
-																}
+																options={() => [
+																	{
+																		items: option.options.map(
+																			(
+																				i,
+																			) => ({
+																				label: i,
+																			}),
+																		),
+																		onSelect:
+																			option.onChange,
+																	},
+																]}
 															/>
 														);
 

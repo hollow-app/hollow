@@ -1,6 +1,6 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { DataBase, HollowEvent, ICard } from "@type/hollow";
+import { DataBase, HollowEvent, ICard, ToolOption } from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
 import { ImageType } from "./ImageType";
 
@@ -88,17 +88,28 @@ export default function Image({ data, card, db }: ImageProps) {
 					type: "dropdown",
 					label: "Fit Mode",
 					description: "How the image should fit in its container",
-					value: image().objectFit,
-					onChange: (value) => {
-						setImage((prev) => ({
-							...prev,
-							objectFit: value,
-							...(value === "cover"
-								? { position: { x: 50, y: 50 } }
-								: {}),
-						}));
-					},
-					options: ["contain", "cover", "fill", "none", "scale-down"],
+					value: () => image().objectFit,
+					onChange: () => {},
+					options: [
+						{
+							items: [
+								"contain",
+								"cover",
+								"fill",
+								"none",
+								"scale-down",
+							].map((i) => ({ label: i })),
+							onSelect: (value: any) => {
+								setImage((prev) => ({
+									...prev,
+									objectFit: value,
+									...(value === "cover"
+										? { position: { x: 50, y: 50 } }
+										: {}),
+								}));
+							},
+						},
+					],
 				},
 				{
 					type: "text",

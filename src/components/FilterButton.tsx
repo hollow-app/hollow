@@ -143,13 +143,23 @@ export default function FilterButton(props: FilterButtonProps) {
 											when={config.type === "dropdown"}
 										>
 											<DropDown
-												items={() => config.options}
-												onSelect={(v) => {
-													setOpen(false);
-													(
-														config as DropdownConfig
-													).onSelect(v);
-												}}
+												options={() => [
+													{
+														items: config.options.map(
+															(i) => ({
+																label: i,
+															}),
+														),
+														onSelect: (
+															v: string,
+														) => {
+															setOpen(false);
+															(
+																config as DropdownConfig
+															).onSelect(v);
+														},
+													},
+												]}
 												placeholder={
 													(config as DropdownConfig)
 														.placeholder

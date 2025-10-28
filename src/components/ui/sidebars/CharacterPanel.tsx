@@ -48,7 +48,15 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 				{
 					key: "title",
 					type: "dropdown",
-					options: character().titles,
+					// TODO form != multi-onSelect
+					options: [
+						{
+							items: character().titles.map((i) => ({
+								label: i,
+							})),
+							onSelect: () => {},
+						},
+					],
 					label: "Title",
 					value: character().title,
 				},

@@ -29,7 +29,6 @@ export class NotifyManager {
 	}
 
 	constructor() {
-		//console.log('notify')
 		const savedData = localStorage.getItem(this.key);
 		if (savedData) {
 			this.system = JSON.parse(savedData);
@@ -37,7 +36,17 @@ export class NotifyManager {
 			this.update();
 		}
 		// TODO needs to check network
-		// this.checkRepo();
+		if (hollow.events.getCurrentData("network-state")) {
+			// this.checkRepo();
+		} else {
+			const waitToFetch = (state: boolean) => {
+				if (state) {
+					// this.checkRepo();
+					hollow.events.off("network-state", waitToFetch);
+				}
+			};
+			hollow.events.on("network-state", waitToFetch);
+		}
 	}
 
 	addNoty(noty: NotifyType) {

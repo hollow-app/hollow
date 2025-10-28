@@ -61,10 +61,11 @@ export class ToolManager {
 	}
 
 	private async initializeTools(loadUnsigned?: boolean): Promise<void> {
-		const realmTools =
-			localStorage.getItem(`${this.realm}-tools`) ||
-			JSON.stringify(initialStack);
-		localStorage.setItem(`${this.realm}-tools`, realmTools);
+		let realmTools = localStorage.getItem(`${this.realm}-tools`);
+		if (!realmTools) {
+			realmTools = JSON.stringify(initialStack);
+			localStorage.setItem(`${this.realm}-tools`, realmTools);
+		}
 
 		let parsedData: HandType[] = JSON.parse(realmTools);
 		//const hasUnsigned = parsedData.some((i) => !i.signed);

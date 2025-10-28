@@ -76,7 +76,14 @@ export default function Account() {
 					key: "type",
 					label: "Type",
 					type: "dropdown",
-					options: ["text", "list", "progress"],
+					options: [
+						{
+							items: ["text", "list", "progress"].map((i) => ({
+								label: i,
+							})),
+							onSelect: () => {},
+						},
+					],
 					value: Array.isArray(target?.value)
 						? "list"
 						: typeof target?.value === "string"
@@ -189,9 +196,15 @@ export default function Account() {
 					</div>
 					<div>
 						<DropDown
-							items={() => character().titles}
+							options={() => [
+								{
+									items: character().titles.map((i) => ({
+										label: i,
+									})),
+									onSelect: changeTitle,
+								},
+							]}
 							value={() => character().title}
-							onSelect={changeTitle}
 						/>
 					</div>
 				</div>

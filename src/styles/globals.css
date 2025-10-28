@@ -75,7 +75,7 @@
 
 *::-webkit-scrollbar-thumb {
 	background: var(--color-neutral-700);
-	border-radius: 0.25rem;
+	/* border-radius: 0.25rem; */
 	opacity: 0.3;
 }
 

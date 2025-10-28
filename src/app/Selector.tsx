@@ -355,9 +355,15 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								Themes
 							</label>
 							<DropDown
-								items={() => themes.map((i) => i.name)}
+								options={() => [
+									{
+										items: themes.map((i) => ({
+											label: i.name,
+										})),
+										onSelect: selectTheme,
+									},
+								]}
 								placeholder="Select A Theme"
-								onSelect={selectTheme}
 							/>
 						</div>
 						<div class="flex items-center justify-between">
@@ -571,14 +577,20 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 								Title
 							</h2>
 							<DropDown
-								value={() => "Elder"}
-								items={() => ["Elder", "The Original Few"]}
-								onSelect={(s) =>
-									setCharacter((prev) => ({
-										...prev,
-										title: s,
-									}))
-								}
+								value={() => character().title}
+								options={() => [
+									{
+										items: [
+											"Elder",
+											"The Original Few",
+										].map((i) => ({ label: i })),
+										onSelect: (s: string) =>
+											setCharacter((prev) => ({
+												...prev,
+												title: s,
+											})),
+									},
+								]}
 							/>
 						</div>
 					</div>

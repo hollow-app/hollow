@@ -295,21 +295,36 @@ function Header({ selectCard }: HeaderProps) {
 				</h1>
 				<div class="flex gap-2">
 					<DropDown
-						items={() =>
-							hollow.toolManager.getHand().map((i) => i.name)
-						}
+						options={() => [
+							{
+								items: hollow.toolManager
+									.getHand()
+									.map((i) => ({ label: i.name })),
+								onSelect: (v) =>
+									setSelected({ tool: v, card: null }),
+							},
+						]}
 						value={() => selected().tool}
-						onSelect={(v) => setSelected({ tool: v, card: null })}
 						placeholder="--tool--"
 						style={{ "--w": "50%" }}
 					/>
 					<DropDown
-						items={cards}
+						options={() => [
+							{
+								items: cards().map((i) => ({ label: i })),
+								onSelect: (v) => {
+									setSelected((prev) => ({
+										...prev,
+										card: v,
+									}));
+									selectCard(
+										selected().tool,
+										selected().card,
+									);
+								},
+							},
+						]}
 						value={() => selected().card}
-						onSelect={(v) => {
-							setSelected((prev) => ({ ...prev, card: v }));
-							selectCard(selected().tool, selected().card);
-						}}
 						placeholder="--card--"
 						style={{ "--w": "50%" }}
 					/>

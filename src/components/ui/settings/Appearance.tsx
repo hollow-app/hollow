@@ -4,7 +4,14 @@ import TagEditor from "@components/TagEditor";
 import { useBackground } from "@hooks/useBackground";
 import { useColor } from "@hooks/useColor";
 import useGrid from "@hooks/useGrid";
-import { createMemo, createSignal, For } from "solid-js";
+import {
+	createMemo,
+	createResource,
+	createSignal,
+	For,
+	Show,
+	Suspense,
+} from "solid-js";
 import { TagType } from "@type/hollow";
 import useTags from "@hooks/useTags";
 import DropDown from "@components/DropDown";
@@ -13,6 +20,9 @@ import Slider from "@components/Slider";
 import setStyle from "@hooks/setStyle";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
+import { CodeThemeManager } from "@managers/CodeThemeManager";
+import { MarkdownManager } from "@managers/MarkdownManager";
+import Loading from "@components/Loading";
 
 export default function Appearance() {
 	return (
@@ -293,29 +303,45 @@ function BackgroundSettings() {
 	);
 }
 
+const exampleCode = () => `
+\`\`\`js
+function greet(name) {
+  console.log(\`Hello, ${name}!\`);
+}
+greet("Theme Tester");
+\`\`\`
+`;
+
 function CodeThemeSettings() {
 	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
+	const [md] = createResource(exampleCode, () =>
+		MarkdownManager.getSelf().renderMarkdown(
+			exampleCode(),
+			"code-theme-example",
+		),
+	);
 	const [codeTheme, setCodeTheme] = createSignal(
-		localStorage.getItem(`${realm()}-code-theme`),
+		localStorage.getItem(`${realm()}-last-theme`),
 	);
 
-	const useCodeTheme = (v: string) => {
+	const useCodeTheme = async (v: string) => {
 		// keep same behavior as original (you had console.log)
 		// swap to useCodeTheme if you want actual effect:
 		// useCodeTheme(v);
 		// TODO
+		setCodeTheme(null);
+		await CodeThemeManager.getSelf().loadTheme(v);
 		setCodeTheme(v);
-		console.log(v);
 	};
 
 	return (
 		<>
 			<div class="flex items-center justify-between">
-				<div class="">
-					<h1 class="py-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
+				<div class="py-8">
+					<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
 						Code Theme
 					</h1>
-					<p>
+					<p class="pl-5 text-xs text-neutral-500">
 						All themes can be easily previewed on{" "}
 						<a
 							href={"https://highlightjs.org/examples"}
@@ -326,10 +352,21 @@ function CodeThemeSettings() {
 						.
 					</p>
 				</div>
+				<div class="flex h-40 items-center">
+					<Show when={codeTheme()} fallback={<Loading />}>
+						<Suspense>
+							<div class="markdown-preview" innerHTML={md()} />
+						</Suspense>
+					</Show>
+				</div>
 				<DropDown
 					value={() => codeTheme()}
-					items={() => codeThemes}
-					onSelect={useCodeTheme}
+					options={() => [
+						{
+							items: codeThemes.map((i) => ({ label: i })),
+							onSelect: useCodeTheme,
+						},
+					]}
 				/>
 			</div>
 		</>
@@ -421,163 +458,83 @@ function TagsEditor() {
 
 const codeThemes: string[] = [
 	"1c-light",
-	"1c-light.min",
 	"a11y-dark",
-	"a11y-dark.min",
 	"a11y-light",
-	"a11y-light.min",
 	"agate",
-	"agate.min",
 	"androidstudio",
-	"androidstudio.min",
 	"an-old-hope",
-	"an-old-hope.min",
 	"arduino-light",
-	"arduino-light.min",
 	"arta",
-	"arta.min",
 	"ascetic",
-	"ascetic.min",
 	"atom-one-dark",
-	"atom-one-dark.min",
 	"atom-one-dark-reasonable",
-	"atom-one-dark-reasonable.min",
 	"atom-one-light",
-	"atom-one-light.min",
 	"brown-paper",
-	"brown-paper.min",
 	"codepen-embed",
-	"codepen-embed.min",
 	"color-brewer",
-	"color-brewer.min",
 	"cybertopia-cherry",
-	"cybertopia-cherry.min",
 	"cybertopia-dimmer",
-	"cybertopia-dimmer.min",
 	"cybertopia-icecap",
-	"cybertopia-icecap.min",
 	"cybertopia-saturated",
-	"cybertopia-saturated.min",
 	"dark",
-	"dark.min",
 	"default",
-	"default.min",
 	"devibeans",
-	"devibeans.min",
 	"docco",
-	"docco.min",
 	"far",
-	"far.min",
 	"felipec",
-	"felipec.min",
 	"foundation",
-	"foundation.min",
-	"github",
-	"github-dark",
 	"github-dark-dimmed",
-	"github-dark-dimmed.min",
-	"github-dark.min",
-	"github.min",
+	"github-dark",
+	"github",
 	"gml",
-	"gml.min",
 	"googlecode",
-	"googlecode.min",
 	"gradient-dark",
-	"gradient-dark.min",
 	"gradient-light",
-	"gradient-light.min",
 	"neutralscale",
-	"neutralscale.min",
 	"hybrid",
-	"hybrid.min",
 	"idea",
-	"idea.min",
 	"intellij-light",
-	"intellij-light.min",
 	"ir-black",
-	"ir-black.min",
 	"isbl-editor-dark",
-	"isbl-editor-dark.min",
 	"isbl-editor-light",
-	"isbl-editor-light.min",
 	"kimbie-dark",
-	"kimbie-dark.min",
 	"kimbie-light",
-	"kimbie-light.min",
 	"lightfair",
-	"lightfair.min",
 	"lioshi",
-	"lioshi.min",
 	"magula",
-	"magula.min",
 	"mono-blue",
-	"mono-blue.min",
 	"monokai",
-	"monokai.min",
 	"monokai-sublime",
-	"monokai-sublime.min",
 	"night-owl",
-	"night-owl.min",
 	"nnfx-dark",
-	"nnfx-dark.min",
 	"nnfx-light",
-	"nnfx-light.min",
 	"nord",
-	"nord.min",
 	"obsidian",
-	"obsidian.min",
 	"panda-syntax-dark",
-	"panda-syntax-dark.min",
 	"panda-syntax-light",
-	"panda-syntax-light.min",
 	"paraiso-dark",
-	"paraiso-dark.min",
 	"paraiso-light",
-	"paraiso-light.min",
 	"pojoaque",
-	"pojoaque.min",
 	"purebasic",
-	"purebasic.min",
 	"qtcreator-dark",
-	"qtcreator-dark.min",
 	"qtcreator-light",
-	"qtcreator-light.min",
 	"rainbow",
-	"rainbow.min",
-	"rose-pine",
 	"rose-pine-dawn",
-	"rose-pine-dawn.min",
-	"rose-pine.min",
+	"rose-pine",
 	"rose-pine-moon",
-	"rose-pine-moon.min",
 	"routeros",
-	"routeros.min",
 	"school-book",
-	"school-book.min",
 	"shades-of-purple",
-	"shades-of-purple.min",
 	"srcery",
-	"srcery.min",
 	"stackoverflow-dark",
-	"stackoverflow-dark.min",
 	"stackoverflow-light",
-	"stackoverflow-light.min",
 	"sunburst",
-	"sunburst.min",
 	"tokyo-night-dark",
-	"tokyo-night-dark.min",
 	"tokyo-night-light",
-	"tokyo-night-light.min",
 	"tomorrow-night-blue",
-	"tomorrow-night-blue.min",
 	"tomorrow-night-bright",
-	"tomorrow-night-bright.min",
 	"vs2015",
-	"vs2015.min",
 	"vs",
-	"vs.min",
 	"xcode",
-	"xcode.min",
 	"xt256",
-	"xt256.min",
 ];

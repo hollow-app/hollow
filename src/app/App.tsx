@@ -15,15 +15,17 @@ import { HollowManager } from "@managers/HollowManager";
 const Selector = lazy(() => import("@app/Selector"));
 
 export default function App() {
-	const [step1] = createResource(
-		async () => await HollowManager.getSelf().preRealmSelection(),
-	);
 	const selectRealmOnStartup = createMemo(() =>
 		JSON.parse(localStorage.realmToggleOnStartup ?? "false"),
 	);
 	const [selectedRealm, setSelectedRealm] = createSignal<string | null>(
 		selectRealmOnStartup() ? null : localStorage.currentRealmId,
 	);
+
+	const [step1] = createResource(async () => {
+		RealmManager.getSelf().init(setSelectedRealm);
+		return await HollowManager.getSelf().preRealmSelection();
+	});
 	const Container = createMemo(() => {
 		const realm = selectedRealm();
 		const LazyContainer = lazy(async () => {
@@ -32,9 +34,6 @@ export default function App() {
 			return import("./Container");
 		});
 		return <LazyContainer />;
-	});
-	onMount(() => {
-		RealmManager.getSelf().init(setSelectedRealm);
 	});
 
 	return (

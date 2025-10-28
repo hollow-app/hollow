@@ -1,11 +1,23 @@
-class CodeThemeManager {
+import { RealmManager } from "./RealmManager";
+
+export class CodeThemeManager {
 	private db!: IDBDatabase;
 	private readonly dbName = "codeThemeDB";
 	private readonly storeName = "themes";
+	private readonly lastThemeKey = `${RealmManager.getSelf().currentRealmId}-last-theme`;
 	private readonly max = 10;
 	private readonly styleId = "hljs-theme-style";
-	private readonly themeBaseUrl =
-		"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles";
+	private static self: CodeThemeManager;
+
+	static init() {
+		if (!this.self) {
+			this.self = new CodeThemeManager();
+		}
+	}
+	static getSelf() {
+		this.init();
+		return this.self;
+	}
 
 	constructor(defaultTheme = "default") {
 		this.init().then(() => this.applyLastUsedTheme(defaultTheme));
@@ -37,7 +49,7 @@ class CodeThemeManager {
 			await this.evictOldThemes();
 		}
 		this.applyTheme(css);
-		localStorage.setItem("hljs-last-theme", name);
+		localStorage.setItem(this.lastThemeKey, name);
 	}
 
 	private async getCachedTheme(name: string) {
@@ -79,7 +91,9 @@ class CodeThemeManager {
 	}
 
 	private async fetchTheme(name: string) {
-		const res = await fetch(`${this.themeBaseUrl}/${name}.min.css`);
+		const res = await fetch(
+			`https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.0/styles/${name}.min.css`,
+		);
 		if (!res.ok) throw new Error("Theme download failed");
 		return res.text();
 	}
@@ -97,7 +111,7 @@ class CodeThemeManager {
 
 	private applyLastUsedTheme(fallback: string) {
 		return this.loadTheme(
-			localStorage.getItem("hljs-last-theme") || fallback,
+			localStorage.getItem(this.lastThemeKey) || fallback,
 		);
 	}
 }

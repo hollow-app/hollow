@@ -6,7 +6,7 @@ import { EventsManager } from "@managers/EventsManager";
 import { FormType, CardType } from "@type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
 import ToolCaseIcon from "@assets/icons/tool-case.svg";
-import { Accessor, createMemo, createSignal, For } from "solid-js";
+import { Accessor, createMemo, createSignal, For, onMount } from "solid-js";
 import { lazy } from "solid-js";
 import { hollow } from "hollow";
 
@@ -75,7 +75,13 @@ export default function Expand({ isVisible }: ExpandProps) {
 					label: "Tool",
 					key: "tool",
 					description: "The tool that will be inside this card",
-					options: hand().map((i) => i.title),
+					// TODO multi select in dropdown yet one for FORM
+					options: [
+						{
+							items: hand().map((i) => ({ label: i.title })),
+							onSelect: () => {},
+						},
+					],
 				},
 				{
 					type: "text",

@@ -1,4 +1,10 @@
-import { ClipboardPasteIcon, CopyIcon, ScissorsIcon } from "lucide-solid";
+import {
+	ClipboardPasteIcon,
+	CopyIcon,
+	RefreshCcw,
+	RefreshCcwIcon,
+	ScissorsIcon,
+} from "lucide-solid";
 import {
 	createSignal,
 	For,
@@ -13,6 +19,7 @@ import ContextMenuSide from "./ContextMenuSide";
 import { lazy } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
+import { RustManager } from "@managers/RustManager";
 const Icon = lazy(() => import("@components/Icon"));
 
 export default function ContextMenu() {
@@ -121,9 +128,9 @@ export default function ContextMenu() {
 	return (
 		<Presence>
 			<Show when={isVisible()}>
-				<Motion
+				<Motion.div
 					class={
-						"border-secondary-05 bg-secondary/80 text-secondary-90 pointer-events-auto fixed z-200 w-70 space-y-2 rounded-lg border px-2 py-2 shadow-[0_0_30px_3px_gray] backdrop-blur-sm dark:shadow-[0_0_30px_3px_black]"
+						"border-secondary-05 bg-secondary text-secondary-90 pointer-events-auto fixed z-200 w-60 space-y-2 rounded-lg border px-2 py-2 shadow-[0_0_5px_1px_gray] dark:shadow-[0_0_5px_1px_black]"
 					}
 					style={{
 						left: `${position().x}px`,
@@ -169,7 +176,6 @@ export default function ContextMenu() {
 								{(group: ContextMenuItem) => (
 									<>
 										<div class="flex items-center gap-1">
-											<hr class="border-secondary-10 w-2" />
 											<h1 class="text-secondary-30 text-xs font-semibold uppercase">
 												{group.header}
 											</h1>
@@ -221,17 +227,28 @@ export default function ContextMenu() {
 								)}
 							</For>
 						</Show>
+						<div class="flex items-center gap-1">
+							<h1 class="text-secondary-30 text-xs font-semibold uppercase">
+								{
+									RealmManager.getSelf().getRealmFromId(
+										RealmManager.getSelf().currentRealmId,
+									).name
+								}
+								{" Realm"}
+							</h1>
+							<hr class="border-secondary-10 flex-1" />
+						</div>
+						<div class="">
+							<button
+								class="button-cm"
+								onclick={() => RustManager.getSelf().reload()}
+							>
+								<RefreshCcwIcon class="size-4" />
+								Reload
+							</button>
+						</div>
 					</div>
-					<div id="context-menu-vault"></div>
-					<p class="text-secondary-40 border-secondary-10 border-t px-0 pt-1 text-xs tracking-wide">
-						{
-							RealmManager.getSelf().getRealmFromId(
-								RealmManager.getSelf().currentRealmId,
-							).name
-						}
-						{" Realm"}
-					</p>
-				</Motion>
+				</Motion.div>
 			</Show>
 		</Presence>
 	);

@@ -189,7 +189,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 					<div class="h-full flex-1 overflow-hidden overflow-y-scroll">
 						<Presence exitBeforeEnter>
 							<Show when={selected() === 0}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -207,10 +207,10 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<General />
 									</Suspense>
-								</Motion>
+								</Motion.div>
 							</Show>
 							<Show when={selected() === 1}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -228,10 +228,10 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<Appearance />
 									</Suspense>
-								</Motion>
+								</Motion.div>
 							</Show>
 							<Show when={selected() === 2}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -249,10 +249,10 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<Plugins />
 									</Suspense>
-								</Motion>
-							</Show>{" "}
+								</Motion.div>
+							</Show>
 							<Show when={selected() === 3}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -270,10 +270,10 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<HotKeys />
 									</Suspense>
-								</Motion>
+								</Motion.div>
 							</Show>
 							<Show when={selected() === 4}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -291,10 +291,10 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<Modifier />
 									</Suspense>
-								</Motion>
+								</Motion.div>
 							</Show>
 							<Show when={selected() === 5}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -312,10 +312,10 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<Developers />
 									</Suspense>
-								</Motion>
+								</Motion.div>
 							</Show>
 							<Show when={selected() === 6}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -333,10 +333,10 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<Account />
 									</Suspense>
-								</Motion>
+								</Motion.div>
 							</Show>
 							<Show when={selected() === 7}>
-								<Motion
+								<Motion.div
 									initial={{
 										opacity: 0,
 									}}
@@ -354,7 +354,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 									<Suspense>
 										<About />
 									</Suspense>
-								</Motion>
+								</Motion.div>
 							</Show>
 						</Presence>
 					</div>

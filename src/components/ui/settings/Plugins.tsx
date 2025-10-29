@@ -96,7 +96,7 @@ export default function Plugins({}: PluginsProps) {
 	return (
 		<Presence exitBeforeEnter>
 			<Show when={!selectedTool()}>
-				<Motion
+				<Motion.div
 					initial={{ opacity: 1 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
@@ -147,10 +147,10 @@ export default function Plugins({}: PluginsProps) {
 							)}
 						</For>
 					</div>
-				</Motion>
+				</Motion.div>
 			</Show>
 			<Show when={selectedTool()}>
-				<Motion
+				<Motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
@@ -222,7 +222,7 @@ export default function Plugins({}: PluginsProps) {
 							/>
 						</Suspense>
 					</div>
-				</Motion>
+				</Motion.div>
 			</Show>
 		</Presence>
 	);

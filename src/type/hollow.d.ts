@@ -119,6 +119,7 @@ export type AppEvents = {
 	notify: NotifyType;
 	insight: InsightType;
 	"network-state": boolean;
+	alert: AlertType;
 } & {
 	[key: string]: any;
 };
@@ -265,19 +266,19 @@ export type NotifyType = {
 	/**
 	 * ISO timestamp of when the notification should expire.
 	 */
-	expires_at: string;
+	expires_at?: string;
 
 	/**
 	 * Category or type label.
 	 */
-	type: "achievement" | "reminder" | "error" | "info" | "warning" | "update";
-
-	/**
-	 * @ignore
-	 */
-	visible?: boolean;
+	type: "achievement" | "reminder" | "error" | "warning" | "update";
 };
 
+export type AlertType = {
+	message: string;
+	accent?: string;
+	duration?: number; //ms
+};
 /**
  * Represents a visual tag with a name and color scheme.
  */

@@ -42,8 +42,8 @@ export default function ContextMenuSide({
 			</button>
 			<Presence>
 				<Show when={hovered()}>
-					<Motion
-						class="bg-secondary/80 border-secondary-05 absolute h-fit w-70 rounded-lg border px-2 py-2 backdrop-blur-sm"
+					<Motion.div
+						class="bg-secondary border-secondary-05 absolute h-fit w-70 rounded-lg border px-2 py-2 backdrop-blur-sm"
 						onMouseOver={handleMouseOver}
 						classList={{
 							"right-[100%]": position().xflip,
@@ -85,7 +85,7 @@ export default function ContextMenuSide({
 								Empty
 							</p>
 						)}
-					</Motion>
+					</Motion.div>
 				</Show>
 			</Presence>
 		</div>

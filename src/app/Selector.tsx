@@ -94,7 +94,7 @@ const useRealmManager = () => {
 };
 
 const WelcomeScreen = (props: { onNext: () => void }) => (
-	<Motion
+	<Motion.div
 		initial={{ opacity: 0 }}
 		animate={{ opacity: 1 }}
 		exit={{ opacity: 0 }}
@@ -119,7 +119,7 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 				<span class="relative z-10">Start</span>
 			</button>
 		</div>
-	</Motion>
+	</Motion.div>
 );
 
 const RealmList = (props: {
@@ -131,7 +131,7 @@ const RealmList = (props: {
 	const { removeRealm } = useRealmManager();
 
 	return (
-		<Motion
+		<Motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -167,7 +167,7 @@ const RealmList = (props: {
 				<div class="grid gap-4">
 					<For each={props.realms()}>
 						{(realm) => (
-							<Motion
+							<Motion.div
 								initial={{
 									opacity: 0,
 									y: 10,
@@ -271,12 +271,12 @@ const RealmList = (props: {
 										</button>
 									</div>
 								</div>
-							</Motion>
+							</Motion.div>
 						)}
 					</For>
 				</div>
 			</div>
-		</Motion>
+		</Motion.div>
 	);
 };
 
@@ -304,7 +304,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 	};
 
 	return (
-		<Motion
+		<Motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -479,7 +479,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 					</div>
 				</div>
 			</div>
-		</Motion>
+		</Motion.div>
 	);
 };
 
@@ -502,7 +502,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 	};
 
 	return (
-		<Motion
+		<Motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -642,7 +642,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 					Skip
 				</button>
 			</div>
-		</Motion>
+		</Motion.div>
 	);
 }
 

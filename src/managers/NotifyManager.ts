@@ -1,23 +1,18 @@
-import Notifications from "@components/ui/Notifications";
 import { NotifyType } from "@type/hollow";
-import data from "emojibase-data/en/compact.json";
-import { Setter } from "solid-js";
 import { isExpired, weekOld } from "./manipulation/strings";
 import { RealmManager } from "./RealmManager";
 import { hollow } from "hollow";
 
 type NotificationData = {
-	lastUpdated: string;
 	notifications: NotifyType[];
+	alert: boolean;
 };
 
 export class NotifyManager {
 	private static self: NotifyManager;
-	private key = `${RealmManager.getSelf().currentRealmId}-notifications`;
-	public system: NotificationData = {
-		lastUpdated: new Date().toISOString(),
-		notifications: [],
-	};
+	private readonly key = `${RealmManager.getSelf().currentRealmId}-notifications`;
+	private data: NotificationData = { alert: true, notifications: [] };
+
 	static init() {
 		this.self = new NotifyManager();
 	}
@@ -31,11 +26,10 @@ export class NotifyManager {
 	constructor() {
 		const savedData = localStorage.getItem(this.key);
 		if (savedData) {
-			this.system = JSON.parse(savedData);
+			this.data = JSON.parse(savedData);
 		} else {
 			this.update();
 		}
-		// TODO needs to check network
 		if (hollow.events.getCurrentData("network-state")) {
 			// this.checkRepo();
 		} else {
@@ -50,22 +44,22 @@ export class NotifyManager {
 	}
 
 	addNoty(noty: NotifyType) {
-		this.system.notifications.push(noty);
-		hollow.events.emit("notify-status", true);
+		this.data.notifications.push(noty);
+		this.setAlert(true);
 		this.update();
 	}
 	removeNoty(id: string) {
-		this.system.notifications = this.system.notifications.filter(
+		this.data.notifications = this.data.notifications.filter(
 			(i) => i.id !== id,
 		);
-		if (this.system.notifications.length === 0) {
-			hollow.events.emit("notify-status", false);
+		if (this.count() === 0) {
+			this.setAlert(false);
 		}
 		this.update();
 	}
 	clearAll() {
-		this.system.notifications = [];
-		hollow.events.emit("notify-status", false);
+		this.data.notifications = [];
+		this.setAlert(false);
 		this.update();
 	}
 
@@ -79,15 +73,14 @@ export class NotifyManager {
 			const parsed: (NotifyType & { platform: string })[] =
 				JSON.parse(text);
 			parsed.forEach((n) => {
-				//console.log(n.id)
 				if (
 					(([localStorage.platform, "all"].includes(n.platform) &&
 						weekOld(n.submitted_at) &&
 						!isExpired(n.expires_at)) ||
 						n.id === "HX1-rS4v") &&
-					!this.system.notifications.some((i) => i.id === n.id)
+					!this.data.notifications.some((i) => i.id === n.id)
 				) {
-					hollow.events.emit("notify", n);
+					this.addNoty(n);
 				}
 			});
 		} catch (e) {
@@ -95,11 +88,25 @@ export class NotifyManager {
 		}
 	}
 
+	public count() {
+		return this.data.notifications.length;
+	}
+	public getNotification() {
+		return this.data.notifications;
+	}
+	public isAlert() {
+		return this.data.alert;
+	}
+	public setAlert(v: boolean) {
+		this.data.alert = v;
+		hollow.events.emit("notify-status", v);
+		this.update();
+	}
+
 	update() {
-		this.system = {
-			...this.system,
-			lastUpdated: new Date().toISOString(),
-		};
-		localStorage.setItem(this.key, JSON.stringify(this.system));
+		if (this.data.notifications.length > 20) {
+			this.data.notifications = this.data.notifications.slice(0, 21);
+		}
+		localStorage.setItem(this.key, JSON.stringify(this.data));
 	}
 }

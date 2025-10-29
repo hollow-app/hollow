@@ -14,6 +14,7 @@ import SideBar from "@components/ui/SideBar";
 import CharacterPanel from "@components/ui/sidebars/CharacterPanel";
 import { hotkeysManager } from "@managers/HotkeysManager";
 import { hollow } from "hollow";
+import Alerts from "@components/ui/popups/Alerts";
 const Settings = lazy(async () => import("@components/ui/Settings"));
 const Expand = lazy(() => import("@components/ui/sidebars/Expand"));
 const Editor = lazy(() => import("@components/ui/sidebars/Editor"));
@@ -108,6 +109,7 @@ function Container() {
 				isVisible={isNotifications}
 				setVisible={setNotifications}
 			/>
+			<Alerts />
 		</div>
 	);
 }

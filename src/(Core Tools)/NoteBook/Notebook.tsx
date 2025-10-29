@@ -283,7 +283,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			{/* Body */}
 			<Presence exitBeforeEnter>
 				<Show when={panel() === 2}>
-					<Motion
+					<Motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
@@ -387,10 +387,10 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 								/>
 							</div>
 						</div>
-					</Motion>
+					</Motion.div>
 				</Show>
 				<Show when={panel() === 0}>
-					<Motion
+					<Motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
@@ -398,7 +398,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 						class="flex h-full w-full items-center justify-center"
 					>
 						<NotebookTabsIcon class="text-secondary-10 h-50 w-50" />
-					</Motion>
+					</Motion.div>
 				</Show>
 				{/* Notes List */}
 				<Show when={panel() === 1}>
@@ -441,7 +441,7 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 	};
 
 	return (
-		<Motion
+		<Motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -461,7 +461,7 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 					/>
 				)}
 			</For>
-		</Motion>
+		</Motion.div>
 	);
 }
 

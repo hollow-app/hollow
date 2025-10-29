@@ -38,9 +38,7 @@ export default function SideBar({
 		setDrag(!isDrag());
 	};
 
-	const [alert, setAlert] = createSignal(
-		NotifyManager.getSelf().system.notifications.length > 0,
-	);
+	const [alert, setAlert] = createSignal(NotifyManager.getSelf().isAlert());
 
 	onMount(() => {
 		hollow.events.on("notify-status", setAlert);

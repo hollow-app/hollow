@@ -30,13 +30,44 @@ export default function Notifications({
 	isVisible,
 	setVisible,
 }: NotificationsProps) {
+	return (
+		<div class="pointer-events-none fixed top-5 right-5 z-10 h-[calc(100%-calc(var(--spacing)*10))] w-120 max-w-full">
+			<Presence>
+				<Show when={isVisible()}>
+					<Motion.div
+						initial={{
+							x: "100%",
+						}}
+						animate={{ x: "0%" }}
+						exit={{ x: "100%" }}
+						transition={{ duration: 0.4 }}
+						class="h-full w-full"
+					>
+						<NotifyList setVisible={setVisible} />
+					</Motion.div>
+				</Show>
+			</Presence>
+		</div>
+	);
+}
+
+type NotifyListProps = {
+	setVisible: Setter<boolean>;
+};
+function NotifyList({ setVisible }: NotifyListProps) {
 	const [notifications, setNotifications] = createSignal(
-		NotifyManager.getSelf().system.notifications,
+		NotifyManager.getSelf().getNotification(),
 	);
-	const visibleNotyList = createMemo(() =>
-		notifications().filter((i) => i.visible),
-	);
-	const [cue, setCue] = createSignal([]);
+	// TODO if list is seen then no alert
+	const removeNoty = (id: string) => {
+		setNotifications((prev) => [...prev.filter((i) => i.id !== id)]);
+		NotifyManager.getSelf().removeNoty(id);
+	};
+	const clearAll = () => {
+		setVisible(false);
+		setNotifications([]);
+		NotifyManager.getSelf().clearAll();
+	};
 	const getIconFromType = (type: string): { icon: string; color: string } => {
 		switch (type) {
 			case "achievement":
@@ -45,8 +76,6 @@ export default function Notifications({
 				return { icon: "Bell", color: "#5A67D8" };
 			case "error":
 				return { icon: "OctagonX", color: "#E53E3E" };
-			case "info":
-				return { icon: "Info", color: "#3182CE" };
 			case "warning":
 				return {
 					icon: "OctagonAlert",
@@ -59,145 +88,51 @@ export default function Notifications({
 		}
 	};
 
-	const addNoty = (n: NotifyType) => {
-		setNotifications((prev) => [...prev, { ...n, visible: true }]);
-		NotifyManager.getSelf().addNoty(n);
-		setCue((prev) => [...prev, n.id]);
-		setTimeout(() => {
-			setCue((prev) => [...prev.filter((i) => i !== n.id)]);
-			setTimeout(() => {
-				setNotifications((prev) =>
-					prev.map((i) =>
-						i.id === n.id
-							? {
-									...i,
-									visible: false,
-								}
-							: i,
-					),
-				);
-			}, 1000);
-		}, 3000);
-	};
-
-	const removeNoty = (id: string) => {
-		setNotifications((prev) => [...prev.filter((i) => i.id !== id)]);
-
-		NotifyManager.getSelf().removeNoty(id);
-	};
-	const clearAll = () => {
-		setVisible(false);
-		setNotifications([]);
-		NotifyManager.getSelf().clearAll();
-	};
-
-	createEffect(() => {
-		if (isVisible())
-			setNotifications((prev) => [
-				...prev.map((i) => ({ ...i, visible: false })),
-			]);
-	});
-
-	onMount(() => {
-		hollow.events.on("notify", addNoty);
-	});
-
 	return (
-		<div class="pointer-events-none fixed top-5 right-5 z-10 h-[calc(100%-calc(var(--spacing)*10))] w-120 max-w-full">
-			<Show when={visibleNotyList().length > 0 && !isVisible()}>
-				<div class="pointer-events-none h-full space-y-4 overflow-hidden overflow-y-auto">
-					<For each={visibleNotyList()}>
-						{(noty) => (
-							<Presence>
-								<Show when={cue().find((i) => i === noty.id)}>
-									<Motion
-										initial={{
-											x: "100%",
-										}}
-										animate={{
-											x: "0%",
-										}}
-										exit={{
-											x: "100%",
-										}}
-										transition={{
-											duration: 0.4,
-										}}
-									>
-										<Noty
-											tp={getIconFromType(noty.type)}
-											noti={noty}
-											external
-										/>
-									</Motion>
-								</Show>
-							</Presence>
-						)}
-					</For>
+		<PopupWrapper
+			Icon={BellIcon}
+			title="Notifications"
+			onClose={() => setVisible(false)}
+			shadow={false}
+		>
+			<div class="flex h-[calc(100vh-calc(var(--spacing)*24))] w-120 flex-col gap-3 px-3">
+				<div class="flex items-center justify-between">
+					<p class="text-secondary-40 px-3 text-sm tracking-wider">
+						Notifications
+					</p>
+					<Show when={notifications().length > 0}>
+						<div class="flex w-full p-2">
+							<button
+								onclick={clearAll}
+								class="button-secondary ml-auto"
+							>
+								Clear All
+							</button>
+						</div>
+					</Show>
 				</div>
-			</Show>
-
-			<Presence>
-				<Show when={isVisible()}>
-					<Motion
-						initial={{
-							x: "100%",
+				<hr class="border-secondary bg-secondary-10 h-[2px] w-full" />
+				<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
+					<For each={notifications()}>
+						{(noti) => {
+							const tp = getIconFromType(noti.type);
+							return (
+								<Noty
+									noti={noti}
+									tp={tp}
+									removeNoty={removeNoty}
+								/>
+							);
 						}}
-						animate={{ x: "0%" }}
-						exit={{ x: "100%" }}
-						transition={{ duration: 0.4 }}
-						class="h-full w-full"
-					>
-						<PopupWrapper
-							Icon={BellIcon}
-							title="Notifications"
-							onClose={() => setVisible(false)}
-							shadow={false}
-						>
-							<div class="flex h-[calc(100vh-calc(var(--spacing)*24))] w-120 flex-col gap-3 px-3">
-								<div class="flex items-center justify-between">
-									<p class="text-secondary-40 px-3 text-sm tracking-wider">
-										Notifications
-									</p>
-									<Show when={notifications().length > 0}>
-										<div class="flex w-full p-2">
-											<button
-												onclick={clearAll}
-												class="button-secondary ml-auto"
-											>
-												Clear All
-											</button>
-										</div>
-									</Show>
-								</div>
-								<hr class="border-secondary bg-secondary-10 h-[2px] w-full" />
-								<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
-									<For each={notifications()}>
-										{(noti) => {
-											const tp = getIconFromType(
-												noti.type,
-											);
-											return (
-												<Noty
-													noti={noti}
-													tp={tp}
-													removeNoty={removeNoty}
-												/>
-											);
-										}}
-									</For>
-									<Show when={notifications().length === 0}>
-										<span class="text-secondary-50 m-auto text-center tracking-tighter">
-											You have no notifications
-										</span>
-									</Show>
-								</div>
-							</div>
-						</PopupWrapper>
-					</Motion>
-				</Show>
-			</Presence>
-		</div>
+					</For>
+					<Show when={notifications().length === 0}>
+						<span class="text-secondary-50 m-auto text-center tracking-tighter">
+							You have no notifications
+						</span>
+					</Show>
+				</div>
+			</div>
+		</PopupWrapper>
 	);
 }
 

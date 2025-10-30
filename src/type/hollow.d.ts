@@ -275,8 +275,13 @@ export type NotifyType = {
 };
 
 export type AlertType = {
+	type?: "success" | "error" | "warning" | "info";
+	title: string;
 	message: string;
-	accent?: string;
+	button?: {
+		label: string;
+		callback: () => void;
+	};
 	duration?: number; //ms
 };
 /**

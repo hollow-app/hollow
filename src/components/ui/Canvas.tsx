@@ -1,7 +1,5 @@
-import DropDown from "@components/DropDown";
 import Vault from "@components/ui/Vault";
 import useGrid from "@hooks/useGrid";
-import { AlertType, NotifyType } from "@type/hollow";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
@@ -24,13 +22,6 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 		useGrid();
 		setSize({ w: width, h: height });
 	});
-	const emitNotify = () => {
-		const alert: AlertType = {
-			message: "test something",
-			accent: "#FFCD03",
-		};
-		hollow.events.emit("alert", alert);
-	};
 	return (
 		<div
 			ref={canvas}
@@ -67,7 +58,7 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 				<Show when={size()}>
 					<div
 						ref={container}
-						class={"canvas relative"}
+						class="canvas relative"
 						style={{
 							width: `calc(${size().w}px + calc(var(--cw) * var(--offcolumns) - 2px))`,
 							height: `calc(${size().h}px + calc(var(--rh) * var(--offrows) - 2px)`,
@@ -80,12 +71,6 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 								);
 							}}
 						</For>
-						<button
-							class="button-primary absolute top-30 left-30"
-							onclick={emitNotify}
-						>
-							Emit
-						</button>
 					</div>
 				</Show>
 			</OverlayScrollbarsComponent>

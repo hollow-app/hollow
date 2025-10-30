@@ -12,9 +12,9 @@ import {
 	SearchIcon,
 	Trash2Icon,
 } from "lucide-solid";
-import FilterButton from "@components/FilterButton";
 import PopupWrapper from "../PopupWrapper";
 import { hollow } from "hollow";
+import DropDown from "@components/DropDown";
 const dt = new Date();
 type VaultStorageProps = {
 	onSelect?: (p: string) => void;
@@ -160,29 +160,36 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 							</span>
 							<ImageUpIcon class="size-5" />
 						</button>
-						<FilterButton
-							configs={[
+						<DropDown
+							isFilter
+							options={() => [
 								{
-									id: "image-types",
-									type: "multioption",
-									label: "Types",
-									options: [
-										...new Set(images().map((i) => i.type)),
-									],
-									onChange: filterByTypes,
+									title: "By Tags",
+									isCheckBox: true,
+									items: [
+										...new Set(
+											images().flatMap((i) => i.tags),
+										),
+									].map((i) => ({
+										label: i,
+										checked: filter().tags.includes(i),
+									})),
+
+									onSelect: filterByTags,
 								},
 								{
-									id: "image-tags",
-									type: "multioption",
-									label: "Tags",
-									options: [
+									title: "By Types",
+									isCheckBox: true,
+									items: [
 										...new Set(
-											images()
-												.map((i) => i.tags)
-												.flat(),
+											images().flatMap((i) => i.type),
 										),
-									],
-									onChange: filterByTags,
+									].map((i) => ({
+										label: i,
+										checked: filter().tags.includes(i),
+									})),
+
+									onSelect: filterByTypes,
 								},
 							]}
 						/>

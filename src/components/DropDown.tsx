@@ -1,7 +1,5 @@
-import { ItemType } from "@coretools/Kanban/types/ItemType";
 import { DropdownOption } from "@type/hollow";
-import { ChevronDownIcon } from "lucide-solid";
-import { platform } from "os";
+import { ChevronDownIcon, ListFilterPlusIcon } from "lucide-solid";
 import { createSignal, For, JSX, onCleanup, onMount, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 
@@ -10,13 +8,15 @@ export type DropDownProps = {
 	options: () => DropdownOption[];
 	placeholder?: string;
 	style?: JSX.CSSProperties;
+	isFilter?: boolean;
 };
 
 export default function DropDown({
 	value,
 	options,
 	placeholder,
-	style,
+	style = {},
+	isFilter,
 }: DropDownProps) {
 	const [isOpen, setIsOpen] = createSignal(false);
 	let dropdownRef: HTMLDivElement | undefined;
@@ -49,7 +49,7 @@ export default function DropDown({
 			listRef &&
 			!listRef.contains(target)
 		) {
-			// setIsOpen(false);
+			setIsOpen(false);
 		}
 	};
 	const toggleOpen = () => {
@@ -73,29 +73,58 @@ export default function DropDown({
 	return (
 		<div
 			ref={dropdownRef}
-			class="group drop-down pointer-events-auto relative h-fit max-w-full"
-			aria-expanded={isOpen()}
-			style={style}
+			class="group pointer-events-auto relative h-fit"
+			classList={{
+				"w-10": isFilter,
+				"drop-down ": !isFilter,
+			}}
+			style={isFilter ? {} : style}
 		>
-			<input
-				ref={inputRef}
-				type="text"
-				value={value()}
-				onClick={toggleOpen}
-				placeholder={placeholder}
-				spellcheck="false"
-				readonly
-				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 text-md relative h-fit w-full max-w-full cursor-pointer appearance-none rounded-md py-2 pr-3 pl-3 shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
-			/>
+			<button onClick={toggleOpen}>
+				<input
+					ref={inputRef}
+					type="text"
+					value={value ? value() : ""}
+					placeholder={placeholder}
+					spellcheck="false"
+					readonly
+					class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 hover:border-secondary-70 focus:border-primary bg-secondary-10/75 text-md relative h-fit w-full cursor-pointer appearance-none rounded-md px-3 py-2 shadow-sm focus:shadow disabled:cursor-not-allowed disabled:opacity-50"
+				/>
+				<Show
+					when={isFilter}
+					fallback={
+						<ChevronDownIcon
+							class="pointer-events-none absolute top-0 right-1 h-full transition duration-300"
+							classList={{
+								"text-secondary-20": !isOpen(),
+								"text-primary": isOpen(),
+							}}
+							aria-hidden="true"
+						/>
+					}
+				>
+					<ListFilterPlusIcon
+						class="absolute top-2.5 left-2.5 size-5 transition duration-300"
+						classList={{
+							"text-secondary-50": !isOpen(),
+							"text-primary": isOpen(),
+						}}
+					/>
+				</Show>
+			</button>
 			<Show when={isOpen()}>
 				<Portal>
 					<ul
 						ref={listRef}
-						class="bg-secondary-10 border-secondary-05 fixed z-50 max-h-40 overflow-x-hidden overflow-y-auto rounded-md border text-sm shadow-lg"
+						class="bg-secondary-05 drop-down border-secondary-10 fixed z-50 max-h-40 overflow-x-hidden overflow-y-auto rounded-md border text-sm shadow-lg"
 						style={{
 							top: `${pos().top}px`,
 							left: `${pos().left}px`,
-							width: `${inputRef.getBoundingClientRect().width}px`,
+							...(isFilter
+								? style
+								: {
+										width: `${dropdownRef.getBoundingClientRect().width}px`,
+									}),
 						}}
 					>
 						<div class="p-1">
@@ -111,7 +140,7 @@ export default function DropDown({
 											}
 										>
 											<Show when={group.title}>
-												<div class="bg-secondary-10 sticky top-0 z-20 flex w-full items-center gap-1">
+												<div class="bg-secondary-05 sticky -top-px z-20 flex w-full items-center gap-1">
 													<h1 class="py-1 pl-2 text-xs text-neutral-500 uppercase">
 														{group.title}
 													</h1>
@@ -132,14 +161,6 @@ export default function DropDown({
 					</ul>
 				</Portal>
 			</Show>
-			<ChevronDownIcon
-				class="pointer-events-none absolute top-0 right-1 h-full transition duration-300"
-				classList={{
-					"text-secondary-20": !isOpen(),
-					"text-primary": isOpen(),
-				}}
-				aria-hidden="true"
-			/>
 		</div>
 	);
 }
@@ -185,6 +206,7 @@ function ItemsList({ items, isCheckBox, onSelect, hide }: ItemsListProps) {
 						<input
 							class="checkbox"
 							type="checkbox"
+							style={{ "--margin": "0 0 0 10px" }}
 							checked={selected().includes(item.label)}
 						/>
 					</Show>

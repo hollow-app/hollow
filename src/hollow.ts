@@ -12,6 +12,7 @@ type hollowType = {
 	onCut?: () => void;
 	onPaste?: () => void;
 	events: HollowEvent<AppEvents>;
+	pevents: HollowEvent<PrivateEvents>;
 	toolManager?: ToolManager;
 	entryManager?: EntryManager;
 	markdownManager?: MarkdownManager;
@@ -20,5 +21,10 @@ type hollowType = {
 
 export const hollow: hollowType = {
 	events: new EventsManager() as HollowEvent<AppEvents>,
+	pevents: new EventsManager() as HollowEvent<PrivateEvents>,
 	// toolmanager is assigned in init
+};
+
+type PrivateEvents = {
+	"deep-link": string[];
 };

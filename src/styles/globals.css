@@ -839,3 +839,24 @@ a {
 		min-width: var(--container-6xl);
 	}
 }
+
+
+.timer-bar {
+	--duration: 3000ms;
+	animation: timer-bar var(--duration) ease-in-out forwards;
+}
+
+
+@keyframes timer-bar {
+	from {
+		width: 100%;
+	}
+
+	to {
+		width: 0;
+	}
+}
+
+a.no-underline-alt {
+	text-decoration: none;
+}

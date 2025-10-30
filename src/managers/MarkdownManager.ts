@@ -15,7 +15,7 @@ export class MarkdownManager {
 		}
 		return this.self;
 	}
-	constructor() {
+	private constructor() {
 		hollow.events.on(
 			"render-markdown",
 			({ id, text }: { id: string; text: string }) =>

@@ -109,7 +109,6 @@ function Container() {
 				isVisible={isNotifications}
 				setVisible={setNotifications}
 			/>
-			<Alerts />
 		</div>
 	);
 }

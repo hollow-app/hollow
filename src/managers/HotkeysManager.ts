@@ -26,7 +26,7 @@ export class hotkeysManager {
 		return this.self;
 	}
 
-	constructor() {
+	private constructor() {
 		const savedData = localStorage.getItem(this.key);
 		let parsedData: HotKeysData;
 		if (savedData) {

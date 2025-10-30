@@ -17,7 +17,7 @@ export class EntryManager {
 	async start() {
 		this.initDB().then(() => this.loadEntries());
 	}
-	constructor() {
+	private constructor() {
 		hollow.events.on("send-entry", (entry: EntryType) =>
 			this.receiveEntry(entry),
 		);

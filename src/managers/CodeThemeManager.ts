@@ -19,7 +19,7 @@ export class CodeThemeManager {
 		return this.self;
 	}
 
-	constructor(defaultTheme = "default") {
+	private constructor(defaultTheme = "default") {
 		this.init().then(() => this.applyLastUsedTheme(defaultTheme));
 	}
 

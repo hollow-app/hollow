@@ -52,7 +52,9 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 	return (
 		<Sidepanel isVisible={isVisible}>
 			<div class="px-5 py-3">
-				<Header selectCard={selectCard} />
+				<Show when={isVisible()}>
+					<Header selectCard={selectCard} />
+				</Show>
 			</div>
 			<Show
 				when={kit()}
@@ -283,7 +285,8 @@ function Header({ selectCard }: HeaderProps) {
 			? hollow.toolManager
 					.getHand()
 					.find((i) => i.name === selected().tool)
-					.cards.map((i) => i.name)
+					.cards.filter((i) => i.isPlaced)
+					.map((i) => i.name)
 			: [],
 	);
 
@@ -312,15 +315,12 @@ function Header({ selectCard }: HeaderProps) {
 						options={() => [
 							{
 								items: cards().map((i) => ({ label: i })),
-								onSelect: (v) => {
+								onSelect: (v: string) => {
 									setSelected((prev) => ({
 										...prev,
 										card: v,
 									}));
-									selectCard(
-										selected().tool,
-										selected().card,
-									);
+									selectCard(selected().tool, v);
 								},
 							},
 						]}

@@ -31,7 +31,7 @@ export default function Notifications({
 	setVisible,
 }: NotificationsProps) {
 	return (
-		<div class="pointer-events-none fixed top-5 right-5 z-10 h-[calc(100%-calc(var(--spacing)*10))] w-120 max-w-full">
+		<div class="pointer-events-none fixed top-5 right-5 bottom-5 z-10 h-full w-120 max-w-full">
 			<Presence>
 				<Show when={isVisible()}>
 					<Motion.div

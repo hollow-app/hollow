@@ -11,6 +11,7 @@ import {
 } from "solid-js";
 import Loading from "@components/Loading";
 import { HollowManager } from "@managers/HollowManager";
+import Alerts from "@components/ui/popups/Alerts";
 
 const Selector = lazy(() => import("@app/Selector"));
 
@@ -48,8 +49,8 @@ export default function App() {
 					</Suspense>
 				</Show>
 			</Show>
-
 			<Popups />
+			<Alerts />
 		</main>
 	);
 }

@@ -46,7 +46,7 @@ export default function SideBar({
 	return (
 		<div class="bg-secondary-10/0 mr-2 flex w-14 flex-col gap-4 rounded-xl py-4">
 			<button
-				class="bg-secondary-05 border-secondary-10 hover:text-secondary-95 text-secondary-70 mx-auto w-fit rounded-lg border p-1"
+				class="bg-secondary-05 border-secondary-10 hover:text-secondary-95 text-secondary-80 mx-auto w-fit rounded-lg border p-1"
 				onclick={() => toggleChara()}
 			>
 				<Hollow class="orbit mx-auto size-7" />

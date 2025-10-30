@@ -1,12 +1,9 @@
 import Sidepanel from "@components/animations/Sidepanel";
 import Card from "@components/Card";
 import DropDown from "@components/DropDown";
-import FilterButton from "@components/FilterButton";
-import { EventsManager } from "@managers/EventsManager";
 import { FormType, CardType } from "@type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
-import ToolCaseIcon from "@assets/icons/tool-case.svg";
-import { Accessor, createMemo, createSignal, For, onMount } from "solid-js";
+import { Accessor, createMemo, createSignal, For } from "solid-js";
 import { lazy } from "solid-js";
 import { hollow } from "hollow";
 
@@ -173,15 +170,27 @@ export default function Expand({ isVisible }: ExpandProps) {
 						/>
 						<SearchIcon class="text-secondary-30 peer-focus:text-secondary-50 absolute top-1/2 left-3 size-5 -translate-y-1/2 transition-colors" />
 					</div>
-					<FilterButton
-						configs={[
+					<DropDown
+						isFilter
+						style={{ "--w": "fit-content" }}
+						options={() => [
 							{
-								type: "multioption",
-								label: "State",
-								id: "state",
-								options: ["favourite", "placed", "unplaced"],
-								initials: [1, 2],
-								onChange: (v) => {
+								isCheckBox: true,
+								items: [
+									{
+										label: "favourite",
+										checked: filter().favourite,
+									},
+									{
+										label: "placed",
+										checked: filter().placed,
+									},
+									{
+										label: "unplaced",
+										checked: filter().unplaced,
+									},
+								],
+								onSelect: (v) => {
 									const tmp = Object.fromEntries(
 										["favourite", "placed", "unplaced"].map(
 											(key) => [key, v.includes(key)],

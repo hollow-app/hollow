@@ -14,6 +14,7 @@ import { DataBaseRequest } from "@type/hollow";
 import { ToolDataBase } from "./ToolDataBase";
 import { hotkeysManager } from "./HotkeysManager";
 import { CodeThemeManager } from "./CodeThemeManager";
+import { DeepLinkManager } from "./DeepLinkManager";
 
 export class HollowManager {
 	private static self: HollowManager;
@@ -25,7 +26,7 @@ export class HollowManager {
 		return this.self;
 	}
 
-	constructor() {
+	private constructor() {
 		this.isOnline = navigator.onLine;
 		hollow.events.emit("network-state", this.isOnline);
 		window.addEventListener("offline", () => {
@@ -70,6 +71,7 @@ export class HollowManager {
 		useTags();
 		NotifyManager.init();
 		CodeThemeManager.init();
+		DeepLinkManager.init();
 		this.handleEvents();
 	}
 

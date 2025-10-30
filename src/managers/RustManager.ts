@@ -46,7 +46,7 @@ export class RustManager {
 	static self: RustManager;
 	private appWindow = null;
 
-	constructor() {
+	private constructor() {
 		this.appWindow = getCurrentWindow();
 	}
 

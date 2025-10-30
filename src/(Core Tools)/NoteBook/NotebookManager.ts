@@ -14,7 +14,7 @@ export class NotebookManager {
 		return this.self;
 	}
 
-	constructor() {
+	private constructor() {
 		const request: DataBaseRequest = {
 			pluginName: "notebookDB",
 			version: 1,

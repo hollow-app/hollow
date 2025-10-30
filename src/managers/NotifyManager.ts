@@ -23,7 +23,7 @@ export class NotifyManager {
 		return this.self;
 	}
 
-	constructor() {
+	private constructor() {
 		const savedData = localStorage.getItem(this.key);
 		if (savedData) {
 			this.data = JSON.parse(savedData);

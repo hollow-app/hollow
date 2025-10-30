@@ -3,7 +3,6 @@ import ServerIcon from "@assets/icons/server.svg";
 import { For, createMemo, createSignal, Show, Suspense } from "solid-js";
 import Tag from "../../Tag";
 import { ChevronsUpDownIcon, SearchIcon } from "lucide-solid";
-import FilterButton from "../../FilterButton";
 import { lazy } from "solid-js";
 import { EntryType } from "@type/hollow";
 import {
@@ -19,10 +18,11 @@ import PopupWrapper from "../../ui/PopupWrapper";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import { EntryManager } from "@managers/EntryManager";
 import { hollow } from "hollow";
+import DropDown from "@components/DropDown";
 const Icon = lazy(() => import("@components/Icon"));
 
 type filterType = {
-	tool: string;
+	tools: string[];
 	tags: string[];
 	text: string;
 };
@@ -36,7 +36,7 @@ export default function EntriesViewer() {
 	);
 
 	const [filter, setFilter] = createSignal<filterType>({
-		tool: null,
+		tools: [],
 		tags: [],
 		text: null,
 	});
@@ -47,14 +47,15 @@ export default function EntriesViewer() {
 		content: false,
 	});
 	const filteredList = createMemo(() => {
-		const { tags, tool, text } = filter();
+		const { tags, tools, text } = filter();
 		const currentSort = sort();
 		const list = entries().filter((entry) => {
 			// TODO opt
 			const matchesTags =
 				tags.length === 0 ||
 				entry.tags?.some((tag) => tags.includes(tag));
-			const matchesTool = !tool || entry.source.tool === tool;
+			const matchesTool =
+				tools.length === 0 || tools.includes(entry.source.tool);
 			const matchesText =
 				!text ||
 				entry.title?.includes(text) ||
@@ -99,38 +100,49 @@ export default function EntriesViewer() {
 									collected from tools across your workspace.
 								</p>
 								<div class="relative z-1 flex flex-1 items-center gap-3">
-									<FilterButton
-										configs={[
+									<DropDown
+										isFilter
+										options={() => [
 											{
-												id: "tool",
-												type: "dropdown",
-												label: "Tool",
-												options: [
+												title: "Tools",
+												isCheckBox: true,
+												items: [
 													...new Set(
 														entries().map(
 															(i) =>
 																i.source.tool,
 														),
 													),
-												],
-												onSelect: (v) =>
+												].map((i) => ({
+													label: i,
+													checked:
+														filter().tools.includes(
+															i,
+														),
+												})),
+												onSelect: (v: string[]) =>
 													setFilter((prev) => ({
 														...prev,
-														tool: v,
+														tools: v,
 													})),
 											},
 											{
-												id: "tags",
-												type: "multioption",
-												label: "Tags",
-												options: [
+												title: "Tags",
+												isCheckBox: true,
+												items: [
 													...new Set(
-														entries()
-															.map((i) => i.tags)
-															.flat(),
+														entries().flatMap(
+															(i) => i.tags,
+														),
 													),
-												],
-												onChange: (v) =>
+												].map((i) => ({
+													label: i,
+													checked:
+														filter().tags.includes(
+															i,
+														),
+												})),
+												onSelect: (v: string[]) =>
 													setFilter((prev) => ({
 														...prev,
 														tags: v,
@@ -256,7 +268,7 @@ export default function EntriesViewer() {
 												>
 													{entry.title ?? "---"}
 												</p>
-												<div class="my-auto flex gap-2 text-[0.7em]">
+												<div class="my-auto flex flex-wrap gap-2 text-[1em]">
 													<For
 														each={entry.tags.slice(
 															0,

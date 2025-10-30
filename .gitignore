@@ -6,5 +6,6 @@ npm-debug.log*
 src-tauri/target/
 src-tauri/.cargo/
 src-tauri/Cargo.lock
-
+src/managers/SecretsManager.ts
+package-lock.json
 

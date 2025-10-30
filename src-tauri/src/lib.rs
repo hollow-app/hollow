@@ -194,8 +194,7 @@ fn vault_add(app: AppHandle, source: String, name: String) -> Result<PathBuf, St
 
     // copy file only if it doesn't exist yet
     if !dest_path.exists() {
-        fs::copy(&source, &dest_path)
-            .map_err(|e| format!("Could not copy {}: {}", source, e))?;
+        fs::copy(&source, &dest_path).map_err(|e| format!("Could not copy {}: {}", source, e))?;
     }
 
     Ok(dest_path)
@@ -207,8 +206,7 @@ fn vault_remove(app: AppHandle, name: String) -> Result<(), String> {
     let file_path = vault_dir.join(&name);
 
     if file_path.exists() {
-        fs::remove_file(&file_path)
-            .map_err(|e| format!("Could not remove {}: {}", name, e))?;
+        fs::remove_file(&file_path).map_err(|e| format!("Could not remove {}: {}", name, e))?;
     } else {
         return Err(format!("File {} does not exist in vault", name));
     }
@@ -227,8 +225,7 @@ fn vault_rename(app: AppHandle, name: String, new_name: String) -> Result<PathBu
         return Err(format!("File {} does not exist in vault", name));
     }
 
-    fs::rename(&old_path, &new_path)
-        .map_err(|e| format!("Could not rename {}: {}", name, e))?;
+    fs::rename(&old_path, &new_path).map_err(|e| format!("Could not rename {}: {}", name, e))?;
 
     Ok(new_path)
 }
@@ -239,7 +236,18 @@ pub fn run() {
         .with_flags(Flags::CONTEXT_MENU | Flags::PRINT | Flags::DOWNLOADS)
         .build();
 
-    tauri::Builder::default()
+        tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
+            println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
+            // when defining deep link schemes at runtime, you must also check `argv` here
+        }))
+        .plugin(tauri_plugin_deep_link::init()).setup(|app| {
+            #[cfg(any(windows, target_os = "linux"))]
+            {
+                use tauri_plugin_deep_link::DeepLinkExt;
+                app.deep_link().register_all()?;
+            }
+            Ok(())
+        })
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(prevent)

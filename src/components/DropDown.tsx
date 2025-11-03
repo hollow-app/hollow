@@ -15,7 +15,7 @@ export default function DropDown({
 	value,
 	options,
 	placeholder,
-	style = {},
+	style = { "--w": "fit-content" },
 	isFilter,
 }: DropDownProps) {
 	const [isOpen, setIsOpen] = createSignal(false);
@@ -116,7 +116,7 @@ export default function DropDown({
 				<Portal>
 					<ul
 						ref={listRef}
-						class="bg-secondary-05 drop-down border-secondary-10 fixed z-50 max-h-40 overflow-x-hidden overflow-y-auto rounded-md border text-sm shadow-lg"
+						class="bg-secondary-05 drop-down border-secondary-10 fixed z-50 max-h-60 overflow-x-hidden overflow-y-auto rounded-md border text-sm shadow-lg"
 						style={{
 							top: `${pos().top}px`,
 							left: `${pos().left}px`,
@@ -140,7 +140,7 @@ export default function DropDown({
 											}
 										>
 											<Show when={group.title}>
-												<div class="bg-secondary-05 sticky -top-px z-20 flex w-full items-center gap-1">
+												<div class="bg-secondary-05 sticky -top-px z-20 flex w-full items-center gap-1 pt-1">
 													<h1 class="py-1 pl-2 text-xs text-neutral-500 uppercase">
 														{group.title}
 													</h1>
@@ -152,6 +152,7 @@ export default function DropDown({
 												isCheckBox={group.isCheckBox}
 												onSelect={group.onSelect}
 												hide={() => setIsOpen(false)}
+												value={group.value}
 											/>
 										</Show>
 									</div>
@@ -167,11 +168,18 @@ export default function DropDown({
 
 type ItemsListProps = {
 	isCheckBox?: boolean;
+	value?: () => string | string[];
 	items: () => { label: string; checked?: boolean }[];
 	onSelect: (v: string | string[]) => void;
 	hide: () => void;
 };
-function ItemsList({ items, isCheckBox, onSelect, hide }: ItemsListProps) {
+function ItemsList({
+	items,
+	isCheckBox,
+	onSelect,
+	hide,
+	value,
+}: ItemsListProps) {
 	const [selected, setSelected] = createSignal(
 		isCheckBox
 			? items()
@@ -184,8 +192,12 @@ function ItemsList({ items, isCheckBox, onSelect, hide }: ItemsListProps) {
 		<For each={items().sort((a, b) => a.label.localeCompare(b.label))}>
 			{(item) => (
 				<li
-					class="hover:bg-primary/10 text-secondary-60 hover:text-primary flex w-full cursor-pointer justify-between rounded bg-transparent px-3 py-2 text-xs"
+					class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full cursor-pointer justify-between rounded bg-transparent px-3 py-2 text-xs"
 					role="option"
+					classList={{
+						"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
+							!isCheckBox && value && value() === item.label,
+					}}
 					onclick={() => {
 						if (isCheckBox) {
 							const checked = !selected().includes(item.label);

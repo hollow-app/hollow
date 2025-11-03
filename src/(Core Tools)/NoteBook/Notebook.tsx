@@ -26,6 +26,7 @@ import { EntryType } from "@type/hollow";
 import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
 import { timeDifference } from "@managers/manipulation/strings";
+import DropDown from "@components/DropDown";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
 const WordInput = lazy(() => import("@components/WordInput"));
@@ -75,6 +76,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			},
 		};
 		setSelected(note);
+		setExpand(false);
 		setEditMode(true);
 	};
 
@@ -213,7 +215,6 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 		setExpand(false);
 		updateBook();
 	};
-
 	onMount(() => {
 		card.app.on(`notebook-${card.name}-settings`, showSettings);
 		card.app.on("tags", setHollowTags);
@@ -414,8 +415,12 @@ type NoteListProps = {
 	book: Accessor<NotebookType>;
 	changeSelected: (id: string) => void;
 };
+
 function NoteList({ app, book, changeSelected }: NoteListProps) {
-	const [selectedGroup, setSelectedGroup] = createSignal([]);
+	const [selectedGroup, setSelectedGroup] = createSignal<string[]>([]);
+	const [searchTerm, setSearchTerm] = createSignal("");
+	const [selectedTags, setSelectedTags] = createSignal<string[]>([]);
+	const [orderBy, setOrderBy] = createSignal("Newest");
 
 	const removeGroup = () => {
 		NotebookManager.getSelf().deleteNotesFromNotebook(
@@ -423,6 +428,7 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 			selectedGroup(),
 		);
 	};
+
 	const onContextMenu = () => {
 		if (selectedGroup().length > 0) {
 			const cm: ContextMenuItem = {
@@ -440,6 +446,47 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 		}
 	};
 
+	const filteredNotes = createMemo(() => {
+		const term = searchTerm().toLowerCase();
+		const tags = selectedTags();
+
+		let result = book().notes.filter((note) => {
+			const matchesSearch =
+				note.title.toLowerCase().includes(term) ||
+				note.content.toLowerCase().includes(term);
+
+			const matchesTags =
+				tags.length === 0 ||
+				tags.every((tag) => note.tags.includes(tag));
+
+			return matchesSearch && matchesTags;
+		});
+
+		switch (orderBy()) {
+			case "Oldest":
+				result = [...result].sort(
+					(a, b) =>
+						new Date(a.dates.createdAt).getTime() -
+						new Date(b.dates.createdAt).getTime(),
+				);
+				break;
+			case "Title (A–Z)":
+				result = [...result].sort((a, b) =>
+					a.title.localeCompare(b.title),
+				);
+				break;
+			default:
+				result = [...result].sort(
+					(a, b) =>
+						new Date(b.dates.createdAt).getTime() -
+						new Date(a.dates.createdAt).getTime(),
+				);
+				break;
+		}
+
+		return result;
+	});
+
 	return (
 		<Motion.div
 			initial={{ opacity: 0 }}
@@ -447,20 +494,69 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}
 			oncontextmenu={onContextMenu}
-			class="bg-secondary grid h-full w-full [grid-template-columns:repeat(auto-fit,minmax(12rem,1fr))] justify-center p-5"
+			class="bg-secondary flex h-full w-full flex-col justify-center gap-2 px-0 pt-2 pb-5"
 		>
-			<For each={book().notes}>
-				{(note) => (
-					<NotePreview
-						{...{
-							note,
-							changeSelected,
-							setSelectedGroup,
-							selectedGroup,
-						}}
-					/>
-				)}
-			</For>
+			<div class="flex gap-1">
+				<input
+					class="input flex-1 text-sm"
+					placeholder="Search"
+					value={searchTerm()}
+					onInput={(e) => setSearchTerm(e.currentTarget.value)}
+					style={{
+						"--padding-x": "calc(var(--spacing) * 2)",
+						"--padding-y": "calc(var(--spacing) * 1)",
+					}}
+				/>
+
+				<DropDown
+					isFilter
+					options={() => [
+						{
+							title: "Order by",
+							value: orderBy,
+							items: [
+								{ label: "Newest" },
+								{ label: "Oldest" },
+								{ label: "Title (A–Z)" },
+							],
+							onSelect: (selected: string) =>
+								setOrderBy(selected),
+						},
+						{
+							isCheckBox: true,
+							title: "Tags",
+							items: [
+								...new Set(book().notes.flatMap((i) => i.tags)),
+							].map((tag) => ({
+								label: tag,
+								checked: selectedTags().includes(tag),
+							})),
+							onSelect: (tags: string[]) => setSelectedTags(tags),
+						},
+					]}
+				/>
+			</div>
+
+			<div class="grid w-full flex-1 grid-cols-1 gap-2 @lg:grid-cols-2 @4xl:grid-cols-3">
+				<For each={filteredNotes()}>
+					{(note) => (
+						<NotePreview
+							{...{
+								note,
+								changeSelected,
+								setSelectedGroup,
+								selectedGroup,
+							}}
+						/>
+					)}
+				</For>
+
+				<Show when={filteredNotes().length === 0}>
+					<p class="mt-4 text-center text-sm opacity-60">
+						No notes found.
+					</p>
+				</Show>
+			</div>
 		</Motion.div>
 	);
 }
@@ -478,10 +574,7 @@ function NotePreview({
 	setSelectedGroup,
 }: NotePreviewProps) {
 	const selected = createMemo(() => selectedGroup().includes(note.id));
-	const handleCheckMark = (
-		e: Event & { currentTarget: HTMLInputElement },
-	) => {
-		e.stopPropagation();
+	const onSelect = () => {
 		setSelectedGroup((prev) =>
 			prev.includes(note.id)
 				? prev.filter((i) => i !== note.id)
@@ -490,10 +583,16 @@ function NotePreview({
 	};
 	return (
 		<div
-			class="group bg-secondary-05 border-primary relative flex h-fit w-full max-w-50 cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
-			onclick={() => changeSelected(note.id)}
+			class="group bg-secondary-05 border-primary relative mx-auto flex h-fit w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
+			onclick={(e) => (e.ctrlKey ? onSelect() : changeSelected(note.id))}
 			classList={{
-				"border-transparent hover:border-secondary-10": !selected(),
+				"border-secondary-10 hover:border-secondary-10": !selected(),
+			}}
+			style={{
+				"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note.banner})`,
+				"background-size": "cover",
+				"background-position": "center",
+				"background-repeat": "no-repeat",
 			}}
 		>
 			<input
@@ -501,22 +600,12 @@ function NotePreview({
 				class="checkbox top-1 right-1 opacity-0 group-hover:opacity-100"
 				classList={{ "opacity-100": selected() }}
 				style={{ "--position": "absolute", "--margin": "0" }}
-				onclick={handleCheckMark}
+				checked={selected()}
+				onclick={(e) => {
+					e.stopPropagation();
+					onSelect();
+				}}
 			/>
-			<Show
-				when={note.banner}
-				fallback={
-					<div class="bg-secondary-10 flex h-28 w-full items-center justify-center">
-						<FileDescriptionIcon class="size-8 text-neutral-400" />
-					</div>
-				}
-			>
-				<img
-					src={note.banner}
-					alt=""
-					class="h-28 w-full object-cover"
-				/>
-			</Show>
 
 			<div class="flex flex-col gap-1 p-2 px-3 text-xs text-neutral-500">
 				<h2 class="truncate text-lg font-medium text-neutral-800 dark:text-neutral-200">

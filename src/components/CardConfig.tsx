@@ -12,7 +12,7 @@ import Icon from "./Icon";
 import { timeDifference } from "@managers/manipulation/strings";
 import { hollow } from "hollow";
 
-export default function Card({
+export default function CardConfig({
 	myCard,
 	setHand,
 }: {

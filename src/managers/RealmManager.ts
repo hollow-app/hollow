@@ -1,6 +1,12 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
 import { RustManager } from "./RustManager";
+import CONFIG from "@assets/configs/realms.json?raw";
+
+type ConfigType = {
+	current: string;
+	list: Realm[];
+};
 
 export class RealmManager {
 	public realms: Realm[] = [];

@@ -24,7 +24,7 @@ export default function App() {
 	);
 
 	const [step1] = createResource(async () => {
-		RealmManager.getSelf().init(setSelectedRealm);
+		await RealmManager.getSelf().init(setSelectedRealm);
 		return await HollowManager.getSelf().preRealmSelection();
 	});
 	const Container = createMemo(() => {

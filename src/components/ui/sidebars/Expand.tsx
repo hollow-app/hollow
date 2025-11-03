@@ -1,5 +1,5 @@
 import Sidepanel from "@components/animations/Sidepanel";
-import Card from "@components/Card";
+import CardConfig from "@components/CardConfig";
 import DropDown from "@components/DropDown";
 import { FormType, CardType } from "@type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
@@ -225,7 +225,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 									icon: string;
 									title: string;
 								},
-							) => <Card myCard={c} setHand={setHand} />}
+							) => <CardConfig myCard={c} setHand={setHand} />}
 						</For>
 					</div>
 					<hr
@@ -240,86 +240,3 @@ export default function Expand({ isVisible }: ExpandProps) {
 		</Sidepanel>
 	);
 }
-
-const cardsy = [
-	{
-		name: "Task Planner",
-		emoji: "🗓️",
-		isPlaced: true,
-		isFavored: false,
-		tool: "Image",
-		CreatedDate: "2025-03-14",
-	},
-	{
-		name: "Note Keeper",
-		emoji: "📝",
-		isPlaced: false,
-		isFavored: true,
-		tool: "NotebookTabs",
-		CreatedDate: "2025-02-10",
-	},
-	{
-		name: "Music Player",
-		emoji: "🎵",
-		isPlaced: true,
-		isFavored: true,
-		tool: "Kanban",
-		CreatedDate: "2025-05-22",
-	},
-	{
-		name: "Weather Watch",
-		emoji: "🌤️",
-		isPlaced: false,
-		isFavored: false,
-		tool: "CodeXml",
-		CreatedDate: "2025-01-05",
-	},
-	{
-		name: "Finance Tracker",
-		emoji: "💰",
-		isPlaced: true,
-		isFavored: false,
-		tool: "NotebookTabs",
-		CreatedDate: "2025-04-01",
-	},
-	{
-		name: "Habit Builder",
-		emoji: "📈",
-		isPlaced: false,
-		tool: "NotebookTabs",
-		isFavored: true,
-		CreatedDate: "2025-07-09",
-	},
-	{
-		name: "Photo Gallery",
-		emoji: "🖼️",
-		tool: "Image",
-		isPlaced: true,
-		isFavored: false,
-		CreatedDate: "2025-06-15",
-	},
-	{
-		name: "Daily Journal",
-		emoji: "📔",
-		isPlaced: false,
-		isFavored: true,
-		tool: "NotebookTabs",
-		CreatedDate: "2025-03-03",
-	},
-	{
-		name: "Quote Board",
-		emoji: "💬",
-		isPlaced: true,
-		isFavored: true,
-		CreatedDate: "2025-08-20",
-		tool: "NotebookTabs",
-	},
-	{
-		name: "Focus Timer",
-		emoji: "⏳",
-		isPlaced: false,
-		tool: "NotebookTabs",
-		isFavored: false,
-		CreatedDate: "2025-09-12",
-	},
-];

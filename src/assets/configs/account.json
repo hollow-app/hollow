@@ -1,0 +1,27 @@
+{
+	"username": "New Adventurer",
+	"bio": "Welcome to Hollow!",
+	"avatar": null,
+	"title": "Elder",
+	"banner": null,
+	"level": 1,
+	"xp": 5,
+	"achievements": ["🌀 First Step"],
+	"titles": ["Elder", "The Original Few"],
+	"meta": [
+		{
+			"id": "example-1",
+			"label": "Study",
+			"icon": "Leaf",
+			"value": 90,
+			"color": "#3BA936"
+		}
+	],
+	"discord": {
+		"access_token": null,
+		"token_type": null,
+		"expires_in": null,
+		"refresh_token": null,
+		"scope": null
+	}
+}

@@ -15,7 +15,7 @@ import {
 import PopupWrapper from "../PopupWrapper";
 import { hollow } from "hollow";
 import DropDown from "@components/DropDown";
-const dt = new Date();
+
 type VaultStorageProps = {
 	onSelect?: (p: string) => void;
 };
@@ -75,7 +75,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 			message: "You sure ?",
 			onAccept: () => {
 				setImages((prev) => [
-					...prev.filter((i) => i.id === selectedItem().id),
+					...prev.filter((i) => i.id !== selectedItem().id),
 				]);
 				VaultManager.getSelf().removeItem(selectedItem().id);
 			},

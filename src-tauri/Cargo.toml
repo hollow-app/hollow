@@ -26,6 +26,8 @@ tauri-plugin-prevent-default = "2.1"
 tauri-plugin-dialog = "2.4.0"
 tauri-plugin-deep-link = "2"
 tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
+tauri-plugin-tcp = "0.1.2"
+tauri-plugin-store = "2"
 
 [profile.dev]
 incremental = true

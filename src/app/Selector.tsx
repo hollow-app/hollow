@@ -16,7 +16,6 @@ import {
 	createResource,
 	createSignal,
 	For,
-	onMount,
 	Setter,
 	Show,
 	Suspense,
@@ -30,6 +29,7 @@ import { useColor } from "@hooks/useColor";
 import Loading from "@components/Loading";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
+import { ask, confirm, message, open } from "@tauri-apps/plugin-dialog";
 
 type SelectorProps = {
 	onSelect: Setter<string | null>;
@@ -49,6 +49,7 @@ const themes = [
 ];
 const useRealmManager = () => {
 	const [name, setName] = createSignal("");
+	const [location, setLocation] = createSignal("");
 	const [primary, setPrimary] = createSignal("#FF0033");
 	const [secondary, setSecondary] = createSignal("#000000");
 
@@ -58,6 +59,7 @@ const useRealmManager = () => {
 		const newRealm: Realm = {
 			id: crypto.randomUUID(),
 			name: name(),
+			location: location(),
 			lastEntered: new Date().toISOString(),
 			createdDate: new Date().toISOString(),
 			colors: {
@@ -84,6 +86,8 @@ const useRealmManager = () => {
 	return {
 		name,
 		setName,
+		location,
+		setLocation,
 		primary,
 		setPrimary,
 		secondary,
@@ -284,6 +288,8 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 	const {
 		name,
 		setName,
+		location,
+		setLocation,
 		primary,
 		setPrimary,
 		secondary,
@@ -303,13 +309,21 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 		setSecondary(t.secondary);
 	};
 
+	const selectLocation = async () => {
+		await open({
+			multiple: false,
+			directory: true,
+			title: "Select your Realm Location folder",
+		});
+	};
+
 	return (
 		<Motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}
-			class="up-pop flex h-120 w-210 flex-col"
+			class="up-pop flex h-fit w-210 flex-col"
 			style={{
 				"--bg-color": "var(--color-neutral-950)",
 				"--border-color": "var(--color-neutral-900)",
@@ -349,6 +363,17 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								title="e.g., Dark, light, sky..."
 								class="rounded-xl bg-white/5 px-4 py-3 text-white placeholder-neutral-500 focus:ring-2 focus:ring-white/20 focus:outline-none"
 							/>
+						</div>
+						<div class="flex items-center justify-between">
+							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
+								Location
+							</label>
+							<button
+								class="button-primary"
+								onclick={selectLocation}
+							>
+								Select
+							</button>
 						</div>
 						<div class="flex items-center justify-between">
 							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
@@ -653,7 +678,8 @@ export default function Selector({ onSelect }: SelectorProps) {
 		return true;
 	});
 	const [level, setLevel] = createSignal(
-		RealmManager.getSelf().realms.length === 0 ? 0 : 1,
+		// RealmManager.getSelf().realms.length === 0 ? 0 : 1,
+		2,
 	);
 	const [realms, setRealms] = createSignal<Realm[]>(
 		RealmManager.getSelf().realms,

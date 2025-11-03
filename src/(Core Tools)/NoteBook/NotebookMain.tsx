@@ -44,6 +44,8 @@ export class NotebookMain implements IPlugin {
 			});
 
 			this.roots.set(card.name, dispose);
+		} else {
+			return false;
 		}
 
 		return true;

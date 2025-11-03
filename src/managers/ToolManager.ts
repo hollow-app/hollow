@@ -296,9 +296,9 @@ export class ToolManager {
 		};
 		return cardobj;
 	}
-	async loadCard(cardInfo: CardType, toolName: string): Promise<void> {
+	async loadCard(cardInfo: CardType, toolName: string): Promise<boolean> {
 		const tool = this.toolMap.get(toolName);
-		tool.onLoad(this.getICard(toolName, cardInfo.name));
+		return await tool.onLoad(this.getICard(toolName, cardInfo.name));
 	}
 	togglePlacement(name: string, toolName: string) {
 		const { tool, card } = this.getToolAndCard(toolName, name);

@@ -236,7 +236,7 @@ pub fn run() {
         .with_flags(Flags::CONTEXT_MENU | Flags::PRINT | Flags::DOWNLOADS)
         .build();
 
-        tauri::Builder::default().plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
+    tauri::Builder::default().plugin(tauri_plugin_store::Builder::new().build()).plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
             println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
             // when defining deep link schemes at runtime, you must also check `argv` here
         }))
@@ -247,7 +247,7 @@ pub fn run() {
                 app.deep_link().register_all()?;
             }
             Ok(())
-        })
+        }).plugin(tauri_plugin_tcp::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(prevent)

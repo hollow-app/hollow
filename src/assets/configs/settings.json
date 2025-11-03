@@ -1,0 +1,19 @@
+{
+	"auto-update": false,
+	"realm-toggle-on-startup": false,
+	"grid-columns": 20,
+	"grid-off-columns": 0,
+	"grid-rows": 10,
+	"grid-off-rows": 0,
+	"static-grid-lines": false,
+	"primary-color": "#FF0033",
+	"secondary-color": "#000000",
+	"background-image": null,
+	"background-opacity": 50,
+	"code-theme": "default",
+	"custom-tags": [],
+	"enable-unverified-plugins": false,
+	"hotkeys-enabled": true,
+	"enable-dev-tools": false,
+	"load-unsigned-plugins": false
+}

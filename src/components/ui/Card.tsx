@@ -1,18 +1,26 @@
 import { CardType, ContextMenuItem } from "@type/hollow";
 import { EditorKitType } from "@type/EditorKitType";
 import { KitType } from "@type/hollow";
-import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import {
+	createMemo,
+	createResource,
+	createSignal,
+	onCleanup,
+	onMount,
+} from "solid-js";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
+import { loadEnvFile } from "process";
 
-type VaultProps = {
+type CardProps = {
 	cardInfo: Opthand;
 	canvas: HTMLDivElement;
 };
 
-export default function Vault({ cardInfo, canvas }: VaultProps) {
+export default function Card({ cardInfo, canvas }: CardProps) {
 	let vault!: HTMLDivElement;
 	const [kit, setKit] = createSignal<KitType>(cardInfo.kit);
+	const [isLoaded, setLoaded] = createSignal(false);
 	const editorKit = createMemo<EditorKitType>(() => ({
 		tool: cardInfo.tool,
 		card: cardInfo.name,
@@ -100,11 +108,11 @@ export default function Vault({ cardInfo, canvas }: VaultProps) {
 		canvas.removeEventListener("mousemove", onMouseMoveInCanvas);
 		canvas.removeEventListener("mouseup", onMouseUp);
 	});
-
 	onMount(async () => {
 		hollow.toolManager.addEditorKit(editorKit());
-		hollow.toolManager.loadCard(cardInfo, cardInfo.tool);
+		setLoaded(await hollow.toolManager.loadCard(cardInfo, cardInfo.tool));
 	});
+
 	return (
 		<div
 			ref={vault}
@@ -124,20 +132,25 @@ export default function Vault({ cardInfo, canvas }: VaultProps) {
 		>
 			<div
 				id={cardInfo.id}
-				class="border-secondary-20 h-full w-full rounded-lg border-1"
+				class="border-secondary-20 h-full w-full border-1"
 				style={{
 					"--opacity": `${kit().opacity * 100}%`,
 					"--border-radius": `${kit().corner}px`,
 					"--border-color": kit().border.c,
 					"--border-width": `${kit().border.n}px`,
+					"--outer-margin": kit().extra?.outerMargin ?? "0",
 					"border-radius": "var(--border-radius)",
 					"border-color": "var(--border-color)",
 					"border-style": "solid",
 					"border-width": "var(--border-width)",
 					...kit().extra,
 				}}
+				//onAnimationEnd={(e) =>
+				//	e.currentTarget.classList.remove("card-spot")
+				//}
 				classList={{
 					"backdrop-blur-sm": kit().glass,
+					"card-spot": !isLoaded(),
 				}}
 			></div>
 		</div>

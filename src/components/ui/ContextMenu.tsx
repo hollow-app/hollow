@@ -130,7 +130,7 @@ export default function ContextMenu() {
 			<Show when={isVisible()}>
 				<Motion.div
 					class={
-						"border-secondary-05 bg-secondary text-secondary-90 pointer-events-auto fixed z-200 w-60 space-y-2 rounded-lg border px-2 py-2 shadow-[0_0_5px_1px_gray] dark:shadow-[0_0_5px_1px_black]"
+						"border-secondary-05 bg-secondary text-secondary-90 pointer-events-auto fixed z-200 w-60 space-y-2 rounded-lg border px-2 py-2 shadow-[0_0_5px_1px_gray] select-none dark:shadow-[0_0_5px_1px_black]"
 					}
 					style={{
 						left: `${position().x}px`,

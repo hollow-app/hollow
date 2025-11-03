@@ -860,3 +860,38 @@ a {
 a.no-underline-alt {
 	text-decoration: none;
 }
+
+
+
+.card-spot::before {
+	content: "";
+	position: absolute;
+	background-color: var(--color-secondary-10);
+	inset: var(--outer-margin);
+	border-radius: var(--border-radius);
+	z-index: 1;
+	animation: load-card 2s ease-in-out forwards;
+	pointer-events: none;
+}
+
+@keyframes load-card {
+	0% {
+		background-color: var(--color-secondary-10);
+	}
+
+	25% {
+		background-color: var(--color-secondary-05);
+	}
+
+	50% {
+		background-color: var(--color-secondary-10);
+	}
+
+	75% {
+		background-color: var(--color-secondary-05);
+	}
+
+	100% {
+		background-color: transparent;
+	}
+}

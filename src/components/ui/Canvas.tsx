@@ -1,5 +1,6 @@
-import Vault from "@components/ui/Vault";
+import Card from "@components/ui/Card";
 import useGrid from "@hooks/useGrid";
+import { DeepLinkManager } from "@managers/DeepLinkManager";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
@@ -67,7 +68,7 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 						<For each={cards().filter((i) => i.isPlaced)}>
 							{(card) => {
 								return (
-									<Vault canvas={container} cardInfo={card} />
+									<Card canvas={container} cardInfo={card} />
 								);
 							}}
 						</For>

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+        <head>
+                <meta charset="UTF-8" />
+                <title>Hollow - Authorization Complete</title>
+                <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1.0"
+                />
+                <link
+                        rel="icon"
+                        type="image/x-icon"
+                        href="https://hollow-space.vercel.app/favicon.ico"
+                />
+                <style>
+                        :root {
+                                --primary-rgb: 200, 200, 200;
+                                --background-dark: #0f0f0f;
+                                --container-dark: #1f1f1f;
+                                --text-light: #e0e0e0;
+                                --text-secondary: #a0a0a0;
+                        }
+
+                        body {
+                                margin: 0;
+                                font-family: "Inter", sans-serif;
+                                text-align: center;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                min-height: 100vh;
+                                background: radial-gradient(
+                                        circle at top left,
+                                        var(--background-dark) 0%,
+                                        #212121 100%
+                                );
+                                color: var(--text-light);
+                        }
+
+                        .container {
+                                position: relative;
+                                width: 90%;
+                                max-width: 40rem;
+                                padding: 4rem 3rem;
+                                background: var(--container-dark);
+                                border-radius: 1.5rem;
+                                overflow: hidden;
+                                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+                                border: 1px solid rgba(255, 255, 255, 0.05);
+                                z-index: 1;
+                        }
+
+                        .blur-circle {
+                                height: 80%;
+                                width: 80%;
+                                border-radius: 50%;
+                                position: absolute;
+                                top: -60%;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                background-color: rgba(var(--primary-rgb), 0.2);
+                                filter: blur(5rem);
+                                transition: background-color 0.7s ease-in-out;
+                                pointer-events: none;
+                                opacity: 0.7;
+                        }
+
+                        .container:hover .blur-circle {
+                                background-color: rgba(var(--primary-rgb), 0.3);
+                        }
+
+                        .logo-group {
+                                display: flex;
+                                gap: 1.5rem;
+                                align-items: center;
+                                width: fit-content;
+                                margin-inline: auto;
+                                margin-bottom: 2rem;
+                                position: relative;
+                                z-index: 2;
+                        }
+
+                        #logo svg {
+                                width: 6em;
+                                height: 6em;
+                                color: var(--text-light);
+                                filter: drop-shadow(
+                                        0 0 5px rgba(var(--primary-rgb), 0.5)
+                                );
+                        }
+
+                        .discord-icon {
+                                width: 6em;
+                                height: 6em;
+                                filter: drop-shadow(
+                                        0 0 5px rgba(var(--primary-rgb), 0.5)
+                                );
+                        }
+
+                        .connector-line {
+                                width: 4em;
+                                border-bottom: 1px dashed var(--text-secondary);
+                                height: 0px;
+                                flex-shrink: 0;
+                        }
+
+                        h2 {
+                                font-size: 2.2rem;
+                                margin-top: 0;
+                                margin-bottom: 0.5rem;
+                                color: white;
+                                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                        }
+
+                        p {
+                                color: var(--text-secondary);
+                                margin-bottom: 2rem;
+                                font-size: 1.1rem;
+                        }
+
+                        .cta-button {
+                                border: 0;
+                                cursor: pointer;
+                                display: inline-block;
+                                padding: 0.75rem 2rem;
+                                background-color: rgb(var(--primary-rgb));
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 0.75rem;
+                                font-weight: bold;
+                                letter-spacing: 0.5px;
+                                transition:
+                                        background-color 0.3s ease,
+                                        transform 0.1s ease;
+                                box-shadow: 0 4px 15px
+                                        rgba(var(--primary-rgb), 0.4);
+                        }
+
+                        .cta-button:hover {
+                                background-color: rgba(var(--primary-rgb), 0.9);
+                                transform: translateY(-2px);
+                                box-shadow: 0 6px 20px
+                                        rgba(var(--primary-rgb), 0.6);
+                        }
+                        .action-area {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                gap: 1.5rem;
+                        }
+
+                        #timer-display {
+                                color: var(--text-light);
+                                font-size: 1.1rem;
+                                font-weight: bold;
+                                letter-spacing: 0.5px;
+                        }
+                </style>
+        </head>
+        <body>
+                <div class="container">
+                        <div class="blur-circle"></div>
+                        <div class="logo-group">
+                                <div id="logo"></div>
+                                <div class="connector-line"></div>
+                                <img
+                                        class="discord-icon"
+                                        src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e3d7f4ef6498ac018f2c55_Symbol.svg"
+                                        alt="Discord Icon"
+                                />
+                        </div>
+                        <h2>Authorization Complete! 🎉</h2>
+                        <p>
+                                You've successfully connected your Discord
+                                account. This tab will automatically close in a
+                                moment.
+                        </p>
+                        <div class="action-area">
+                                <span id="timer-display"
+                                        >Closing in 30 seconds...</span
+                                >
+                                <button id="close-button" class="cta-button">
+                                        Close Now
+                                </button>
+                        </div>
+                </div>
+                <script>
+
+                        let countdown = 30;
+                        const timerDisplay =
+                                document.getElementById("timer-display");
+                        const closeButton =
+                                document.getElementById("close-button");
+
+
+                        const closeWindow = () => {
+
+
+
+                                window.close();
+
+                                timerDisplay.textContent =
+                                        "You can safely close this tab now.";
+                                closeButton.remove();
+                        };
+
+
+                        closeButton.addEventListener("click", closeWindow);
+
+
+                        const timerInterval = setInterval(() => {
+                                countdown--;
+                                if (countdown > 0) {
+                                        timerDisplay.textContent = `Closing in ${countdown} seconds...`;
+                                } else {
+                                        clearInterval(timerInterval);
+                                        closeWindow();
+                                }
+                        }, 1000);
+
+
+                        (async () => {
+                                const response = await fetch(
+                                        "https://raw.githubusercontent.com/hollow-app/hollow/fbe51c95558b283108b5a51c0cea4725f5e3360c/src/assets/logo.svg:
+                                );
+                                if (response.ok) {
+                                        const svgText = await response.text();
+                                        const targetDiv =
+                                                document.getElementById("logo");
+                                        targetDiv.innerHTML = svgText;
+                                } else {
+                                        console.error(
+                                                "Failed to fetch SVG logo:",
+                                                response.status,
+                                        );
+                                }
+                        })();
+                </script>
+        </body>
+</html>

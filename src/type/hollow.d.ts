@@ -643,6 +643,7 @@ type DropdownItem = {
 
 export type DropdownOption = {
 	title?: string;
+	value?: () => string | string[];
 	isCheckBox?: boolean;
 	items: DropdownItem[];
 	onSelect: (v: string[] | string) => void;

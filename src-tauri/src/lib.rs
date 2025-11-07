@@ -1,5 +1,8 @@
 use serde_json::Value;
-use std::{fs, path::PathBuf};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 use tauri::{AppHandle, Manager};
 use tauri_plugin_prevent_default::Flags;
 
@@ -230,13 +233,29 @@ fn vault_rename(app: AppHandle, name: String, new_name: String) -> Result<PathBu
     Ok(new_path)
 }
 
+//
+#[tauri::command]
+fn create_dir(path: String) -> Result<(), String> {
+    let path_ref = Path::new(&path);
+    if !path_ref.exists() {
+        fs::create_dir_all(&path_ref).map_err(|e| format!("Failed to create dir: {}", e))?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+fn dir_exists(path: String) -> bool {
+    let path_ref = Path::new(&path);
+    path_ref.exists() && path_ref.is_dir()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let prevent = tauri_plugin_prevent_default::Builder::new()
         .with_flags(Flags::CONTEXT_MENU | Flags::PRINT | Flags::DOWNLOADS)
         .build();
 
-    tauri::Builder::default().plugin(tauri_plugin_store::Builder::new().build()).plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
+    tauri::Builder::default().plugin(tauri_plugin_fs::init()).plugin(tauri_plugin_store::Builder::new().build()).plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
             println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
             // when defining deep link schemes at runtime, you must also check `argv` here
         }))
@@ -264,7 +283,9 @@ pub fn run() {
             vault_add,
             vault_remove,
             vault_rename,
-            read_file
+            read_file,
+            create_dir,
+            dir_exists
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

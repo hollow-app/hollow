@@ -4,7 +4,7 @@ import { hollow } from "hollow";
 
 export class EntryManager {
 	public entries: EntryType[] = [];
-	private dbName: string = `${RealmManager.getSelf().currentRealmId}-entry`;
+	private dbName: string = `${RealmManager.getSelf().getCurrent()}-entry`;
 	private db: IDBDatabase | null = null;
 	private static self: EntryManager;
 

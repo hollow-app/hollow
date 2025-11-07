@@ -17,6 +17,9 @@
 		"dialog:allow-message",
 		"dialog:allow-ask",
 		"store:default",
-		"tcp:default"
+		"tcp:default",
+		"fs:default",
+		"fs:allow-mkdir",
+		"fs:allow-exists"
 	]
 }

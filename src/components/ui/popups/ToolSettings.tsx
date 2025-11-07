@@ -1,5 +1,5 @@
 import ColorPick from "@components/ColorPick";
-import DropDown from "@components/DropDown";
+import Dropdown from "@components/Dropdown";
 import EmojiPick from "@components/EmojiPick";
 import ImportFile from "@components/ImportFile";
 import NumberInput from "@components/NumberInput";
@@ -243,23 +243,19 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 
 													case "dropdown":
 														return (
-															<DropDown
-																value={() =>
+															<Dropdown
+																value={
 																	option.value
 																}
-																options={() => [
-																	{
-																		items: option.options.map(
-																			(
-																				i,
-																			) => ({
-																				label: i,
-																			}),
-																		),
-																		onSelect:
-																			option.onChange,
-																	},
-																]}
+																placeholder={
+																	option.placeholder
+																}
+																options={() =>
+																	option.options
+																}
+																onSelect={
+																	option.onChange
+																}
 															/>
 														);
 

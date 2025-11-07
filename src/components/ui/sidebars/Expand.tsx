@@ -6,6 +6,7 @@ import { PlusIcon, SearchIcon } from "lucide-solid";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
 import { lazy } from "solid-js";
 import { hollow } from "hollow";
+import FilterButton from "@components/FilterButton";
 
 const IconInner = lazy(() => import("@components/Icon"));
 
@@ -71,18 +72,20 @@ export default function Expand({ isVisible }: ExpandProps) {
 					type: "dropdown",
 					label: "Tool",
 					key: "tool",
+					inline: true,
 					description: "The tool that will be inside this card",
+					placeholder: "Tool",
 					// TODO multi select in dropdown yet one for FORM
 					options: [
 						{
-							items: hand().map((i) => ({ label: i.title })),
-							onSelect: () => {},
+							items: hand().map((i) => i.title),
 						},
 					],
 				},
 				{
 					type: "text",
 					key: "name",
+					inline: true,
 					label: "Card Name",
 					pattern: "^[A-Za-z]+$",
 					placeholder: "Card name (e.g., ToDo)",
@@ -91,6 +94,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 					type: "emoji",
 					label: "Emoji",
 					value: "☂️",
+					row: true,
 					description: "Give this card an emoji",
 					key: "emoji",
 				},
@@ -170,9 +174,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 						/>
 						<SearchIcon class="text-secondary-30 peer-focus:text-secondary-50 absolute top-1/2 left-3 size-5 -translate-y-1/2 transition-colors" />
 					</div>
-					<DropDown
-						isFilter
-						style={{ "--w": "fit-content" }}
+					<FilterButton
 						options={() => [
 							{
 								isCheckBox: true,

@@ -3,6 +3,7 @@ import { Property } from "@type/Property";
 import { readableColor } from "polished";
 import setStyle from "./setStyle";
 import { RealmManager } from "@managers/RealmManager";
+import { Realm } from "@type/Realm";
 
 type useColorProps = {
 	name: string;
@@ -15,7 +16,7 @@ export function useColor({ name, color, oneTime }: useColorProps) {
 	if (oneTime) {
 		shades = ShadeIt(name, color);
 	} else {
-		const storageKey = `${RealmManager.getSelf().currentRealmId}-color-${name}`;
+		const storageKey = `${RealmManager.getSelf().getCurrent()}-color-${name}`;
 		const savedData = localStorage.getItem(storageKey);
 
 		if (savedData && color) {
@@ -37,9 +38,7 @@ export function useColor({ name, color, oneTime }: useColorProps) {
 		} else if (savedData && !color) {
 			shades = JSON.parse(savedData).savedShades;
 		} else {
-			const realm = RealmManager.getSelf().getRealmFromId(
-				RealmManager.getSelf().currentRealmId,
-			);
+			const realm = RealmManager.getSelf().getCurrent(true) as Realm;
 			const defaultColor =
 				name === "primary"
 					? realm.colors.primary

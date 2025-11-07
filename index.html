@@ -1,29 +1,38 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
-    <link rel="icon" type="image/svg+xml" href="/src/assets/icon-nobg.svg" />
-    <title>Hollow</title>
-    <script>
-            document.documentElement.classList.toggle(
-                "dark",
-                localStorage.theme !== "light",
-            );
-    </script>
-	<style id="dynamic-styles">:root { 
-		--cw: 5%;
-		--rh: 10%;
-		--offcolumns: 0;
-		--offrows: 0;
-	}</style>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="/src/assets/icon-nobg.svg"
+		/>
+		<title>Hollow</title>
+		<script>
+			document.documentElement.classList.toggle(
+				"dark",
+				localStorage.theme !== "light",
+			);
+		</script>
+		<style id="dynamic-styles">
+			:root {
+				--cw: 5%;
+				--rh: 10%;
+				--offcolumns: 0;
+				--offrows: 0;
+			}
+		</style>
+	</head>
 
-  </head>
+	<body style="background-color: black">
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<div id="root">
+			<div class="flex h-full w-full items-center justify-center">
+				<div class="chaotic-orbit" />
+			</div>
+		</div>
 
-  <body style="background-color: black">
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-
-    <script src="/src/index.tsx" type="module"></script>
-  </body>
+		<script src="/src/index.tsx" type="module"></script>
+	</body>
 </html>

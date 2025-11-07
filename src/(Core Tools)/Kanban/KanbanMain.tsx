@@ -27,7 +27,7 @@ export class KanbanMain implements IPlugin {
 
 	async onLoad(card: ICard): Promise<boolean> {
 		const targetContainer = document.getElementById(card.id);
-		if (targetContainer && !this.roots.has(card.name)) {
+		if (targetContainer && !this.roots.has(card.id)) {
 			const data: ColumnType = await KanbanManager.getSelf().getColumn(
 				card.id,
 			);
@@ -39,17 +39,17 @@ export class KanbanMain implements IPlugin {
 				return dispose;
 			});
 
-			this.roots.set(card.name, dispose);
+			this.roots.set(card.id, dispose);
 		}
 
 		return true;
 	}
 
-	onUnload(name: string): void {
-		const dispose = this.roots.get(name);
+	onUnload(id: string): void {
+		const dispose = this.roots.get(id);
 		if (dispose) {
 			dispose();
-			this.roots.delete(name);
+			this.roots.delete(id);
 		}
 	}
 }

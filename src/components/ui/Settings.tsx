@@ -18,6 +18,7 @@ import { lazy } from "solid-js";
 import Account from "./settings/Account";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
+import { Realm } from "@type/Realm";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
 const Modifier = lazy(() => import("./settings/Modifier"));
@@ -41,10 +42,11 @@ export default function Settings({ setSettings }: SettingsProps) {
 								<div class="flex min-w-0 flex-1 flex-col">
 									<h1 class="my-auto text-xl font-bold text-neutral-950 dark:text-neutral-50">
 										{
-											RealmManager.getSelf().getRealmFromId(
-												RealmManager.getSelf()
-													.currentRealmId,
-											)?.name
+											(
+												RealmManager.getSelf().getCurrent(
+													true,
+												) as Realm
+											).name
 										}{" "}
 										Realm
 									</h1>

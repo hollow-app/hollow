@@ -3,10 +3,9 @@ import { Property } from "@type/Property";
 import setStyle from "./setStyle";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
+import { SettingsManager } from "@managers/SettingsManager";
 
 export default function useGrid(properties?: Property[]) {
-	const key = `${RealmManager.getSelf().currentRealmId}-canvas`;
-	const savedData = localStorage.getItem(key);
 	let vars: Property[] = [];
 
 	const updateGridVariable = (name: string, value: number) => {
@@ -38,37 +37,24 @@ export default function useGrid(properties?: Property[]) {
 			vars.push({ name: `--${name}`, value });
 		}
 	};
+	const savedGrid = SettingsManager.getSelf().getConfigs([
+		"columns",
+		"offcolumns",
+		"rows",
+		"offrows",
+	]);
 
-	if (savedData) {
-		const savedGrid: GridInfo = JSON.parse(savedData);
-
-		if (!properties) {
-			Object.entries(savedGrid).forEach(([name, value]) =>
-				updateGridVariable(name, value),
-			);
-		} else {
-			properties.forEach((property) => {
-				if (
-					property.value !==
-					savedGrid[property.name as keyof GridInfo]
-				) {
-					savedGrid[property.name as keyof GridInfo] = property.value;
-					localStorage.setItem(key, JSON.stringify(savedGrid));
-					updateGridVariable(property.name, property.value);
-				}
-			});
-		}
-	} else {
-		const initialGrid: GridInfo = {
-			columns: 20,
-			rows: 10,
-			offcolumns: 0,
-			offrows: 0,
-		};
-		localStorage.setItem(key, JSON.stringify(initialGrid));
-		Object.entries(initialGrid).forEach(([name, value]) =>
+	if (!properties) {
+		Object.entries(savedGrid).forEach(([name, value]) =>
 			updateGridVariable(name, value),
 		);
+	} else {
+		properties.forEach((property) => {
+			if (property.value !== savedGrid[property.name as keyof GridInfo]) {
+				savedGrid[property.name as keyof GridInfo] = property.value;
+				updateGridVariable(property.name, property.value);
+			}
+		});
 	}
 
 	setStyle(vars);

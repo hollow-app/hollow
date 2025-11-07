@@ -22,15 +22,16 @@ export default function CardConfig({
 	const [isPlaced, setPlaced] = createSignal(myCard.isPlaced);
 
 	const handlePlacement = () => {
-		hollow.toolManager.togglePlacement(myCard.name, myCard.tool);
+		hollow.toolManager.togglePlacement(myCard.id, myCard.tool);
 		setPlaced(!isPlaced());
 	};
 	const handleDelete = async () => {
-		await hollow.toolManager.deleteCard(myCard.name, myCard.tool);
+		await hollow.toolManager.deleteCard(myCard.id, myCard.tool);
 		setHand([...hollow.toolManager.getHand()]);
 	};
 	const onEmojiChanged = (newEmoji: string) => {
-		hollow.toolManager.changeEmoji(newEmoji, myCard.name, myCard.tool);
+		hollow.toolManager.changeEmoji(newEmoji, myCard.id, myCard.tool);
+		// TODO
 		hollow.events.off("emoji-picker-changed", onEmojiChanged);
 	};
 

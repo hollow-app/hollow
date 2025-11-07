@@ -6,7 +6,6 @@ import {
 	createSignal,
 	lazy,
 	Show,
-	createResource,
 	onMount,
 } from "solid-js";
 import Loading from "@components/Loading";
@@ -20,13 +19,11 @@ export default function App() {
 		JSON.parse(localStorage.realmToggleOnStartup ?? "false"),
 	);
 	const [selectedRealm, setSelectedRealm] = createSignal<string | null>(
-		selectRealmOnStartup() ? null : localStorage.currentRealmId,
+		selectRealmOnStartup()
+			? null
+			: RealmManager.getSelf().getCurrent(false),
 	);
 
-	const [step1] = createResource(async () => {
-		await RealmManager.getSelf().init(setSelectedRealm);
-		return await HollowManager.getSelf().preRealmSelection();
-	});
 	const Container = createMemo(() => {
 		const realm = selectedRealm();
 		const LazyContainer = lazy(async () => {
@@ -36,18 +33,22 @@ export default function App() {
 		});
 		return <LazyContainer />;
 	});
+	const onSelect = (id: string) => {
+		RealmManager.getSelf().enterRealm(id);
+	};
+	onMount(() => {
+		RealmManager.getSelf().init(setSelectedRealm);
+	});
 
 	return (
 		<main class="app-container text-black dark:text-white">
-			<Show when={step1()} fallback={<Loading />}>
-				<Show
-					when={selectedRealm()}
-					fallback={<Selector onSelect={setSelectedRealm} />}
-				>
-					<Suspense fallback={<Loading />}>
-						<Container />
-					</Suspense>
-				</Show>
+			<Show
+				when={selectedRealm()}
+				fallback={<Selector onSelect={onSelect} />}
+			>
+				<Suspense fallback={<Loading />}>
+					<Container />
+				</Suspense>
 			</Show>
 			<Popups />
 			<Alerts />

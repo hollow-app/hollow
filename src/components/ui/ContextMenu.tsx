@@ -20,6 +20,7 @@ import { lazy } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 import { RustManager } from "@managers/RustManager";
+import { Realm } from "@type/Realm";
 const Icon = lazy(() => import("@components/Icon"));
 
 export default function ContextMenu() {
@@ -230,8 +231,10 @@ export default function ContextMenu() {
 						<div class="flex items-center gap-1">
 							<h1 class="text-secondary-30 text-xs font-semibold uppercase">
 								{
-									RealmManager.getSelf().getRealmFromId(
-										RealmManager.getSelf().currentRealmId,
+									(
+										RealmManager.getSelf().getCurrent(
+											true,
+										) as Realm
 									).name
 								}
 								{" Realm"}

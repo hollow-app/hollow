@@ -42,6 +42,9 @@ type vaultRenameProps = {
 	new_name: string;
 };
 
+type createDirProps = {
+	path: string;
+};
 export class RustManager {
 	static self: RustManager;
 	private appWindow = null;
@@ -188,17 +191,17 @@ export class RustManager {
 			const PluginClass = module.exports.default;
 			const instance: IPlugin = new PluginClass(db);
 			return {
-				onCreate: (card_name: string): Promise<boolean> => {
-					return instance.onCreate(card_name);
+				onCreate: (card: ICard): Promise<boolean> => {
+					return instance.onCreate(card);
 				},
-				onDelete: (card_name: string): Promise<boolean> => {
-					return instance.onDelete(card_name);
+				onDelete: (card: ICard): Promise<boolean> => {
+					return instance.onDelete(card);
 				},
-				onLoad: (card_info: ICard, app: HollowEvent) => {
-					return instance.onLoad(card_info, app);
+				onLoad: (card_info: ICard) => {
+					return instance.onLoad(card_info);
 				},
-				onUnload: (name: string) => {
-					return instance.onUnload(name);
+				onUnload: (id: string) => {
+					return instance.onUnload(id);
 				},
 			};
 		}
@@ -214,6 +217,14 @@ export class RustManager {
 	}
 	async vault_rename({ name, new_name }: vaultRenameProps): Promise<string> {
 		return await invoke("vault_rename", { name, new_name });
+	}
+
+	async create_dir({ path }: createDirProps): Promise<boolean> {
+		return await invoke("create_dir", { path });
+	}
+
+	async dir_exists({ path }: { path: string }): Promise<boolean> {
+		return await invoke("dir_exists", { path });
 	}
 
 	close_window() {

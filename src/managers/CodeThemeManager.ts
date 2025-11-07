@@ -4,7 +4,7 @@ export class CodeThemeManager {
 	private db!: IDBDatabase;
 	private readonly dbName = "codeThemeDB";
 	private readonly storeName = "themes";
-	private readonly lastThemeKey = `${RealmManager.getSelf().currentRealmId}-last-theme`;
+	private readonly lastThemeKey = `${RealmManager.getSelf().getCurrent()}-last-theme`;
 	private readonly max = 10;
 	private readonly styleId = "hljs-theme-style";
 	private static self: CodeThemeManager;

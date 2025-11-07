@@ -15,6 +15,7 @@ import {
 import PopupWrapper from "../PopupWrapper";
 import { hollow } from "hollow";
 import DropDown from "@components/DropDown";
+import FilterButton from "@components/FilterButton";
 
 type VaultStorageProps = {
 	onSelect?: (p: string) => void;
@@ -160,8 +161,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 							</span>
 							<ImageUpIcon class="size-5" />
 						</button>
-						<DropDown
-							isFilter
+						<FilterButton
 							options={() => [
 								{
 									title: "By Tags",

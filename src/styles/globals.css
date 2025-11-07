@@ -755,7 +755,7 @@ a {
 	border-radius: var(--radius-lg);
 	border: 1px solid var(--border-color);
 	box-shadow: 0px 0px 30px var(--shadow);
-	overflow: hidden;
+	/* overflow: hidden; */
 	/* transition: 0.2s all ease-in-out; */
 	/* animation: animatetop 0.4s */
 }
@@ -826,7 +826,7 @@ a {
 
 
 .drop-down {
-	--w: calc(var(--spacing) * 70);
+	--w: 100%;
 	width: var(--w);
 
 }

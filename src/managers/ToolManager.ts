@@ -9,7 +9,6 @@ import {
 	AppEvents,
 } from "@type/hollow";
 import { Setter } from "solid-js";
-import { initialStack } from "./initalStack";
 import { ImageMain } from "@coretools/Image/ImageMain";
 import { NotebookMain } from "@coretools/NoteBook/NotebookMain";
 import { KanbanMain } from "@coretools/Kanban/KanbanMain";
@@ -23,6 +22,7 @@ import { EditorKitType } from "@type/EditorKitType";
 import { RealmManager } from "./RealmManager";
 import { EntryManager } from "./EntryManager";
 import { hollow } from "hollow";
+import DEFAULT from "@assets/configs/tools.json?raw";
 
 type ToolMethods = {
 	name: string;
@@ -61,12 +61,7 @@ export class ToolManager {
 	}
 
 	private async initializeTools(loadUnsigned?: boolean): Promise<void> {
-		let realmTools = localStorage.getItem(`${this.realm}-tools`);
-		if (!realmTools) {
-			realmTools = JSON.stringify(initialStack);
-			localStorage.setItem(`${this.realm}-tools`, realmTools);
-		}
-
+		let realmTools = localStorage.getItem(`${this.realm}-tools`) ?? DEFAULT;
 		let parsedData: HandType[] = JSON.parse(realmTools);
 		//const hasUnsigned = parsedData.some((i) => !i.signed);
 
@@ -74,7 +69,6 @@ export class ToolManager {
 			const unsignedTools = (
 				await RustManager.getSelf().get_unsigned_tools()
 			).filter((i) => !parsedData.find((j) => j.name === i.name));
-
 			parsedData.push(...unsignedTools);
 		} else {
 			parsedData = parsedData.filter((i) => i.signed);
@@ -296,9 +290,9 @@ export class ToolManager {
 		};
 		return cardobj;
 	}
-	async loadCard(cardInfo: CardType, toolName: string): Promise<boolean> {
+	async loadCard(cardInfo: CardType, toolName: string): Promise<void> {
 		const tool = this.toolMap.get(toolName);
-		return await tool.onLoad(this.getICard(toolName, cardInfo.name));
+		tool.onLoad(this.getICard(toolName, cardInfo.name));
 	}
 	togglePlacement(name: string, toolName: string) {
 		const { tool, card } = this.getToolAndCard(toolName, name);

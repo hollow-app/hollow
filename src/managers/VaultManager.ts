@@ -1,5 +1,7 @@
 import { VaultItem } from "@type/VaultItem";
 import { RustManager } from "./RustManager";
+import { join } from "@tauri-apps/api/path";
+import { RealmManager } from "./RealmManager";
 
 export default class VaultManager {
 	private db: Promise<IDBDatabase> = this.openDB();
@@ -43,7 +45,7 @@ export default class VaultManager {
 	}
 
 	public async addItem(item: VaultItem, source: string) {
-		this.vault = [...this.vault, item];
+		this.vault = [...this.vault, { ...item }];
 		this.addToDB(item);
 		await RustManager.getSelf().vault_add({
 			source: source,

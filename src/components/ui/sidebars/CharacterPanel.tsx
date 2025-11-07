@@ -10,6 +10,7 @@ import { Accessor } from "solid-js";
 import { FormType } from "@type/hollow";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
+import { Realm } from "@type/Realm";
 
 type CharacterPanelProps = {
 	isVisible: Accessor<boolean>;
@@ -51,10 +52,7 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 					// TODO form != multi-onSelect
 					options: [
 						{
-							items: character().titles.map((i) => ({
-								label: i,
-							})),
-							onSelect: () => {},
+							items: character().titles,
 						},
 					],
 					label: "Title",
@@ -136,9 +134,10 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 								<span class="text-secondary-50">Realm:</span>{" "}
 								<span class="text-secondary-95 pl-2">
 									{
-										RealmManager.getSelf().getRealmFromId(
-											RealmManager.getSelf()
-												.currentRealmId,
+										(
+											RealmManager.getSelf().getCurrent(
+												true,
+											) as Realm
 										).name
 									}
 								</span>

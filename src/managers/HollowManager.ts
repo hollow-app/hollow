@@ -15,6 +15,7 @@ import { ToolDataBase } from "./ToolDataBase";
 import { hotkeysManager } from "./HotkeysManager";
 import { CodeThemeManager } from "./CodeThemeManager";
 import { DeepLinkManager } from "./DeepLinkManager";
+import { SettingsManager } from "./SettingsManager";
 
 export class HollowManager {
 	private static self: HollowManager;
@@ -40,6 +41,9 @@ export class HollowManager {
 	}
 
 	async preRealmSelection() {
+		if (!localStorage.realmToggleOnStartup) {
+			localStorage.realmToggleOnStartup = "false";
+		}
 		hotkeysManager.init();
 		await VaultManager.getSelf().start();
 		await CharacterManager.getSelf().start();
@@ -51,27 +55,26 @@ export class HollowManager {
 			localStorage.platform = await RustManager.getSelf().get_platform();
 		}
 		const devData = this.handleDev();
+		//
 		hollow.toolManager = await ToolManager.create(devData.loadunsigned);
+		NotifyManager.init();
+		CodeThemeManager.init();
+		// DeepLinkManager.init();
 		await EntryManager.getSelf().start();
+		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });
 		setStyle([
 			{
 				name: "--static-grid-lines",
-				value: JSON.parse(
-					localStorage.getItem(
-						`${RealmManager.getSelf().currentRealmId}-static-grid-lines`,
-					) ?? "false",
-				)
+				value: SettingsManager.getSelf().getConfig("static-grid-lines")
 					? "var(--secondary-color-15)"
 					: "transparent",
 			},
 		]);
 		useBackground({});
 		useTags();
-		NotifyManager.init();
-		CodeThemeManager.init();
-		DeepLinkManager.init();
+		//
 		this.handleEvents();
 	}
 
@@ -92,7 +95,7 @@ export class HollowManager {
 	}
 
 	private handleDev() {
-		const key = `${RealmManager.getSelf().currentRealmId}-dev`;
+		const key = `${RealmManager.getSelf().getCurrent()}-dev`;
 		const savedData: string | undefined = localStorage.getItem(key);
 		let iniData = {
 			devtools: false,

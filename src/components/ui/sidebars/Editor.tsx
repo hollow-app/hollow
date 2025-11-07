@@ -1,6 +1,6 @@
 import Sidepanel from "@components/animations/Sidepanel";
 import ColorPick from "@components/ColorPick";
-import DropDown from "@components/DropDown";
+// import DropDown from "@components/DropDown";
 import NumberInput from "@components/NumberInput";
 import { EditorKitType } from "@type/EditorKitType";
 import { TentTreeIcon } from "lucide-solid";
@@ -15,6 +15,7 @@ import {
 	Show,
 } from "solid-js";
 import { hollow } from "hollow";
+import Dropdown from "@components/Dropdown";
 
 type EditorProps = {
 	isVisible: Accessor<boolean>;
@@ -297,36 +298,30 @@ function Header({ selectCard }: HeaderProps) {
 					Editor
 				</h1>
 				<div class="flex gap-2">
-					<DropDown
+					<Dropdown
+						value={() => selected().tool}
+						onSelect={(v) => setSelected({ tool: v, card: null })}
 						options={() => [
 							{
 								items: hollow.toolManager
 									.getHand()
-									.map((i) => ({ label: i.name })),
-								onSelect: (v) =>
-									setSelected({ tool: v, card: null }),
+									.map((i) => i.name),
 							},
 						]}
-						value={() => selected().tool}
-						placeholder="--tool--"
-						style={{ "--w": "50%" }}
+						placeholder="Tool"
 					/>
-					<DropDown
+					<Dropdown
+						value={() => selected().card}
+						onSelect={(v) => {
+							setSelected((prev) => ({ ...prev, card: v }));
+							selectCard(selected().tool, v);
+						}}
 						options={() => [
 							{
-								items: cards().map((i) => ({ label: i })),
-								onSelect: (v: string) => {
-									setSelected((prev) => ({
-										...prev,
-										card: v,
-									}));
-									selectCard(selected().tool, v);
-								},
+								items: cards(),
 							},
 						]}
-						value={() => selected().card}
-						placeholder="--card--"
-						style={{ "--w": "50%" }}
+						placeholder="Card"
 					/>
 				</div>
 			</div>

@@ -3,6 +3,7 @@ import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { DataBase, HollowEvent, ICard, ToolOption } from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
 import { ImageType } from "./ImageType";
+import WordInput from "@components/WordInput";
 
 type ImageProps = {
 	data: ImageType;
@@ -89,7 +90,15 @@ export default function Image({ data, card, db }: ImageProps) {
 					label: "Fit Mode",
 					description: "How the image should fit in its container",
 					value: () => image().objectFit,
-					onChange: () => {},
+					onChange: (value: any) => {
+						setImage((prev) => ({
+							...prev,
+							objectFit: value,
+							...(value === "cover"
+								? { position: { x: 50, y: 50 } }
+								: {}),
+						}));
+					},
 					options: [
 						{
 							items: [
@@ -98,16 +107,7 @@ export default function Image({ data, card, db }: ImageProps) {
 								"fill",
 								"none",
 								"scale-down",
-							].map((i) => ({ label: i })),
-							onSelect: (value: any) => {
-								setImage((prev) => ({
-									...prev,
-									objectFit: value,
-									...(value === "cover"
-										? { position: { x: 50, y: 50 } }
-										: {}),
-								}));
-							},
+							],
 						},
 					],
 				},

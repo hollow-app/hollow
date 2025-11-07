@@ -1,16 +1,10 @@
 import { RustManager } from "@managers/RustManager";
 import { createResource, Suspense } from "solid-js";
 import PatreonIcon from "@assets/icons/patreon.svg";
+import { SettingsManager } from "@managers/SettingsManager";
 
 export default function General() {
 	const [version] = createResource(() => RustManager.getSelf().get_version());
-	const handleRealmToggle = (
-		e: Event & { currentTarget: HTMLInputElement },
-	) => {
-		localStorage.realmToggleOnStartup = JSON.stringify(
-			e.currentTarget.checked,
-		);
-	};
 	return (
 		<div class="flex flex-col gap-5 p-10 text-neutral-950 dark:text-neutral-200">
 			<div class="flex justify-between">
@@ -65,7 +59,11 @@ export default function General() {
 						checked={JSON.parse(
 							localStorage.realmToggleOnStartup ?? "false",
 						)}
-						onchange={handleRealmToggle}
+						onchange={(e) =>
+							(localStorage.realmToggleOnStartup = JSON.stringify(
+								e.currentTarget.checked,
+							))
+						}
 					/>
 					<label
 						class="toggle-label"

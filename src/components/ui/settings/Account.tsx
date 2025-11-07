@@ -1,4 +1,4 @@
-import DropDown from "@components/DropDown";
+import Dropdown from "@components/Dropdown";
 import { CharacterManager } from "@managers/CharacterManager";
 import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
@@ -78,10 +78,7 @@ export default function Account() {
 					type: "dropdown",
 					options: [
 						{
-							items: ["text", "list", "progress"].map((i) => ({
-								label: i,
-							})),
-							onSelect: () => {},
+							items: ["text", "list", "progress"],
 						},
 					],
 					value: Array.isArray(target?.value)
@@ -195,15 +192,13 @@ export default function Account() {
 						</p>
 					</div>
 					<div>
-						<DropDown
+						<Dropdown
 							options={() => [
 								{
-									items: character().titles.map((i) => ({
-										label: i,
-									})),
-									onSelect: changeTitle,
+									items: character().titles,
 								},
 							]}
+							onSelect={changeTitle}
 							value={() => character().title}
 						/>
 					</div>

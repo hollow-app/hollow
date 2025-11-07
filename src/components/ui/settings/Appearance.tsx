@@ -14,7 +14,6 @@ import {
 } from "solid-js";
 import { TagType } from "@type/hollow";
 import useTags from "@hooks/useTags";
-import DropDown from "@components/DropDown";
 import { readableColor } from "polished";
 import Slider from "@components/Slider";
 import setStyle from "@hooks/setStyle";
@@ -23,39 +22,53 @@ import { hollow } from "hollow";
 import { CodeThemeManager } from "@managers/CodeThemeManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import Loading from "@components/Loading";
+import { SettingsManager } from "@managers/SettingsManager";
+import Dropdown from "@components/Dropdown";
 
 export default function Appearance() {
+	const settingsManager = SettingsManager.getSelf();
 	return (
 		<div class="h-full p-10">
-			<GridSettings />
+			<GridSettings settingsManager={settingsManager} />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<ColorSettings />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
-			<BackgroundSettings />
+			<BackgroundSettings settingsManager={settingsManager} />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
-			<CodeThemeSettings />
+			<CodeThemeSettings settingsManager={settingsManager} />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
-			<TagsEditor />
+			<TagsEditor settingsManager={settingsManager} />
 		</div>
 	);
 }
-
-function GridSettings() {
-	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
-	const grid = createMemo(() =>
-		JSON.parse(localStorage.getItem(`${realm()}-canvas`)),
+type CommonSettings = {
+	settingsManager: SettingsManager;
+};
+function GridSettings({ settingsManager }: CommonSettings) {
+	const columns = createMemo(() => settingsManager.getConfig("columns"));
+	const offColumns = createMemo(() =>
+		settingsManager.getConfig("offcolumns"),
+	);
+	const rows = createMemo(() => settingsManager.getConfig("rows"));
+	const offRows = createMemo(() => settingsManager.getConfig("offrows"));
+	const staticGridLines = createMemo(() =>
+		settingsManager.getConfig("static-grid-lines"),
 	);
 
 	const setColumns = (n: number) => {
+		settingsManager.setConfig("columns", n);
 		useGrid([{ name: "columns", value: n }]);
 	};
 	const setMoreColumns = (n: number) => {
+		settingsManager.setConfig("offcolumns", n);
 		useGrid([{ name: "offcolumns", value: n }]);
 	};
 	const setRows = (n: number) => {
+		settingsManager.setConfig("rows", n);
 		useGrid([{ name: "rows", value: n }]);
 	};
 	const setMoreRows = (n: number) => {
+		settingsManager.setConfig("offrows", n);
 		useGrid([{ name: "offrows", value: n }]);
 	};
 
@@ -78,7 +91,7 @@ function GridSettings() {
 						</div>
 						<div class="w-70 max-w-[50%]">
 							<NumberInput
-								value={grid().columns}
+								value={columns()}
 								setValue={setColumns}
 							/>
 						</div>
@@ -89,7 +102,7 @@ function GridSettings() {
 						</h2>
 						<div class="w-70 max-w-[50%]">
 							<NumberInput
-								value={grid().offcolumns}
+								value={offColumns()}
 								setValue={setMoreColumns}
 							/>
 						</div>
@@ -106,10 +119,7 @@ function GridSettings() {
 							</p>
 						</div>
 						<div class="w-70 max-w-[50%]">
-							<NumberInput
-								value={grid().rows}
-								setValue={setRows}
-							/>
+							<NumberInput value={rows()} setValue={setRows} />
 						</div>
 					</div>
 					<div class="bg-secondary-10/40 mx-auto flex w-full items-center justify-between rounded-lg p-2">
@@ -118,7 +128,7 @@ function GridSettings() {
 						</h2>
 						<div class="w-70 max-w-[50%]">
 							<NumberInput
-								value={grid().offrows}
+								value={offRows()}
 								setValue={setMoreRows}
 							/>
 						</div>
@@ -134,13 +144,13 @@ function GridSettings() {
 								class="toggle-input"
 								type="checkbox"
 								id="static-grid-lines-toggle"
-								checked={JSON.parse(
-									localStorage.getItem(
-										`${realm()}-static-grid-lines`,
-									) ?? "false",
-								)}
+								checked={staticGridLines()}
 								onchange={(e) => {
 									const check = e.currentTarget.checked;
+									settingsManager.setConfig(
+										"static-grid-lines",
+										check,
+									);
 									setStyle([
 										{
 											name: "--static-grid-lines",
@@ -149,10 +159,6 @@ function GridSettings() {
 												: "transparent",
 										},
 									]);
-									localStorage.setItem(
-										`${realm()}-static-grid-lines`,
-										`${check}`,
-									);
 								}}
 							/>
 							<label
@@ -168,7 +174,7 @@ function GridSettings() {
 }
 
 function ColorSettings() {
-	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
+	const realm = createMemo(() => RealmManager.getSelf().getCurrent());
 	const primaryColor = createMemo(
 		() =>
 			JSON.parse(localStorage.getItem(`${realm()}-color-primary`))
@@ -230,28 +236,27 @@ function ColorSettings() {
 	);
 }
 
-function BackgroundSettings() {
-	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
-	const [background, setBackground] = createSignal(
-		(() => {
-			const data = JSON.parse(
-				localStorage.getItem(`${realm()}-canvas-bg`),
-			);
-			return {
-				...data,
-				opacity: Math.round(data.opacity * 100),
-			};
-		})(),
+function BackgroundSettings({ settingsManager }: CommonSettings) {
+	const backgroundImage = createMemo(() =>
+		settingsManager.getConfig("background-image"),
 	);
+	const backgroundOpacity = createMemo(() =>
+		settingsManager.getConfig("background-opacity"),
+	);
+	const [background, setBackground] = createSignal({
+		opacity: backgroundOpacity(),
+	});
 
 	const selectBg = () => {
 		hollow.events.emit("show-vault", { onSelect: setBackgroundImg });
 	};
 	const setBackgroundImg = (path: string) => {
+		settingsManager.setConfig("background-image", path);
 		useBackground({ path: `url(${path})` });
 	};
-	const setBackgroundOpacity = () => {
-		useBackground({ opacity: `${background().opacity / 100}` });
+	const setBackgroundOpacity = (opacity: number) => {
+		settingsManager.setConfig("background-opacity", opacity);
+		useBackground({ opacity: `${opacity / 100}` });
 	};
 
 	return (
@@ -286,13 +291,13 @@ function BackgroundSettings() {
 						</div>
 						<div class="flex gap-3">
 							<Slider
-								value={Number(background().opacity)}
+								value={backgroundOpacity()}
 								setValue={(v) => {
 									setBackground((prev) => ({
 										...prev,
 										opacity: v,
 									}));
-									setBackgroundOpacity();
+									setBackgroundOpacity(v);
 								}}
 							/>
 						</div>
@@ -312,8 +317,7 @@ greet("Theme Tester");
 \`\`\`
 `;
 
-function CodeThemeSettings() {
-	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
+function CodeThemeSettings({ settingsManager }: CommonSettings) {
 	const [md] = createResource(exampleCode, () =>
 		MarkdownManager.getSelf().renderMarkdown(
 			exampleCode(),
@@ -321,17 +325,13 @@ function CodeThemeSettings() {
 		),
 	);
 	const [codeTheme, setCodeTheme] = createSignal(
-		localStorage.getItem(`${realm()}-last-theme`),
+		settingsManager.getConfig("code-theme"),
 	);
 
 	const useCodeTheme = async (v: string) => {
-		// keep same behavior as original (you had console.log)
-		// swap to useCodeTheme if you want actual effect:
-		// useCodeTheme(v);
-		// TODO
-		setCodeTheme(null);
-		await CodeThemeManager.getSelf().loadTheme(v);
+		settingsManager.setConfig("code-theme", v);
 		setCodeTheme(v);
+		await CodeThemeManager.getSelf().loadTheme(v);
 	};
 
 	return (
@@ -359,31 +359,33 @@ function CodeThemeSettings() {
 						</Suspense>
 					</Show>
 				</div>
-				<DropDown
-					value={() => codeTheme()}
+				<Dropdown
+					value={codeTheme}
 					options={() => [
 						{
-							items: codeThemes.map((i) => ({ label: i })),
-							onSelect: useCodeTheme,
+							items: codeThemes,
 						},
 					]}
+					onSelect={useCodeTheme}
 				/>
 			</div>
 		</>
 	);
 }
 
-function TagsEditor() {
-	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
+function TagsEditor({ settingsManager }: CommonSettings) {
+	const tags = createMemo(() => {
+		const customTags = settingsManager.getConfig("custom-tags");
+		// Handle both string[] (if SettingsManager type is correct) and TagType[]
+		// If it's a string array, we'd need to parse it, but for now assume it's TagType[]
+		return (customTags as unknown as TagType[]) || [];
+	});
 
 	const [newTag, setNewTag] = createSignal<TagType>({
 		name: "",
 		foreground: "",
 		background: "#151515",
 	});
-	const [tags, setTags] = createSignal<TagType[]>(
-		JSON.parse(localStorage.getItem(`${realm()}-tags`)) || [],
-	);
 	const submit = () => {
 		const { name, background } = newTag();
 		if (
@@ -392,20 +394,23 @@ function TagsEditor() {
 				.map((i) => i.name)
 				.includes(`${name}`)
 		) {
-			toTags((prev) => [
-				...prev,
+			const newTags = [
+				...tags(),
 				{
 					name,
 					background,
 					foreground: readableColor(background),
 				},
-			]);
+			];
+			settingsManager.setConfig("custom-tags", newTags);
+			useTags(newTags);
 			setNewTag({ name: "", background: "#151515", foreground: "" });
 		}
 	};
 	const toTags = (v: TagType[] | ((prev: TagType[]) => TagType[])) => {
-		setTags(typeof v === "function" ? v : () => v);
-		useTags(tags());
+		const newTags = typeof v === "function" ? v(tags()) : v;
+		settingsManager.setConfig("custom-tags", newTags);
+		useTags(newTags);
 	};
 	return (
 		<div class="w-full py-4">

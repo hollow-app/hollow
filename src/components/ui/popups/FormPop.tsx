@@ -2,13 +2,15 @@ import { FormType } from "@type/hollow";
 import { Accessor, For } from "solid-js";
 import { createSignal } from "solid-js";
 import ColorPick from "@components/ColorPick";
-import DropDown from "@components/DropDown";
 import EmojiPick from "@components/EmojiPick";
 import NumberInput from "@components/NumberInput";
 import Slider from "@components/Slider";
 import WordInput from "@components/WordInput";
 import ImportFile from "@components/ImportFile";
 import { hollow } from "hollow";
+import { options } from "marked";
+import Dropdown from "@components/Dropdown";
+import { Show } from "solid-js";
 
 type FormPopProps = {
 	form: Accessor<FormType>;
@@ -63,7 +65,7 @@ export default function FormPop({ form }: FormPopProps) {
 					</div>
 				</div>
 
-				<div class="flex h-full flex-col overflow-x-hidden overflow-y-auto">
+				<div class="flex h-full flex-wrap overflow-x-hidden overflow-y-auto">
 					<For each={form().options}>
 						{(preOption, index) => {
 							const option = {
@@ -82,13 +84,17 @@ export default function FormPop({ form }: FormPopProps) {
 								);
 							return (
 								<div
-									class="relative flex flex-col transition-all duration-200 ease-in-out"
+									class="relative p-1 transition-all duration-200 ease-in-out"
 									classList={{
-										" hidden": dependable(),
-										" my-2": !dependable(),
+										hidden: dependable(),
+										"my-2": !dependable(),
+										"w-[50%]": option.inline,
+										"w-full": !option.inline,
+										"flex justify-between":
+											option.row && !option.inline,
 									}}
 								>
-									<div class="mb-2 flex items-center gap-2">
+									<div class="mb-2 flex w-[50%] items-center gap-2">
 										<h2
 											class="flex gap-1 text-lg text-neutral-800 dark:text-neutral-200"
 											classList={{
@@ -96,11 +102,11 @@ export default function FormPop({ form }: FormPopProps) {
 													!!option.description,
 											}}
 										>
-											{option.label}{" "}
-											{option.description && (
+											{option.label}
+											<Show when={option.description}>
 												<>
-													<span class="text-secondary-20 font-light tracking-widest">
-														[i]
+													<span class="text-secondary-20 font-bold">
+														[ i ]
 													</span>
 													<span
 														class="tool-tip-content"
@@ -109,12 +115,12 @@ export default function FormPop({ form }: FormPopProps) {
 														{option.description}
 													</span>
 												</>
-											)}
-											{!option.optional && (
+											</Show>
+											<Show when={!option.optional}>
 												<span class="text-primary-10 text-sm">
 													*
 												</span>
-											)}
+											</Show>
 										</h2>
 									</div>
 									{(() => {
@@ -245,22 +251,19 @@ export default function FormPop({ form }: FormPopProps) {
 
 											case "dropdown":
 												return (
-													<DropDown
-														value={() =>
-															option.value ??
-															option.options[0]
+													<Dropdown
+														value={
+															option.value ?? ""
 														}
-														options={() => [
-															{
-																items: option.options.map(
-																	(i) => ({
-																		label: i,
-																	}),
-																),
-																onSelect:
-																	option.onChange,
-															},
-														]}
+														placeholder={
+															option.placeholder
+														}
+														options={() =>
+															option.options
+														}
+														onSelect={
+															option.onChange
+														}
 													/>
 												);
 											case "file":

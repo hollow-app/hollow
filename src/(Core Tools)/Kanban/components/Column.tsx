@@ -275,10 +275,7 @@ export default function Column({ card, data }: ColumnProps) {
 					label: "Priority",
 					options: [
 						{
-							items: ["low", "medium", "high", "urgent"].map(
-								(i) => ({ label: i }),
-							),
-							onSelect: () => {},
+							items: ["low", "medium", "high", "urgent"],
 						},
 					],
 					value: item?.priority ?? "medium",

@@ -19,6 +19,7 @@ import { MarkdownManager } from "@managers/MarkdownManager";
 import { EntryManager } from "@managers/EntryManager";
 import { hollow } from "hollow";
 import DropDown from "@components/DropDown";
+import FilterButton from "@components/FilterButton";
 const Icon = lazy(() => import("@components/Icon"));
 
 type filterType = {
@@ -100,8 +101,7 @@ export default function EntriesViewer() {
 									collected from tools across your workspace.
 								</p>
 								<div class="relative z-1 flex flex-1 items-center gap-3">
-									<DropDown
-										isFilter
+									<FilterButton
 										options={() => [
 											{
 												title: "Tools",

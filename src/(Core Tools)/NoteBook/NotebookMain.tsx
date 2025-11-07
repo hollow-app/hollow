@@ -28,7 +28,7 @@ export class NotebookMain implements IPlugin {
 
 	async onLoad(card: ICard): Promise<boolean> {
 		const targetContainer = document.getElementById(card.id);
-		if (targetContainer && !this.roots.has(card.name)) {
+		if (targetContainer && !this.roots.has(card.id)) {
 			const book: NotebookType = {
 				...(await NotebookManager.getSelf().getNotebook(card.id)),
 				notes: await NotebookManager.getSelf().getNotesForNotebook(
@@ -43,7 +43,7 @@ export class NotebookMain implements IPlugin {
 				return dispose;
 			});
 
-			this.roots.set(card.name, dispose);
+			this.roots.set(card.id, dispose);
 		} else {
 			return false;
 		}
@@ -51,11 +51,11 @@ export class NotebookMain implements IPlugin {
 		return true;
 	}
 
-	onUnload(name: string): void {
-		const dispose = this.roots.get(name);
+	onUnload(id: string): void {
+		const dispose = this.roots.get(id);
 		if (dispose) {
 			dispose();
-			this.roots.delete(name);
+			this.roots.delete(id);
 		}
 	}
 }

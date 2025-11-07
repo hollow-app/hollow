@@ -1,12 +1,8 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
 import { RustManager } from "./RustManager";
-import CONFIG from "@assets/configs/realms.json?raw";
-
-type ConfigType = {
-	current: string;
-	list: Realm[];
-};
+import { exists, mkdir } from "@tauri-apps/plugin-fs";
+import { join } from "@tauri-apps/api/path";
 
 export class RealmManager {
 	public realms: Realm[] = [];
@@ -14,25 +10,35 @@ export class RealmManager {
 	private setCurrentRealm: Setter<string> = null;
 	private static self: RealmManager;
 
+	private constructor() {
+		const savedRealms = localStorage.getItem("realms") ?? "[]";
+		this.realms = JSON.parse(savedRealms);
+		this.currentRealmId = localStorage.currentRealmId;
+	}
 	static getSelf() {
 		if (!this.self) {
 			this.self = new RealmManager();
 		}
 		return this.self;
 	}
-
+	getCurrent<T extends boolean | undefined>(
+		obj?: T,
+	): T extends true ? Realm : string {
+		if (obj) {
+			return this.realms.find((i) => i.id === this.currentRealmId) as any;
+		}
+		return this.currentRealmId as any;
+	}
 	public init(setCurrentRealm: Setter<string>) {
-		const savedRealms = localStorage.getItem("realms") ?? "[]";
-		this.realms = JSON.parse(savedRealms);
-		this.currentRealmId = localStorage.currentRealmId;
 		this.setCurrentRealm = setCurrentRealm;
 	}
 
-	public enterRealm(realmId: string) {
+	public async enterRealm(realmId: string, ignoreReload?: boolean) {
 		this.currentRealmId = realmId;
 		localStorage.currentRealmId = realmId;
+		this.setCurrentRealm(realmId);
 		// reload the app or open it in a new window.
-		RustManager.getSelf().reload();
+		ignoreReload && RustManager.getSelf().reload();
 	}
 	public addRealm(nRealm: Realm) {
 		this.realms.push(nRealm);
@@ -55,7 +61,7 @@ export class RealmManager {
 	}
 
 	public updateColors(obj: any) {
-		const realm = this.getRealmFromId(this.currentRealmId);
+		const realm = this.getCurrent(true);
 		if (realm) {
 			realm.colors = { ...realm.colors, ...obj };
 		}

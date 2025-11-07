@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
 import { RustManager } from "@managers/RustManager";
 import { RealmManager } from "@managers/RealmManager";
+import { SettingsManager } from "@managers/SettingsManager";
 import { hollow } from "hollow";
 
 // jk
@@ -8,13 +9,18 @@ export default function Developers() {
 	const [options, setOption] = createSignal<{
 		devtools: boolean;
 		loadunsigned: boolean;
-	}>(
-		JSON.parse(
-			localStorage.getItem(
-				`${RealmManager.getSelf().currentRealmId}-dev`,
-			),
-		),
-	);
+	}>({ devtools: false, loadunsigned: false });
+
+	// Load from SettingsManager
+	(async () => {
+		const devtools = (await SettingsManager.getSelf().getConfig(
+			"enable-dev-tools",
+		)) as boolean;
+		const loadunsigned = (await SettingsManager.getSelf().getConfig(
+			"load-unsigned-plugins",
+		)) as boolean;
+		setOption({ devtools, loadunsigned });
+	})();
 
 	const changeDevtools = (e: Event & { currentTarget: HTMLInputElement }) => {
 		const state = e.currentTarget.checked;
@@ -40,9 +46,13 @@ export default function Developers() {
 		});
 	};
 	const update = () => {
-		localStorage.setItem(
-			`${RealmManager.getSelf().currentRealmId}-dev`,
-			JSON.stringify(options()),
+		SettingsManager.getSelf().setConfig(
+			"enable-dev-tools",
+			options().devtools,
+		);
+		SettingsManager.getSelf().setConfig(
+			"load-unsigned-plugins",
+			options().loadunsigned,
 		);
 	};
 	return (

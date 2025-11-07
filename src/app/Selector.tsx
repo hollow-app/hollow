@@ -10,6 +10,7 @@ import {
 	ArrowLeftIcon,
 	RocketIcon,
 	PandaIcon,
+	CheckIcon,
 } from "lucide-solid";
 import {
 	Accessor,
@@ -22,17 +23,16 @@ import {
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import WindowControl from "@components/WindowControl";
-import DropDown from "@components/DropDown";
 import { Character } from "@type/Character";
 import { CharacterManager } from "@managers/CharacterManager";
 import { useColor } from "@hooks/useColor";
 import Loading from "@components/Loading";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
-import { ask, confirm, message, open } from "@tauri-apps/plugin-dialog";
+import Dropdown from "@components/Dropdown";
 
 type SelectorProps = {
-	onSelect: Setter<string | null>;
+	onSelect: (id: string) => void;
 };
 
 const themes = [
@@ -49,7 +49,6 @@ const themes = [
 ];
 const useRealmManager = () => {
 	const [name, setName] = createSignal("");
-	const [location, setLocation] = createSignal("");
 	const [primary, setPrimary] = createSignal("#FF0033");
 	const [secondary, setSecondary] = createSignal("#000000");
 
@@ -59,7 +58,6 @@ const useRealmManager = () => {
 		const newRealm: Realm = {
 			id: crypto.randomUUID(),
 			name: name(),
-			location: location(),
 			lastEntered: new Date().toISOString(),
 			createdDate: new Date().toISOString(),
 			colors: {
@@ -86,8 +84,6 @@ const useRealmManager = () => {
 	return {
 		name,
 		setName,
-		location,
-		setLocation,
 		primary,
 		setPrimary,
 		secondary,
@@ -288,8 +284,6 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 	const {
 		name,
 		setName,
-		location,
-		setLocation,
 		primary,
 		setPrimary,
 		secondary,
@@ -307,14 +301,6 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 		const t = themes.find((i) => i.name === name);
 		setPrimary(t.primary);
 		setSecondary(t.secondary);
-	};
-
-	const selectLocation = async () => {
-		await open({
-			multiple: false,
-			directory: true,
-			title: "Select your Realm Location folder",
-		});
 	};
 
 	return (
@@ -366,28 +352,16 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 						</div>
 						<div class="flex items-center justify-between">
 							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
-								Location
-							</label>
-							<button
-								class="button-primary"
-								onclick={selectLocation}
-							>
-								Select
-							</button>
-						</div>
-						<div class="flex items-center justify-between">
-							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
 								Themes
 							</label>
-							<DropDown
+							<Dropdown
+								// TODO light/dark gruops
 								options={() => [
 									{
-										items: themes.map((i) => ({
-											label: i.name,
-										})),
-										onSelect: selectTheme,
+										items: themes.map((i) => i.name),
 									},
 								]}
+								onSelect={selectTheme}
 								placeholder="Select A Theme"
 							/>
 						</div>
@@ -581,7 +555,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 							import
 						</button>
 					</div>
-					<div class="w-ful flex h-40 flex-col justify-around gap-2">
+					<div class="flex h-40 w-full flex-col justify-around gap-2">
 						<div class="w-full">
 							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
 								Name
@@ -589,6 +563,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 							<input
 								class="input"
 								placeholder="All realms remember a name"
+								value={character().username}
 								onInput={(e) =>
 									setCharacter((prev) => ({
 										...prev,
@@ -601,21 +576,19 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
 								Title
 							</h2>
-							<DropDown
+							<Dropdown
 								value={() => character().title}
 								options={() => [
 									{
-										items: [
-											"Elder",
-											"The Original Few",
-										].map((i) => ({ label: i })),
-										onSelect: (s: string) =>
-											setCharacter((prev) => ({
-												...prev,
-												title: s,
-											})),
+										items: ["Elder", "The Original Few"],
 									},
 								]}
+								onSelect={(s: string) =>
+									setCharacter((prev) => ({
+										...prev,
+										title: s,
+									}))
+								}
 							/>
 						</div>
 					</div>
@@ -627,6 +600,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 					<textarea
 						class="input resize-none"
 						placeholder="Your tale begins here"
+						value={character().bio}
 						onInput={(e) =>
 							setCharacter((prev) => ({
 								...prev,
@@ -678,13 +652,12 @@ export default function Selector({ onSelect }: SelectorProps) {
 		return true;
 	});
 	const [level, setLevel] = createSignal(
-		// RealmManager.getSelf().realms.length === 0 ? 0 : 1,
-		2,
+		RealmManager.getSelf().realms.length === 0 ? 0 : 1,
 	);
 	const [realms, setRealms] = createSignal<Realm[]>(
 		RealmManager.getSelf().realms,
 	);
-
+	//
 	return (
 		<Suspense fallback={<Loading />}>
 			<Show when={ready()}>
@@ -702,11 +675,9 @@ export default function Selector({ onSelect }: SelectorProps) {
 								<Show when={level() === 1}>
 									<RealmList
 										onBack={() => setLevel(2)}
-										onSelect={(id) =>
-											RealmManager.getSelf().enterRealm(
-												id,
-											)
-										}
+										onSelect={(id) => {
+											onSelect(id);
+										}}
 										realms={realms}
 										setRealms={setRealms}
 									/>

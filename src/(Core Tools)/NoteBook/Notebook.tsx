@@ -6,7 +6,7 @@ import FileDescriptionIcon from "@assets/icons/files/file-description.svg";
 import FolderOpenIcon from "@assets/icons/folder-open.svg";
 import FolderCloseIcon from "@assets/icons/folder-close.svg";
 import { HollowEvent, ICard, ContextMenuItem, TagType } from "@type/hollow";
-import { NotebookTabsIcon } from "lucide-solid";
+import { Filter, NotebookTabsIcon } from "lucide-solid";
 import {
 	Accessor,
 	createMemo,
@@ -27,6 +27,7 @@ import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
 import { timeDifference } from "@managers/manipulation/strings";
 import DropDown from "@components/DropDown";
+import FilterButton from "@components/FilterButton";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
 const WordInput = lazy(() => import("@components/WordInput"));
@@ -508,8 +509,7 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 					}}
 				/>
 
-				<DropDown
-					isFilter
+				<FilterButton
 					options={() => [
 						{
 							title: "Order by",

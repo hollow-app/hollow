@@ -24,10 +24,10 @@ export interface IPlugin {
 
 	/**
 	 * Called when a card is unloaded.
-	 * @param name - The name of the card being unloaded.
+	 * @param id - The id of the card being unloaded.
 	 * Cleans up resources or state as necessary.
 	 */
-	onUnload(name: string): void;
+	onUnload(id: string): void;
 }
 
 // Represents a card in the app, with properties and methods for interaction.
@@ -400,7 +400,10 @@ export type TypedOptionMap = {
 	button: {};
 	color: {};
 	emoji: {};
-	dropdown: { options: DropdownOption[] };
+	dropdown: {
+		options: { title?: string; items: string[] }[];
+		placeholder?: string;
+	};
 	file: { accept?: string };
 	image: {};
 	range: { min: number; max: number; step?: number };
@@ -519,7 +522,8 @@ export type FormOption = {
 	 * Unique key identifying the option within the form submission.
 	 */
 	key: any;
-
+	inline?: boolean;
+	row?: boolean;
 	/**
 	 * Conditional visibility:
 	 * This field will only be shown if the option with the matching key
@@ -634,17 +638,4 @@ export type InsightType = {
 		tool: string;
 		card: string;
 	};
-};
-
-type DropdownItem = {
-	label: string;
-	checked?: boolean;
-};
-
-export type DropdownOption = {
-	title?: string;
-	value?: () => string | string[];
-	isCheckBox?: boolean;
-	items: DropdownItem[];
-	onSelect: (v: string[] | string) => void;
 };

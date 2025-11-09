@@ -46,7 +46,7 @@ export class ToolManager {
 	private toolMap: ToolMap;
 	private handMap: HandMap;
 	public setHand: Setter<Opthand[]>;
-	public toolsEvent: { [toolName: string]: HollowEvent } = {};
+	private toolsEvent: { [toolName: string]: HollowEvent } = {};
 	private realm = RealmManager.getSelf().currentRealmId;
 
 	private constructor() {
@@ -214,6 +214,10 @@ export class ToolManager {
 		return request;
 	}
 
+	getToolEvents(tool: string) {
+		return this.toolsEvent[tool];
+	}
+
 	private isToolUsedByOtherRealms(name: string): boolean {
 		return (
 			RealmManager.getSelf()
@@ -270,11 +274,11 @@ export class ToolManager {
 			})),
 		);
 	}
-	private getICard(toolName: string, cardName: string) {
+	private getICard(toolName: string, cardId: string) {
 		const methods = this.toolMap.get(toolName);
 		const card = this.hand
 			.find((i) => i.name === toolName)
-			.cards.find((i) => i.name === cardName);
+			.cards.find((i) => i.id === cardId);
 		const happ = hollow.events;
 		const cardobj: ICard = {
 			...card,
@@ -290,12 +294,12 @@ export class ToolManager {
 		};
 		return cardobj;
 	}
-	async loadCard(cardInfo: CardType, toolName: string): Promise<void> {
+	async loadCard(cardInfo: CardType, toolName: string): Promise<boolean> {
 		const tool = this.toolMap.get(toolName);
-		tool.onLoad(this.getICard(toolName, cardInfo.name));
+		return await tool.onLoad(this.getICard(toolName, cardInfo.id));
 	}
-	togglePlacement(name: string, toolName: string) {
-		const { tool, card } = this.getToolAndCard(toolName, name);
+	togglePlacement(id: string, toolName: string) {
+		const { tool, card } = this.getToolAndCard(toolName, id);
 		if (!tool || !card) {
 			return;
 		}
@@ -340,24 +344,24 @@ export class ToolManager {
 		this.update();
 	}
 
-	async deleteCard(name: string, toolName: string): Promise<void> {
-		const { tool, card } = this.getToolAndCard(toolName, name);
+	async deleteCard(cardId: string, toolName: string): Promise<void> {
+		const { tool, card } = this.getToolAndCard(toolName, cardId);
 		if (!tool || !card) return;
 
 		const toolInstance = this.toolMap.get(toolName);
 		if (card.isPlaced) {
-			toolInstance?.onUnload(name);
+			toolInstance?.onUnload(cardId);
 		}
 
-		await toolInstance?.onDelete(this.getICard(toolName, name));
-		tool.cards = tool.cards.filter((i) => i.name !== name);
+		await toolInstance?.onDelete(this.getICard(toolName, cardId));
+		tool.cards = tool.cards.filter((i) => i.id !== cardId);
 
 		this.setHand((prev) =>
-			prev.filter((i) => !(i.name === name && i.tool === toolName)),
+			prev.filter((i) => !(i.id === cardId && i.tool === toolName)),
 		);
 
 		const entries = EntryManager.getSelf().entries.filter(
-			(e) => e.source.card === name,
+			(e) => e.source.card === card.name,
 		);
 		EntryManager.getSelf().removeEntry(entries.map((i) => i.id));
 
@@ -365,8 +369,8 @@ export class ToolManager {
 		this.updateToolMetadata(toolName, { cards: tool.cards });
 	}
 
-	changeEmoji(emoji: string, cardName: string, toolName: string): void {
-		const { tool, card } = this.getToolAndCard(toolName, cardName);
+	changeEmoji(emoji: string, cardId: string, toolName: string): void {
+		const { tool, card } = this.getToolAndCard(toolName, cardId);
 		if (tool && card) {
 			card.emoji = emoji;
 			this.update();
@@ -375,10 +379,16 @@ export class ToolManager {
 
 	addCard(name: string, toolName: string, emoji: string): void {
 		const { tool } = this.getToolAndCard(toolName);
-		if (!tool) return;
-
+		if (tool.cards.some((i) => i.name === name)) {
+			hollow.events.emit("alert", {
+				type: "error",
+				message: "A card with that name already exists",
+			});
+			return;
+		}
+		const id = crypto.randomUUID();
 		const newCard: CardType = {
-			id: crypto.randomUUID(),
+			id,
 			name,
 			emoji: emoji,
 			isPlaced: false,
@@ -403,7 +413,7 @@ export class ToolManager {
 		};
 
 		tool.cards = [...tool.cards, newCard];
-		this.toolMap.get(toolName)?.onCreate(this.getICard(toolName, name));
+		this.toolMap.get(toolName)?.onCreate(this.getICard(toolName, id));
 
 		const newOptCard: Opthand = {
 			...newCard,
@@ -435,11 +445,11 @@ export class ToolManager {
 
 	private getToolAndCard(
 		toolName: string,
-		cardName?: string,
+		cardId?: string,
 	): { tool: HandType | undefined; card: CardType | undefined } {
 		const tool = this.handMap.get(toolName);
-		const card = cardName
-			? tool?.cards.find((card) => card.name === cardName)
+		const card = cardId
+			? tool?.cards.find((card) => card.id === cardId)
 			: undefined;
 		return { tool, card };
 	}

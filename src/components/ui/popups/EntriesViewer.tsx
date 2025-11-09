@@ -18,7 +18,6 @@ import PopupWrapper from "../../ui/PopupWrapper";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import { EntryManager } from "@managers/EntryManager";
 import { hollow } from "hollow";
-import DropDown from "@components/DropDown";
 import FilterButton from "@components/FilterButton";
 const Icon = lazy(() => import("@components/Icon"));
 
@@ -360,9 +359,9 @@ function EntryViewer({
 	);
 	const removeEntry = () => {
 		const id = selected().id;
-		hollow.toolManager.toolsEvent[
-			selected().source.tool.toLowerCase()
-		].emit(`${selected().source.card}-remove-entry`, id);
+		hollow.toolManager
+			.getToolEvents(selected().source.tool.toLowerCase())
+			.emit(`${selected().source.card}-remove-entry`, id);
 		setEntries((prev: EntryType[]) => [...prev.filter((i) => i.id !== id)]);
 		EntryManager.getSelf().removeEntry(id);
 		setSelected(null);

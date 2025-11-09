@@ -1,26 +1,29 @@
-import { CardType, ContextMenuItem } from "@type/hollow";
+import { ContextMenuItem } from "@type/hollow";
 import { EditorKitType } from "@type/EditorKitType";
 import { KitType } from "@type/hollow";
-import {
-	createMemo,
-	createResource,
-	createSignal,
-	onCleanup,
-	onMount,
-} from "solid-js";
+import { createMemo, createSignal, onCleanup, onMount, Setter } from "solid-js";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
-import { loadEnvFile } from "process";
+import { isErrored } from "stream";
+import { OverlayScrollbarsComponentRef } from "overlayscrollbars-solid";
+import { setEngine } from "crypto";
+import { PartialOptions } from "overlayscrollbars";
 
 type CardProps = {
 	cardInfo: Opthand;
-	canvas: HTMLDivElement;
+	container: HTMLDivElement;
+	setScrollOptions: Setter<PartialOptions>;
 };
 
-export default function Card({ cardInfo, canvas }: CardProps) {
+export default function Card({
+	cardInfo,
+	container,
+	setScrollOptions,
+}: CardProps) {
 	let vault!: HTMLDivElement;
 	const [kit, setKit] = createSignal<KitType>(cardInfo.kit);
 	const [isLoaded, setLoaded] = createSignal(false);
+	const [isExpand, setExpand] = createSignal(false);
 	const editorKit = createMemo<EditorKitType>(() => ({
 		tool: cardInfo.tool,
 		card: cardInfo.name,
@@ -42,15 +45,15 @@ export default function Card({ cardInfo, canvas }: CardProps) {
 				y: e.clientY - top,
 			});
 
-			canvas.addEventListener("mousemove", onMouseMoveInCanvas);
-			canvas.addEventListener("mouseup", onMouseUp);
+			container.addEventListener("mousemove", onMouseMoveInCanvas);
+			container.addEventListener("mouseup", onMouseUp);
 		}
 	};
 
 	const onMouseUp = () => {
 		if (dragInfo()) {
-			canvas.removeEventListener("mousemove", onMouseMoveInCanvas);
-			canvas.removeEventListener("mouseup", onMouseUp);
+			container.removeEventListener("mousemove", onMouseMoveInCanvas);
+			container.removeEventListener("mouseup", onMouseUp);
 			setDragInfo(null);
 			// TODO hm
 			hollow.toolManager.changeKit(kit(), cardInfo.name, cardInfo.tool);
@@ -58,7 +61,7 @@ export default function Card({ cardInfo, canvas }: CardProps) {
 	};
 
 	const onMouseMoveInCanvas = (e: MouseEvent) => {
-		const { left, top } = canvas.getBoundingClientRect();
+		const { left, top } = container.getBoundingClientRect();
 		const { cw, rh } = hollow.canvas_grid;
 		const x = Math.round((e.clientX - left - dragInfo().x) / cw);
 		const y = Math.round((e.clientY - top - dragInfo().y) / rh);
@@ -77,6 +80,11 @@ export default function Card({ cardInfo, canvas }: CardProps) {
 			header: "Card",
 			items: [
 				{
+					icon: "Expand",
+					label: "Focus Mode",
+					onclick: () => expand(!isExpand()),
+				},
+				{
 					icon: "PencilRuler",
 					label: "Modify",
 					onclick: showEditor,
@@ -91,41 +99,75 @@ export default function Card({ cardInfo, canvas }: CardProps) {
 		hollow.events.emit("context-menu-extend", cmItems);
 	};
 
+	const expand = (state: boolean) => {
+		if (state) {
+			setScrollOptions((prev) => ({
+				...prev,
+				scrollbars: { visibility: "hidden" },
+				overflow: {
+					x: "hidden",
+					y: "hidden",
+				},
+			}));
+		} else {
+			setScrollOptions((prev) => ({
+				...prev,
+				scrollbars: { visibility: "auto" },
+				overflow: {
+					x: "scroll",
+					y: "scroll",
+				},
+			}));
+		}
+		setExpand(state);
+	};
+
 	const showEditor = () => {
 		hollow.events.emit("editor", editorKit());
 		hollow.events.emit("context-menu", false);
 	};
 
 	const showSettings = () => {
-		hollow.events.emit(
-			`${cardInfo.tool.toLowerCase()}-${cardInfo.name}-settings`,
-			true,
-		);
+		hollow.toolManager
+			.getToolEvents(cardInfo.tool)
+			.emit(`${cardInfo.id}-settings`, true);
 		hollow.events.emit("context-menu", false);
 	};
 
-	onCleanup(() => {
-		canvas.removeEventListener("mousemove", onMouseMoveInCanvas);
-		canvas.removeEventListener("mouseup", onMouseUp);
-	});
 	onMount(async () => {
 		hollow.toolManager.addEditorKit(editorKit());
 		setLoaded(await hollow.toolManager.loadCard(cardInfo, cardInfo.tool));
+		hollow.toolManager.getToolEvents(cardInfo.tool).on("expand", expand);
 	});
 
+	onCleanup(() => {
+		container.removeEventListener("mousemove", onMouseMoveInCanvas);
+		container.removeEventListener("mouseup", onMouseUp);
+		hollow.toolManager.getToolEvents(cardInfo.tool).off("expand", expand);
+	});
 	return (
 		<div
 			ref={vault}
-			class={"absolute box-border p-4 transition-all"}
+			class={"absolute box-border transition-all"}
 			style={{
-				width: `calc(var(--cw) * ${kit().width})`,
-				height: `calc(var(--rh) * ${kit().height})`,
-				left: `calc(var(--cw) * ${kit().xyz.x})`,
-				top: `calc(var(--rh) * ${kit().xyz.y})`,
-				"z-index": dragInfo ? "999" : kit().xyz.z,
+				...(isExpand()
+					? {
+							left: 0,
+							top: 0,
+							width: "calc(100vw - calc(var(--spacing) * 20))",
+							height: "calc(100vh - calc(var(--spacing) * 4))",
+						}
+					: {
+							left: `calc(var(--cw) * ${kit().xyz.x})`,
+							top: `calc(var(--rh) * ${kit().xyz.y})`,
+							width: `calc(var(--cw) * ${kit().width})`,
+							height: `calc(var(--rh) * ${kit().height})`,
+							padding: kit().extra?.outerMargin ?? "0",
+						}),
+				// position: isExpand() ? "sticky" : "absolute",
+				"z-index": dragInfo || isExpand() ? "999" : kit().xyz.z,
 				cursor: dragInfo() ? "move" : "default",
 				"pointer-events": dragInfo() ? "none" : "auto",
-				padding: kit().extra?.outerMargin ?? "0",
 			}}
 			oncontextmenu={onContextMenu}
 			onPointerDown={onMouseDown}
@@ -144,10 +186,8 @@ export default function Card({ cardInfo, canvas }: CardProps) {
 					"border-style": "solid",
 					"border-width": "var(--border-width)",
 					...kit().extra,
+					...(isExpand() && { "border-width": 0 }),
 				}}
-				//onAnimationEnd={(e) =>
-				//	e.currentTarget.classList.remove("card-spot")
-				//}
 				classList={{
 					"backdrop-blur-sm": kit().glass,
 					"card-spot": !isLoaded(),

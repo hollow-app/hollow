@@ -8,7 +8,6 @@ import Slider from "@components/Slider";
 import WordInput from "@components/WordInput";
 import ImportFile from "@components/ImportFile";
 import { hollow } from "hollow";
-import { options } from "marked";
 import Dropdown from "@components/Dropdown";
 import { Show } from "solid-js";
 
@@ -23,16 +22,15 @@ export default function FormPop({ form }: FormPopProps) {
 		}, {}),
 		id: form().id,
 	});
-	const onSave = () => {
+	const onSave = (e) => {
+		e.preventDefault();
 		const submission: any = result();
+		// - check if any of those conditions are true in any option
+		// 	- 1: if its text and has pattern, you check if its false input (form checks that)
+		// 	- 2: if the option is optional you skip it
+		// 	- 3: if it depends on another option, you check if it's value is included in the ok list (dependsOn.conditions)
 		if (
 			!form().options.some((i) => {
-				if (
-					i.type === "text" &&
-					i.pattern &&
-					!new RegExp(i.pattern).test(submission[i.key])
-				)
-					return true;
 				if (i.optional) return false;
 				return i.dependsOn
 					? i.dependsOn.conditions.includes(
@@ -49,7 +47,7 @@ export default function FormPop({ form }: FormPopProps) {
 		hollow.events.emit("form", null);
 	};
 	return (
-		<div class="pop-up">
+		<form class="pop-up" onsubmit={onSave}>
 			<div class="up-pop pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 p-5">
 				<div class="border-secondary-15 flex items-start gap-5 border-b border-dashed pb-5">
 					<div>
@@ -130,10 +128,7 @@ export default function FormPop({ form }: FormPopProps) {
 													<input
 														type="text"
 														class="input w-full"
-														pattern={option.pattern}
-														placeholder={
-															option.placeholder
-														}
+														{...option.attributes}
 														value={
 															option.value ?? ""
 														}
@@ -142,6 +137,9 @@ export default function FormPop({ form }: FormPopProps) {
 																e.currentTarget
 																	.value,
 															)
+														}
+														required={
+															!option.optional
 														}
 													/>
 												);
@@ -149,9 +147,7 @@ export default function FormPop({ form }: FormPopProps) {
 												return (
 													<textarea
 														class="input resize-none"
-														placeholder={
-															option.placeholder
-														}
+														{...option.attributes}
 														value={
 															option.value ?? ""
 														}
@@ -161,13 +157,16 @@ export default function FormPop({ form }: FormPopProps) {
 																	.value,
 															)
 														}
+														required={
+															!option.optional
+														}
 													/>
 												);
 
 											case "number":
 												return (
 													<NumberInput
-														value={
+														value={() =>
 															option.value ??
 															option.min
 														}
@@ -252,7 +251,7 @@ export default function FormPop({ form }: FormPopProps) {
 											case "dropdown":
 												return (
 													<Dropdown
-														value={
+														value={() =>
 															option.value ?? ""
 														}
 														placeholder={
@@ -274,24 +273,6 @@ export default function FormPop({ form }: FormPopProps) {
 															option.onChange
 														}
 													/>
-												);
-
-											case "image":
-												return (
-													<button
-														class="button-primary"
-														onclick={() => {
-															hollow.events.emit(
-																"show-vault",
-																{
-																	onSelect:
-																		option.onChange,
-																},
-															);
-														}}
-													>
-														Vault
-													</button>
 												);
 											case "range":
 												return (
@@ -335,7 +316,7 @@ export default function FormPop({ form }: FormPopProps) {
 					</For>
 				</div>
 				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded px-[3rem] py-5">
-					<button class="button-primary" onclick={onSave}>
+					<button class="button-primary" type="submit">
 						{form().update ? "Update" : "Submit"}
 					</button>
 					<button class="button-secondary" onclick={onCancel}>
@@ -343,7 +324,7 @@ export default function FormPop({ form }: FormPopProps) {
 					</button>
 				</div>
 			</div>
-		</div>
+		</form>
 	);
 }
 //

@@ -3,6 +3,7 @@ import { createMemo, createSignal, Show } from "solid-js";
 import { SettingsManager } from "@managers/SettingsManager";
 import Dropdown from "@components/Dropdown";
 import { RealmManager } from "@managers/RealmManager";
+import { hollow } from "hollow";
 
 const keys = ["settings", "tools", "color-primary", "color-secondary"];
 
@@ -60,15 +61,25 @@ export default function Modifier() {
 		}
 	};
 
-	const handleSave = () => {
+	const handleSave = (e: Event & { currentTarget: HTMLButtonElement }) => {
 		if (!key()) {
 			setError("Please enter a key");
 			return;
 		}
 
 		try {
+			const button = e.currentTarget;
+			button.classList.add("debounce");
 			const parsed = JSON.parse(value());
 			localStorage.setItem(key(), JSON.stringify(parsed));
+			hollow.events.emit("alert", {
+				title: "Saved",
+				message: "successfully",
+				type: "success",
+				onTimeOut: () => {
+					button.classList.remove("debounce");
+				},
+			});
 			setError("");
 		} catch (err) {
 			setError("Invalid JSON format");
@@ -167,9 +178,11 @@ export default function Modifier() {
 				</div>
 			</div>
 
-			<button onClick={handleSave} class="button-primary w-full">
-				Save Changes
-			</button>
+			<div class="bg-secondary-05 mt-auto flex w-full justify-end gap-2 rounded-xl p-5">
+				<button onClick={handleSave} class="button-primary w-full">
+					Save Changes
+				</button>
+			</div>
 		</div>
 	);
 }

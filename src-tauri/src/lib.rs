@@ -1,8 +1,5 @@
 use serde_json::Value;
-use std::{
-    fs,
-    path::{Path, PathBuf},
-};
+use std::{fs, path::PathBuf};
 use tauri::{AppHandle, Manager};
 use tauri_plugin_prevent_default::Flags;
 
@@ -147,49 +144,6 @@ fn join(app: AppHandle, path: Vec<String>) -> Result<String, String> {
 }
 
 #[tauri::command]
-fn open_directory(app: AppHandle, path: Vec<String>) -> Result<(), String> {
-    let mut full_path = PathBuf::new();
-
-    for p in path {
-        if p == "user_plugins" {
-            full_path.push(get_data_path(&app, "plugins")?);
-        } else {
-            full_path.push(p);
-        }
-    }
-
-    if !full_path.exists() {
-        return Err("Directory does not exist".to_string());
-    }
-
-    #[cfg(target_os = "windows")]
-    {
-        std::process::Command::new("explorer")
-            .arg(&full_path)
-            .spawn()
-            .map_err(|e| format!("Failed to open directory: {}", e))?;
-    }
-
-    #[cfg(target_os = "macos")]
-    {
-        std::process::Command::new("open")
-            .arg(&full_path)
-            .spawn()
-            .map_err(|e| format!("Failed to open directory: {}", e))?;
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        std::process::Command::new("xdg-open")
-            .arg(&full_path)
-            .spawn()
-            .map_err(|e| format!("Failed to open directory: {}", e))?;
-    }
-
-    Ok(())
-}
-
-#[tauri::command]
 fn vault_add(app: AppHandle, source: String, name: String) -> Result<PathBuf, String> {
     let vault_dir = get_data_path(&app, "vault")?;
 
@@ -233,22 +187,6 @@ fn vault_rename(app: AppHandle, name: String, new_name: String) -> Result<PathBu
     Ok(new_path)
 }
 
-//
-#[tauri::command]
-fn create_dir(path: String) -> Result<(), String> {
-    let path_ref = Path::new(&path);
-    if !path_ref.exists() {
-        fs::create_dir_all(&path_ref).map_err(|e| format!("Failed to create dir: {}", e))?;
-    }
-    Ok(())
-}
-
-#[tauri::command]
-fn dir_exists(path: String) -> bool {
-    let path_ref = Path::new(&path);
-    path_ref.exists() && path_ref.is_dir()
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let prevent = tauri_plugin_prevent_default::Builder::new()
@@ -279,13 +217,10 @@ pub fn run() {
             create_plugin_file,
             uninstall_plugin,
             join,
-            open_directory,
             vault_add,
             vault_remove,
             vault_rename,
-            read_file,
-            create_dir,
-            dir_exists
+            read_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -506,21 +506,12 @@ a {
 
 .orbit {
 
-	.ring-1,
-	.ring-2 {
-		transition: 1s transform ease;
-		transform-origin: center;
-	}
+	transition: 1s transform ease;
+	transform-origin: center;
 }
 
 .orbit:hover {
-	.ring-1 {
-		transform: rotate(360deg);
-	}
-
-	.ring-2 {
-		transform: rotate(-360deg);
-	}
+	transform: rotate(360deg);
 }
 
 
@@ -625,7 +616,6 @@ a {
 	--w: fit-content;
 	width: var(--w);
 	height: fit-content;
-	/* color: color-contrast(var(--color-primary-20) vs white, black); */
 	color: color-mix(in oklab, var(--color-primary-20), var(--tc-50) 80%);
 	border-width: var(--border-w);
 	border-style: solid;
@@ -653,6 +643,7 @@ a {
 		cursor: not-allowed;
 	}
 }
+
 
 .button-secondary {
 	--padding-x: calc(var(--spacing) * 5);
@@ -894,4 +885,11 @@ a.no-underline-alt {
 	100% {
 		background-color: transparent;
 	}
+}
+
+
+.debounce {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
 }

@@ -56,20 +56,20 @@ function GridSettings({ settingsManager }: CommonSettings) {
 	);
 
 	const setColumns = (n: number) => {
-		settingsManager.setConfig("columns", n);
 		useGrid([{ name: "columns", value: n }]);
+		settingsManager.setConfig("columns", n);
 	};
 	const setMoreColumns = (n: number) => {
-		settingsManager.setConfig("offcolumns", n);
 		useGrid([{ name: "offcolumns", value: n }]);
+		settingsManager.setConfig("offcolumns", n);
 	};
 	const setRows = (n: number) => {
-		settingsManager.setConfig("rows", n);
 		useGrid([{ name: "rows", value: n }]);
+		settingsManager.setConfig("rows", n);
 	};
 	const setMoreRows = (n: number) => {
-		settingsManager.setConfig("offrows", n);
 		useGrid([{ name: "offrows", value: n }]);
+		settingsManager.setConfig("offrows", n);
 	};
 
 	return (
@@ -91,7 +91,7 @@ function GridSettings({ settingsManager }: CommonSettings) {
 						</div>
 						<div class="w-70 max-w-[50%]">
 							<NumberInput
-								value={columns()}
+								value={columns}
 								setValue={setColumns}
 							/>
 						</div>
@@ -102,7 +102,7 @@ function GridSettings({ settingsManager }: CommonSettings) {
 						</h2>
 						<div class="w-70 max-w-[50%]">
 							<NumberInput
-								value={offColumns()}
+								value={offColumns}
 								setValue={setMoreColumns}
 							/>
 						</div>
@@ -119,7 +119,7 @@ function GridSettings({ settingsManager }: CommonSettings) {
 							</p>
 						</div>
 						<div class="w-70 max-w-[50%]">
-							<NumberInput value={rows()} setValue={setRows} />
+							<NumberInput value={rows} setValue={setRows} />
 						</div>
 					</div>
 					<div class="bg-secondary-10/40 mx-auto flex w-full items-center justify-between rounded-lg p-2">
@@ -128,7 +128,7 @@ function GridSettings({ settingsManager }: CommonSettings) {
 						</h2>
 						<div class="w-70 max-w-[50%]">
 							<NumberInput
-								value={offRows()}
+								value={offRows}
 								setValue={setMoreRows}
 							/>
 						</div>
@@ -359,15 +359,17 @@ function CodeThemeSettings({ settingsManager }: CommonSettings) {
 						</Suspense>
 					</Show>
 				</div>
-				<Dropdown
-					value={codeTheme}
-					options={() => [
-						{
-							items: codeThemes,
-						},
-					]}
-					onSelect={useCodeTheme}
-				/>
+				<div class="w-70">
+					<Dropdown
+						value={codeTheme}
+						options={() => [
+							{
+								items: codeThemes,
+							},
+						]}
+						onSelect={useCodeTheme}
+					/>
+				</div>
 			</div>
 		</>
 	);

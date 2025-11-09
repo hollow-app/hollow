@@ -1,6 +1,5 @@
 import Sidepanel from "@components/animations/Sidepanel";
 import CardConfig from "@components/CardConfig";
-import DropDown from "@components/DropDown";
 import { FormType, CardType } from "@type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
@@ -66,7 +65,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 		};
 		const form: FormType = {
 			id: crypto.randomUUID(),
-			title: "New Card",
+			title: "Create Card",
 			options: [
 				{
 					type: "dropdown",
@@ -87,8 +86,11 @@ export default function Expand({ isVisible }: ExpandProps) {
 					key: "name",
 					inline: true,
 					label: "Card Name",
-					pattern: "^[A-Za-z]+$",
-					placeholder: "Card name (e.g., ToDo)",
+					attributes: {
+						pattern: "^[A-Za-z]+$",
+						placeholder: "Card name (e.g., ToDo)",
+						title: "Only letters (A-Z, a-z) are allowed",
+					},
 				},
 				{
 					type: "emoji",

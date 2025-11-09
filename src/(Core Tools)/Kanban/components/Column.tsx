@@ -259,14 +259,16 @@ export default function Column({ card, data }: ColumnProps) {
 					key: "title",
 					type: "text",
 					label: "Title",
-					placeholder: "Enter Title",
+					attributes: { placeholder: "Enter Title" },
 					value: item?.title ?? "",
 				},
 				{
 					key: "content",
 					type: "longtext",
 					label: "Content",
-					placeholder: "Enter Content",
+					attributes: {
+						placeholder: "Enter Content",
+					},
 					value: item?.content ?? "",
 				},
 				{
@@ -331,14 +333,14 @@ export default function Column({ card, data }: ColumnProps) {
 	};
 	onMount(() => {
 		card.app.on("tags", updateHollowTags);
-		card.app.on(`kanban-${card.name}-settings`, showSettings);
+		card.toolEvent.on(`${card.id}-settings`, showSettings);
 		card.toolEvent.on(`${card.name}-receive-task`, handleReceiveTask);
 		card.toolEvent.on(`${card.name}-remove-entry`, removeItem);
 		card.toolEvent.on("metadata", updateMeta);
 	});
 	onCleanup(() => {
 		card.app.off("tags", updateHollowTags);
-		card.app.off(`kanban-${card.name}-settings`, showSettings);
+		card.toolEvent.off(`${card.id}-settings`, showSettings);
 		card.toolEvent.off(`${card.name}-receive-task`, handleReceiveTask);
 		card.toolEvent.off(`${card.name}-remove-entry`, removeItem);
 		card.toolEvent.off("metadata", updateMeta);

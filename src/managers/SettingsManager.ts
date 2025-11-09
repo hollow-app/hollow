@@ -26,9 +26,11 @@ export class SettingsManager {
 	private readonly realmId = RealmManager.getSelf().getCurrent(false);
 	private settings: SettingsConfig;
 	private constructor() {
-		this.settings = JSON.parse(
-			localStorage.getItem(`${this.realmId}-settigs`) ?? DEFAULT,
-		);
+		const localItem = localStorage.getItem(`${this.realmId}-settings`);
+		this.settings = JSON.parse(localItem ?? DEFAULT);
+		if (!localItem) {
+			this.update();
+		}
 	}
 	static getSelf() {
 		if (!this.self) {

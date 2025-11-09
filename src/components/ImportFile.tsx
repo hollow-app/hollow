@@ -28,7 +28,7 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 		<div class="flex w-full items-center justify-end gap-2">
 			<Show when={file()}>
 				<>
-					<span class="w-[50%] text-xs text-neutral-300 dark:text-neutral-700">
+					<span class="w-fit text-xs text-neutral-300 dark:text-neutral-700">
 						{file()}
 					</span>
 					<button

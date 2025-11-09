@@ -26,23 +26,16 @@ export default function FilterButton({ options }: FilterButtonProps) {
 
 	const { pos, updatePosition, handleClickOutside } = useDropdownPosition();
 
+	const outsideClick = () => {
+		handleClickOutside(dropdownRef, listRef, () => setIsOpen(false));
+	};
 	const toggleOpen = (e: MouseEvent) => {
 		e.stopPropagation();
 		if (!isOpen()) {
 			updatePosition(dropdownRef);
-			window.addEventListener(
-				"pointerdown",
-				handleClickOutside(dropdownRef, listRef, () =>
-					setIsOpen(false),
-				),
-			);
+			window.addEventListener("pointerdown", outsideClick);
 		} else {
-			window.removeEventListener(
-				"pointerdown",
-				handleClickOutside(dropdownRef, listRef, () =>
-					setIsOpen(false),
-				),
-			);
+			window.removeEventListener("pointerdown", outsideClick);
 		}
 		setIsOpen(!isOpen());
 	};

@@ -276,12 +276,13 @@ export type NotifyType = {
 
 export type AlertType = {
 	type?: "success" | "error" | "warning" | "info";
-	title: string;
-	message: string;
+	title?: string;
+	message?: string;
 	button?: {
 		label: string;
 		callback: () => void;
 	};
+	onTimeOut?: () => void;
 	duration?: number; //ms
 };
 /**
@@ -393,10 +394,13 @@ export type EntryType = {
  * These are used for both tool settings and form entries.
  */
 export type TypedOptionMap = {
-	text: { placeholder?: string; pattern?: string };
-	longtext: { placeholder?: string };
+	// native
+	text: { attributes?: JSX.InputHTMLAttributes<HTMLInputElement> };
+	// native
+	longtext: { attributes?: JSX.TextAreaHTMLAttributes<HTMLTextAreaElement> };
 	number: { min?: number; max?: number };
 	boolean: {};
+	// ??
 	button: {};
 	color: {};
 	emoji: {};
@@ -404,8 +408,8 @@ export type TypedOptionMap = {
 		options: { title?: string; items: string[] }[];
 		placeholder?: string;
 	};
+	// ??
 	file: { accept?: string };
-	image: {};
 	range: { min: number; max: number; step?: number };
 	keywords: { placeholder?: string };
 };

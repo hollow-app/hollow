@@ -76,7 +76,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 								<h3>Width</h3>
 								<div class="w-70 max-w-[50%]">
 									<NumberInput
-										value={kit().it.width}
+										value={() => kit().it.width}
 										setValue={(v) =>
 											kit().setIt((prev) => ({
 												...prev,
@@ -91,7 +91,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 								<h3>Height</h3>
 								<div class="w-70 max-w-[50%]">
 									<NumberInput
-										value={kit().it.height}
+										value={() => kit().it.height}
 										setValue={(v) =>
 											kit().setIt((prev) => ({
 												...prev,
@@ -109,7 +109,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 								<h3>Corner</h3>
 								<div class="w-70 max-w-[50%]">
 									<NumberInput
-										value={kit().it.corner}
+										value={() => kit().it.corner}
 										setValue={(v) =>
 											kit().setIt((prev) => ({
 												...prev,
@@ -124,7 +124,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 								<h3>Opacity</h3>
 								<div class="w-70 max-w-[50%]">
 									<NumberInput
-										value={kit().it.opacity}
+										value={() => kit().it.opacity}
 										setValue={(v) =>
 											kit().setIt((prev) => ({
 												...prev,
@@ -154,7 +154,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 									/>
 									<div class="w-70 max-w-[90%]">
 										<NumberInput
-											value={kit().it.border.n}
+											value={() => kit().it.border.n}
 											setValue={(v) =>
 												kit().setIt((prev) => ({
 													...prev,
@@ -218,7 +218,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 								<h3>X</h3>
 								<div class="w-70 max-w-[50%]">
 									<NumberInput
-										value={kit().it.xyz.x}
+										value={() => kit().it.xyz.x}
 										setValue={(n) =>
 											kit().setIt((prev) => ({
 												...prev,
@@ -233,7 +233,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 								<h3>Y</h3>
 								<div class="w-70 max-w-[50%]">
 									<NumberInput
-										value={kit().it.xyz.y}
+										value={() => kit().it.xyz.y}
 										setValue={(n) =>
 											kit().setIt((prev) => ({
 												...prev,
@@ -248,7 +248,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 								<h3>Z</h3>
 								<div class="w-70 max-w-[50%]">
 									<NumberInput
-										value={kit().it.xyz.z}
+										value={() => kit().it.xyz.z}
 										setValue={(n) =>
 											kit().setIt((prev) => ({
 												...prev,

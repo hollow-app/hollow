@@ -1,8 +1,6 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
 import { RustManager } from "./RustManager";
-import { exists, mkdir } from "@tauri-apps/plugin-fs";
-import { join } from "@tauri-apps/api/path";
 
 export class RealmManager {
 	public realms: Realm[] = [];

@@ -65,7 +65,9 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 	};
 
 	onMount(() => {
-		CharacterManager.getSelf().setUiCharacter = setCharacter;
+		hollow.pevents.on("ui-set-character", (c) =>
+			setCharacter((prev) => ({ ...prev, ...c })),
+		);
 		setCharacter(CharacterManager.getSelf().getCharacter());
 	});
 	return (

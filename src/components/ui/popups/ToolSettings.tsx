@@ -105,36 +105,18 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 															<input
 																type="text"
 																class="input"
-																placeholder={
-																	option.placeholder
-																}
-																pattern={
-																	option.pattern
-																}
+																{...option.attributes}
 																value={
 																	option.value
 																}
 																onInput={(
 																	e,
 																) => {
-																	const v =
+																	option.onChange(
 																		e
 																			.currentTarget
-																			.value;
-																	if (
-																		!new RegExp(
-																			option.pattern,
-																		).test(
-																			v,
-																		)
-																	) {
-																		e.currentTarget.value =
-																			option.value;
-																	} else {
-																		option.onChange(
-																			v,
-																		);
-																	}
+																			.value,
+																	);
 																}}
 															/>
 														);
@@ -142,9 +124,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 														return (
 															<textarea
 																class="input w-full resize-none"
-																placeholder={
-																	option.placeholder
-																}
+																{...option.attributes}
 																value={
 																	option.value
 																}
@@ -160,7 +140,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 													case "number":
 														return (
 															<NumberInput
-																value={
+																value={() =>
 																	option.value
 																}
 																setValue={
@@ -269,23 +249,6 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.onChange
 																}
 															/>
-														);
-													case "image":
-														return (
-															<button
-																class="button-primary"
-																onclick={() => {
-																	hollow.events.emit(
-																		"show-vault",
-																		{
-																			onSelect:
-																				option.onChange,
-																		},
-																	);
-																}}
-															>
-																Vault
-															</button>
 														);
 													case "range":
 														return (

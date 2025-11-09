@@ -78,13 +78,14 @@ export default function Image({ data, card, db }: ImageProps) {
 			card: card.name,
 			save: updateImage,
 			options: [
-				{
-					label: "Image",
-					description: "Upload or provide image URL",
-					type: "image",
-					onChange: setImage,
-					value: image().url,
-				},
+				// TODO
+				// {
+				// 	label: "Image",
+				// 	description: "Upload or provide image URL",
+				// 	type: "image",
+				// 	onChange: setImage,
+				// 	value: image().url,
+				// },
 				{
 					type: "dropdown",
 					label: "Fit Mode",
@@ -132,11 +133,11 @@ export default function Image({ data, card, db }: ImageProps) {
 	};
 
 	onMount(() => {
-		card.app.on(`image-${card.name}-settings`, setSettingsVisible);
+		card.toolEvent.on(`${card.id}-settings`, setSettingsVisible);
 	});
 
 	onCleanup(() => {
-		card.app.off(`image-${card.name}-settings`, setSettingsVisible);
+		card.toolEvent.off(`${card.id}-settings`, setSettingsVisible);
 	});
 
 	return (

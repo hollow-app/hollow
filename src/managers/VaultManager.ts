@@ -1,7 +1,8 @@
 import { VaultItem } from "@type/VaultItem";
 import { RustManager } from "./RustManager";
-import { join } from "@tauri-apps/api/path";
+import { appDataDir, join } from "@tauri-apps/api/path";
 import { RealmManager } from "./RealmManager";
+import { copyFile } from "@tauri-apps/plugin-fs";
 
 export default class VaultManager {
 	private db: Promise<IDBDatabase> = this.openDB();

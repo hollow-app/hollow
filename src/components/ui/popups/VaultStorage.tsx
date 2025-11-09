@@ -14,7 +14,6 @@ import {
 } from "lucide-solid";
 import PopupWrapper from "../PopupWrapper";
 import { hollow } from "hollow";
-import DropDown from "@components/DropDown";
 import FilterButton from "@components/FilterButton";
 
 type VaultStorageProps = {
@@ -90,6 +89,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 			{
 				key: "path",
 				label: "Image",
+				inline: true,
 				type: "file",
 				accept: "image/*",
 				value: target?.path ?? "",
@@ -97,9 +97,10 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 			{
 				key: "name",
 				label: "Name",
+				inline: true,
 				type: "text",
 				value: target?.name ?? "",
-				placeholder: "File Name",
+				attributes: { placeholder: "File Name" },
 			},
 			{
 				key: "tags",

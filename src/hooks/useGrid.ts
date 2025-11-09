@@ -7,7 +7,6 @@ import { SettingsManager } from "@managers/SettingsManager";
 
 export default function useGrid(properties?: Property[]) {
 	let vars: Property[] = [];
-
 	const updateGridVariable = (name: string, value: number) => {
 		if (name === "columns") {
 			const width = hollow.canvas_size.w;

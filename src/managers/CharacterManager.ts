@@ -1,6 +1,9 @@
 import { Character } from "@type/Character";
 import { hollow } from "hollow";
 import { Setter } from "solid-js";
+import DEFAULT from "@assets/configs/account.json?raw";
+import { SecretsManager } from "./SecretsManager";
+import { ActivityIcon } from "lucide-solid";
 
 export class CharacterManager {
 	private character: Character = {
@@ -23,20 +26,19 @@ export class CharacterManager {
 			},
 		],
 	};
-	public setUiCharacter: Setter<Character> = null;
 	private static self: CharacterManager;
-	private db: Promise<IDBDatabase>;
 
 	public async start() {
-		this.db = this.openDB();
-		const saved = await this.getFromDB<Character>();
-		if (saved) {
-			this.character = saved;
+		if (!localStorage.getItem("character")) {
+			this.character = JSON.parse(DEFAULT);
 		} else {
-			this.update();
+			this.character =
+				(await SecretsManager.getSelf().decryptObject(
+					localStorage.getItem("character"),
+				)) ?? JSON.parse(DEFAULT);
 		}
 		hollow.events.on("character-add-achievement", this.addAchievement);
-		// hollow.events.on("character-level-up", this.levelUp);
+		hollow.events.on("character-add-title", this.addTitle);
 		hollow.events.on("character-add-xp", this.addXp);
 	}
 	static getSelf() {
@@ -63,11 +65,24 @@ export class CharacterManager {
 		this.update();
 	}
 
+	public addTitle(title: string) {
+		if (!this.character.titles.includes(title)) {
+			this.character.titles.push(title);
+			hollow.events.emit("alert", {
+				title: "Title Gained",
+				message: title,
+			});
+			this.update();
+		}
+	}
+
 	public addAchievement(achievement: string): void {
-		if (!this.character.achievements)
-			this.character.achievements = [achievement];
 		if (!this.character.achievements.includes(achievement)) {
 			this.character.achievements.push(achievement);
+			hollow.events.emit("alert", {
+				title: "Achievement Gained",
+				message: achievement,
+			});
 			this.update();
 		}
 	}
@@ -107,48 +122,11 @@ export class CharacterManager {
 		}
 	}
 
-	private async update(): Promise<void> {
-		if (this.setUiCharacter) {
-			this.setUiCharacter({ ...this.character });
-		}
-		await this.setInDB(this.character);
-	}
-
-	/* -------------- db -------------- */
-	// account -> character -> account
-	private openDB(): Promise<IDBDatabase> {
-		return new Promise((resolve, reject) => {
-			const request = indexedDB.open("account", 1);
-			request.onupgradeneeded = () => {
-				const db = request.result;
-				if (!db.objectStoreNames.contains("character")) {
-					db.createObjectStore("character");
-				}
-			};
-			request.onsuccess = () => resolve(request.result);
-			request.onerror = () => reject(request.error);
-		});
-	}
-
-	private async getFromDB<T>(): Promise<T | null> {
-		const db = await this.db;
-		return new Promise((resolve, reject) => {
-			const tx = db.transaction("character", "readonly");
-			const store = tx.objectStore("character");
-			const req = store.get("account");
-			req.onsuccess = () => resolve(req.result ?? null);
-			req.onerror = () => reject(req.error);
-		});
-	}
-
-	private async setInDB<T>(value: T): Promise<void> {
-		const db = await this.db;
-		return new Promise((resolve, reject) => {
-			const tx = db.transaction("character", "readwrite");
-			const store = tx.objectStore("character");
-			const req = store.put(value, "account");
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
-		});
+	private async update() {
+		hollow.pevents.emit("ui-set-character", () => this.character);
+		const encrypted = await SecretsManager.getSelf().encryptObject(
+			this.character,
+		);
+		localStorage.setItem("character", encrypted);
 	}
 }

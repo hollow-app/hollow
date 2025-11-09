@@ -1,9 +1,12 @@
 import Card from "@components/ui/Card";
 import useGrid from "@hooks/useGrid";
-import { DeepLinkManager } from "@managers/DeepLinkManager";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
+import { Options, PartialOptions } from "overlayscrollbars";
+import {
+	OverlayScrollbarsComponent,
+	OverlayScrollbarsComponentRef,
+} from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
 import { createSignal, For, onMount, Show } from "solid-js";
 
@@ -13,21 +16,27 @@ type CanvasProps = {
 };
 
 export default function Canvas({ isGridVisible, cards }: CanvasProps) {
-	let canvas!: HTMLDivElement;
+	let canvas!: OverlayScrollbarsComponentRef;
 	let container!: HTMLDivElement;
+	const [scrollOption, setScrollOption] = createSignal<PartialOptions>({
+		overflow: { x: "scroll", y: "scroll" },
+		scrollbars: {
+			visibility: "auto",
+			autoHide: "leave",
+			autoHideDelay: 800,
+			theme: "os-theme-native",
+		},
+	});
 	const [size, setSize] = createSignal(null);
 	onMount(() => {
-		const { width, height } = canvas.getBoundingClientRect();
+		const { width, height } = canvas.getElement().getBoundingClientRect();
 		hollow.canvas_size = { w: width, h: height };
 		hollow.canvas_grid = { cw: 0, rh: 0 };
 		useGrid();
 		setSize({ w: width, h: height });
 	});
 	return (
-		<div
-			ref={canvas}
-			class="bg-secondary/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border"
-		>
+		<div class="bg-secondary/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border">
 			<div
 				class="absolute top-0 left-0 h-full w-full object-cover"
 				style={{
@@ -40,20 +49,15 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 			/>
 
 			<OverlayScrollbarsComponent
+				ref={(r) => (canvas = r)}
+				element="div"
 				class={"grid-lines relative h-full w-full bg-transparent"}
 				style={{
 					"--visible": isGridVisible()
 						? "var(--secondary-color-15)"
 						: "var(--static-grid-lines)",
 				}}
-				options={{
-					scrollbars: {
-						visibility: "auto",
-						autoHide: "leave",
-						autoHideDelay: 800,
-						theme: "os-theme-native",
-					},
-				}}
+				options={scrollOption()}
 				defer
 			>
 				<Show when={size()}>
@@ -68,7 +72,11 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 						<For each={cards().filter((i) => i.isPlaced)}>
 							{(card) => {
 								return (
-									<Card canvas={container} cardInfo={card} />
+									<Card
+										container={container}
+										cardInfo={card}
+										setScrollOptions={setScrollOption}
+									/>
 								);
 							}}
 						</For>

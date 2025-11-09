@@ -38,25 +38,23 @@ export default function Dropdown({
 	});
 
 	const { pos, updatePosition, handleClickOutside } = useDropdownPosition();
-
+	const outsideClick = () => {
+		handleClickOutside(dropdownRef, listRef, () => setIsOpen(false));
+	};
 	const toggleOpen = () => {
 		if (!isOpen()) {
 			updatePosition(inputRef);
-			window.addEventListener(
-				"pointerdown",
-				handleClickOutside(dropdownRef, listRef, () =>
-					setIsOpen(false),
-				),
-			);
+			window.addEventListener("pointerdown", outsideClick);
 		} else {
-			window.removeEventListener(
-				"pointerdown",
-				handleClickOutside(dropdownRef, listRef, () =>
-					setIsOpen(false),
-				),
-			);
+			window.removeEventListener("pointerdown", outsideClick);
 		}
 		setIsOpen(!isOpen());
+	};
+
+	const selectItem = (item: string) => {
+		onSelect(item);
+		setInnerValue(item);
+		setIsOpen(false);
 	};
 
 	onMount(() =>
@@ -114,14 +112,11 @@ export default function Dropdown({
 														role="option"
 														classList={{
 															"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
-																value &&
-																value() ===
-																	item,
+																innerValue() ===
+																item,
 														}}
 														onClick={() => {
-															onSelect(item);
-															setInnerValue(item);
-															setIsOpen(false);
+															selectItem(item);
 														}}
 													>
 														{item}

@@ -4,17 +4,13 @@ import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
 import { hollow } from "hollow";
 import { SquarePenIcon, Trash2Icon } from "lucide-solid";
-import { For } from "solid-js";
-import { createMemo, createSignal } from "solid-js";
+import { For, Show } from "solid-js";
+import { createSignal } from "solid-js";
 
 export default function Account() {
 	const [character, setCharacter] = createSignal<Character>(
 		CharacterManager.getSelf().getCharacter(),
 	);
-
-	const changeTitle = (t: string) => {
-		CharacterManager.getSelf().setCharacter({ title: t });
-	};
 
 	const addMeta = () => {
 		const save = (data: any) => {
@@ -22,8 +18,6 @@ export default function Account() {
 				...prev,
 				meta: [...prev.meta, data],
 			}));
-
-			CharacterManager.getSelf().setMeta(data);
 		};
 		submitForm(save);
 	};
@@ -40,7 +34,6 @@ export default function Account() {
 				...prev,
 				meta: prev.meta.map((i) => (i.id === data.id ? data : i)),
 			}));
-			CharacterManager.getSelf().setMeta({ ...data });
 		};
 		submitForm(save, id);
 	};
@@ -59,7 +52,7 @@ export default function Account() {
 					label: "Label",
 					optional: true,
 					type: "text",
-					placeholder: "Enter label",
+					attributes: { placeholder: "Enter label" },
 					value: target?.label ?? "",
 				},
 				{
@@ -69,7 +62,7 @@ export default function Account() {
 					type: "text",
 					description:
 						"Enter the icon you want to use for this meta data, names are available at lucide.dev",
-					placeholder: "Enter icon name",
+					attributes: { placeholder: "Enter icon name" },
 					value: target?.icon ?? "",
 				},
 				{
@@ -91,7 +84,9 @@ export default function Account() {
 					key: "value",
 					label: "Value",
 					type: "text",
-					placeholder: "Enter value",
+					attributes: {
+						placeholder: "Enter value",
+					},
 					dependsOn: {
 						key: "type",
 						conditions: ["text"],
@@ -140,6 +135,21 @@ export default function Account() {
 
 		hollow.events.emit("form", form);
 	};
+
+	const onSave = (e: Event & { currentTarget: HTMLButtonElement }) => {
+		const button = e.currentTarget;
+		button.classList.add("debounce");
+		CharacterManager.getSelf().setCharacter(character());
+		hollow.events.emit("alert", {
+			type: "success",
+			title: "Character",
+			message: "saved successfully",
+			onTimeOut: () => {
+				button.classList.remove("debounce");
+			},
+		});
+	};
+
 	return (
 		<div class="h-fit w-full p-10">
 			<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
@@ -160,6 +170,12 @@ export default function Account() {
 							class="input"
 							placeholder="username"
 							value={character().username}
+							onInput={(e) =>
+								setCharacter((prev) => ({
+									...prev,
+									username: e.currentTarget.value,
+								}))
+							}
 						/>
 					</div>
 				</div>
@@ -178,6 +194,12 @@ export default function Account() {
 							class="input resize-none"
 							placeholder="name your self"
 							value={character().bio}
+							onInput={(e) =>
+								setCharacter((prev) => ({
+									...prev,
+									bio: e.currentTarget.value,
+								}))
+							}
 						/>
 					</div>
 				</div>
@@ -198,7 +220,12 @@ export default function Account() {
 									items: character().titles,
 								},
 							]}
-							onSelect={changeTitle}
+							onSelect={(t) =>
+								setCharacter((prev) => ({
+									...prev,
+									title: t,
+								}))
+							}
 							value={() => character().title}
 						/>
 					</div>
@@ -293,6 +320,21 @@ export default function Account() {
 							)}
 						</For>
 					</div>
+				</div>
+				<div class="bg-secondary-05 absolute bottom-10 left-10 mt-auto flex w-[calc(100%-calc(var(--spacing)*20))] justify-end gap-2 rounded-xl p-5">
+					<button
+						class="button-secondary"
+						onclick={() =>
+							setCharacter(
+								CharacterManager.getSelf().getCharacter(),
+							)
+						}
+					>
+						Cancel Changes
+					</button>
+					<button class="button-primary" onclick={onSave}>
+						Save
+					</button>
 				</div>
 			</div>
 		</div>

@@ -3,7 +3,9 @@ import { EventsManager } from "@managers/EventsManager";
 import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import { ToolManager } from "@managers/ToolManager";
+import { Character } from "@type/Character";
 import { AppEvents, HollowEvent } from "@type/hollow";
+import { Setter } from "solid-js";
 
 type hollowType = {
 	canvas_size?: { w: number; h: number };
@@ -27,4 +29,5 @@ export const hollow: hollowType = {
 
 type PrivateEvents = {
 	"deep-link": string[];
+	"ui-set-character": (character: Character) => void;
 };

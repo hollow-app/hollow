@@ -19,7 +19,37 @@
 		"store:default",
 		"tcp:default",
 		"fs:default",
-		"fs:allow-mkdir",
-		"fs:allow-exists"
+		{
+			"identifier": "fs:allow-exists",
+			"allow": [
+				{ "path": "$APPDATA/*" },
+				{ "path": "$APPCONFIG/hollow/*" }
+			]
+		},
+		{
+			"identifier": "fs:allow-open",
+			"allow": [
+				{ "path": "$APPDATA/*" },
+				{ "path": "$APPCONFIG/hollow/*" }
+			]
+		},
+		{
+			"identifier": "fs:allow-mkdir",
+			"allow": [{ "path": "$APPDATA/*" }, { "path": "$APPCONFIG/*" }]
+		},
+		{
+			"identifier": "fs:allow-read-file",
+			"allow": [
+				{ "path": "$APPDATA/*" },
+				{ "path": "$APPCONFIG/hollow/*" }
+			]
+		},
+		{
+			"identifier": "fs:allow-remove",
+			"allow": [
+				{ "path": "$APPDATA/*" },
+				{ "path": "$APPCONFIG/hollow/*" }
+			]
+		}
 	]
 }

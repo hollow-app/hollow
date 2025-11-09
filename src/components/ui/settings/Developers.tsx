@@ -3,6 +3,7 @@ import { RustManager } from "@managers/RustManager";
 import { RealmManager } from "@managers/RealmManager";
 import { SettingsManager } from "@managers/SettingsManager";
 import { hollow } from "hollow";
+import { BaseDirectory, open } from "@tauri-apps/plugin-fs";
 
 // jk
 export default function Developers() {
@@ -13,12 +14,11 @@ export default function Developers() {
 
 	// Load from SettingsManager
 	(async () => {
-		const devtools = (await SettingsManager.getSelf().getConfig(
-			"enable-dev-tools",
-		)) as boolean;
-		const loadunsigned = (await SettingsManager.getSelf().getConfig(
+		const devtools =
+			SettingsManager.getSelf().getConfig("enable-dev-tools");
+		const loadunsigned = SettingsManager.getSelf().getConfig(
 			"load-unsigned-plugins",
-		)) as boolean;
+		);
 		setOption({ devtools, loadunsigned });
 	})();
 
@@ -98,9 +98,9 @@ export default function Developers() {
 							Allows you to load any plugin inside{" "}
 							<span
 								class="text-primary cursor-pointer underline"
-								onclick={() => {
-									RustManager.getSelf().open_directory({
-										path: ["user_plugins"],
+								onclick={async () => {
+									await open("plugins", {
+										baseDir: BaseDirectory.AppData,
 									});
 								}}
 							>

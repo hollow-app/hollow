@@ -14,7 +14,6 @@ import { DataBaseRequest } from "@type/hollow";
 import { ToolDataBase } from "./ToolDataBase";
 import { hotkeysManager } from "./HotkeysManager";
 import { CodeThemeManager } from "./CodeThemeManager";
-import { DeepLinkManager } from "./DeepLinkManager";
 import { SettingsManager } from "./SettingsManager";
 
 export class HollowManager {
@@ -43,6 +42,8 @@ export class HollowManager {
 	async preRealmSelection() {
 		if (!localStorage.realmToggleOnStartup) {
 			localStorage.realmToggleOnStartup = "false";
+			// await mkdir("plugins", { baseDir: BaseDirectory.AppData });
+			// await mkdir("vault", { baseDir: BaseDirectory.AppData });
 		}
 		hotkeysManager.init();
 		await VaultManager.getSelf().start();

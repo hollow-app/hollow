@@ -42,9 +42,6 @@ type vaultRenameProps = {
 	new_name: string;
 };
 
-type createDirProps = {
-	path: string;
-};
 export class RustManager {
 	static self: RustManager;
 	private appWindow = null;
@@ -158,10 +155,6 @@ export class RustManager {
 		return await invoke("join", { path });
 	}
 
-	open_directory({ path }: OpenDirectoryProps): void {
-		invoke("open_directory", { path });
-	}
-
 	async load_plugin({
 		fullPath,
 		db,
@@ -217,14 +210,6 @@ export class RustManager {
 	}
 	async vault_rename({ name, new_name }: vaultRenameProps): Promise<string> {
 		return await invoke("vault_rename", { name, new_name });
-	}
-
-	async create_dir({ path }: createDirProps): Promise<boolean> {
-		return await invoke("create_dir", { path });
-	}
-
-	async dir_exists({ path }: { path: string }): Promise<boolean> {
-		return await invoke("dir_exists", { path });
 	}
 
 	close_window() {

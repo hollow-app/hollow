@@ -6,7 +6,8 @@ import FileDescriptionIcon from "@assets/icons/files/file-description.svg";
 import FolderOpenIcon from "@assets/icons/folder-open.svg";
 import FolderCloseIcon from "@assets/icons/folder-close.svg";
 import { HollowEvent, ICard, ContextMenuItem, TagType } from "@type/hollow";
-import { Filter, NotebookTabsIcon } from "lucide-solid";
+import { NotebookTabsIcon } from "lucide-solid";
+import fm from "front-matter";
 import {
 	Accessor,
 	createMemo,
@@ -26,7 +27,6 @@ import { EntryType } from "@type/hollow";
 import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
 import { timeDifference } from "@managers/manipulation/strings";
-import DropDown from "@components/DropDown";
 import FilterButton from "@components/FilterButton";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
@@ -69,12 +69,12 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			notebookId: card.id,
 			id: crypto.randomUUID(),
 			title: "",
-			tags: [],
-			content: book().structure,
+			body: book().structure,
 			dates: {
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 			},
+			frontmatter: "tags:",
 		};
 		setSelected(note);
 		setExpand(false);
@@ -103,11 +103,12 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			sendEntry({
 				id: note.id,
 				title: note.title,
-				tags: note.tags,
-				content: note.content,
+				tags: note.attributes.tags,
+				content: note.body,
 				meta: { ...note.dates },
 				source: { tool: "notebook", card: card.name },
 			});
+			setEditMode(false);
 		}
 	};
 	const sendEntry = (entry: EntryType) => {
@@ -122,7 +123,15 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 				setBook((prev) => ({
 					...prev,
 					notes: prev.notes.map((i) =>
-						i.id === selected().id ? { ...i, banner: url } : i,
+						i.id === selected().id
+							? {
+									...i,
+									attributes: {
+										...i.attributes,
+										banner: url,
+									},
+								}
+							: i,
 					),
 				}));
 				setSelected((prev) => ({ ...prev, banner: url }));
@@ -217,12 +226,12 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 		updateBook();
 	};
 	onMount(() => {
-		card.app.on(`notebook-${card.name}-settings`, showSettings);
+		card.toolEvent.on(`${card.id}-settings`, showSettings);
 		card.app.on("tags", setHollowTags);
 		card.toolEvent.on(`${card.name}-remove-entry`, removeNote);
 	});
 	onCleanup(() => {
-		card.app.off(`notebook-${card.name}-settings`, showSettings);
+		card.toolEvent.off(`${card.id}-settings`, showSettings);
 		card.app.off("tags", setHollowTags);
 		card.toolEvent.off(`${card.name}-remove-entry`, removeNote);
 	});
@@ -239,8 +248,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 						<button
 							class="button-control"
 							onclick={() => {
-								editMode() && onSave();
-								setEditMode((prev: boolean) => !prev);
+								editMode() ? onSave() : setEditMode(true);
 							}}
 							style={{
 								"--p": 1,
@@ -296,7 +304,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 						<div
 							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 transition-all group-hover:opacity-100"
 							style={{
-								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${selected().banner})`,
+								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${selected().attributes?.banner})`,
 								"background-size": "cover",
 								"background-position": "center",
 								"background-repeat": "no-repeat",
@@ -336,7 +344,10 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 												setWords={(tgs) =>
 													setSelected((prev) => ({
 														...prev,
-														tags: tgs,
+														attributes: {
+															...prev.attributes,
+															tags: tgs,
+														},
 													}))
 												}
 											/>
@@ -348,7 +359,12 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 												"font-size": "1.1em",
 											}}
 										>
-											<For each={selected().tags}>
+											<For
+												each={
+													selected().attributes
+														?.tags ?? []
+												}
+											>
 												{(tag) => {
 													const target = () =>
 														hollowTags().find(
@@ -372,17 +388,17 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 								</div>
 							</div>
 						</div>
-						<div class="flex w-full flex-1 shrink-0 justify-center overflow-hidden overflow-y-scroll">
+						<div class="mx-auto flex w-full flex-1 shrink-0 justify-center overflow-hidden overflow-y-scroll @lg:w-[50%]">
 							<div class="w-full px-5">
 								<MarkdownEditor
 									editMode={editMode}
-									value={() => selected().content}
-									setValue={(v) =>
+									value={() => selected().body}
+									setValue={(v) => {
 										setSelected((prev) => ({
 											...prev,
-											content: v,
-										}))
-									}
+											body: v,
+										}));
+									}}
 									uniqueNote={() =>
 										`${book().name.toLowerCase()}-${selected().title.toLowerCase()}`
 									}
@@ -454,11 +470,11 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 		let result = book().notes.filter((note) => {
 			const matchesSearch =
 				note.title.toLowerCase().includes(term) ||
-				note.content.toLowerCase().includes(term);
+				note.body.toLowerCase().includes(term);
 
 			const matchesTags =
 				tags.length === 0 ||
-				tags.every((tag) => note.tags.includes(tag));
+				tags.every((tag) => note.attributes.tags.includes(tag));
 
 			return matchesSearch && matchesTags;
 		});
@@ -526,7 +542,11 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 							isCheckBox: true,
 							title: "Tags",
 							items: [
-								...new Set(book().notes.flatMap((i) => i.tags)),
+								...new Set(
+									book().notes.flatMap(
+										(i) => i.attributes.tags,
+									),
+								),
 							].map((tag) => ({
 								label: tag,
 								checked: selectedTags().includes(tag),
@@ -589,7 +609,7 @@ function NotePreview({
 				"border-secondary-10 hover:border-secondary-10": !selected(),
 			}}
 			style={{
-				"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note.banner})`,
+				"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note.attributes.banner})`,
 				"background-size": "cover",
 				"background-position": "center",
 				"background-repeat": "no-repeat",
@@ -611,8 +631,11 @@ function NotePreview({
 				<h2 class="truncate text-lg font-medium text-neutral-800 dark:text-neutral-200">
 					{note.title}
 				</h2>
-				<span class="truncate" title={note.tags.join(", ")}>
-					Tags: {note.tags.join(", ")}
+				<span
+					class="truncate"
+					title={(note.attributes?.tags ?? []).join(", ")}
+				>
+					Tags: {note.attributes.tags}
 				</span>
 				<span class="truncate">
 					Created: {timeDifference(note.dates.createdAt)}

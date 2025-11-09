@@ -24,7 +24,7 @@ export default function Embed({ card, data, db }: EmbedProps) {
 					type: "longtext",
 					label: "IFrame",
 					description: "embed an iframe",
-					placeholder: "<iframe ...",
+					attributes: { placeholder: "<iframe ..." },
 					value: embed().src,
 					onChange: (s: string) => {
 						setEmbed((prev: EmbedData) => ({
@@ -39,11 +39,11 @@ export default function Embed({ card, data, db }: EmbedProps) {
 	};
 
 	onMount(() => {
-		card.app.on(`embed-${card.name}-settings`, setSettingsVisible);
+		card.toolEvent.on(`${card.id}-settings`, setSettingsVisible);
 	});
 
 	onCleanup(() => {
-		card.app.off(`embed-${card.name}-settings`, setSettingsVisible);
+		card.toolEvent.off(`${card.id}-settings`, setSettingsVisible);
 	});
 	return (
 		<div class="h-full w-full">

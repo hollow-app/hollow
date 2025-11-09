@@ -31,6 +31,7 @@ export default function Alerts() {
 					prev.filter((i) => i.id !== uniqueAlert.id),
 				);
 			}, 4000);
+			alert.onTimeOut && alert.onTimeOut();
 		}, alert.duration ?? 3000);
 	};
 
@@ -63,10 +64,14 @@ export default function Alerts() {
 											<Show when={alert.type}>
 												<Icon class="size-5" />
 											</Show>
-											<h1>{alert.title}</h1>
-											<span class="py-2 text-neutral-500">
-												{alert.message}
-											</span>
+											<Show when={alert.title}>
+												<h1>{alert.title}</h1>
+											</Show>
+											<Show when={alert.message}>
+												<span class="py-2 text-neutral-500">
+													{alert.message}
+												</span>
+											</Show>
 											<Show when={alert.button}>
 												<button
 													class="border-secondary-10 hover:bg-secondary-10 ml-2 border-l px-3 py-2 transition-colors"
@@ -79,7 +84,7 @@ export default function Alerts() {
 											</Show>
 										</div>
 										<hr
-											class="bg-secondary-95 timer-bar absolute bottom-0 h-[2px] border-0"
+											class="bg-secondary-20 timer-bar absolute bottom-0 h-[2px] border-0"
 											style={{
 												"--duration": `${alert.duration ?? 3000}ms`,
 											}}

@@ -4,9 +4,6 @@ import { KitType } from "@type/hollow";
 import { createMemo, createSignal, onCleanup, onMount, Setter } from "solid-js";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
-import { isErrored } from "stream";
-import { OverlayScrollbarsComponentRef } from "overlayscrollbars-solid";
-import { setEngine } from "crypto";
 import { PartialOptions } from "overlayscrollbars";
 
 type CardProps = {
@@ -82,7 +79,7 @@ export default function Card({
 				{
 					icon: "Expand",
 					label: "Focus Mode",
-					onclick: () => expand(!isExpand()),
+					onclick: () => expand(),
 				},
 				{
 					icon: "PencilRuler",
@@ -99,11 +96,11 @@ export default function Card({
 		hollow.events.emit("context-menu-extend", cmItems);
 	};
 
-	const expand = (state: boolean) => {
+	const showExpand = (state: boolean) => {
 		if (state) {
 			setScrollOptions((prev) => ({
 				...prev,
-				scrollbars: { visibility: "hidden" },
+				scrollbars: { ...prev.scrollbars, visibility: "hidden" },
 				overflow: {
 					x: "hidden",
 					y: "hidden",
@@ -112,7 +109,7 @@ export default function Card({
 		} else {
 			setScrollOptions((prev) => ({
 				...prev,
-				scrollbars: { visibility: "auto" },
+				scrollbars: { ...prev.scrollbars, visibility: "auto" },
 				overflow: {
 					x: "scroll",
 					y: "scroll",
@@ -134,28 +131,37 @@ export default function Card({
 		hollow.events.emit("context-menu", false);
 	};
 
+	const expand = () => {
+		hollow.toolManager
+			.getToolEvents(cardInfo.tool)
+			.toggle(`${cardInfo.id}-expand`);
+	};
 	onMount(async () => {
 		hollow.toolManager.addEditorKit(editorKit());
 		setLoaded(await hollow.toolManager.loadCard(cardInfo, cardInfo.tool));
-		hollow.toolManager.getToolEvents(cardInfo.tool).on("expand", expand);
+		hollow.toolManager
+			.getToolEvents(cardInfo.tool)
+			.on(`${cardInfo.id}-expand`, showExpand);
 	});
 
 	onCleanup(() => {
 		container.removeEventListener("mousemove", onMouseMoveInCanvas);
 		container.removeEventListener("mouseup", onMouseUp);
-		hollow.toolManager.getToolEvents(cardInfo.tool).off("expand", expand);
+		hollow.toolManager
+			.getToolEvents(cardInfo.tool)
+			.off(`${cardInfo.id}-expand`, showExpand);
 	});
 	return (
 		<div
 			ref={vault}
-			class={"absolute box-border transition-all"}
+			class={"box-border transition-all"}
 			style={{
 				...(isExpand()
 					? {
-							left: 0,
 							top: 0,
-							width: "calc(100vw - calc(var(--spacing) * 20))",
-							height: "calc(100vh - calc(var(--spacing) * 4))",
+							left: 0,
+							width: "calc(100vw - calc(var(--spacing) * 20) - 2px)",
+							height: "calc(100vh - calc(var(--spacing) * 4) - 2px)",
 						}
 					: {
 							left: `calc(var(--cw) * ${kit().xyz.x})`,
@@ -164,7 +170,7 @@ export default function Card({
 							height: `calc(var(--rh) * ${kit().height})`,
 							padding: kit().extra?.outerMargin ?? "0",
 						}),
-				// position: isExpand() ? "sticky" : "absolute",
+				position: isExpand() ? "sticky" : "absolute",
 				"z-index": dragInfo || isExpand() ? "999" : kit().xyz.z,
 				cursor: dragInfo() ? "move" : "default",
 				"pointer-events": dragInfo() ? "none" : "auto",
@@ -186,7 +192,9 @@ export default function Card({
 					"border-style": "solid",
 					"border-width": "var(--border-width)",
 					...kit().extra,
-					...(isExpand() && { "border-width": 0 }),
+					...(isExpand() && {
+						"border-width": 0,
+					}),
 				}}
 				classList={{
 					"backdrop-blur-sm": kit().glass,

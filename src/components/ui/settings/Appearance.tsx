@@ -255,7 +255,7 @@ function BackgroundSettings({ settingsManager }: CommonSettings) {
 		useBackground({ path: `url(${path})` });
 	};
 	const setBackgroundOpacity = (opacity: number) => {
-		settingsManager.setConfig("background-opacity", opacity);
+		settingsManager.setConfig("background-opacity", opacity / 100);
 		useBackground({ opacity: `${opacity / 100}` });
 	};
 
@@ -291,7 +291,7 @@ function BackgroundSettings({ settingsManager }: CommonSettings) {
 						</div>
 						<div class="flex gap-3">
 							<Slider
-								value={backgroundOpacity()}
+								value={backgroundOpacity() * 100}
 								setValue={(v) => {
 									setBackground((prev) => ({
 										...prev,
@@ -376,12 +376,9 @@ function CodeThemeSettings({ settingsManager }: CommonSettings) {
 }
 
 function TagsEditor({ settingsManager }: CommonSettings) {
-	const tags = createMemo(() => {
-		const customTags = settingsManager.getConfig("custom-tags");
-		// Handle both string[] (if SettingsManager type is correct) and TagType[]
-		// If it's a string array, we'd need to parse it, but for now assume it's TagType[]
-		return (customTags as unknown as TagType[]) || [];
-	});
+	const [tags, setTags] = createSignal(
+		settingsManager.getConfig("custom-tags"),
+	);
 
 	const [newTag, setNewTag] = createSignal<TagType>({
 		name: "",
@@ -404,6 +401,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 					foreground: readableColor(background),
 				},
 			];
+			setTags(newTags);
 			settingsManager.setConfig("custom-tags", newTags);
 			useTags(newTags);
 			setNewTag({ name: "", background: "#151515", foreground: "" });
@@ -412,8 +410,10 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 	const toTags = (v: TagType[] | ((prev: TagType[]) => TagType[])) => {
 		const newTags = typeof v === "function" ? v(tags()) : v;
 		settingsManager.setConfig("custom-tags", newTags);
+		setTags(newTags);
 		useTags(newTags);
 	};
+
 	return (
 		<div class="w-full py-4">
 			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">

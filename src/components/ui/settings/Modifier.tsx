@@ -24,7 +24,6 @@ export default function Modifier() {
 	const handleValueChange = (
 		e: KeyboardEvent & { currentTarget: HTMLTextAreaElement },
 	) => {
-		setValue(e.currentTarget.value);
 		if (e.ctrlKey && e.key === "Enter") {
 			const textarea = e.currentTarget;
 			try {
@@ -70,8 +69,9 @@ export default function Modifier() {
 		try {
 			const button = e.currentTarget;
 			button.classList.add("debounce");
-			const parsed = JSON.parse(value());
-			localStorage.setItem(key(), JSON.stringify(parsed));
+			// const parsed = JSON.parse(value());
+			console.log(value());
+			localStorage.setItem(key(), value());
 			hollow.events.emit("alert", {
 				title: "Saved",
 				message: "successfully",
@@ -155,6 +155,9 @@ export default function Modifier() {
 									id="value"
 									value={value()}
 									onKeyDown={handleValueChange}
+									onInput={(e) =>
+										setValue(e.currentTarget.value)
+									}
 									class="input h-full w-full resize-none font-mono text-sm text-neutral-900"
 									style={{
 										"--padding-y":

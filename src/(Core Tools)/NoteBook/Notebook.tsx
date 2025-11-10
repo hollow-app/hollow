@@ -2,15 +2,15 @@ import Tag from "@components/Tag";
 import FileCheckIcon from "@assets/icons/files/file-check.svg";
 import FilePenIcon from "@assets/icons/files/file-pen.svg";
 import FilePlusIcon from "@assets/icons/files/file-plus.svg";
-import FileDescriptionIcon from "@assets/icons/files/file-description.svg";
 import FolderOpenIcon from "@assets/icons/folder-open.svg";
 import FolderCloseIcon from "@assets/icons/folder-close.svg";
+import AlignBoxLeftTopIcon from "@assets/icons/align-box-left-top.svg";
 import { HollowEvent, ICard, ContextMenuItem, TagType } from "@type/hollow";
 import { NotebookTabsIcon } from "lucide-solid";
-import fm from "front-matter";
 import {
 	Accessor,
 	createMemo,
+	createResource,
 	createSignal,
 	For,
 	lazy,
@@ -26,8 +26,9 @@ import { NotebookType } from "./NotebookType";
 import { EntryType } from "@type/hollow";
 import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
-import { timeDifference } from "@managers/manipulation/strings";
+import { isExpired, timeDifference } from "@managers/manipulation/strings";
 import FilterButton from "@components/FilterButton";
+import { MarkdownManager } from "@managers/MarkdownManager";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
 const WordInput = lazy(() => import("@components/WordInput"));
@@ -37,7 +38,8 @@ type NotebookProps = {
 	noteBook: NotebookType;
 };
 export default function Notebook({ card, noteBook }: NotebookProps) {
-	const [expand, setExpand] = createSignal(false);
+	const [showList, setShowList] = createSignal(false);
+	const [isExpand, setExpand] = createSignal(false);
 	const [editMode, setEditMode] = createSignal(false);
 	const [book, setBook] = createSignal<NotebookType>(noteBook);
 	const [selected, setSelected] = createSignal<NoteType>(
@@ -48,9 +50,9 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 
 	const panel = createMemo(() => {
 		// 0: nothing, 1: list, 2: selected
-		if (expand()) {
+		if (showList()) {
 			return 1;
-		} else if ((selected() || editMode()) && !expand()) {
+		} else if ((selected() || editMode()) && !showList()) {
 			return 2;
 		} else {
 			return 0;
@@ -77,7 +79,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			frontmatter: "tags:",
 		};
 		setSelected(note);
-		setExpand(false);
+		setShowList(false);
 		setEditMode(true);
 	};
 
@@ -134,7 +136,10 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 							: i,
 					),
 				}));
-				setSelected((prev) => ({ ...prev, banner: url }));
+				setSelected((prev) => ({
+					...prev,
+					attributes: { ...prev.attributes, banner: url },
+				}));
 				NotebookManager.getSelf().updateNote(selected());
 			},
 		});
@@ -222,28 +227,33 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 	const changeSelected = (id: string) => {
 		setSelected(book().notes.find((i) => i.id === id));
 		setBook((prev) => ({ ...prev, last: id }));
-		setExpand(false);
+		setShowList(false);
 		updateBook();
 	};
 	onMount(() => {
 		card.toolEvent.on(`${card.id}-settings`, showSettings);
 		card.app.on("tags", setHollowTags);
 		card.toolEvent.on(`${card.name}-remove-entry`, removeNote);
+		card.toolEvent.on(`${card.id}-expand`, setExpand);
 	});
 	onCleanup(() => {
 		card.toolEvent.off(`${card.id}-settings`, showSettings);
 		card.app.off("tags", setHollowTags);
 		card.toolEvent.off(`${card.name}-remove-entry`, removeNote);
+		card.toolEvent.off(`${card.id}-expand`, setExpand);
 	});
 
 	return (
-		<div class="@container relative flex h-full w-full flex-col items-center">
+		<div
+			class="text-md @container relative flex h-full w-full flex-col items-center"
+			classList={{ "text-[1.2em]": isExpand() }}
+		>
 			{/* Header */}
-			<div class="bg-secondary-05 hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded px-2 @xs:flex">
-				<h1 class="text-sm font-medium">
+			<div class="bg-secondary-05 hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded px-2 @xs:flex @7xl:h-13 @7xl:px-4">
+				<h1 class="text-sm font-medium @7xl:text-lg">
 					{book().name} <span class="text-secondary-40">Book</span>
 				</h1>
-				<div class="flex gap-2">
+				<div class="flex items-center gap-2">
 					<Show when={selected() || editMode()}>
 						<button
 							class="button-control"
@@ -275,14 +285,14 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 					</button>
 					<button
 						class="button-control"
-						onclick={() => setExpand((prev: boolean) => !prev)}
+						onclick={() => setShowList((prev: boolean) => !prev)}
 						style={{
 							"--p": 1,
 							"--border-radius": "var(--radius-sm)",
 						}}
 					>
 						<Show
-							when={expand()}
+							when={showList()}
 							fallback={<FolderCloseIcon class="size-5" />}
 						>
 							<FolderOpenIcon class="size-5" />
@@ -298,11 +308,11 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3 }}
-						class="flex min-h-0 w-full flex-1 flex-col"
+						class="relative flex min-h-0 w-full flex-1 flex-col"
 						oncontextmenu={onContextMenu}
 					>
 						<div
-							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 transition-all group-hover:opacity-100"
+							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 transition-all group-hover:opacity-100 @7xl:h-35"
 							style={{
 								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${selected().attributes?.banner})`,
 								"background-size": "cover",
@@ -340,7 +350,10 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 										when={!editMode()}
 										fallback={
 											<WordInput
-												words={() => selected().tags}
+												words={() =>
+													selected().attributes
+														?.tags ?? []
+												}
 												setWords={(tgs) =>
 													setSelected((prev) => ({
 														...prev,
@@ -388,8 +401,8 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 								</div>
 							</div>
 						</div>
-						<div class="mx-auto flex w-full flex-1 shrink-0 justify-center overflow-hidden overflow-y-scroll @lg:w-[50%]">
-							<div class="w-full px-5">
+						<div class="w-full flex-1 shrink-0 justify-center overflow-hidden overflow-y-scroll scroll-smooth">
+							<div class="mx-auto flex w-full px-5 @4xl:w-[70%] @7xl:w-[50%]">
 								<MarkdownEditor
 									editMode={editMode}
 									value={() => selected().body}
@@ -404,6 +417,18 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 									}
 								/>
 							</div>
+							<Show
+								when={isExpand() && selected() && !editMode()}
+							>
+								<div class="absolute top-50 left-[80%] opacity-0 @7xl:opacity-100">
+									<HeadersTree
+										body={() => selected().body}
+										id={() =>
+											`${book().name.toLowerCase()}-${selected().title.toLowerCase()}`
+										}
+									/>
+								</div>
+							</Show>
 						</div>
 					</Motion.div>
 				</Show>
@@ -641,6 +666,59 @@ function NotePreview({
 					Created: {timeDifference(note.dates.createdAt)}
 				</span>
 			</div>
+		</div>
+	);
+}
+
+function HeadersTree({
+	id,
+	body,
+	floats,
+}: {
+	id: () => string;
+	body: () => string;
+	floats?: boolean;
+}) {
+	const [headers] = createResource(() =>
+		MarkdownManager.getSelf().getHeaders(body(), id()),
+	);
+	return (
+		<div class="h-full shrink-0">
+			<span class="flex items-center gap-2 pb-3">
+				<hr class="bg-secondary-10 size-2 border-0" />
+				On this page
+			</span>
+			<For each={headers()}>
+				{(head) => (
+					<div class="flex flex-row-reverse items-center justify-end gap-5">
+						<a
+							href={`#${head.id}`}
+							class="peer no-underline-alt text-sm text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white"
+							style={{
+								"font-size": "0.8em",
+							}}
+							classList={{
+								"my-1": head.depth - 1 === 0,
+							}}
+						>
+							{head.text}
+						</a>
+						<Show when={head.depth - 1 > 0}>
+							<For each={new Array(head.depth - 1)}>
+								{(_, index) => (
+									<span
+										class="border-secondary-10 h-full border-l py-4"
+										classList={{
+											"peer-hover:border-primary ":
+												index() === 0,
+										}}
+									/>
+								)}
+							</For>
+						</Show>
+					</div>
+				)}
+			</For>
 		</div>
 	);
 }

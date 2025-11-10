@@ -2,6 +2,7 @@ import Card from "@components/ui/Card";
 import useGrid from "@hooks/useGrid";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
+import { options } from "marked";
 import { Options, PartialOptions } from "overlayscrollbars";
 import {
 	OverlayScrollbarsComponent,
@@ -19,6 +20,17 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 	let canvas!: OverlayScrollbarsComponentRef;
 	let container!: HTMLDivElement;
 	const [scrollOption, setScrollOption] = createSignal<PartialOptions>({
+		// overflow: {
+		// 	x: "hidden",
+		// 	y: "hidden",
+		// },
+		// scrollbars: {
+		// 	visibility: "hidden",
+		// 	autoHide: "leave",
+		// 	autoHideDelay: 800,
+		// 	theme: "os-theme-native",
+		// },
+		// TODO
 		overflow: { x: "scroll", y: "scroll" },
 		scrollbars: {
 			visibility: "auto",

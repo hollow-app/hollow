@@ -13,6 +13,7 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 	const onImport = async () => {
 		const path = await open({
 			multiple: false,
+			title: "Select an image",
 			filters: [
 				{
 					name: "Images",

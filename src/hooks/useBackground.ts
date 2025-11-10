@@ -1,6 +1,7 @@
 import { Property } from "@type/Property";
 import setStyle from "./setStyle";
 import { RealmManager } from "@managers/RealmManager";
+import { SettingsManager } from "@managers/SettingsManager";
 
 export function useBackground(pack: { path?: string; opacity?: string }) {
 	const vars: Property[] = [];
@@ -19,11 +20,11 @@ export function useBackground(pack: { path?: string; opacity?: string }) {
 	} else {
 		vars.push({
 			name: "--canvas-bg-image",
-			value: 'url("")',
+			value: `url(${SettingsManager.getSelf().getConfig("background-image")})`,
 		});
 		vars.push({
 			name: "--canvas-bg-opacity",
-			value: "0.5",
+			value: SettingsManager.getSelf().getConfig("background-opacity"),
 		});
 	}
 	setStyle(vars);

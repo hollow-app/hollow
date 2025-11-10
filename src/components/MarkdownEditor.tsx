@@ -2,7 +2,13 @@ import {
 	createCodeMirror,
 	createEditorControlledValue,
 } from "solid-codemirror";
-import { Accessor, createResource, createSignal, Suspense } from "solid-js";
+import {
+	Accessor,
+	createEffect,
+	createResource,
+	createSignal,
+	Suspense,
+} from "solid-js";
 import {
 	drawSelection,
 	EditorView,
@@ -43,7 +49,6 @@ export default function MarkdownEditor({
 		MarkdownManager.getSelf().renderMarkdown(value(), uniqueNote()),
 	);
 	const [inValue, setInValue] = createSignal(value());
-
 	const {
 		editorView,
 		createExtension,
@@ -61,7 +66,7 @@ export default function MarkdownEditor({
 	createExtension(codemirrorSetup);
 
 	return (
-		<div class="relative h-fit w-full">
+		<div class="relative h-fit w-full shrink-0">
 			<Show when={editMode() && inValue() === ""}>
 				<p class="text-secondary-30 absolute top-0 left-[6px] text-xl">
 					{
@@ -78,7 +83,7 @@ export default function MarkdownEditor({
 				classList={{ hidden: !editMode() }}
 				ref={editorRef}
 			/>
-			<Show when={!editMode()}>
+			<Show when={!editMode() && parsedMd()}>
 				<Suspense
 					fallback={
 						<div class="flex h-full w-full items-center justify-center">

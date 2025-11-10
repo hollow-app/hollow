@@ -3,8 +3,13 @@ import { Property } from "@type/Property";
 export default function setStyle(
 	properties: { name: string; value: string }[],
 ) {
-	// console.log(properties);
 	let styleEl = document.getElementById("dynamic-styles") as HTMLStyleElement;
+
+	if (!styleEl) {
+		styleEl = document.createElement("style");
+		styleEl.id = "dynamic-styles";
+		document.head.appendChild(styleEl);
+	}
 
 	const existingCSS = styleEl.textContent || "";
 	const rootMatch = existingCSS.match(/:root\s*{([\s\S]*?)}/);
@@ -12,7 +17,10 @@ export default function setStyle(
 
 	if (rootMatch) {
 		rootMatch[1].split(";").forEach((line) => {
-			const [key, val] = line.split(":").map((s) => s.trim());
+			const trimmed = line.trim();
+			if (!trimmed) return;
+			const [key, ...rest] = trimmed.split(":");
+			const val = rest.join(":").trim();
 			if (key && val) existingProps[key] = val;
 		});
 	}

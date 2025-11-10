@@ -15,6 +15,7 @@ import { ToolDataBase } from "./ToolDataBase";
 import { hotkeysManager } from "./HotkeysManager";
 import { CodeThemeManager } from "./CodeThemeManager";
 import { SettingsManager } from "./SettingsManager";
+import { MarkdownManager } from "./MarkdownManager";
 
 export class HollowManager {
 	private static self: HollowManager;
@@ -62,6 +63,7 @@ export class HollowManager {
 		CodeThemeManager.init();
 		// DeepLinkManager.init();
 		await EntryManager.getSelf().start();
+		await MarkdownManager.getSelf().start();
 		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });

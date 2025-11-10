@@ -6,7 +6,6 @@ export class MarkdownManager {
 	private slugger = new GithubSlugger();
 	private noteId: string;
 	private renderer!: InstanceType<typeof marked.Renderer>;
-	private isRendererSetup = false;
 	private static self: MarkdownManager;
 
 	static getSelf() {
@@ -23,9 +22,7 @@ export class MarkdownManager {
 		);
 	}
 
-	private async setupRenderer() {
-		if (this.isRendererSetup) return;
-
+	async start() {
 		const { default: hljs } = await import("highlight.js");
 		const { default: markedKatex } = await import("marked-katex-extension");
 
@@ -56,13 +53,11 @@ export class MarkdownManager {
 				const title = match[2].trim();
 				href = `${hashes}${this.noteId}-${title}`;
 			}
-			return `<a href="${href}" target="_blank">${text}</a>`;
+			return `<a href="${href}" ${!href[0].startsWith("#") && 'target="_blank"'}>${text}</a>`;
 		};
 
 		marked.use(markedKatex());
 		marked.setOptions({ renderer: this.renderer });
-
-		this.isRendererSetup = true;
 	}
 
 	private cleanHeadingText(text: string): string {
@@ -74,12 +69,33 @@ export class MarkdownManager {
 
 	async renderMarkdown(markdown: string, id: string): Promise<string> {
 		this.noteId = id;
+		// for unique elements
 		this.slugger.reset();
-		await this.setupRenderer();
-		return marked(markdown);
+		return await marked(markdown);
 	}
 
-	getSlug(text: string): string {
-		return this.slugger.slug(this.cleanHeadingText(text));
+	getHeaders(
+		markdown: string,
+		id: string,
+	): { depth: number; text: string; id: string }[] {
+		this.slugger.reset();
+		const tokens = marked.lexer(markdown);
+		const headers = tokens
+			.filter((token) => token.type === "heading")
+			.map((token) => {
+				const slug = this.slugger.slug(
+					// @ts-ignore
+					this.cleanHeadingText(token.text),
+				);
+				const headerId = `${id}-${slug}`;
+				return {
+					// @ts-ignore
+					depth: token.depth,
+					// @ts-ignore
+					text: token.text,
+					id: headerId,
+				};
+			});
+		return headers;
 	}
 }

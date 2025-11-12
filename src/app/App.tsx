@@ -14,14 +14,12 @@ import Alerts from "@components/ui/popups/Alerts";
 
 const Selector = lazy(() => import("@app/Selector"));
 
+const selectRealmOnStartup = JSON.parse(
+	localStorage.realmToggleOnStartup ?? "false",
+);
 export default function App() {
-	const selectRealmOnStartup = createMemo(() =>
-		JSON.parse(localStorage.realmToggleOnStartup ?? "false"),
-	);
 	const [selectedRealm, setSelectedRealm] = createSignal<string | null>(
-		selectRealmOnStartup()
-			? null
-			: RealmManager.getSelf().getCurrent(false),
+		selectRealmOnStartup ? null : RealmManager.getSelf().currentRealmId,
 	);
 
 	const Container = createMemo(() => {

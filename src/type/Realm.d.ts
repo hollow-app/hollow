@@ -1,7 +1,7 @@
 export type Realm = {
 	id: string;
 	name: string;
-	// location: string;
+	location: string;
 	createdDate: string;
 	lastEntered: string;
 	colors: {

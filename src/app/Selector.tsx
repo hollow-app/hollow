@@ -1,16 +1,14 @@
 import ColorPick from "@components/ColorPick";
 import { formatDate, timeDifference } from "@managers/manipulation/strings";
 import { Realm } from "@type/Realm";
-import HollowIcon from "@assets/icon-nobg.svg";
+import HollowIcon from "@assets/logo.svg";
 import {
 	CalendarIcon,
-	OrbitIcon,
 	Trash2Icon,
 	PlusIcon,
 	ArrowLeftIcon,
 	RocketIcon,
 	PandaIcon,
-	CheckIcon,
 } from "lucide-solid";
 import {
 	Accessor,
@@ -30,6 +28,7 @@ import Loading from "@components/Loading";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 import Dropdown from "@components/Dropdown";
+import { open } from "@tauri-apps/plugin-dialog";
 
 type SelectorProps = {
 	onSelect: (id: string) => void;
@@ -49,15 +48,17 @@ const themes = [
 ];
 const useRealmManager = () => {
 	const [name, setName] = createSignal("");
+	const [location, setLocation] = createSignal("");
 	const [primary, setPrimary] = createSignal("#FF0033");
 	const [secondary, setSecondary] = createSignal("#000000");
 
 	const createRealm = () => {
-		if (!name()) return false;
+		if (!name() || !location()) return false;
 
 		const newRealm: Realm = {
 			id: crypto.randomUUID(),
 			name: name(),
+			location: location(),
 			lastEntered: new Date().toISOString(),
 			createdDate: new Date().toISOString(),
 			colors: {
@@ -84,6 +85,8 @@ const useRealmManager = () => {
 	return {
 		name,
 		setName,
+		location,
+		setLocation,
 		primary,
 		setPrimary,
 		secondary,
@@ -189,10 +192,9 @@ const RealmList = (props: {
 											}}
 										>
 											<HollowIcon
-												class="selector-logo size-8"
+												class="size-8"
 												style={{
-													"--color":
-														realm.colors.primary,
+													color: realm.colors.primary,
 												}}
 											/>
 										</div>
@@ -284,6 +286,8 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 	const {
 		name,
 		setName,
+		location,
+		setLocation,
 		primary,
 		setPrimary,
 		secondary,
@@ -301,6 +305,15 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 		const t = themes.find((i) => i.name === name);
 		setPrimary(t.primary);
 		setSecondary(t.secondary);
+	};
+
+	const selectLocation = async () => {
+		const path = await open({
+			directory: true,
+			multiple: false,
+			title: "Select Realm Location",
+		});
+		setLocation(path);
 	};
 
 	return (
@@ -351,19 +364,37 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 							/>
 						</div>
 						<div class="flex items-center justify-between">
+							<label class="flex items-center text-sm font-medium tracking-wider text-neutral-400 uppercase">
+								Location{" "}
+								<Show when={location()}>
+									<span class="truncate text-xs text-neutral-500">
+										[{location()}]
+									</span>
+								</Show>
+							</label>
+							<button
+								class="button-secondary"
+								onclick={selectLocation}
+							>
+								Select
+							</button>
+						</div>
+						<div class="flex items-center justify-between">
 							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
 								Themes
 							</label>
-							<Dropdown
-								// TODO light/dark gruops
-								options={() => [
-									{
-										items: themes.map((i) => i.name),
-									},
-								]}
-								onSelect={selectTheme}
-								placeholder="Select A Theme"
-							/>
+							<div class="w-50">
+								<Dropdown
+									// TODO light/dark gruops
+									options={() => [
+										{
+											items: themes.map((i) => i.name),
+										},
+									]}
+									onSelect={selectTheme}
+									placeholder="Select A Theme"
+								/>
+							</div>
 						</div>
 						<div class="flex items-center justify-between">
 							<label class="text-sm font-medium tracking-wider text-neutral-400 uppercase">
@@ -415,7 +446,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 							{/* Top Bar */}
 							<div class="relative flex items-center justify-between p-4">
 								<div class="flex items-center gap-2">
-									<OrbitIcon
+									<HollowIcon
 										class="h-5 w-5"
 										style={{
 											color: primary(),
@@ -651,12 +682,10 @@ export default function Selector({ onSelect }: SelectorProps) {
 		useColor({ name: "secondary", color: "#000000", oneTime: true });
 		return true;
 	});
-	const [level, setLevel] = createSignal(
-		RealmManager.getSelf().realms.length === 0 ? 0 : 1,
-	);
 	const [realms, setRealms] = createSignal<Realm[]>(
-		RealmManager.getSelf().realms,
+		RealmManager.getSelf().getRealms(),
 	);
+	const [level, setLevel] = createSignal(realms().length === 0 ? 0 : 1);
 	//
 	return (
 		<Suspense fallback={<Loading />}>

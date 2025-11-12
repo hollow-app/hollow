@@ -10,7 +10,7 @@ type NotificationData = {
 
 export class NotifyManager {
 	private static self: NotifyManager;
-	private readonly key = `${RealmManager.getSelf().getCurrent()}-notifications`;
+	private readonly key = `${RealmManager.getSelf().currentRealmId}-notifications`;
 	private data: NotificationData = { alert: true, notifications: [] };
 
 	static init() {

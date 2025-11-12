@@ -23,15 +23,21 @@ type SettingsKey = keyof SettingsConfig;
 
 export class SettingsManager {
 	private static self: SettingsManager;
-	private readonly realmId = RealmManager.getSelf().getCurrent(false);
-	private settings: SettingsConfig;
-	private constructor() {
-		const localItem = localStorage.getItem(`${this.realmId}-settings`);
-		this.settings = JSON.parse(localItem ?? DEFAULT);
-		if (!localItem) {
-			this.update();
-		}
+	private store: Storage;
+
+	async start() {
+		const path = await join(
+			...[
+				RealmManager.getSelf().getCurrent().location,
+				".hollow",
+				"settings.json",
+			],
+		);
+		this.store = await Storage.create(path, {
+			defaults: JSON.parse(DEFAULT),
+		});
 	}
+
 	static getSelf() {
 		if (!this.self) {
 			this.self = new SettingsManager();
@@ -40,30 +46,23 @@ export class SettingsManager {
 	}
 
 	getConfig<K extends SettingsKey>(key: K): SettingsConfig[K] {
-		return this.settings[key];
+		return this.store.get(key);
 	}
 	getConfigs<K extends SettingsKey>(keys: K[]): Pick<SettingsConfig, K> {
 		const result = {} as Pick<SettingsConfig, K>;
 		for (const key of keys) {
-			result[key] = this.settings[key];
+			result[key] = this.store.get(key);
 		}
 		return result;
 	}
 	setConfig<K extends SettingsKey>(key: K, value: SettingsConfig[K]) {
-		this.settings[key] = value;
-		this.update();
+		this.store.set(key, value);
 	}
 	setConfigs<K extends SettingsKey>(configs: Pick<SettingsConfig, K>) {
 		for (const key in configs) {
 			if (Object.prototype.hasOwnProperty.call(configs, key)) {
-				this.settings[key as K] = configs[key as K];
+				this.store.set(key as K, configs[key as K]);
 			}
 		}
-	}
-	private update() {
-		localStorage.setItem(
-			`${this.realmId}-settings`,
-			JSON.stringify(this.settings),
-		);
 	}
 }

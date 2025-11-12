@@ -27,7 +27,7 @@ export default function Card({
 		it: cardInfo.kit,
 		setIt: setKit,
 		save: () =>
-			hollow.toolManager.changeKit(kit(), cardInfo.name, cardInfo.tool),
+			hollow.toolManager.changeKit(kit(), cardInfo.id, cardInfo.tool),
 	}));
 	const [dragInfo, setDragInfo] = createSignal(null);
 
@@ -53,7 +53,7 @@ export default function Card({
 			container.removeEventListener("mouseup", onMouseUp);
 			setDragInfo(null);
 			// TODO hm
-			hollow.toolManager.changeKit(kit(), cardInfo.name, cardInfo.tool);
+			hollow.toolManager.changeKit(kit(), cardInfo.id, cardInfo.tool);
 		}
 	};
 

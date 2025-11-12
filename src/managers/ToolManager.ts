@@ -23,6 +23,8 @@ import { RealmManager } from "./RealmManager";
 import { EntryManager } from "./EntryManager";
 import { hollow } from "hollow";
 import DEFAULT from "@assets/configs/tools.json?raw";
+import { join } from "@tauri-apps/api/path";
+import { Storage } from "./Storage";
 
 type ToolMethods = {
 	name: string;
@@ -40,14 +42,13 @@ const CORE_TOOLS = ["image", "notebook", "kanban", "embed"];
 type CoreTool = (typeof CORE_TOOLS)[number];
 
 export class ToolManager {
-	private hand: HandType[];
+	private store: Storage;
 	private editorKits: EditorKitType[] = [];
 	private tools: ToolMethods[];
 	private toolMap: ToolMap;
 	private handMap: HandMap;
 	public setHand: Setter<Opthand[]>;
 	private toolsEvent: { [toolName: string]: HollowEvent } = {};
-	private realm = RealmManager.getSelf().currentRealmId;
 
 	private constructor() {
 		this.toolMap = new Map();
@@ -61,28 +62,31 @@ export class ToolManager {
 	}
 
 	private async initializeTools(loadUnsigned?: boolean): Promise<void> {
-		let realmTools = localStorage.getItem(`${this.realm}-tools`) ?? DEFAULT;
-		let parsedData: HandType[] = JSON.parse(realmTools);
-		//const hasUnsigned = parsedData.some((i) => !i.signed);
+		const path = await join(
+			...[
+				RealmManager.getSelf().getCurrent().location,
+				".hollow",
+				"tools.json",
+			],
+		);
+		this.store = await Storage.create(path, {
+			defaults: JSON.parse(DEFAULT),
+		});
+		let parsedData: HandType[] = this.getHand();
 
 		if (loadUnsigned) {
 			const unsignedTools = (
-				await RustManager.getSelf().get_unsigned_tools()
+				await RustManager.getSelf().get_unsigned_plugins()
 			).filter((i) => !parsedData.find((j) => j.name === i.name));
 			parsedData.push(...unsignedTools);
 		} else {
 			parsedData = parsedData.filter((i) => i.signed);
-			localStorage.setItem(
-				`${this.realm}-tools`,
-				JSON.stringify(parsedData),
-			);
 		}
 
-		this.hand = parsedData;
-		this.hand.forEach((tool) => this.handMap.set(tool.name, tool));
+		parsedData.forEach((tool) => this.handMap.set(tool.name, tool));
 
 		this.tools = await Promise.all(
-			this.hand.map(async (tool) => {
+			parsedData.map(async (tool) => {
 				const toolInstance = await this.createToolInstance(tool);
 				if (toolInstance) {
 					this.toolMap.set(tool.name, toolInstance);
@@ -138,7 +142,7 @@ export class ToolManager {
 	}
 
 	async installTool(name: string, repo: string): Promise<boolean> {
-		const request = await RustManager.getSelf().install_plugin({
+		const request = await RustManager.getSelf().add_plugin({
 			name: name,
 			repo: repo,
 		});
@@ -154,7 +158,9 @@ export class ToolManager {
 
 			const loadRequest = await this.loadTool(newTool);
 			if (loadRequest) {
-				this.hand.push(newTool);
+				const root: HandType[] = this.getHand();
+				root.push(newTool);
+				this.store.set("__root__", root);
 				this.handMap.set(newTool.name, newTool);
 				this.toolMap.set(newTool.name, loadRequest);
 				// TODO ??
@@ -183,7 +189,6 @@ export class ToolManager {
 				// 		},
 				// 	},
 				// ]);
-				this.update();
 			}
 		}
 		return request.state;
@@ -194,7 +199,7 @@ export class ToolManager {
 		const usedByOtherRealms = this.isToolUsedByOtherRealms(name);
 		const request = usedByOtherRealms
 			? { state: true }
-			: await RustManager.getSelf().uninstall_plugin({
+			: await RustManager.getSelf().remove_plugin({
 					name: title,
 				});
 
@@ -204,11 +209,12 @@ export class ToolManager {
 				tool.cards.map((card) => this.deleteCard(card.name, name)),
 			);
 
-			this.hand = this.hand.filter((i) => i.name !== name);
+			let root: HandType[] = this.getHand();
+			root = root.filter((i) => i.name !== title.toLowerCase());
+			this.store.set("__root__", root);
 			this.handMap.delete(name);
 			this.toolMap.delete(name);
 			this.setHand((prev) => prev.filter((i) => i.tool !== name));
-			this.update();
 		}
 
 		return request;
@@ -221,7 +227,8 @@ export class ToolManager {
 	private isToolUsedByOtherRealms(name: string): boolean {
 		return (
 			RealmManager.getSelf()
-				.realms.map(
+				.getRealms()
+				.map(
 					(r) =>
 						JSON.parse(
 							localStorage.getItem(`${r.id}-tools`) || "[]",
@@ -236,9 +243,7 @@ export class ToolManager {
 	}
 
 	async loadTool(tool: HandType): Promise<ToolMethods | null> {
-		const fullPath = await RustManager.getSelf().join({
-			path: ["user_plugins", tool.title!, "index.js"],
-		});
+		const fullPath = await join(...["plugins", tool.title!, "index.js"]);
 
 		const db = new ToolDataBase(tool.name, tool.dbVersion);
 		const toolClass = await RustManager.getSelf().load_plugin({
@@ -267,7 +272,7 @@ export class ToolManager {
 	}
 
 	optimizeHand(): Opthand[] {
-		return this.hand.flatMap(({ name, cards }) =>
+		return this.getHand().flatMap(({ name, cards }) =>
 			cards.map((i) => ({
 				tool: name,
 				...i,
@@ -276,9 +281,7 @@ export class ToolManager {
 	}
 	private getICard(toolName: string, cardId: string) {
 		const methods = this.toolMap.get(toolName);
-		const card = this.hand
-			.find((i) => i.name === toolName)
-			.cards.find((i) => i.id === cardId);
+		const card = this.getCard(toolName, cardId);
 		const happ = hollow.events;
 		const cardobj: ICard = {
 			...card,
@@ -299,62 +302,56 @@ export class ToolManager {
 		return await tool.onLoad(this.getICard(toolName, cardInfo.id));
 	}
 	togglePlacement(id: string, toolName: string) {
-		const { tool, card } = this.getToolAndCard(toolName, id);
-		if (!tool || !card) {
-			return;
-		}
+		const card = this.getCard(toolName, id);
 		if (card.isPlaced) {
-			this.unPlaceCard(tool, card);
+			this.unPlaceCard(toolName, id);
 		} else {
-			this.placeCard(tool, card);
+			this.placeCard(toolName, id);
 		}
+		this.setCard(toolName, id, "isPlaced", !card.isPlaced);
 		const metadata: ToolMetadata = {
-			cards: this.hand.find((i) => i.name === toolName).cards,
+			cards: this.getHand().find((i) => i.name === toolName).cards,
 		};
 		this.updateToolMetadata(toolName, metadata);
 	}
 
-	private placeCard(tool: HandType, card: CardType): void {
+	private placeCard(toolName: string, cardId: string): void {
 		this.setHand((prev) => {
 			const nList = [...prev];
 			const target = nList.find(
-				(i) => i.tool === tool.name && i.name === card.name,
+				(i) => i.tool === toolName && i.id === cardId,
 			);
 			if (target) target.isPlaced = true;
 			return nList;
 		});
-		card.isPlaced = true;
-		this.update();
 	}
 
-	private unPlaceCard(tool: HandType, card: CardType): void {
-		const toolInstance = this.toolMap.get(tool.name);
-		toolInstance?.onUnload(card.name);
+	private unPlaceCard(toolName: string, cardId: string): void {
+		const toolInstance = this.toolMap.get(toolName);
+		toolInstance?.onUnload(cardId);
 
 		this.setHand((prev) => {
 			const nList = [...prev];
 			const target = nList.find(
-				(i) => i.tool === tool.name && i.name === card.name,
+				(i) => i.tool === toolName && i.id === cardId,
 			);
 			if (target) target.isPlaced = false;
 			return nList;
 		});
-
-		card.isPlaced = false;
-		this.update();
 	}
 
 	async deleteCard(cardId: string, toolName: string): Promise<void> {
-		const { tool, card } = this.getToolAndCard(toolName, cardId);
-		if (!tool || !card) return;
-
+		const card = this.getCard(toolName, cardId);
 		const toolInstance = this.toolMap.get(toolName);
 		if (card.isPlaced) {
 			toolInstance?.onUnload(cardId);
 		}
-
 		await toolInstance?.onDelete(this.getICard(toolName, cardId));
+
+		const hand: HandType[] = this.getHand();
+		const tool = hand.find((i) => i.name === toolName);
 		tool.cards = tool.cards.filter((i) => i.id !== cardId);
+		this.store.set("__root__", hand);
 
 		this.setHand((prev) =>
 			prev.filter((i) => !(i.id === cardId && i.tool === toolName)),
@@ -365,20 +362,16 @@ export class ToolManager {
 		);
 		EntryManager.getSelf().removeEntry(entries.map((i) => i.id));
 
-		this.update();
 		this.updateToolMetadata(toolName, { cards: tool.cards });
 	}
 
 	changeEmoji(emoji: string, cardId: string, toolName: string): void {
-		const { tool, card } = this.getToolAndCard(toolName, cardId);
-		if (tool && card) {
-			card.emoji = emoji;
-			this.update();
-		}
+		this.setCard(toolName, cardId, "emoji", emoji);
 	}
 
 	addCard(name: string, toolName: string, emoji: string): void {
-		const { tool } = this.getToolAndCard(toolName);
+		const root: HandType[] = this.getHand();
+		const tool = root.find((i) => i.name === toolName);
 		if (tool.cards.some((i) => i.name === name)) {
 			hollow.events.emit("alert", {
 				type: "error",
@@ -415,24 +408,21 @@ export class ToolManager {
 		tool.cards = [...tool.cards, newCard];
 		this.toolMap.get(toolName)?.onCreate(this.getICard(toolName, id));
 
+		this.store.set("__root__", root);
 		const newOptCard: Opthand = {
 			...newCard,
 			tool: toolName,
 		};
 
 		this.setHand((prev) => [...prev, newOptCard]);
-		this.update();
 	}
 
-	changeKit(kit: KitType, card: string, tool: string): void {
-		const handTool = this.handMap.get(tool);
-		const targetCard = handTool?.cards.find((i) => i.name === card);
-		if (targetCard) {
-			targetCard.kit = kit;
-			this.update();
-		}
+	changeKit(kit: KitType, cardId: string, tool: string): void {
+		this.setCard(tool, cardId, "kit", kit);
+		// TODO editorKits???
 		const target = this.editorKits.find(
-			(i) => i.tool === tool && i.card === card,
+			(i) =>
+				i.tool === tool && i.card === this.getCard(tool, cardId).name,
 		);
 		if (target) {
 			target.it = kit;
@@ -443,15 +433,20 @@ export class ToolManager {
 		this.toolMap.get(toolName)?.toolEvent.emit("metadata", metadata);
 	}
 
-	private getToolAndCard(
-		toolName: string,
-		cardId?: string,
-	): { tool: HandType | undefined; card: CardType | undefined } {
-		const tool = this.handMap.get(toolName);
-		const card = cardId
-			? tool?.cards.find((card) => card.id === cardId)
-			: undefined;
-		return { tool, card };
+	private getCard(toolName: string, cardId: string): CardType {
+		const root = this.getHand();
+		return root
+			.find((i) => i.name === toolName)
+			.cards.find((i) => i.id === cardId);
+	}
+
+	private setCard(toolName: string, cardId: string, key: string, value: any) {
+		const root = this.getHand();
+		const tool = root.find((i) => i.name === toolName);
+		tool.cards = tool.cards.map((i) =>
+			i.id === cardId ? { ...i, [key]: value } : i,
+		);
+		this.store.set("__root__", root);
 	}
 
 	public getEditorKit(toolName: string, cardName: string) {
@@ -463,11 +458,7 @@ export class ToolManager {
 		this.editorKits.push(kit);
 	}
 
-	public getHand() {
-		return this.hand;
-	}
-
-	private update() {
-		localStorage.setItem(`${this.realm}-tools`, JSON.stringify(this.hand));
+	public getHand(): HandType[] {
+		return this.store.get("__root__");
 	}
 }

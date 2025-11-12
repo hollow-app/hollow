@@ -2,6 +2,9 @@ import { invoke } from "@tauri-apps/api/core";
 import { HandType } from "@type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
+import { RealmManager } from "./RealmManager";
+import { join } from "@tauri-apps/api/path";
+import { type } from "os";
 
 const PLUGIN_FILES = ["index.js", "manifest.json"] as const;
 
@@ -11,21 +14,13 @@ type FetchProps = {
 	responseType?: "json" | "text" | "blob";
 };
 
-type InstallPluginProps = {
+type AddPluginProps = {
 	name: string;
 	repo: string;
 };
 
-type UninstallPluginProps = {
+type RemovePluginProps = {
 	name: string;
-};
-
-type JoinProps = {
-	path: string[];
-};
-
-type OpenDirectoryProps = {
-	path: string[];
 };
 
 type vaultAddProps = {
@@ -37,9 +32,8 @@ type vaultRemoveProps = {
 	name: string;
 };
 
-type vaultRenameProps = {
-	name: string;
-	new_name: string;
+type startProps = {
+	location: string;
 };
 
 export class RustManager {
@@ -64,6 +58,16 @@ export class RustManager {
 		return await invoke("dbg");
 	}
 
+	async start_realm({ location }: startProps) {
+		return await invoke("start_realm", {
+			location,
+		});
+	}
+
+	async first_launch() {
+		invoke("first_launch");
+	}
+
 	reload(): void {
 		invoke("reload");
 	}
@@ -76,7 +80,7 @@ export class RustManager {
 		return await invoke("get_platform");
 	}
 
-	async get_unsigned_tools(): Promise<HandType[]> {
+	async get_unsigned_plugins(): Promise<HandType[]> {
 		const result: HandType[] = await invoke("get_unsigned_tools");
 		return [
 			...result.map((manifest) => ({
@@ -104,42 +108,34 @@ export class RustManager {
 		}
 	}
 
-	async install_plugin({ name, repo }: InstallPluginProps): Promise<any> {
+	async add_plugin({ name, repo }: AddPluginProps): Promise<any> {
 		let manifest = "";
-		const is_dir_created = await invoke("create_plugin_directory", {
-			name,
-		});
-		if (is_dir_created) {
-			for (let i = 0; i < 2; i++) {
-				try {
-					const response = await fetch(
-						`https://raw.githubusercontent.com/${repo}/main/${PLUGIN_FILES[i]}`,
-						{
-							headers: {
-								Accept: "application/vnd.github.v3+json",
-							},
+		for (let i = 0; i < 2; i++) {
+			try {
+				const response = await fetch(
+					`https://raw.githubusercontent.com/${repo}/main/${PLUGIN_FILES[i]}`,
+					{
+						headers: {
+							Accept: "application/vnd.github.v3+json",
 						},
-					);
+					},
+				);
 
-					const data = await response.text();
+				const data = await response.text();
 
-					// make file
-					if (i === 1) {
-						manifest = data;
-					} else {
-						invoke("create_plugin_file", {
-							pluginName: name,
-							fileName: "index.js",
-							content: data,
-						});
-					}
-				} catch (error) {
-					console.error("An error occurred:", error);
-					return { state: false };
+				// make file
+				if (i === 1) {
+					manifest = data;
+				} else {
+					invoke("add_plugin", {
+						pluginName: name,
+						content: data,
+					});
 				}
+			} catch (error) {
+				console.error("An error occurred:", error);
+				return { state: false };
 			}
-		} else {
-			return { state: false };
 		}
 		return {
 			state: true,
@@ -147,12 +143,8 @@ export class RustManager {
 		};
 	}
 
-	async uninstall_plugin({ name }: UninstallPluginProps): Promise<any> {
-		return await invoke("uninstall_plugin", { name });
-	}
-
-	async join({ path }: JoinProps): Promise<string> {
-		return await invoke("join", { path });
+	async remove_plugin({ name }: RemovePluginProps): Promise<any> {
+		return await invoke("remove_plugin", { name });
 	}
 
 	async load_plugin({
@@ -166,13 +158,6 @@ export class RustManager {
 		const indexJS: string = await invoke("read_file", {
 			path: fullPath,
 		});
-		// const { createRequire } = require("module");
-		// const requireFromHere = createRequire(__filename);
-		// const plugin = requireFromHere(fullPath);
-		// const classModule = plugin.default as new (
-		//         db: DataBase,
-		// ) => IPlugin;
-		// const instance = new classModule(db);
 		if (indexJS !== "none") {
 			const pluginWrapper = new Function("exports", "module", indexJS);
 			const module = {
@@ -201,15 +186,16 @@ export class RustManager {
 		return null;
 	}
 
-	async vault_add({ source, name }: vaultAddProps): Promise<string> {
-		return await invoke("vault_add", { source, name });
+	async vault_add(props: vaultAddProps): Promise<string> {
+		return await invoke("vault_add", props);
+	}
+	async vault_remove(props: vaultRemoveProps): Promise<string> {
+		return await invoke("vault_remove", props);
 	}
 
-	async vault_remove({ name }: vaultRemoveProps): Promise<string> {
-		return await invoke("vault_remove", { name });
-	}
-	async vault_rename({ name, new_name }: vaultRenameProps): Promise<string> {
-		return await invoke("vault_rename", { name, new_name });
+	// TODO is it needed?
+	async create_dir(props: { path: string }) {
+		return await invoke("create_dir", props);
 	}
 
 	close_window() {

@@ -1,16 +1,16 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
 import { RustManager } from "./RustManager";
+import { Storage } from "./Storage";
+import { appConfigDir, join } from "@tauri-apps/api/path";
 
 export class RealmManager {
-	public realms: Realm[] = [];
-	public currentRealmId: string = undefined;
+	public currentRealmId: string | null = null;
 	private setCurrentRealm: Setter<string> = null;
 	private static self: RealmManager;
+	private store: Storage;
 
 	private constructor() {
-		const savedRealms = localStorage.getItem("realms") ?? "[]";
-		this.realms = JSON.parse(savedRealms);
 		this.currentRealmId = localStorage.currentRealmId;
 	}
 	static getSelf() {
@@ -19,50 +19,51 @@ export class RealmManager {
 		}
 		return this.self;
 	}
-	getCurrent<T extends boolean | undefined>(
-		obj?: T,
-	): T extends true ? Realm : string {
-		if (obj) {
-			return this.realms.find((i) => i.id === this.currentRealmId) as any;
-		}
-		return this.currentRealmId as any;
+
+	async start() {
+		const path = await join(...[await appConfigDir(), "realms.json"]);
+		this.store = await Storage.create(path, { defaults: { __root__: [] } });
+	}
+
+	getCurrent(): Realm | undefined {
+		return this.getRealms().find((i) => i.id === this.currentRealmId);
 	}
 	public init(setCurrentRealm: Setter<string>) {
 		this.setCurrentRealm = setCurrentRealm;
 	}
 
-	public async enterRealm(realmId: string, ignoreReload?: boolean) {
+	public async enterRealm(realmId: string, reload?: boolean) {
 		this.currentRealmId = realmId;
 		localStorage.currentRealmId = realmId;
-		this.setCurrentRealm(realmId);
-		// reload the app or open it in a new window.
-		ignoreReload && RustManager.getSelf().reload();
+		await RustManager.getSelf().start_realm({
+			location: this.getCurrent().location,
+		});
+		reload ? RustManager.getSelf().reload() : this.setCurrentRealm(realmId);
 	}
 	public addRealm(nRealm: Realm) {
-		this.realms.push(nRealm);
-		this.update();
+		const realms = this.getRealms();
+		realms.push(nRealm);
+		this.store.set("__root__", realms);
 	}
 	public removeRealm(realmId: string) {
-		this.realms = this.realms.filter((i) => i.id !== realmId);
+		const realms = this.getRealms().filter((i) => i.id !== realmId);
 		if (realmId === this.currentRealmId) {
 			this.enterRealm(null);
 		}
-		this.update();
+		this.store.set("__root__", realms);
 		localStorage.removeItem(`${realmId}-color-primary`);
 		localStorage.removeItem(`${realmId}-color-secondary`);
 		localStorage.removeItem(`${realmId}-canvas`);
-		localStorage.removeItem(`${realmId}-tools`);
-	}
-
-	private update() {
-		localStorage.setItem("realms", JSON.stringify(this.realms));
 	}
 
 	public updateColors(obj: any) {
-		const realm = this.getCurrent(true);
+		const realm = this.getCurrent();
 		if (realm) {
 			realm.colors = { ...realm.colors, ...obj };
 		}
+		const realms = this.getRealms();
+		realms.find((i) => i.id === this.currentRealmId).colors = realm.colors;
+		this.store.set("__root__", realms);
 	}
 
 	public toggleRealm() {
@@ -71,6 +72,9 @@ export class RealmManager {
 		);
 	}
 	public getRealmFromId(id: string) {
-		return this.realms.find((i) => i.id === id);
+		return this.getRealms().find((i) => i.id === id);
+	}
+	public getRealms(): Realm[] {
+		return this.store.get("__root__");
 	}
 }

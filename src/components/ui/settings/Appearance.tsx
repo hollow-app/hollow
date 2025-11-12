@@ -174,7 +174,7 @@ function GridSettings({ settingsManager }: CommonSettings) {
 }
 
 function ColorSettings() {
-	const realm = createMemo(() => RealmManager.getSelf().getCurrent());
+	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
 	const primaryColor = createMemo(
 		() =>
 			JSON.parse(localStorage.getItem(`${realm()}-color-primary`))

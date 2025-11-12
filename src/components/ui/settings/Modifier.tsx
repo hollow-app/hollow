@@ -11,7 +11,7 @@ export default function Modifier() {
 	const [key, setKey] = createSignal("");
 	const [value, setValue] = createSignal("");
 	const [error, setError] = createSignal("");
-	const realm = createMemo(() => RealmManager.getSelf().getCurrent());
+	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
 
 	const handleKeyChange = (
 		e: Event & { currentTarget: HTMLInputElement },

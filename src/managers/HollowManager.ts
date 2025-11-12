@@ -1,3 +1,4 @@
+import { warn, debug, trace, info, error } from "@tauri-apps/plugin-log";
 import { hollow } from "hollow";
 import { CharacterManager } from "./CharacterManager";
 import VaultManager from "./VaultManager";
@@ -38,14 +39,38 @@ export class HollowManager {
 			this.isOnline = true;
 			hollow.events.emit("network-state", true);
 		});
+		// logging
+		const logMap = {
+			log: trace,
+			debug,
+			info,
+			warn,
+			error,
+		} as const;
+		type ConsoleMethod = keyof typeof logMap;
+		for (const method of Object.keys(logMap) as ConsoleMethod[]) {
+			const original = console[method].bind(console);
+			const forward = logMap[method];
+			console[method] = (...args: unknown[]) => {
+				original(...args);
+				const message = args
+					.map((a) =>
+						typeof a === "object"
+							? JSON.stringify(a, null, 2)
+							: String(a),
+					)
+					.join(" ");
+				void forward(message);
+			};
+		}
 	}
 
 	async preRealmSelection() {
 		if (!localStorage.realmToggleOnStartup) {
 			localStorage.realmToggleOnStartup = "false";
-			// await mkdir("plugins", { baseDir: BaseDirectory.AppData });
-			// await mkdir("vault", { baseDir: BaseDirectory.AppData });
+			await RustManager.getSelf().first_launch();
 		}
+		await RealmManager.getSelf().start();
 		hotkeysManager.init();
 		await VaultManager.getSelf().start();
 		await CharacterManager.getSelf().start();
@@ -59,11 +84,12 @@ export class HollowManager {
 		const devData = this.handleDev();
 		//
 		hollow.toolManager = await ToolManager.create(devData.loadunsigned);
+		await SettingsManager.getSelf().start();
+		await EntryManager.getSelf().start();
+		await MarkdownManager.getSelf().start();
 		NotifyManager.init();
 		CodeThemeManager.init();
 		// DeepLinkManager.init();
-		await EntryManager.getSelf().start();
-		await MarkdownManager.getSelf().start();
 		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });
@@ -98,7 +124,7 @@ export class HollowManager {
 	}
 
 	private handleDev() {
-		const key = `${RealmManager.getSelf().getCurrent()}-dev`;
+		const key = `${RealmManager.getSelf().currentRealmId}-dev`;
 		const savedData: string | undefined = localStorage.getItem(key);
 		let iniData = {
 			devtools: false,

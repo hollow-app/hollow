@@ -5,6 +5,8 @@ import {
 	HollowEvent,
 	ICard,
 	IPlugin,
+	IStore,
+	ToolEvents,
 } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
@@ -15,25 +17,25 @@ const Image = lazy(() => import("./Image"));
 
 export class ImageMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
-	private db: DataBase = null;
+	private store: IStore = null;
 
-	constructor(app: HollowEvent<AppEvents>) {
-		this.getDB(app);
+	constructor(toolEvent: HollowEvent<ToolEvents>) {
+		this.store = toolEvent.getCurrentData("config");
 	}
 
 	async onCreate(card: ICard): Promise<boolean> {
-		await this.db.putData("images", card.id, {
+		this.store.set(card.id, {
 			url: "",
 			caption: "",
 			alt: "",
 			objectFit: "contain",
 			position: { x: 50, y: 50 },
-		} as ImageType);
+		});
 		return true;
 	}
 
 	async onDelete(card: ICard): Promise<boolean> {
-		await this.db.deleteData("images", card.id);
+		this.store.remove(card.id);
 		return true;
 	}
 
@@ -41,10 +43,10 @@ export class ImageMain implements IPlugin {
 		const targetContainer = document.getElementById(card.id);
 
 		if (targetContainer && !this.roots.has(card.id)) {
-			const data: ImageType = await this.db.getData("images", card.id);
+			const data: ImageType = this.store.get(card.id);
 			const dispose = createRoot((dispose) => {
 				render(
-					() => <Image db={this.db} card={card} data={data} />,
+					() => <Image store={this.store} card={card} data={data} />,
 					targetContainer,
 				);
 				return dispose;
@@ -62,19 +64,5 @@ export class ImageMain implements IPlugin {
 			dispose();
 			this.roots.delete(id);
 		}
-	}
-
-	private getDB(app: HollowEvent<AppEvents>) {
-		const request: DataBaseRequest = {
-			pluginName: "imageDB",
-			version: 1,
-			stores: [
-				{
-					name: "images",
-				},
-			],
-			callback: (db) => (this.db = db),
-		};
-		app.emit("database", request);
 	}
 }

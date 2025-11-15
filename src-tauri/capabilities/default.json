@@ -18,38 +18,47 @@
 		"dialog:allow-ask",
 		"store:default",
 		"tcp:default",
+		"log:allow-log",
 		"fs:default",
 		{
+			"identifier": "fs:allow-watch",
+			"allow": [{ "path": "$HOME/**" }]
+		},
+		{
+			"identifier": "fs:allow-read-dir",
+			"allow": [{ "path": "$HOME/**" }]
+		},
+		{
 			"identifier": "fs:allow-exists",
-			"allow": [
-				{ "path": "$APPDATA/*" },
-				{ "path": "$APPCONFIG/hollow/*" }
-			]
+			"allow": [{ "path": "$HOME/**" }]
 		},
 		{
 			"identifier": "fs:allow-open",
-			"allow": [
-				{ "path": "$APPDATA/*" },
-				{ "path": "$APPCONFIG/hollow/*" }
-			]
+			"allow": [{ "path": "$HOME/**" }]
 		},
 		{
 			"identifier": "fs:allow-mkdir",
-			"allow": [{ "path": "$APPDATA/*" }, { "path": "$APPCONFIG/*" }]
-		},
-		{
-			"identifier": "fs:allow-read-file",
-			"allow": [
-				{ "path": "$APPDATA/*" },
-				{ "path": "$APPCONFIG/hollow/*" }
-			]
+			"allow": [{ "path": "$HOME/**" }]
 		},
 		{
 			"identifier": "fs:allow-remove",
-			"allow": [
-				{ "path": "$APPDATA/*" },
-				{ "path": "$APPCONFIG/hollow/*" }
-			]
+			"allow": [{ "path": "$HOME/**" }]
+		},
+		{
+			"identifier": "fs:allow-read-file",
+			"allow": [{ "path": "$HOME/**" }]
+		},
+		{
+			"identifier": "fs:allow-write-file",
+			"allow": [{ "path": "$HOME/**" }]
+		},
+		{
+			"identifier": "fs:allow-read-text-file",
+			"allow": [{ "path": "$HOME/**" }]
+		},
+		{
+			"identifier": "fs:allow-write-text-file",
+			"allow": [{ "path": "$HOME/**" }]
 		}
 	]
 }

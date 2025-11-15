@@ -1,5 +1,4 @@
 import KanbanItem from "@coretools/Kanban/components/Item";
-import Footer from "@coretools/Kanban/components/Footer";
 import Sortable from "@components/Sortable";
 import {
 	closestCenter,
@@ -12,22 +11,12 @@ import {
 import {
 	ContextMenuItem,
 	FormType,
-	HollowEvent,
 	ICard,
 	ToolOptions,
 	TagType,
 	EntryType,
-	AppEvents,
 } from "@type/hollow";
-import {
-	Accessor,
-	createMemo,
-	createSignal,
-	For,
-	onCleanup,
-	onMount,
-	Show,
-} from "solid-js";
+import { createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 import { ColumnType } from "../types/ColumnType";
 import { KanbanManager } from "../KanbanManager";
@@ -132,7 +121,7 @@ export default function Column({ card, data }: ColumnProps) {
 					label: "Title",
 					description: "Change Column Title",
 					value: kanban().name,
-					onChange: (v: string) =>
+					onAction: (v: string) =>
 						setKanban((prev) => ({
 							...prev,
 							name: v,
@@ -143,7 +132,7 @@ export default function Column({ card, data }: ColumnProps) {
 					label: "Accent Color",
 					description: "Change The Column's Accent Color",
 					value: kanban().accent,
-					onChange: (c: string) =>
+					onAction: (c: string) =>
 						setKanban((prev) => ({
 							...prev,
 							accent: c,
@@ -154,7 +143,7 @@ export default function Column({ card, data }: ColumnProps) {
 					label: "Max Items",
 					description: "Max Number of items",
 					value: kanban().max,
-					onChange: (v: number) =>
+					onAction: (v: number) =>
 						setKanban((prev) => ({
 							...prev,
 							max: v,
@@ -230,7 +219,7 @@ export default function Column({ card, data }: ColumnProps) {
 					label: `Delete (${nSelected})`,
 					onclick: () => {
 						card.app.emit("confirm", {
-							type: "Warning",
+							title: "Warning",
 							message: `You sure you want to remove (${nSelected}) items`,
 							onAccept: () => {
 								removeSelected();

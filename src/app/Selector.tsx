@@ -76,7 +76,7 @@ const useRealmManager = () => {
 			setRealms((prev) => prev.filter((r) => r.id !== id));
 		};
 		hollow.events.emit("confirm", {
-			type: "warning",
+			title: "warning",
 			message: `Are you sure you want to remove ${RealmManager.getSelf().getRealmFromId(id)?.name} Realm?`,
 			onAccept: handleDecision,
 		});
@@ -313,6 +313,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 			multiple: false,
 			title: "Select Realm Location",
 		});
+		// TODO check if path in inside $HOME
 		setLocation(path);
 	};
 

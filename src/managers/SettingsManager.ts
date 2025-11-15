@@ -33,8 +33,11 @@ export class SettingsManager {
 				"settings.json",
 			],
 		);
-		this.store = await Storage.create(path, {
-			defaults: JSON.parse(DEFAULT),
+		this.store = await Storage.create({
+			path,
+			options: {
+				defaults: JSON.parse(DEFAULT),
+			},
 		});
 	}
 

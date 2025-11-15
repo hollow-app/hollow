@@ -1,13 +1,29 @@
 import { VaultItem } from "@type/VaultItem";
 import { RustManager } from "./RustManager";
+import { Storage } from "./Storage";
+import { join } from "@tauri-apps/api/path";
+import { RealmManager } from "./RealmManager";
+import { hollow } from "hollow";
+import { convertFileSrc } from "@tauri-apps/api/core";
 
 export default class VaultManager {
-	private db: Promise<IDBDatabase> = this.openDB();
-	private vault: VaultItem[] = [];
 	private static self: VaultManager;
+	private store: Storage;
 
 	public async start() {
-		this.vault = (await this.getFromDB()) ?? [];
+		const path = await join(
+			...[
+				RealmManager.getSelf().getCurrent().location,
+				".hollow",
+				"vault.json",
+			],
+		);
+		this.store = await Storage.create({
+			path,
+			options: {
+				defaults: { __root__: [] },
+			},
+		});
 	}
 
 	static getSelf() {
@@ -17,85 +33,97 @@ export default class VaultManager {
 		return this.self;
 	}
 
-	public getVault() {
-		return this.vault;
+	public getVault(): VaultItem[] {
+		return this.store.get("__root__");
 	}
 
 	public async editItem(editedParts: any) {
-		const db = await this.db;
-		return new Promise<void>((resolve, reject) => {
-			const tx = db.transaction("vault", "readwrite");
-			const store = tx.objectStore("vault");
-			const getReq = store.get(editedParts.id);
-			getReq.onsuccess = () => {
-				const existing = getReq.result;
-				if (existing) {
-					const updated = { ...existing, ...editedParts };
-					const putReq = store.put(updated);
-					putReq.onsuccess = () => resolve();
-					putReq.onerror = () => reject(putReq.error);
-				} else {
-					reject(new Error("Item not found"));
-				}
-			};
-			getReq.onerror = () => reject(getReq.error);
+		const vault: VaultItem[] = this.getVault().map((i) =>
+			i.url === editedParts.url ? { ...i, ...editedParts } : i,
+		);
+		this.store.set("__root__", vault);
+	}
+	public async addUrlItem(image: string) {
+		const urlItem: VaultItem = {
+			url: image,
+			name: "unamed",
+			type: "image",
+			uploadedAt: new Date(),
+		};
+
+		this.store.set("__root__", [
+			...(this.store.get("__root__") as VaultItem[]),
+			urlItem,
+		]);
+		hollow.events.emit("alert", {
+			type: "success",
+			title: "Vault",
+			message: `added 1 image`,
 		});
 	}
-
-	public async addItem(item: VaultItem, source: string) {
-		this.vault = [...this.vault, { ...item }];
-		this.addToDB(item);
-		await RustManager.getSelf().vault_add({
-			source: source,
-			name: `${item.id}.${item.type}`,
-		});
+	public async addItems(images: string[]) {
+		if (images.length > 0) {
+			const removeAlert = hollow.events.emit("alert", {
+				type: "loading",
+				title: "Vault",
+				message: `adding ${images.length} images`,
+			});
+			const addedImagesPaths: string[] =
+				await RustManager.getSelf().vault_add({
+					paths: images,
+				});
+			removeAlert();
+			hollow.events.emit("alert", {
+				type: addedImagesPaths.length > 0 ? "success" : "warning",
+				title: "Vault",
+				message: `added ${addedImagesPaths.length} images`,
+			});
+			const asVaultItems: VaultItem[] = addedImagesPaths.map((i) => {
+				return {
+					path: i,
+					url: convertFileSrc(i),
+					name: "unamed",
+					type: "image",
+					uploadedAt: new Date(),
+				};
+			});
+			this.store.set("__root__", [
+				...(this.store.get("__root__") as VaultItem[]),
+				...asVaultItems,
+			]);
+		}
 	}
 
-	public async removeItem(id: string) {
-		const target = this.vault.find((i) => i.id === id);
-		const full_name = `${target.id}.${target.type}`;
-		await RustManager.getSelf().vault_remove({ name: full_name });
-		const db = await this.db;
-		return new Promise<void>((resolve, reject) => {
-			const tx = db.transaction("vault", "readwrite");
-			const store = tx.objectStore("vault");
-			const req = store.delete(id);
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
-		});
+	public async removeItems(urls: string[]) {
+		const paths = (this.store.get("__root__") as VaultItem[])
+			.filter((i) => urls.includes(i.url) && !i.url.startsWith("https"))
+			.map((i) => i.path);
+		if (paths.length > 0) {
+			const targetFiles = paths
+				.filter((i) => !i.startsWith("https"))
+				.map((i) => this.getNameFromPath(i));
+			void (await RustManager.getSelf().vault_remove({
+				names: targetFiles,
+			}));
+		}
+		this.store.set("__root__", [
+			...(this.store.get("__root__") as VaultItem[]).filter(
+				(i) => !urls.includes(i.url),
+			),
+		]);
+	}
+	private getNameFromPath(filePath: string): string {
+		const parts = filePath.split(/[/\\]/);
+		return parts[parts.length - 1];
 	}
 
-	private openDB(): Promise<IDBDatabase> {
-		return new Promise((resolve, reject) => {
-			const request = indexedDB.open("vault", 1);
-			request.onupgradeneeded = () => {
-				const db = request.result;
-				db.createObjectStore("vault", { keyPath: "id" });
-			};
-			request.onsuccess = () => resolve(request.result);
-			request.onerror = () => reject(request.error);
-		});
+	private watcherFileAdded(path: string) {
+		console.log("file added", path);
 	}
-
-	private async getFromDB<T>(): Promise<any> {
-		const db = await this.db;
-		return new Promise((resolve, reject) => {
-			const tx = db.transaction("vault", "readonly");
-			const store = tx.objectStore("vault");
-			const req = store.getAll();
-			req.onsuccess = () => resolve(req.result ?? null);
-			req.onerror = () => reject(req.error);
-		});
+	private watcherFileRemoved(path: string) {
+		console.log("file removed", path);
 	}
-
-	private async addToDB<T>(value: T): Promise<void> {
-		const db = await this.db;
-		return new Promise((resolve, reject) => {
-			const tx = db.transaction("vault", "readwrite");
-			const store = tx.objectStore("vault");
-			const req = store.add(value);
-			req.onsuccess = () => resolve();
-			req.onerror = () => reject(req.error);
-		});
+	private watcherFileRenamed(paths: string[]) {
+		console.log("file renamed", paths);
 	}
 }

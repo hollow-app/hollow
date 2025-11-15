@@ -1,9 +1,8 @@
 export type VaultItem = {
-	id: string;
-	realm?: string;
-	name: string;
-	type: string;
-	path: string;
+	path?: string;
+	url: string;
+	name?: string;
+	type?: string;
 	tags?: string[];
 	uploadedAt: Date;
 };

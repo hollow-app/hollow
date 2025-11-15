@@ -35,12 +35,12 @@ export type ICard = {
 	/**
 	 * The HollowEvent instance of the whole app.
 	 */
-	app: HollowEvent<AppEvents>;
+	app: HollowEvent<AppEvents, AppEventReturns>;
 
 	/**
 	 * The HollowEvent instance for cards of the same tool to interacting with each other.
 	 */
-	toolEvent: HollowEvent<ToolEvents>;
+	toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
 } & Omit<CardType, "kit">;
 
 // A type representing an event listener callback.
@@ -48,41 +48,57 @@ type Listener<T> = (data?: T) => void;
 
 /**
  * Represents a generic, type-safe event system for the app.
- * Each instance of HollowEvent can have its own set of predefined events with specific payload types.
- * If no EventMap is provided, all event names are allowed and payloads can be any type.
+ * Each instance of HollowEvent can have its own set of predefined events with specific payload and return types.
+ * If no EventMap is provided, all event names are allowed and payloads/returns can be any type.
+ *
+ * @template EventMap - mapping of event name -> payload type
+ * @template ReturnMap - mapping of event name -> return type for listeners (defaults to `void` for every event)
  */
 export type HollowEvent<
 	EventMap extends Record<string, any> = Record<string, any>,
+	ReturnMap extends Record<keyof EventMap, any> = {
+		[K in keyof EventMap]: void;
+	},
 > = {
 	/**
 	 * Registers a listener for a specific event.
+	 * The listener can optionally return a value (e.g., a callback function).
+	 *
 	 * @param eventName - The name of the event.
 	 * @param listener - The callback to invoke when the event is emitted.
 	 */
 	on<K extends keyof EventMap>(
 		eventName: K,
-		listener: (data: EventMap[K]) => void,
+		listener: (data: EventMap[K]) => ReturnMap[K] | void,
 	): void;
 
 	/**
 	 * Unregisters a listener for a specific event.
+	 *
 	 * @param eventName - The name of the event.
 	 * @param listener - The callback to remove.
 	 */
 	off<K extends keyof EventMap>(
 		eventName: K,
-		listener: (data: EventMap[K]) => void,
+		listener: (data: EventMap[K]) => ReturnMap[K] | void,
 	): void;
 
 	/**
 	 * Emits an event, optionally passing data to the listeners.
+	 * If a listener returns a non-null/undefined value, that value is returned (first one wins).
+	 *
 	 * @param eventName - The name of the event.
 	 * @param data - The data to pass to the listeners.
+	 * @returns The first non-null/undefined value returned by a listener, or undefined.
 	 */
-	emit<K extends keyof EventMap>(eventName: K, data: EventMap[K]): void;
+	emit<K extends keyof EventMap>(
+		eventName: K,
+		data: EventMap[K],
+	): ReturnMap[K] | undefined;
 
 	/**
 	 * Retrieves the current data for a specific event.
+	 *
 	 * @param eventName - The name of the event.
 	 * @returns The current data associated with the event, or undefined.
 	 */
@@ -92,6 +108,7 @@ export type HollowEvent<
 
 	/**
 	 * Clears all listeners for a specific event.
+	 *
 	 * @param eventName - The name of the event to clear.
 	 */
 	clear<K extends keyof EventMap>(eventName: K): void;
@@ -100,6 +117,7 @@ export type HollowEvent<
 	 * Toggles the boolean state of an event.
 	 * This is intended for events that store a boolean value, switching it between `true` and `false`.
 	 * If the event does not store a boolean, this method will have no effect.
+	 *
 	 * @param eventName - The name of the event whose boolean state is to be toggled.
 	 */
 	toggle<K extends keyof EventMap>(eventName: K): void;
@@ -120,16 +138,30 @@ export type AppEvents = {
 	insight: InsightType;
 	"network-state": boolean;
 	alert: AlertType;
+	store: (props: StoreType) => Promise<IStore>;
+} & {
+	[key: string]: any;
+};
+export type AppEventReturns = {
+	alert: (() => void) | null;
 } & {
 	[key: string]: any;
 };
 
 export type ToolEvents = {
 	metadata: { cards: CardType[] };
+	store: IStore;
+	"cards-fs": { [cardName: string]: CardFs };
+	"get-store": { cardName: string; store: StoreType };
 } & {
 	[key: string]: any;
 };
 
+export type ToolEventReturns = {
+	"get-store": () => Promise<IStore>;
+} & {
+	[key: string]: any;
+};
 /**
  * Represents an advanced IndexedDB-like database interface.
  * Supports multiple object stores, indexed queries, and management utilities.
@@ -274,17 +306,19 @@ export type NotifyType = {
 	type: "achievement" | "reminder" | "error" | "warning" | "update";
 };
 
-export type AlertType = {
-	type?: "success" | "error" | "warning" | "info";
-	title?: string;
-	message?: string;
-	button?: {
-		label: string;
-		callback: () => void;
-	};
-	onTimeOut?: () => void;
-	duration?: number; //ms
-};
+export type AlertType =
+	| {
+			type?: "success" | "error" | "warning" | "info";
+			title?: string;
+			message: string;
+			button?: {
+				label: string;
+				callback: () => void;
+			};
+			onTimeOut?: () => void;
+			duration?: number; //ms
+	  }
+	| { type: "loading"; title?: string; message: string };
 /**
  * Represents a visual tag with a name and color scheme.
  */
@@ -435,7 +469,7 @@ type ToolOptionBase = {
 	/**
 	 * Called whenever the setting value changes.
 	 */
-	onChange: (v: any) => void;
+	onAction: (v?: any) => void;
 };
 
 /**
@@ -623,7 +657,7 @@ export type CardType = {
 };
 
 export type ConfirmType = {
-	type: string;
+	title: string;
 	message: string;
 	onAccept: () => void;
 	accLabel?: string;
@@ -642,4 +676,44 @@ export type InsightType = {
 		tool: string;
 		card: string;
 	};
+};
+
+export type StoreType = {
+	path: string;
+	options?: {
+		defaults: {
+			[key: string]: unknown;
+		};
+		autoSave?: boolean | number;
+		serializeFnName?: string;
+		deserializeFnName?: string;
+		createNew?: boolean;
+		overrideDefaults?: boolean;
+	};
+};
+
+export type IStore = {
+	getData: () => T;
+
+	get: (key: string, defaultValue?: T) => T | undefined;
+
+	set: (key: string, value: any) => void;
+
+	remove: (key: string) => void;
+
+	keys: () => string[];
+
+	save: () => Promise<void>;
+
+	reload: () => Promise<void>;
+};
+
+export type CardFs = {
+	exists(path: string): Promise<boolean>;
+	readFile(path: string): Promise<string>;
+	writeFile(path: string, contents: string): Promise<void>;
+	mkdir(path: string): Promise<void>;
+	readDir(path?: string): Promise<DirEntry[]>;
+	remove(path: string): Promise<void>;
+	rename(path: string, newPath: string): Promise<void>;
 };

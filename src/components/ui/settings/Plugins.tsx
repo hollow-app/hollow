@@ -40,7 +40,7 @@ export default function Plugins({}: PluginsProps) {
 		if (!unverified()) {
 			e.preventDefault();
 			hollow.events.emit("confirm", {
-				type: "warning",
+				title: "warning",
 				message:
 					"Installing unverified plugins may pose security risks.\nOnly install plugins that you trust and are sure are safe.",
 

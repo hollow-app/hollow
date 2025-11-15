@@ -1,4 +1,4 @@
-import { ICard, IPlugin } from "@type/hollow";
+import { HollowEvent, ICard, IPlugin, IStore, ToolEvents } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
@@ -10,6 +10,9 @@ const Notebook = lazy(() => import("./Notebook"));
 export class NotebookMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
 
+	constructor(toolEvent: HollowEvent<ToolEvents>) {
+		NotebookManager.getSelf().init(toolEvent);
+	}
 	async onCreate(card: ICard): Promise<boolean> {
 		const book: NotebookType = {
 			id: card.id,
@@ -17,7 +20,7 @@ export class NotebookMain implements IPlugin {
 			last: null,
 			structure: defaultStruture,
 		};
-		NotebookManager.getSelf().addNotebook(book);
+		NotebookManager.getSelf().setNotebook(book);
 		return true;
 	}
 
@@ -29,12 +32,8 @@ export class NotebookMain implements IPlugin {
 	async onLoad(card: ICard): Promise<boolean> {
 		const targetContainer = document.getElementById(card.id);
 		if (targetContainer && !this.roots.has(card.id)) {
-			const book: NotebookType = {
-				...(await NotebookManager.getSelf().getNotebook(card.id)),
-				notes: await NotebookManager.getSelf().getNotesForNotebook(
-					card.id,
-				),
-			};
+			const book: NotebookType =
+				await NotebookManager.getSelf().getNotebook(card.id, card.name);
 			const dispose = createRoot((dispose) => {
 				render(
 					() => <Notebook card={card} noteBook={book} />,
@@ -60,7 +59,12 @@ export class NotebookMain implements IPlugin {
 	}
 }
 
-const defaultStruture = `# Title
+const defaultStruture = `---
+title: Note
+tags: hollow, nature
+---
+
+# Title
 
 **Date:** YYYY-MM-DD  
 

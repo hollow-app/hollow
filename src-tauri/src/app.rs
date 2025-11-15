@@ -25,11 +25,12 @@ pub fn start_realm(
         create_dir_internal(".hollow", &state)?;
         create_dir_internal("vault", &state)?;
         create_dir_internal("plugins", &state)?;
+        create_dir_internal("main", &state)?;
     }
     {
         let assets_scope = app.asset_protocol_scope();
         let vault_dir = get_full_path("vault", &state)?;
-        let _ = assets_scope.allow_directory(vault_dir, false);
+        let _ = assets_scope.allow_directory(vault_dir, true);
     }
 
     log::info!("Initialized realm data");

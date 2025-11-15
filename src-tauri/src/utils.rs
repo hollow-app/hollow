@@ -17,9 +17,10 @@ pub fn create_dir_internal(path: &str, state: &State<'_, Mutex<AppData>>) -> Res
     if !full_path.exists() {
         fs::create_dir_all(&full_path).map_err(|e| e.to_string())?;
         log::info!("Directory created: {}", full_path.display());
-    } else {
-        log::info!("Directory already exists: {}", full_path.display());
     }
+    // else {
+    //     log::info!("Directory already exists: {}", full_path.display());
+    // }
     Ok(())
 }
 
@@ -44,8 +45,11 @@ pub fn first_launch(app: AppHandle) {
     }
 }
 #[command]
-pub fn create_dir(path: String, state: State<'_, Mutex<AppData>>) -> Result<(), String> {
-    create_dir_internal(&path, &state)
+pub fn create_dir(paths: Vec<String>, state: State<'_, Mutex<AppData>>) -> Result<(), String> {
+    for path in paths {
+        create_dir_internal(&path, &state)?
+    }
+    Ok(())
 }
 
 #[command]

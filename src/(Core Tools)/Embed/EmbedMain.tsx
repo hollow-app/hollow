@@ -5,6 +5,8 @@ import {
 	HollowEvent,
 	ICard,
 	IPlugin,
+	IStore,
+	ToolEvents,
 } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
@@ -17,30 +19,30 @@ export type EmbedData = {
 };
 
 export class EmbedMain implements IPlugin {
-	private db: DataBase = null;
 	private roots: Map<string, () => void> = new Map();
+	private store: IStore = null;
 
-	constructor(app: HollowEvent<AppEvents>) {
-		this.getDB(app);
+	constructor(toolEvent: HollowEvent<ToolEvents>) {
+		this.store = toolEvent.getCurrentData("config");
 	}
 
 	async onCreate(card: ICard): Promise<boolean> {
-		this.db.putData("cards", card.id, { src: null });
+		this.store.set(card.id, { src: null });
 		return true;
 	}
 
 	async onDelete(card: ICard): Promise<boolean> {
-		this.db.deleteData("cards", card.id);
+		this.store.remove(card.id);
 		return true;
 	}
 
 	async onLoad(card: ICard): Promise<boolean> {
-		const data: EmbedData = await this.db.getData("cards", card.id);
+		const data: EmbedData = this.store.get(card.id);
 		const targetContainer = document.getElementById(card.id);
 		if (targetContainer && !this.roots.has(card.id)) {
 			const dispose = createRoot((dispose) => {
 				render(
-					() => <Embed data={data} db={this.db} card={card} />,
+					() => <Embed data={data} store={this.store} card={card} />,
 					targetContainer,
 				);
 				return dispose;
@@ -56,19 +58,5 @@ export class EmbedMain implements IPlugin {
 			dispose();
 			this.roots.delete(id);
 		}
-	}
-
-	private getDB(app: HollowEvent<AppEvents>) {
-		const request: DataBaseRequest = {
-			pluginName: "embedDB",
-			version: 1,
-			stores: [
-				{
-					name: "cards",
-				},
-			],
-			callback: (db) => (this.db = db),
-		};
-		app.emit("database", request);
 	}
 }

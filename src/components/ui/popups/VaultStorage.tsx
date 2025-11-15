@@ -3,11 +3,10 @@ import VaultManager from "@managers/VaultManager";
 import { FormType, FormOption } from "@type/hollow";
 import { VaultItem } from "@type/VaultItem";
 import { createSignal, For, Show } from "solid-js";
-import { appDataDir, join } from "@tauri-apps/api/path";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import {
 	CopyIcon,
 	ImageUpIcon,
+	LinkIcon,
 	PencilIcon,
 	SearchIcon,
 	Trash2Icon,
@@ -15,6 +14,7 @@ import {
 import PopupWrapper from "../PopupWrapper";
 import { hollow } from "hollow";
 import FilterButton from "@components/FilterButton";
+import { open } from "@tauri-apps/plugin-dialog";
 
 type VaultStorageProps = {
 	onSelect?: (p: string) => void;
@@ -30,77 +30,68 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 	const [filter, setFilter] = createSignal<{
 		search: string;
 		tags: string[];
-		types: string[];
-	}>({ search: "", tags: [], types: [] });
+	}>({ search: "", tags: [] });
 
-	const addItem = () => {
-		const save = async (data: any) => {
-			const appData = await appDataDir();
-			const type = data.path.split(".").pop();
-			const item: VaultItem = {
-				id: data.id,
-				type: type,
-				name: data.name,
-				path: convertFileSrc(
-					await join(appData, "vault", `${data.id}.${type}`),
-				),
-				tags: data.tags ?? [],
-				uploadedAt: new Date(),
-			};
-			await VaultManager.getSelf().addItem(item, data.path);
-			setImages((prev) => [...prev, item]);
-		};
-		submitForm(save);
+	const importImages = async () => {
+		const images = await open({
+			multiple: true,
+			title: "Select Image/s",
+			filters: [
+				{
+					name: "Images",
+					extensions: ["png", "jpg", "jpeg", "gif", "webp"],
+				},
+			],
+		});
+		await VaultManager.getSelf().addItems(images);
+		setImages(VaultManager.getSelf().getVault());
+	};
+	const importImageFromLink = async (imageUrl: string) => {
+		await VaultManager.getSelf().addUrlItem(imageUrl);
+		setImages(VaultManager.getSelf().getVault());
 	};
 
 	const copyItem = () => {
-		navigator.clipboard.writeText(selectedItem().path);
+		navigator.clipboard.writeText(selectedItem().url);
 	};
 
 	const editItem = () => {
-		const id = selectedItem().id;
+		const { path, url } = selectedItem();
 		const save = async (data: any) => {
-			await VaultManager.getSelf().editItem({ ...data, id });
+			const { id, ...wantedData } = data;
+			await VaultManager.getSelf().editItem({ ...wantedData, path, url });
 			setImages((prev) =>
-				prev.map((i) => (i.id === id ? { ...i, ...data } : i)),
+				prev.map((i) => (i.url === url ? { ...i, ...wantedData } : i)),
 			);
-			setSelectedItem((prev) => ({ ...prev, ...data }));
+			setSelectedItem((prev) => ({ ...prev, ...wantedData }));
 		};
-		submitForm(save, id);
+		submitForm(save, url);
 	};
 
 	const removeItem = () => {
 		hollow.events.emit("confirm", {
-			type: `Delete ${selectedItem().name}`,
+			title: `Delete ${selectedItem().name}`,
 			message: "You sure ?",
 			onAccept: () => {
 				setImages((prev) => [
-					...prev.filter((i) => i.id !== selectedItem().id),
+					...prev.filter((i) => i.url !== selectedItem().url),
 				]);
-				VaultManager.getSelf().removeItem(selectedItem().id);
+				VaultManager.getSelf().removeItems([selectedItem().url]);
+				setSelectedItem(null);
 			},
 		});
 	};
 
 	const submitForm = (save: (data: any) => void, id?: string) => {
 		const target = selectedItem();
-		const update = !!id;
 		const options: FormOption[] = [
-			{
-				key: "path",
-				label: "Image",
-				inline: true,
-				type: "file",
-				accept: "image/*",
-				value: target?.path ?? "",
-			},
 			{
 				key: "name",
 				label: "Name",
-				inline: true,
 				type: "text",
 				value: target?.name ?? "",
 				attributes: { placeholder: "File Name" },
+				row: true,
 			},
 			{
 				key: "tags",
@@ -110,14 +101,11 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 				value: target?.tags ?? [],
 			},
 		];
-		if (update) {
-			options.shift();
-		}
 		const form: FormType = {
 			id: id ?? crypto.randomUUID(),
-			title: update ? "Update Item" : "Add Image",
+			title: "Update Item",
 			submit: save,
-			update: update,
+			update: true,
 			options: options,
 		};
 		hollow.events.emit("form", form);
@@ -127,14 +115,11 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 		setSelectedItem(item);
 	};
 
-	const onImageSelected = (path: string) => {
-		onSelect(path);
+	const onImageSelected = (url: string) => {
+		onSelect(url);
 		hollow.events.toggle("show-vault");
 	};
 
-	const filterByTypes = (v: string[]) => {
-		setFilter((prev) => ({ ...prev, types: v }));
-	};
 	const filterByTags = (v: string[]) => {
 		setFilter((prev) => ({ ...prev, tags: v }));
 	};
@@ -153,9 +138,10 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 					</p>
 
 					<div class="relative z-1 ml-auto flex h-fit w-fit items-center justify-end gap-3 pr-3">
+						<AddUrl onAdd={importImageFromLink} />
 						<button
 							class="button-control tool-tip"
-							onClick={addItem}
+							onClick={importImages}
 						>
 							<span class="tool-tip-content" data-side="top">
 								import
@@ -177,20 +163,6 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 									})),
 
 									onSelect: filterByTags,
-								},
-								{
-									title: "By Types",
-									isCheckBox: true,
-									items: [
-										...new Set(
-											images().flatMap((i) => i.type),
-										),
-									].map((i) => ({
-										label: i,
-										checked: filter().tags.includes(i),
-									})),
-
-									onSelect: filterByTypes,
 								},
 							]}
 						/>
@@ -226,11 +198,9 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 								...images().filter(
 									(i) =>
 										i.name.includes(filter().search) &&
-										(filter().types.length === 0 ||
-											filter().types.includes(i.type)) &&
 										(filter().tags.length === 0 ||
 											filter().tags.some((j) =>
-												i.tags.includes(j),
+												(i.tags ?? []).includes(j),
 											)),
 								),
 							].slice(start(), start() + 35)}
@@ -241,7 +211,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 									onclick={() => onImageClick(img)}
 								>
 									<img
-										src={img.path}
+										src={img.url}
 										class="border-secondary-10 bg-secondary-05/50 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain"
 									/>
 									<span class="w-full truncate text-sm font-medium text-ellipsis text-neutral-600 dark:text-neutral-400">
@@ -273,7 +243,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 									</button>
 								</div>
 								<img
-									src={selectedItem()?.path}
+									src={selectedItem()?.url}
 									class="bg-secondary-10 h-40 w-full rounded object-contain"
 								/>
 								<div class="space-y-1 text-xs text-neutral-700 dark:text-neutral-300">
@@ -306,7 +276,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 											class="button-primary"
 											onclick={() =>
 												onImageSelected(
-													selectedItem().path,
+													selectedItem().url,
 												)
 											}
 										>
@@ -365,5 +335,46 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 				</Show>
 			</div>
 		</PopupWrapper>
+	);
+}
+
+type AddUrlProps = {
+	onAdd: (url: string) => void;
+};
+function AddUrl({ onAdd }: AddUrlProps) {
+	const [isOpen, setOpen] = createSignal(false);
+	const [url, setUrl] = createSignal("");
+	const importImage = () => {
+		onAdd(url());
+		setUrl("");
+		setOpen(false);
+	};
+
+	return (
+		<div class="relative">
+			<button
+				class="button-control tool-tip"
+				onclick={() => setOpen(!isOpen())}
+			>
+				<span class="tool-tip-content" data-side="top">
+					import url
+				</span>
+				<LinkIcon class="size-5" />
+			</button>
+			<Show when={isOpen()}>
+				<div class="bg-secondary-05 border-secondary-10 absolute top-10 right-0 flex w-60 gap-1 rounded-lg border p-1">
+					<input
+						class="input"
+						style={{ "--padding-y": "var(--spacing)" }}
+						value={url()}
+						onInput={(e) => setUrl(e.currentTarget.value)}
+						placeholder="https://..."
+					/>
+					<button class="button-secondary" onclick={importImage}>
+						+
+					</button>
+				</div>
+			</Show>
+		</div>
 	);
 }

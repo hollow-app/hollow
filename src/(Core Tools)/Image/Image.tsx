@@ -1,16 +1,16 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { DataBase, HollowEvent, ICard, ToolOption } from "@type/hollow";
+import { DataBase, HollowEvent, ICard, IStore, ToolOption } from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
 import { ImageType } from "./ImageType";
 import WordInput from "@components/WordInput";
 
 type ImageProps = {
 	data: ImageType;
-	db: DataBase;
 	card: ICard;
+	store: IStore;
 };
-export default function Image({ data, card, db }: ImageProps) {
+export default function Image({ data, card, store }: ImageProps) {
 	const [image, setImage] = createSignal(data);
 	const [isDragging, setIsDragging] = createSignal(false);
 	const [startPos, setStartPos] = createSignal({ x: 0, y: 0 });
@@ -70,7 +70,17 @@ export default function Image({ data, card, db }: ImageProps) {
 		}
 	};
 	const updateImage = async () => {
-		await db.putData("images", card.id, image());
+		store.set(card.id, image());
+	};
+	const selectFromVault = (url?: string) => {
+		if (url) {
+			setImage((prev) => ({ ...prev, url: url }));
+			return;
+		}
+		card.app.emit("show-vault", {
+			onSelect: (newUrl) =>
+				setImage((prev) => ({ ...prev, url: newUrl })),
+		});
 	};
 	const setSettingsVisible = () => {
 		const settings: ToolOptions = {
@@ -79,19 +89,19 @@ export default function Image({ data, card, db }: ImageProps) {
 			save: updateImage,
 			options: [
 				// TODO
-				// {
-				// 	label: "Image",
-				// 	description: "Upload or provide image URL",
-				// 	type: "image",
-				// 	onChange: setImage,
-				// 	value: image().url,
-				// },
+				{
+					label: "Image",
+					description: "Upload or provide image URL",
+					type: "file",
+					onAction: selectFromVault,
+					value: image().url,
+				},
 				{
 					type: "dropdown",
 					label: "Fit Mode",
 					description: "How the image should fit in its container",
 					value: () => image().objectFit,
-					onChange: (value: any) => {
+					onAction: (value: any) => {
 						setImage((prev) => ({
 							...prev,
 							objectFit: value,
@@ -117,7 +127,7 @@ export default function Image({ data, card, db }: ImageProps) {
 					label: "Caption",
 					description: "Add a caption to your image",
 					value: image().caption,
-					onChange: (v) =>
+					onAction: (v) =>
 						setImage((prev) => ({ ...prev, caption: v })),
 				},
 				{
@@ -125,7 +135,7 @@ export default function Image({ data, card, db }: ImageProps) {
 					label: "Alt Text",
 					description: "Add alternative text for accessibility",
 					value: image().alt,
-					onChange: (v) => setImage((prev) => ({ ...prev, alt: v })),
+					onAction: (v) => setImage((prev) => ({ ...prev, alt: v })),
 				},
 			],
 		};

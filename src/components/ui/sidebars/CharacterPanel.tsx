@@ -137,9 +137,7 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 								<span class="text-secondary-95 pl-2">
 									{
 										(
-											RealmManager.getSelf().getCurrent(
-												true,
-											) as Realm
+											RealmManager.getSelf().getCurrent() as Realm
 										).name
 									}
 								</span>

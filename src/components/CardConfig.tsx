@@ -26,7 +26,7 @@ export default function CardConfig({
 		setPlaced(!isPlaced());
 	};
 	const handleDelete = async () => {
-		await hollow.toolManager.deleteCard(myCard.id, myCard.tool);
+		await hollow.toolManager.deleteCard(myCard.id, myCard.tool, true);
 		setHand([...hollow.toolManager.getHand()]);
 	};
 	const onEmojiChanged = (newEmoji: string) => {

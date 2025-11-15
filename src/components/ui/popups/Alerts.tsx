@@ -2,10 +2,12 @@ import CheckSquareOutlineIcon from "@assets/icons/check-square-outline.svg";
 import XSquareOutlineIcon from "@assets/icons/x-square-outline.svg";
 import AlertTriangleOutlineIcon from "@assets/icons/alert-triangle-outline.svg";
 import AlertSquareOutlineIcon from "@assets/icons/alert-square-outline.svg";
+import LoaderIcon from "@assets/icons/loader.svg";
 import { AlertType } from "@type/hollow";
 import { hollow } from "hollow";
-import { createSignal, For, JSX, onMount, Show } from "solid-js";
+import { createSignal, For, JSX, onCleanup, onMount, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
+import { cursorTo } from "readline";
 
 const alertTypes: Record<string, (props: any) => JSX.Element> = {
 	success: CheckSquareOutlineIcon,
@@ -21,24 +23,39 @@ export default function Alerts() {
 	const [cue, setCue] = createSignal([]);
 
 	const addAlert = (alert: AlertType) => {
-		const uniqueAlert = { ...alert, id: crypto.randomUUID() };
+		const id = crypto.randomUUID();
+		const uniqueAlert = { ...alert, id };
 		setAlerts((prev) => [uniqueAlert, ...prev]);
 		setCue((prev) => [...prev, uniqueAlert.id]);
-		setTimeout(() => {
-			setCue((prev) => [...prev.filter((i) => i !== uniqueAlert.id)]);
+		if (alert.type !== "loading") {
 			setTimeout(() => {
-				setAlerts((prev) =>
-					prev.filter((i) => i.id !== uniqueAlert.id),
-				);
-			}, 4000);
-			alert.onTimeOut && alert.onTimeOut();
-		}, alert.duration ?? 3000);
+				setCue((prev) => [...prev.filter((i) => i !== uniqueAlert.id)]);
+				setTimeout(() => {
+					setAlerts((prev) =>
+						prev.filter((i) => i.id !== uniqueAlert.id),
+					);
+				}, 4000);
+				alert.onTimeOut && alert.onTimeOut();
+			}, alert.duration ?? 3000);
+		} else {
+			return () => {
+				setCue((prev) => [...prev.filter((i) => i !== uniqueAlert.id)]);
+				setTimeout(() => {
+					setAlerts((prev) =>
+						prev.filter((i) => i.id !== uniqueAlert.id),
+					);
+				}, 4000);
+			};
+		}
 	};
 
 	onMount(() => {
 		hollow.events.on("alert", addAlert);
 	});
 
+	onCleanup(() => {
+		hollow.events.off("alert", addAlert);
+	});
 	return (
 		<Show when={alerts().length > 0}>
 			<div class="pointer-events-none fixed top-4 right-4 z-10 box-border flex h-full w-fit flex-col items-end gap-2">
@@ -55,40 +72,56 @@ export default function Alerts() {
 										transition={{ duration: 0.4 }}
 										class="border-secondary-10 bg-secondary-05 pointer-events-auto relative w-fit overflow-hidden rounded-lg border"
 									>
-										<div
-											class="flex items-center gap-2 pl-3"
-											classList={{
-												"px-3": !alert.button,
-											}}
+										<Show
+											when={alert.type !== "loading"}
+											fallback={
+												<div class="flex items-center gap-2 px-3 py-2">
+													<LoaderIcon class="size-5 animate-spin" />
+													<Show when={alert.title}>
+														<h1>{alert.title}</h1>
+													</Show>
+													<span class="text-neutral-500">
+														{alert.message}
+													</span>
+												</div>
+											}
 										>
-											<Show when={alert.type}>
-												<Icon class="size-5" />
-											</Show>
-											<Show when={alert.title}>
-												<h1>{alert.title}</h1>
-											</Show>
-											<Show when={alert.message}>
-												<span class="py-2 text-neutral-500">
-													{alert.message}
-												</span>
-											</Show>
-											<Show when={alert.button}>
-												<button
-													class="border-secondary-10 hover:bg-secondary-10 ml-2 border-l px-3 py-2 transition-colors"
-													onclick={
-														alert.button.callback
-													}
-												>
-													{alert.button.label}
-												</button>
-											</Show>
-										</div>
-										<hr
-											class="bg-secondary-20 timer-bar absolute bottom-0 h-[2px] border-0"
-											style={{
-												"--duration": `${alert.duration ?? 3000}ms`,
-											}}
-										/>
+											<div
+												class="flex items-center gap-2 pl-3"
+												classList={{
+													"px-3": !alert.button,
+												}}
+											>
+												<Show when={alert.type}>
+													<Icon class="size-5" />
+												</Show>
+												<Show when={alert.title}>
+													<h1>{alert.title}</h1>
+												</Show>
+												<Show when={alert.message}>
+													<span class="py-2 text-neutral-500">
+														{alert.message}
+													</span>
+												</Show>
+												<Show when={alert.button}>
+													<button
+														class="border-secondary-10 hover:bg-secondary-10 ml-2 border-l px-3 py-2 transition-colors"
+														onclick={
+															alert.button
+																.callback
+														}
+													>
+														{alert.button.label}
+													</button>
+												</Show>
+											</div>
+											<hr
+												class="bg-secondary-20 timer-bar absolute bottom-0 h-[2px] border-0"
+												style={{
+													"--duration": `${alert.duration ?? 3000}ms`,
+												}}
+											/>
+										</Show>
 									</Motion.div>
 								</Show>
 							</Presence>

@@ -26,6 +26,7 @@ export default function EmojiPick({
 			class={
 				"content-center rounded-xl text-center text-gray-900 select-none dark:text-gray-50"
 			}
+			type="button"
 		>
 			{emoji()}
 		</button>

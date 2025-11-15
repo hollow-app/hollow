@@ -154,7 +154,7 @@ export default function Card({
 	return (
 		<div
 			ref={vault}
-			class={"box-border transition-all"}
+			class={"box-border"}
 			style={{
 				...(isExpand()
 					? {

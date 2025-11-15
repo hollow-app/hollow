@@ -34,7 +34,7 @@ export default function Developers() {
 		const state = e.currentTarget.checked;
 		hollow.events.emit("confirm", {
 			message: "This action requires the app to restart.",
-			type: "Warning",
+			title: "Warning",
 			onAccept: () => {
 				setOption((prev) => ({
 					...prev,

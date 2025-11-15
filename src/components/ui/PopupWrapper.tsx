@@ -19,7 +19,7 @@ export default function PopupWrapper({
 	return (
 		<div classList={{ "pop-up": shadow }}>
 			<div class="up-pop pointer-events-auto flex flex-col gap-3">
-				<div class="title-panel flex h-fit w-full items-center gap-2">
+				<div class="title-panel flex h-fit w-full items-center gap-2 rounded-t-lg">
 					<Icon class="text-secondary-50 m-1 size-5" />
 					<h1 class="h1-title">{title}</h1>
 					<Show when={onClose}>

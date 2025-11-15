@@ -1,10 +1,11 @@
-import { hollow } from "hollow";
-import { NoteType } from "./NoteType";
+import fm from "front-matter";
 import { NotebookType } from "./NotebookType";
-import { DataBase, DataBaseRequest } from "@type/hollow";
+import { CardFs, HollowEvent, IStore, ToolEvents } from "@type/hollow";
+import { NoteType } from "./NoteType";
 
 export class NotebookManager {
-	private db: DataBase;
+	private store: IStore = null;
+	private toolEvent: HollowEvent<ToolEvents>;
 	private static self: NotebookManager;
 
 	static getSelf() {
@@ -14,116 +15,66 @@ export class NotebookManager {
 		return this.self;
 	}
 
-	private constructor() {
-		const request: DataBaseRequest = {
-			pluginName: "notebookDB",
-			version: 1,
-			stores: [
-				{
-					name: "notebooks",
-				},
-				{
-					name: "notes",
-					indexes: [{ name: "by_notebook", keyPath: "notebookId" }],
-				},
-			],
-			callback: (db) => (this.db = db),
-		};
-		hollow.events.emit("database", request);
+	private constructor() {}
+	init(toolEvent: HollowEvent<ToolEvents>) {
+		this.toolEvent = toolEvent;
+		this.store = this.toolEvent.getCurrentData("config");
 	}
 
-	async addNotebook(notebook: NotebookType): Promise<void> {
-		await this.db.putData("notebooks", notebook.id, {
-			...notebook,
-			last: notebook.last ?? null,
-		});
+	rebuildMarkdown(obj: NoteType) {
+		if (!obj || !obj.frontmatter || !obj.body) {
+			return obj.body || "";
+		}
+		return `---\n${obj.frontmatter}\n---\n${obj.body}`;
 	}
 
-	async updateNotebook(notebook: NotebookType): Promise<void> {
-		await this.db.putData("notebooks", notebook.id, notebook);
+	// fs
+	setNotebook(notebook: NotebookType) {
+		const { notes, ...book } = notebook;
+		this.store.set(notebook.id, book);
 	}
 
-	async getNotebook(id: string): Promise<NotebookType | null> {
-		const notebook = await this.db.getData<NotebookType>("notebooks", id);
-		return notebook ?? null;
+	deleteNotebook(notebookId: string) {
+		this.store.remove(notebookId);
 	}
 
-	async deleteNotebook(notebookId: string): Promise<void> {
-		await this.db.deleteData("notebooks", notebookId);
-		const db = await this.db.getDBInstance();
-		const tx = db.transaction("notes", "readwrite");
-		const store = tx.objectStore("notes");
-		const index = store.index("by_notebook");
-		const range = IDBKeyRange.only(notebookId);
-		const cursorRequest = index.openKeyCursor(range);
-
-		return new Promise((resolve, reject) => {
-			cursorRequest.onsuccess = () => {
-				const cursor = cursorRequest.result;
-				if (cursor) {
-					store.delete(cursor.primaryKey);
-					cursor.continue();
-				} else {
-					tx.oncomplete = () => resolve();
-					tx.onerror = () => reject(tx.error);
-				}
-			};
-			cursorRequest.onerror = () => reject(cursorRequest.error);
-		});
+	async getNotebook(id: string, cardName: string): Promise<NotebookType> {
+		const entries = await this.getCardFs(cardName).readDir();
+		const notes = await Promise.all(
+			entries
+				.filter((i) => i.isFile)
+				.map(async (i) => fm(await this.getNote(cardName, i.name))),
+		);
+		return { ...this.store.get(id), notes };
 	}
 
-	async addNote(note: NoteType): Promise<void> {
-		await this.db.putData("notes", note.id, note);
-	}
-
-	async updateNote(note: NoteType): Promise<void> {
-		await this.db.putData("notes", note.id, note);
-	}
-
-	async getNotesForNotebook(notebookId: string): Promise<NoteType[]> {
-		const db = await this.db.getDBInstance();
-		const tx = db.transaction("notes", "readonly");
-		const store = tx.objectStore("notes");
-		const index = store.index("by_notebook");
-
-		return new Promise((resolve, reject) => {
-			const req = index.getAll(notebookId);
-			req.onsuccess = () => resolve(req.result as NoteType[]);
-			req.onerror = () => reject(req.error);
-		});
-	}
-
-	async deleteNote(id: string): Promise<void> {
-		await this.db.deleteData("notes", id);
-	}
-
-	async deleteNotesFromNotebook(
-		notebookId: string,
-		noteIds: string[],
+	async setNote(
+		cardName: string,
+		title: string,
+		content: string,
+		newTitle?: string,
 	): Promise<void> {
-		if (!noteIds.length) return;
+		if (newTitle && title !== newTitle) {
+			await this.getCardFs(cardName).rename(
+				`${title}.md`,
+				`${newTitle}.md`,
+			);
+		}
+		await this.getCardFs(cardName).writeFile(
+			`${newTitle ?? title}.md`,
+			content,
+		);
+	}
 
-		const db = await this.db.getDBInstance();
-		const tx = db.transaction("notes", "readwrite");
-		const store = tx.objectStore("notes");
-		const index = store.index("by_notebook");
-		const range = IDBKeyRange.only(notebookId);
-		const cursorRequest = index.openCursor(range);
+	async deleteNote(cardName: string, title: string): Promise<void> {
+		await this.getCardFs(cardName).remove(`${title}.md`);
+	}
 
-		return new Promise((resolve, reject) => {
-			cursorRequest.onsuccess = () => {
-				const cursor = cursorRequest.result;
-				if (cursor) {
-					if (noteIds.includes(cursor.value.id)) {
-						store.delete(cursor.primaryKey);
-					}
-					cursor.continue();
-				} else {
-					tx.oncomplete = () => resolve();
-					tx.onerror = () => reject(tx.error);
-				}
-			};
-			cursorRequest.onerror = () => reject(cursorRequest.error);
-		});
+	async getNote(cardName: string, title: string): Promise<string> {
+		return this.getCardFs(cardName).readFile(title);
+	}
+	//
+	private getCardFs(cardName: string): CardFs {
+		return this.toolEvent.getCurrentData("cards-fs")[cardName];
 	}
 }

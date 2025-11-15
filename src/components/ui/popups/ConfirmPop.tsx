@@ -21,7 +21,7 @@ export default function ConfirmPop({ pack }: ConfirmPopProps) {
 	// todo off that evets ^^^
 	return (
 		<div class="bg-secondary-05 border-secondary-15 pointer-events-auto absolute z-9 h-fit w-fit max-w-[90%] rounded-xl border-1 p-10 text-gray-950 md:max-w-[60%] dark:text-gray-200">
-			<h1 class="mb-3 text-3xl font-bold capitalize">{pack.type}</h1>
+			<h1 class="mb-3 text-3xl font-bold capitalize">{pack.title}</h1>
 			<p class="w-full whitespace-pre-line">{pack.message}</p>
 			<div class="mt-10 flex w-full justify-between gap-3">
 				<button

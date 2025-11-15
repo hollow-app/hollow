@@ -1,4 +1,4 @@
-import { AppEvents, HollowEvent, ICard, IPlugin } from "@type/hollow";
+import { HollowEvent, ICard, IPlugin, ToolEvents } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot, lazy } from "solid-js";
 import { ColumnType } from "./types/ColumnType";
@@ -9,6 +9,9 @@ const Column = lazy(() => import("./components/Column"));
 export class KanbanMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
 
+	constructor(toolEvent: HollowEvent<ToolEvents>) {
+		KanbanManager.getSelf().init(toolEvent);
+	}
 	async onCreate(card: ICard): Promise<boolean> {
 		KanbanManager.getSelf().saveColumn({
 			id: card.id,

@@ -27,7 +27,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 
 	const onCancel = () => {
 		pluginSettings.options.forEach((option) => {
-			option.type !== "custom" && option.onChange(option.value);
+			option.type !== "custom" && option.onAction(option.value);
 		});
 		hollow.events.emit("tool-settings", null);
 	};
@@ -112,7 +112,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																onInput={(
 																	e,
 																) => {
-																	option.onChange(
+																	option.onAction(
 																		e
 																			.currentTarget
 																			.value,
@@ -129,7 +129,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.value
 																}
 																onInput={(e) =>
-																	option.onChange(
+																	option.onAction(
 																		e
 																			.currentTarget
 																			.value,
@@ -144,7 +144,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.value
 																}
 																setValue={
-																	option.onChange
+																	option.onAction
 																}
 																min={option.min}
 																max={option.max}
@@ -165,7 +165,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	onchange={(
 																		e,
 																	) =>
-																		option.onChange(
+																		option.onAction(
 																			e
 																				.currentTarget
 																				.checked,
@@ -183,7 +183,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 														return (
 															<button
 																onClick={
-																	option.onChange
+																	option.onAction
 																}
 																class="button-secondary"
 															>
@@ -198,14 +198,14 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.value
 																}
 																setColor={
-																	option.onChange
+																	option.onAction
 																}
 															/>
 														);
 													case "emoji":
 														return (
 															<button
-																//onclick={option.onChange}
+																//onclick={option.onAction}
 																class={
 																	"bg-secondary-10 h-10 w-10 content-center rounded-xl text-center text-2xl text-gray-900 select-none dark:text-gray-50"
 																}
@@ -215,7 +215,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																		option.value
 																	}
 																	emoChanged={
-																		option.onChange
+																		option.onAction
 																	}
 																/>
 															</button>
@@ -234,7 +234,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.options
 																}
 																onSelect={
-																	option.onChange
+																	option.onAction
 																}
 															/>
 														);
@@ -246,7 +246,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.value
 																}
 																onChange={
-																	option.onChange
+																	option.onAction
 																}
 															/>
 														);
@@ -259,7 +259,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.value
 																}
 																setValue={
-																	option.onChange
+																	option.onAction
 																}
 															/>
 														);
@@ -270,7 +270,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 																	option.value
 																}
 																setWords={
-																	option.onChange
+																	option.onAction
 																}
 																placeholder={
 																	option.placeholder

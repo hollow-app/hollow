@@ -11,12 +11,14 @@ import { RealmManager } from "./RealmManager";
 import { useBackground } from "@hooks/useBackground";
 import useTags from "@hooks/useTags";
 import { NotifyManager } from "./NotifyManager";
-import { DataBaseRequest } from "@type/hollow";
+import { DataBaseRequest, IStore, StoreType } from "@type/hollow";
 import { ToolDataBase } from "./ToolDataBase";
 import { hotkeysManager } from "./HotkeysManager";
 import { CodeThemeManager } from "./CodeThemeManager";
 import { SettingsManager } from "./SettingsManager";
 import { MarkdownManager } from "./MarkdownManager";
+import { Storage } from "./Storage";
+import { LazyStore } from "@tauri-apps/plugin-store";
 
 export class HollowManager {
 	private static self: HollowManager;
@@ -81,6 +83,9 @@ export class HollowManager {
 		if (!localStorage.platform) {
 			localStorage.platform = await RustManager.getSelf().get_platform();
 		}
+		await RustManager.getSelf().start_realm({
+			location: RealmManager.getSelf().getCurrent().location,
+		});
 		const devData = this.handleDev();
 		//
 		hollow.toolManager = await ToolManager.create(devData.loadunsigned);
@@ -121,6 +126,13 @@ export class HollowManager {
 
 			callback(pluginDB);
 		});
+
+		const requestStore = (props: StoreType): Promise<IStore> => {
+			return Storage.create(props);
+		};
+
+		// returns a function that returns Promise<IStore>
+		hollow.events.emit("store", requestStore);
 	}
 
 	private handleDev() {

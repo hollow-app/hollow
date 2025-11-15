@@ -1,18 +1,18 @@
-import { ToolDataBase } from "@managers/ToolDataBase";
 import { ColumnType } from "./types/ColumnType";
 import {
-	DataBase,
-	DataBaseRequest,
 	HollowEvent,
 	AppEvents,
 	InsightType,
+	AppEventReturns,
+	ToolEvents,
+	IStore,
 } from "@type/hollow";
 import { ItemType } from "./types/ItemType";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
-import { hollow } from "hollow";
 
 export class KanbanManager {
-	private db: DataBase = null;
+	private store: IStore = null;
+	private toolEvent: HollowEvent<ToolEvents>;
 	private static self: KanbanManager;
 
 	static getSelf() {
@@ -22,29 +22,19 @@ export class KanbanManager {
 		return this.self;
 	}
 
-	private constructor() {
-		const request: DataBaseRequest = {
-			pluginName: "kanbanDB",
-			version: 1,
-			stores: [
-				{
-					name: "columns",
-				},
-			],
-			callback: (db) => {
-				this.db = db;
-			},
-		};
-		hollow.events.emit("database", request);
+	private constructor() {}
+
+	init(toolEvent: HollowEvent<ToolEvents>) {
+		this.toolEvent = toolEvent;
+		this.store = this.toolEvent.getCurrentData("config");
 	}
 
 	async getColumn(columnId: string): Promise<ColumnType | null> {
-		const column = await this.db.getData<ColumnType>("columns", columnId);
-		return column ?? null;
+		return this.store.get(columnId);
 	}
 
 	async saveColumn(column: ColumnType): Promise<void> {
-		await this.db.putData("columns", column.id, column);
+		this.store.set(column.id, column);
 	}
 	async clearColumn(column: ColumnType): Promise<void> {
 		const emptyColumn = {
@@ -55,9 +45,13 @@ export class KanbanManager {
 	}
 
 	async removeColumn(columnId: string): Promise<void> {
-		await this.db.deleteData("columns", columnId);
+		this.store.remove(columnId);
 	}
-	showInsight(column: ColumnType, app: HollowEvent<AppEvents>) {
+
+	showInsight(
+		column: ColumnType,
+		app: HollowEvent<AppEvents, AppEventReturns>,
+	) {
 		const items = column.items ?? [];
 
 		const totalItems = items.length;

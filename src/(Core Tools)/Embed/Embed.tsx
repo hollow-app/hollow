@@ -1,13 +1,13 @@
-import { DataBase, HollowEvent, ICard, ToolOptions } from "@type/hollow";
+import { ICard, IStore, ToolOptions } from "@type/hollow";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { EmbedData } from "./EmbedMain";
 
 type EmbedProps = {
 	card: ICard;
 	data: EmbedData;
-	db: DataBase;
+	store: IStore;
 };
-export default function Embed({ card, data, db }: EmbedProps) {
+export default function Embed({ card, data, store }: EmbedProps) {
 	const [embed, setEmbed] = createSignal(data);
 
 	const setSettingsVisible = () => {
@@ -15,9 +15,7 @@ export default function Embed({ card, data, db }: EmbedProps) {
 			tool: "Embed",
 			card: card.name,
 			save: () => {
-				db.putData("cards", card.name, {
-					src: embed().src,
-				});
+				store.set(card.id, embed());
 			},
 			options: [
 				{
@@ -26,7 +24,7 @@ export default function Embed({ card, data, db }: EmbedProps) {
 					description: "embed an iframe",
 					attributes: { placeholder: "<iframe ..." },
 					value: embed().src,
-					onChange: (s: string) => {
+					onAction: (s: string) => {
 						setEmbed((prev: EmbedData) => ({
 							...prev,
 							src: s,

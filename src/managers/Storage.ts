@@ -1,4 +1,5 @@
 import { load, Store, StoreOptions } from "@tauri-apps/plugin-store";
+import { StoreType } from "@type/hollow";
 
 export class Storage {
 	private store: Store;
@@ -8,7 +9,7 @@ export class Storage {
 		this.store = store;
 	}
 
-	static async create(path: string, options?: StoreOptions) {
+	static async create({ path, options }: StoreType) {
 		const store = await load(path, options);
 		const instance = new Storage(store);
 		await instance.init();

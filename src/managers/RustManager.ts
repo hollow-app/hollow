@@ -1,10 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { HandType } from "@type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { DataBase, HollowEvent, ICard, IPlugin } from "@type/hollow";
-import { RealmManager } from "./RealmManager";
-import { join } from "@tauri-apps/api/path";
-import { type } from "os";
+import { HollowEvent, ICard, IPlugin, ToolEvents } from "@type/hollow";
+import { exists, mkdir, remove } from "@tauri-apps/plugin-fs";
 
 const PLUGIN_FILES = ["index.js", "manifest.json"] as const;
 
@@ -24,12 +22,11 @@ type RemovePluginProps = {
 };
 
 type vaultAddProps = {
-	source: string;
-	name: string;
+	paths: string[];
 };
 
 type vaultRemoveProps = {
-	name: string;
+	names: string[];
 };
 
 type startProps = {
@@ -37,7 +34,7 @@ type startProps = {
 };
 
 export class RustManager {
-	static self: RustManager;
+	private static self: RustManager;
 	private appWindow = null;
 
 	private constructor() {
@@ -128,7 +125,7 @@ export class RustManager {
 					manifest = data;
 				} else {
 					invoke("add_plugin", {
-						pluginName: name,
+						pluginName: name.toLowerCase(),
 						content: data,
 					});
 				}
@@ -149,10 +146,10 @@ export class RustManager {
 
 	async load_plugin({
 		fullPath,
-		db,
+		toolEvent,
 	}: {
 		fullPath: string;
-		db: DataBase;
+		toolEvent: HollowEvent<ToolEvents>;
 	}): Promise<IPlugin | null> {
 		//
 		const indexJS: string = await invoke("read_file", {
@@ -162,12 +159,12 @@ export class RustManager {
 			const pluginWrapper = new Function("exports", "module", indexJS);
 			const module = {
 				exports: {} as {
-					default: new (db: DataBase) => IPlugin;
+					default: new (app: HollowEvent<ToolEvents>) => IPlugin;
 				},
 			};
 			pluginWrapper(module.exports, module);
 			const PluginClass = module.exports.default;
-			const instance: IPlugin = new PluginClass(db);
+			const instance: IPlugin = new PluginClass(toolEvent);
 			return {
 				onCreate: (card: ICard): Promise<boolean> => {
 					return instance.onCreate(card);
@@ -186,7 +183,7 @@ export class RustManager {
 		return null;
 	}
 
-	async vault_add(props: vaultAddProps): Promise<string> {
+	async vault_add(props: vaultAddProps): Promise<string[]> {
 		return await invoke("vault_add", props);
 	}
 	async vault_remove(props: vaultRemoveProps): Promise<string> {
@@ -194,8 +191,18 @@ export class RustManager {
 	}
 
 	// TODO is it needed?
-	async create_dir(props: { path: string }) {
-		return await invoke("create_dir", props);
+	async create_dir(path: string) {
+		const doesExist = await exists(path);
+		if (!doesExist) {
+			await mkdir(path, { recursive: true });
+		}
+	}
+
+	async remove_dir(path: string) {
+		const doesExist = await exists(path);
+		if (doesExist) {
+			await remove(path, { recursive: true });
+		}
 	}
 
 	close_window() {

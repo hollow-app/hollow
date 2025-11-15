@@ -22,7 +22,10 @@ export class RealmManager {
 
 	async start() {
 		const path = await join(...[await appConfigDir(), "realms.json"]);
-		this.store = await Storage.create(path, { defaults: { __root__: [] } });
+		this.store = await Storage.create({
+			path,
+			options: { defaults: { __root__: [] } },
+		});
 	}
 
 	getCurrent(): Realm | undefined {
@@ -35,9 +38,6 @@ export class RealmManager {
 	public async enterRealm(realmId: string, reload?: boolean) {
 		this.currentRealmId = realmId;
 		localStorage.currentRealmId = realmId;
-		await RustManager.getSelf().start_realm({
-			location: this.getCurrent().location,
-		});
 		reload ? RustManager.getSelf().reload() : this.setCurrentRealm(realmId);
 	}
 	public addRealm(nRealm: Realm) {

@@ -4,7 +4,7 @@ import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import { ToolManager } from "@managers/ToolManager";
 import { Character } from "@type/Character";
-import { AppEvents, HollowEvent } from "@type/hollow";
+import { AppEventReturns, AppEvents, HollowEvent } from "@type/hollow";
 import { Setter } from "solid-js";
 
 type hollowType = {
@@ -13,7 +13,7 @@ type hollowType = {
 	onCopy?: () => void;
 	onCut?: () => void;
 	onPaste?: () => void;
-	events: HollowEvent<AppEvents>;
+	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
 	toolManager?: ToolManager;
 	entryManager?: EntryManager;
@@ -22,7 +22,7 @@ type hollowType = {
 };
 
 export const hollow: hollowType = {
-	events: new EventsManager() as HollowEvent<AppEvents>,
+	events: new EventsManager() as HollowEvent<AppEvents, AppEventReturns>,
 	pevents: new EventsManager() as HollowEvent<PrivateEvents>,
 	// toolmanager is assigned in init
 };

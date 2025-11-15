@@ -42,11 +42,8 @@ export default function Settings({ setSettings }: SettingsProps) {
 								<div class="flex min-w-0 flex-1 flex-col">
 									<h1 class="my-auto text-xl font-bold text-neutral-950 dark:text-neutral-50">
 										{
-											(
-												RealmManager.getSelf().getCurrent(
-													true,
-												) as Realm
-											).name
+											RealmManager.getSelf().getCurrent()
+												.name
 										}{" "}
 										Realm
 									</h1>
@@ -63,7 +60,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 									class="button-control my-auto ml-auto shrink-0"
 									onclick={() =>
 										hollow.events.emit("confirm", {
-											type: "Warning",
+											title: "Warning",
 											message:
 												"Switching realms requires a restart of the application.\nWould you like to proceed?",
 

@@ -4,8 +4,7 @@ import FilePenIcon from "@assets/icons/files/file-pen.svg";
 import FilePlusIcon from "@assets/icons/files/file-plus.svg";
 import FolderOpenIcon from "@assets/icons/folder-open.svg";
 import FolderCloseIcon from "@assets/icons/folder-close.svg";
-import AlignBoxLeftTopIcon from "@assets/icons/align-box-left-top.svg";
-import { HollowEvent, ICard, ContextMenuItem, TagType } from "@type/hollow";
+import { ICard, ContextMenuItem, TagType } from "@type/hollow";
 import { NotebookTabsIcon } from "lucide-solid";
 import {
 	Accessor,
@@ -26,12 +25,12 @@ import { NotebookType } from "./NotebookType";
 import { EntryType } from "@type/hollow";
 import { NoteType } from "./NoteType";
 import { NotebookManager } from "./NotebookManager";
-import { isExpired, timeDifference } from "@managers/manipulation/strings";
-import FilterButton from "@components/FilterButton";
 import { MarkdownManager } from "@managers/MarkdownManager";
+import fm from "front-matter";
+import FilterButton from "@components/FilterButton";
+import WordInput from "@components/WordInput";
 
 const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
-const WordInput = lazy(() => import("@components/WordInput"));
 
 type NotebookProps = {
 	card: ICard;
@@ -42,9 +41,9 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 	const [isExpand, setExpand] = createSignal(false);
 	const [editMode, setEditMode] = createSignal(false);
 	const [book, setBook] = createSignal<NotebookType>(noteBook);
-	const [selected, setSelected] = createSignal<NoteType>(
-		noteBook.last
-			? noteBook.notes.find((i) => i.id === noteBook.last)
+	const [note, setNote] = createSignal<NoteType>(
+		book().last
+			? book().notes.find((i) => i.attributes.title === book().last)
 			: null,
 	);
 
@@ -52,7 +51,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 		// 0: nothing, 1: list, 2: selected
 		if (showList()) {
 			return 1;
-		} else if ((selected() || editMode()) && !showList()) {
+		} else if ((note() || editMode()) && !showList()) {
 			return 2;
 		} else {
 			return 0;
@@ -63,98 +62,109 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 	);
 
 	const updateBook = () => {
-		NotebookManager.getSelf().updateNotebook({ ...book(), notes: null });
+		NotebookManager.getSelf().setNotebook(book());
 	};
 
 	const onNewNote = () => {
-		const note: NoteType = {
-			notebookId: card.id,
-			id: crypto.randomUUID(),
-			title: "",
-			body: book().structure,
-			dates: {
-				createdAt: new Date().toISOString(),
-				updatedAt: new Date().toISOString(),
+		// TODO
+		// setBook(prev=>({...prev, last: "new-00-note" }));
+		const data: any = fm(book().structure);
+		const newNote: NoteType = {
+			...data,
+			attributes: {
+				...data.attributes,
+				title: "Note",
+				id: crypto.randomUUID(),
 			},
-			frontmatter: "tags:",
+			newNote: true,
 		};
-		setSelected(note);
+		setNote(newNote);
 		setShowList(false);
 		setEditMode(true);
 	};
 
-	const onSave = () => {
-		const note: NoteType = {
-			...selected(),
-			dates: { ...selected().dates, updatedAt: new Date().toISOString() },
-		};
-		if (note.title) {
-			const trgt = book().notes.findIndex((i) => i.id === note.id);
-			setBook((prev: NotebookType) => ({
-				...prev,
-				last: note.id,
-				notes:
-					trgt !== -1
-						? prev.notes.map((i, idx) =>
-								idx === trgt ? { ...note } : i,
-							)
-						: [...prev.notes, note],
-			}));
-			NotebookManager.getSelf().updateNote(note);
-			updateBook();
-			sendEntry({
-				id: note.id,
-				title: note.title,
-				tags: note.attributes.tags,
-				content: note.body,
-				meta: { ...note.dates },
-				source: { tool: "notebook", card: card.name },
-			});
-			setEditMode(false);
+	const onSave = async () => {
+		const doesNoteTitleAlreadyExists = book().notes.some(
+			(i) => i.attributes.title === note().attributes.title,
+		);
+		// check if the note is new;
+		if (note().newNote) {
+			// check if the new note's title doesn't already exists;
+			if (!doesNoteTitleAlreadyExists) {
+				NotebookManager.getSelf().setNote(
+					card.name,
+					note().attributes.title,
+					NotebookManager.getSelf().rebuildMarkdown(note()),
+				);
+				sendEntry({
+					id: note().attributes.id,
+					title: note().attributes.title,
+					tags: note().attributes.tags.split(","),
+					content: note().body,
+					// meta: { ...note.dates },
+					source: { tool: "notebook", card: card.name },
+				});
+				setEditMode(false);
+				setNote((prev) => ({ ...prev, newNote: false }));
+				setBook((prev) => ({
+					...prev,
+					notes: [...prev.notes, note()],
+				}));
+				updateBook();
+			} else {
+				card.app.emit("alert", {
+					type: "error",
+					title: "Notebook",
+					message: `Title "${note().attributes.title}" already exists`,
+				});
+			}
+		} else {
+			await NotebookManager.getSelf().setNote(
+				card.name,
+				book().last,
+				NotebookManager.getSelf().rebuildMarkdown(note()),
+				note().attributes.title,
+			);
+			doesNoteTitleAlreadyExists &&
+				setBook((prev) => ({
+					...prev,
+					notes: prev.notes.map((i) =>
+						i.attributes.title === note().attributes.title
+							? { ...i, ...note() }
+							: i,
+					),
+				}));
 		}
 	};
 	const sendEntry = (entry: EntryType) => {
 		card.app.emit("send-entry", entry);
 	};
-	const removeEntry = (id: string) => {
-		card.app.emit("remove-entry", id);
-	};
 	const changeBanner = async () => {
 		card.app.emit("show-vault", {
-			onSelect: (url: string) => {
-				setBook((prev) => ({
-					...prev,
-					notes: prev.notes.map((i) =>
-						i.id === selected().id
-							? {
-									...i,
-									attributes: {
-										...i.attributes,
-										banner: url,
-									},
-								}
-							: i,
-					),
-				}));
-				setSelected((prev) => ({
+			onSelect: async (url: string) => {
+				setNote((prev) => ({
 					...prev,
 					attributes: { ...prev.attributes, banner: url },
 				}));
-				NotebookManager.getSelf().updateNote(selected());
+				await NotebookManager.getSelf().setNote(
+					card.name,
+					note().attributes.title,
+					NotebookManager.getSelf().rebuildMarkdown(note()),
+				);
 			},
 		});
 	};
-	const removeNote = (id: string) => {
-		if (selected().id === id) {
-			setSelected(null);
+	const removeNote = (title: string) => {
+		if (note().attributes.title === title) {
+			setNote(null);
 			setEditMode(false);
 		}
 		setBook((prev: NotebookType) => ({
 			...prev,
 			last: null,
-			notes: prev.notes.filter((i) => i.id !== id),
+			notes: prev.notes.filter((i) => i.attributes.title !== title),
 		}));
-		NotebookManager.getSelf().deleteNote(id);
+		NotebookManager.getSelf().deleteNote(card.name, title);
 	};
 	//
 	const onContextMenu = () => {
@@ -167,14 +177,17 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 					label: "Change Banner",
 					onclick: changeBanner,
 				},
-				...(selected()
+				...(note()
 					? [
 							{
 								icon: "Trash2",
 								label: "Delete Note",
 								onclick: () => {
-									removeNote(selected().id);
-									removeEntry(selected().id);
+									removeNote(note().attributes.title);
+									card.app.emit(
+										"remove-entry",
+										note().attributes.id,
+									);
 								},
 							},
 						]
@@ -194,7 +207,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 					label: "Name",
 					description: "Note Book's name",
 					value: book().name,
-					onChange: (v: string) =>
+					onAction: (v: string) =>
 						setBook((prev) => ({
 							...prev,
 							name: v,
@@ -224,9 +237,13 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 		card.app.emit("tool-settings", settings);
 	};
 
-	const changeSelected = (id: string) => {
-		setSelected(book().notes.find((i) => i.id === id));
-		setBook((prev) => ({ ...prev, last: id }));
+	const changeSelected = async (title: string) => {
+		// const content = await NotebookManager.getSelf().getNote(
+		// 	card.name,
+		// 	title,
+		// );
+		setNote(book().notes.find((i) => i.attributes.title === title));
+		setBook((prev) => ({ ...prev, last: title }));
 		setShowList(false);
 		updateBook();
 	};
@@ -254,7 +271,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 					{book().name} <span class="text-secondary-40">Book</span>
 				</h1>
 				<div class="flex items-center gap-2">
-					<Show when={selected() || editMode()}>
+					<Show when={note() || editMode()}>
 						<button
 							class="button-control"
 							onclick={() => {
@@ -314,7 +331,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 						<div
 							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 transition-all group-hover:opacity-100 @7xl:h-35"
 							style={{
-								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${selected().attributes?.banner})`,
+								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note().attributes?.banner})`,
 								"background-size": "cover",
 								"background-position": "center",
 								"background-repeat": "no-repeat",
@@ -331,11 +348,14 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 							>
 								<input
 									class="focus:border-secondary-10 w-full max-w-full overflow-hidden rounded border-transparent text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-gray-900 dark:text-gray-50"
-									value={selected().title}
+									value={note().attributes.title}
 									onchange={(e) =>
-										setSelected((prev) => ({
+										setNote((prev) => ({
 											...prev,
-											title: e.currentTarget.value,
+											attributes: {
+												...prev.attributes,
+												title: e.currentTarget.value,
+											},
 										}))
 									}
 									placeholder={"Note Title"}
@@ -351,15 +371,18 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 										fallback={
 											<WordInput
 												words={() =>
-													selected().attributes
-														?.tags ?? []
+													note().attributes?.tags.split(
+														",",
+													) ?? []
 												}
 												setWords={(tgs) =>
-													setSelected((prev) => ({
+													setNote((prev) => ({
 														...prev,
 														attributes: {
 															...prev.attributes,
-															tags: tgs,
+															tags: tgs.join(
+																", ",
+															),
 														},
 													}))
 												}
@@ -374,8 +397,9 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 										>
 											<For
 												each={
-													selected().attributes
-														?.tags ?? []
+													note().attributes?.tags?.split(
+														",",
+													) ?? []
 												}
 											>
 												{(tag) => {
@@ -405,26 +429,24 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 							<div class="mx-auto flex w-full px-5 @4xl:w-[70%] @7xl:w-[50%]">
 								<MarkdownEditor
 									editMode={editMode}
-									value={() => selected().body}
+									value={() => note().body}
 									setValue={(v) => {
-										setSelected((prev) => ({
+										setNote((prev) => ({
 											...prev,
 											body: v,
 										}));
 									}}
 									uniqueNote={() =>
-										`${book().name.toLowerCase()}-${selected().title.toLowerCase()}`
+										`${book().name.toLowerCase()}-${note().attributes.title.toLowerCase()}`
 									}
 								/>
 							</div>
-							<Show
-								when={isExpand() && selected() && !editMode()}
-							>
+							<Show when={isExpand() && note() && !editMode()}>
 								<div class="absolute top-50 left-[80%] opacity-0 @7xl:opacity-100">
 									<HeadersTree
-										body={() => selected().body}
+										body={() => note().body}
 										id={() =>
-											`${book().name.toLowerCase()}-${selected().title.toLowerCase()}`
+											`${book().name.toLowerCase()}-${note().attributes.title.toLowerCase()}`
 										}
 									/>
 								</div>
@@ -445,7 +467,13 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 				</Show>
 				{/* Notes List */}
 				<Show when={panel() === 1}>
-					<NoteList {...{ app: card.app, book, changeSelected }} />
+					<NoteList
+						{...{
+							card,
+							book,
+							changeSelected,
+						}}
+					/>
 				</Show>
 			</Presence>
 		</div>
@@ -453,22 +481,35 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 }
 
 type NoteListProps = {
-	app: HollowEvent;
+	card: ICard;
 	book: Accessor<NotebookType>;
 	changeSelected: (id: string) => void;
 };
 
-function NoteList({ app, book, changeSelected }: NoteListProps) {
+function NoteList({ card, book, changeSelected }: NoteListProps) {
 	const [selectedGroup, setSelectedGroup] = createSignal<string[]>([]);
 	const [searchTerm, setSearchTerm] = createSignal("");
 	const [selectedTags, setSelectedTags] = createSignal<string[]>([]);
-	const [orderBy, setOrderBy] = createSignal("Newest");
 
-	const removeGroup = () => {
-		NotebookManager.getSelf().deleteNotesFromNotebook(
-			book().id,
-			selectedGroup(),
+	const removeGroup = async () => {
+		const total = selectedGroup().length;
+		const onDone = card.app.emit("alert", {
+			type: "loading",
+			title: "Notebook",
+			message: `Deleting ${total} Note${total > 1 && "s"}...`,
+		});
+		for (const i of selectedGroup()) {
+			await NotebookManager.getSelf().deleteNote(card.name, i);
+		}
+		card.app.emit(
+			"remove-entry",
+			selectedGroup().map(
+				(i) =>
+					book().notes.find((j) => j.attributes.title === i)
+						.attributes.id,
+			),
 		);
+		onDone();
 	};
 
 	const onContextMenu = () => {
@@ -484,7 +525,7 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 					},
 				],
 			};
-			app.emit("context-menu-extend", cm);
+			card.app.emit("context-menu-extend", cm);
 		}
 	};
 
@@ -494,37 +535,15 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 
 		let result = book().notes.filter((note) => {
 			const matchesSearch =
-				note.title.toLowerCase().includes(term) ||
+				note.attributes.title.toLowerCase().includes(term) ||
 				note.body.toLowerCase().includes(term);
-
 			const matchesTags =
 				tags.length === 0 ||
-				tags.every((tag) => note.attributes.tags.includes(tag));
+				(note.attributes.tags &&
+					tags.every((tag) => note.attributes.tags.includes(tag)));
 
 			return matchesSearch && matchesTags;
 		});
-
-		switch (orderBy()) {
-			case "Oldest":
-				result = [...result].sort(
-					(a, b) =>
-						new Date(a.dates.createdAt).getTime() -
-						new Date(b.dates.createdAt).getTime(),
-				);
-				break;
-			case "Title (A–Z)":
-				result = [...result].sort((a, b) =>
-					a.title.localeCompare(b.title),
-				);
-				break;
-			default:
-				result = [...result].sort(
-					(a, b) =>
-						new Date(b.dates.createdAt).getTime() -
-						new Date(a.dates.createdAt).getTime(),
-				);
-				break;
-		}
 
 		return result;
 	});
@@ -552,17 +571,6 @@ function NoteList({ app, book, changeSelected }: NoteListProps) {
 
 				<FilterButton
 					options={() => [
-						{
-							title: "Order by",
-							value: orderBy,
-							items: [
-								{ label: "Newest" },
-								{ label: "Oldest" },
-								{ label: "Title (A–Z)" },
-							],
-							onSelect: (selected: string) =>
-								setOrderBy(selected),
-						},
 						{
 							isCheckBox: true,
 							title: "Tags",
@@ -618,18 +626,22 @@ function NotePreview({
 	selectedGroup,
 	setSelectedGroup,
 }: NotePreviewProps) {
-	const selected = createMemo(() => selectedGroup().includes(note.id));
+	const selected = createMemo(() =>
+		selectedGroup().includes(note.attributes.title),
+	);
 	const onSelect = () => {
 		setSelectedGroup((prev) =>
-			prev.includes(note.id)
-				? prev.filter((i) => i !== note.id)
-				: [...prev, note.id],
+			prev.includes(note.attributes.title)
+				? prev.filter((i) => i !== note.attributes.title)
+				: [...prev, note.attributes.title],
 		);
 	};
 	return (
 		<div
 			class="group bg-secondary-05 border-primary relative mx-auto flex h-fit w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
-			onclick={(e) => (e.ctrlKey ? onSelect() : changeSelected(note.id))}
+			onclick={(e) =>
+				e.ctrlKey ? onSelect() : changeSelected(note.attributes.title)
+			}
 			classList={{
 				"border-secondary-10 hover:border-secondary-10": !selected(),
 			}}
@@ -654,16 +666,10 @@ function NotePreview({
 
 			<div class="flex flex-col gap-1 p-2 px-3 text-xs text-neutral-500">
 				<h2 class="truncate text-lg font-medium text-neutral-800 dark:text-neutral-200">
-					{note.title}
+					{note.attributes.title}
 				</h2>
-				<span
-					class="truncate"
-					title={(note.attributes?.tags ?? []).join(", ")}
-				>
+				<span class="truncate" title={note.attributes?.tags}>
 					Tags: {note.attributes.tags}
-				</span>
-				<span class="truncate">
-					Created: {timeDifference(note.dates.createdAt)}
 				</span>
 			</div>
 		</div>

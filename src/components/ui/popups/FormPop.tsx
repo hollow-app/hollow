@@ -68,7 +68,7 @@ export default function FormPop({ form }: FormPopProps) {
 						{(preOption, index) => {
 							const option = {
 								...preOption,
-								onChange: (v: any) => {
+								onAction: (v: any) => {
 									setResult((prev) => ({
 										...prev,
 										[preOption.key]: v,
@@ -133,7 +133,7 @@ export default function FormPop({ form }: FormPopProps) {
 															option.value ?? ""
 														}
 														onInput={(e) =>
-															option.onChange(
+															option.onAction(
 																e.currentTarget
 																	.value,
 															)
@@ -152,7 +152,7 @@ export default function FormPop({ form }: FormPopProps) {
 															option.value ?? ""
 														}
 														onInput={(e) =>
-															option.onChange(
+															option.onAction(
 																e.currentTarget
 																	.value,
 															)
@@ -171,7 +171,7 @@ export default function FormPop({ form }: FormPopProps) {
 															option.min
 														}
 														setValue={
-															option.onChange
+															option.onAction
 														}
 														min={option.min}
 														max={option.max}
@@ -190,7 +190,7 @@ export default function FormPop({ form }: FormPopProps) {
 																!!option.value
 															}
 															onchange={(e) =>
-																option.onChange(
+																option.onAction(
 																	e
 																		.currentTarget
 																		.checked,
@@ -208,9 +208,10 @@ export default function FormPop({ form }: FormPopProps) {
 												return (
 													<button
 														onClick={
-															option.onChange
+															option.onAction
 														}
 														class="button-secondary"
+														type="button"
 													>
 														click
 													</button>
@@ -224,7 +225,7 @@ export default function FormPop({ form }: FormPopProps) {
 															"#FFFFFF"
 														}
 														setColor={
-															option.onChange
+															option.onAction
 														}
 													/>
 												);
@@ -235,6 +236,7 @@ export default function FormPop({ form }: FormPopProps) {
 														class={
 															"bg-secondary-10 h-10 w-10 content-center rounded-xl text-center text-2xl text-gray-900 select-none dark:text-gray-50"
 														}
+														type="button"
 													>
 														<EmojiPick
 															emo={
@@ -242,7 +244,7 @@ export default function FormPop({ form }: FormPopProps) {
 																"☂️"
 															}
 															emoChanged={
-																option.onChange
+																option.onAction
 															}
 														/>
 													</button>
@@ -261,7 +263,7 @@ export default function FormPop({ form }: FormPopProps) {
 															option.options
 														}
 														onSelect={
-															option.onChange
+															option.onAction
 														}
 													/>
 												);
@@ -270,7 +272,7 @@ export default function FormPop({ form }: FormPopProps) {
 													<ImportFile
 														xfile={option.value}
 														onChange={
-															option.onChange
+															option.onAction
 														}
 													/>
 												);
@@ -284,7 +286,7 @@ export default function FormPop({ form }: FormPopProps) {
 															option.min
 														}
 														setValue={
-															option.onChange
+															option.onAction
 														}
 													/>
 												);
@@ -297,7 +299,7 @@ export default function FormPop({ form }: FormPopProps) {
 																option.value
 															}
 															setWords={
-																option.onChange
+																option.onAction
 															}
 															placeholder={
 																option.placeholder

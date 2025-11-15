@@ -2,7 +2,6 @@ import Card from "@components/ui/Card";
 import useGrid from "@hooks/useGrid";
 import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
-import { options } from "marked";
 import { Options, PartialOptions } from "overlayscrollbars";
 import {
 	OverlayScrollbarsComponent,
@@ -92,6 +91,33 @@ export default function Canvas({ isGridVisible, cards }: CanvasProps) {
 								);
 							}}
 						</For>
+						{/* <button */}
+						{/* 	class="button-primary absolute top-30 left-40" */}
+						{/* 	onclick={() => { */}
+						{/* 		const removeAlert = hollow.events.emit( */}
+						{/* 			"alert", */}
+						{/* 			{ */}
+						{/* 				type: "loading", */}
+						{/* 				title: "Vault", */}
+						{/* 				message: "adding 4 images", */}
+						{/* 			}, */}
+						{/* 		); */}
+						{/* 		setTimeout( */}
+						{/* 			() => { */}
+						{/* 				removeAlert(); */}
+						{/* 				hollow.events.emit("alert", { */}
+						{/* 					type: "success", */}
+						{/* 					title: "Vault", */}
+						{/* 					message: "Done adding 4 images", */}
+						{/* 				}); */}
+						{/* 			}, */}
+						{/**/}
+						{/* 			5000, */}
+						{/* 		); */}
+						{/* 	}} */}
+						{/* > */}
+						{/* 	Load Something */}
+						{/* </button> */}
 					</div>
 				</Show>
 			</OverlayScrollbarsComponent>

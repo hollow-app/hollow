@@ -9,6 +9,7 @@ import {
 	CardFs,
 	IStore,
 	StoreType,
+	ToolEventReturns,
 } from "@type/hollow";
 import { Setter } from "solid-js";
 import { ImageMain } from "@coretools/Image/ImageMain";
@@ -34,7 +35,7 @@ type ToolMethods = {
 	onDelete(card: ICard): Promise<boolean>;
 	onLoad(card: ICard): Promise<boolean>;
 	onUnload(name: string): void;
-	toolEvent: HollowEvent<ToolEvents>;
+	toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
 };
 
 type ToolMap = Map<string, ToolMethods>;
@@ -171,8 +172,11 @@ export class ToolManager {
 	// create the HollowEvent of a singal tool;
 	private async createToolEvent(
 		toolName: string,
-	): Promise<HollowEvent<ToolEvents>> {
-		const toolEvent = new EventsManager() as HollowEvent<ToolEvents>;
+	): Promise<HollowEvent<ToolEvents, ToolEventReturns>> {
+		const toolEvent = new EventsManager() as HollowEvent<
+			ToolEvents,
+			ToolEventReturns
+		>;
 		const path = await join(
 			...[
 				RealmManager.getSelf().getCurrent().location,
@@ -230,16 +234,20 @@ export class ToolManager {
 	// simple internal classes organizer
 	private createCoreTool(
 		name: CoreTool,
-		toolEvent: HollowEvent<ToolEvents>,
+		toolEvent: HollowEvent<ToolEvents, ToolEventReturns>,
 	): IPlugin | null {
 		const toolMap: Record<
 			CoreTool,
-			new (toolEvent: HollowEvent<ToolEvents>) => IPlugin
+			new (
+				toolEvent: HollowEvent<ToolEvents, ToolEventReturns>,
+			) => IPlugin
 		> = {
 			// TODO
 			// @ts-ignore
 			image: ImageMain,
+			// @ts-ignore
 			notebook: NotebookMain,
+			// @ts-ignore
 			kanban: KanbanMain,
 			// @ts-ignore
 			embed: EmbedMain,
@@ -376,7 +384,7 @@ export class ToolManager {
 	}
 
 	private setCard(toolName: string, cardId: string, key: string, value: any) {
-		console.log("changing card's ", key, " to ", value);
+		// console.log("changing card's ", key, " to ", value);
 		const root = this.getHand();
 		const tool = root.find((i) => i.name === toolName);
 		tool.cards = tool.cards.map((i) =>

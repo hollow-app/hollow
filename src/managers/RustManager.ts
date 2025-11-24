@@ -1,7 +1,13 @@
 import { invoke } from "@tauri-apps/api/core";
 import { HandType } from "@type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { HollowEvent, ICard, IPlugin, ToolEvents } from "@type/hollow";
+import {
+	HollowEvent,
+	ICard,
+	IPlugin,
+	ToolEventReturns,
+	ToolEvents,
+} from "@type/hollow";
 import { exists, mkdir, remove } from "@tauri-apps/plugin-fs";
 
 const PLUGIN_FILES = ["index.js", "manifest.json"] as const;
@@ -149,7 +155,7 @@ export class RustManager {
 		toolEvent,
 	}: {
 		fullPath: string;
-		toolEvent: HollowEvent<ToolEvents>;
+		toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
 	}): Promise<IPlugin | null> {
 		//
 		const indexJS: string = await invoke("read_file", {
@@ -159,7 +165,9 @@ export class RustManager {
 			const pluginWrapper = new Function("exports", "module", indexJS);
 			const module = {
 				exports: {} as {
-					default: new (app: HollowEvent<ToolEvents>) => IPlugin;
+					default: new (
+						app: HollowEvent<ToolEvents, ToolEventReturns>,
+					) => IPlugin;
 				},
 			};
 			pluginWrapper(module.exports, module);

@@ -650,8 +650,9 @@ a {
 	--padding-y: calc(var(--spacing) * 1);
 	--border-w: 1px;
 	--w: fit-content;
+	--h: fit-content;
 	width: var(--w);
-	height: fit-content;
+	height: var(--h);
 	color: color-contrast(var(--color-secondary-20) vs white, black);
 	border-width: var(--border-w);
 	border-style: solid;
@@ -892,4 +893,167 @@ a.no-underline-alt {
 	opacity: 0.5;
 	cursor: not-allowed;
 	pointer-events: none;
+}
+
+
+
+/* KITX */
+.kit-controls {
+	button.on {
+		--controls-button-bg: var(--color-primary);
+		--color: var(--color-primary-95);
+	}
+}
+
+.sssolid-kitx {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+	background-color: var(--color-secondary);
+	background-image: none;
+
+	.container {
+		transform-origin: 0 0;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		.node {
+			background: var(--color-secondary-10);
+			outline-width: var(--node-outline-width, 2px);
+			outline-style: var(--node-outline-style, solid);
+			outline-color: var(--color-secondary-15);
+			/* box-sizing: border-box; */
+			color: var(--tc-200);
+			position: absolute;
+			border-radius: var(--node-radius, 10px);
+			padding: var(--node-padding, 0px);
+			box-shadow: var(--node-shadow, 0 2px 5px rgba(0, 0, 0, 0.1));
+			font-size: var(--node-font-size, 14px);
+			font-family: var(--node-font-family, sans-serif);
+			cursor: var(--node-cursor, default);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			transition: all 0.1s;
+
+			.node-edge {
+				--off-v: -7px;
+				position: absolute;
+				z-index: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				&:hover {
+					.node-anchor {
+						--opacity: 1;
+					}
+				}
+
+			}
+
+			.node-anchor {
+				opacity: var(--opacity, 0);
+				background-color: var(--color-secondary-20);
+				border: 2px solid var(--color-secondary-25);
+				width: 10px;
+				height: 10px;
+				position: absolute;
+				border-radius: 100%;
+				transition: opacity 0.1s;
+
+				&:hover {
+					cursor: crosshair;
+				}
+			}
+
+			.node-anchor.visible {
+				--opacity: 1;
+			}
+		}
+
+		.node:hover {
+			outline-color: var(--color-secondary-30);
+		}
+
+		.node.selected {
+			outline-color: var(--color-primary-15);
+		}
+
+		.connection {
+			stroke: var(--color-secondary-40);
+			stroke-width: var(--connection-width, 2);
+
+			&:hover {
+				stroke: var(--color-secondary-50);
+			}
+		}
+
+		.connection.selected {
+			stroke: var(--color-primary-10);
+		}
+
+		.connection-preview {
+			stroke: var(--color-secondary-30);
+
+			& circle {
+				fill: var(--color-secondary-30);
+			}
+		}
+
+
+		.connection-label {
+			background-color: var(--color-secondary);
+			padding-inline: 2px;
+		}
+	}
+
+	.kit-controls {
+		position: absolute;
+		bottom: 10px;
+		right: 10px;
+		display: flex;
+		flex-direction: var(--flex-direction, column);
+		gap: 1px;
+		z-index: 10;
+		background: var(--color-secondary-15);
+		border-radius: 0.3rem;
+		box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.2);
+		overflow: hidden;
+
+		& button {
+			background: var(--color-secondary-10);
+			/* border-radius: 0.4rem; */
+			border: 0;
+			cursor: pointer;
+			padding: 0.4em;
+			width: 2em;
+			height: 2em;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			&:hover {
+				background-color: var(--color-secondary-15);
+			}
+
+			& svg {
+				width: 1.5em;
+				height: 1.5em;
+			}
+
+			&.on {
+				background-color: var(--color-primary);
+
+				& svg {
+					color: var(--color-primary-95);
+				}
+			}
+		}
+
+	}
 }

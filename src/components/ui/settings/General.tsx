@@ -1,7 +1,6 @@
 import { RustManager } from "@managers/RustManager";
 import { createResource, Suspense } from "solid-js";
-import PatreonIcon from "@assets/icons/patreon.svg";
-import { SettingsManager } from "@managers/SettingsManager";
+import BuyMeCoffeeIcon from "@assets/icons/buymecoffee.svg";
 
 export default function General() {
 	const [version] = createResource(() => RustManager.getSelf().get_version());
@@ -14,15 +13,14 @@ export default function General() {
 						<Suspense fallback={"Beta"}>{version()}</Suspense>
 					</p>
 				</div>
-				<div>
-					<a
-						class="button-secondary flex"
-						href={"https://www.patreon.com/c/hollow_app"}
-						target="_blank"
-					>
-						<PatreonIcon class="size-5" />
-					</a>
-				</div>
+				<a
+					class="button-secondary flex"
+					style={{ "--h": "auto" }}
+					href={"buymeacoffee.com/ryusufe"}
+					target="_blank"
+				>
+					<BuyMeCoffeeIcon class="my-auto size-6" />
+				</a>
 			</div>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
 			<div class="flex items-center justify-between">

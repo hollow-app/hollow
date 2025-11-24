@@ -1,5 +1,5 @@
 import { TagType } from "@type/hollow";
-import ServerIcon from "@assets/icons/server.svg";
+import ChartPieIcon from "@assets/icons/chart-pie.svg";
 import { For, createMemo, createSignal, Show, Suspense } from "solid-js";
 import Tag from "../../Tag";
 import { ChevronsUpDownIcon, SearchIcon } from "lucide-solid";
@@ -85,7 +85,7 @@ export default function EntriesViewer() {
 
 	return (
 		<PopupWrapper
-			Icon={ServerIcon}
+			Icon={ChartPieIcon}
 			title="Entries Viewer"
 			onClose={() => hollow.events.toggle("show-entries")}
 		>

@@ -1,9 +1,9 @@
 import Hollow from "@assets/logo.svg";
 import GearIcon from "@assets/icons/gear.svg";
-import BellIcon from "@assets/icons/bell.svg";
-import ToolCaseIcon from "@assets/icons/tool-case.svg";
+import BellIcon from "@assets/icons/bell-ringing.svg";
+import MosaicIcon from "@assets/icons/mosaic.svg";
 import PenRulerIcon from "@assets/icons/pen-ruler.svg";
-import ServerIcon from "@assets/icons/server.svg";
+import ChartPieIcon from "@assets/icons/chart-pie.svg";
 import { NotifyManager } from "@managers/NotifyManager";
 import { Move } from "lucide-solid";
 import { onMount, Setter } from "solid-js";
@@ -58,13 +58,13 @@ export default function SideBar({
 					classList={{ selected: isExpand() }}
 					onclick={toggleExpand}
 				>
-					<ToolCaseIcon class="m-auto size-5" />
+					<MosaicIcon class="m-auto size-5" />
 				</button>
 				<button
 					class="button-control"
 					onclick={() => hollow.events.toggle("show-entries")}
 				>
-					<ServerIcon class="size-5" />
+					<ChartPieIcon class="size-5" />
 				</button>
 				<button
 					class="button-control"
@@ -99,11 +99,9 @@ export default function SideBar({
 					onclick={() => setNotifications((prev) => !prev)}
 				>
 					<BellIcon
-						class="notify-status-bell size-5"
+						class="size-5"
 						style={{
-							"--fill": alert()
-								? "var(--color-primary)"
-								: "currentColor",
+							"--opacity": alert() ? "0.5" : "0",
 						}}
 					/>
 				</button>

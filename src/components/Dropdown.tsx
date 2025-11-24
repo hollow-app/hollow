@@ -31,11 +31,12 @@ export default function Dropdown({
 	let listRef: HTMLUListElement | undefined;
 	let inputRef: HTMLInputElement | undefined;
 
-	createEffect(() => {
+	// TODO
+	createEffect(
 		on(value, (v) => {
 			setInnerValue(v);
-		});
-	});
+		}),
+	);
 
 	const { pos, updatePosition, handleClickOutside } = useDropdownPosition();
 	const outsideClick = () => {

@@ -1,5 +1,4 @@
 import { HollowEvent } from "@type/hollow";
-import { listeners } from "process";
 
 export class EventsManager<
 	EventMap extends Record<string, any> = Record<string, any>,
@@ -76,10 +75,12 @@ export class EventsManager<
 	}
 
 	toggle<K extends keyof EventMap>(eventName: K): void {
+		//@ts-ignore
+		const data: EventMap[K] = !this.getCurrentData(eventName);
+		this.wildcard.forEach((fn) => fn({ event: eventName, data }));
 		const eventListeners = this.listeners[eventName];
+		this.currentData[eventName] = data;
 		if (eventListeners) {
-			const data = !this.currentData[eventName] as EventMap[K];
-			this.currentData[eventName] = data;
 			eventListeners.forEach((listener) => listener(data));
 		}
 	}

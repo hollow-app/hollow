@@ -1,15 +1,7 @@
 import { NotifyType } from "@type/hollow";
 import BellIcon from "@assets/icons/bell.svg";
 import { Accessor, lazy, Suspense } from "solid-js";
-import {
-	createEffect,
-	createMemo,
-	createSignal,
-	For,
-	onMount,
-	Setter,
-	Show,
-} from "solid-js";
+import { createSignal, For, Setter, Show } from "solid-js";
 import {
 	ChevronDownIcon,
 	SquareArrowOutUpRightIcon,
@@ -18,7 +10,6 @@ import {
 import { Motion, Presence } from "solid-motionone";
 import { NotifyManager } from "@managers/NotifyManager";
 import PopupWrapper from "./PopupWrapper";
-import { hollow } from "hollow";
 const Icon = lazy(() => import("@components/Icon"));
 
 type NotificationsProps = {

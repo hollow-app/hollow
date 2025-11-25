@@ -83,7 +83,7 @@ export default function Popups() {
 			</Show>
 
 			<Show when={form()}>
-				<FormPop form={form()} />
+				<FormPop form={form} />
 			</Show>
 
 			<Show when={emoji()}>

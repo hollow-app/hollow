@@ -14,16 +14,11 @@ import SideBar from "@components/ui/SideBar";
 import CharacterPanel from "@components/ui/sidebars/CharacterPanel";
 import { hotkeysManager } from "@managers/HotkeysManager";
 import { hollow } from "hollow";
-import Alerts from "@components/ui/popups/Alerts";
 const Settings = lazy(async () => import("@components/ui/Settings"));
 const Expand = lazy(() => import("@components/ui/sidebars/Expand"));
 const Editor = lazy(() => import("@components/ui/sidebars/Editor"));
 
 function Container() {
-	const [hand, setHand] = createSignal<Opthand[] | null>(
-		hollow.toolManager.optimizeHand(),
-	);
-
 	const [isChara, setChara] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
 	const [isEditor, setEditor] = createSignal(false);
@@ -47,7 +42,6 @@ function Container() {
 		setEditor((prev) => !prev);
 	};
 	onMount(() => {
-		hollow.toolManager.setHand = setHand;
 		hotkeysManager.getSelf().events["Toggle Settings"] = () =>
 			setSettings((prev) => !prev);
 		hotkeysManager.getSelf().events["Toggle Notifications"] = () =>
@@ -89,7 +83,6 @@ function Container() {
 								isSettings() ||
 								isDrag()
 							}
-							cards={hand}
 						/>
 						<Suspense>
 							<Editor

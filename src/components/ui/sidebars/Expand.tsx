@@ -21,6 +21,7 @@ type ExpandProps = {
 };
 
 export default function Expand({ isVisible }: ExpandProps) {
+	// TODO 11
 	const [hand, setHand] = createSignal(hollow.toolManager.getHand());
 	const [filter, setFilter] = createSignal<FilterType>({
 		tools: [],

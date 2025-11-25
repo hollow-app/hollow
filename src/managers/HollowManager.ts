@@ -18,7 +18,6 @@ import { CodeThemeManager } from "./CodeThemeManager";
 import { SettingsManager } from "./SettingsManager";
 import { MarkdownManager } from "./MarkdownManager";
 import { Storage } from "./Storage";
-import { LazyStore } from "@tauri-apps/plugin-store";
 
 export class HollowManager {
 	private static self: HollowManager;

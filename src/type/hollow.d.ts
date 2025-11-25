@@ -578,59 +578,6 @@ export type FormOption = {
 }[keyof TypedOptionMap];
 
 /**
- * Defines the structure for a Card Kit configuration.
- */
-export type KitType = {
-	/** Width of the kit (in units not pixels). */
-	width: number;
-
-	/** Height of the kit (in units not pixels). */
-	height: number;
-
-	/** Corner radius for rounded edges. */
-	corner: number;
-
-	/** Opacity level (0 = transparent, 1 = fully opaque). */
-	opacity: number;
-
-	/** Border settings. */
-	border: {
-		/** Border color (CSS color string). */
-		c: string;
-
-		/** Border thickness (in pixels). */
-		n: number;
-	};
-
-	/** Whether the kit has a glass-like appearance. */
-	glass: boolean;
-
-	/** Whether the kit includes a shadow effect. */
-	shadow: boolean;
-
-	/** 3D position inside the canvas. */
-	xyz: {
-		/** Horizontal position or offset. */
-		x: number;
-
-		/** Vertical position or offset. */
-		y: number;
-
-		/** Depth or z-index position. */
-		z: number;
-	};
-
-	/**
-	 * Optional extra styling or configuration.
-	 * Can include any valid CSS properties.
-	 */
-	extra?: {
-		/** Outer margin for spacing. */
-		outerMargin: string;
-	} & JSX.CSSProperties;
-};
-
-/**
  * Represents information about a card.
  */
 export type CardType = {
@@ -652,8 +599,12 @@ export type CardType = {
 	/** Date when the card was created (ISO string). */
 	CreatedDate: string;
 
-	/** Configuration of the card's kit. */
-	kit: KitType;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	class?: string;
+	style?: JSX.CSSProperties;
 };
 
 export type ConfirmType = {

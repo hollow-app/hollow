@@ -41,7 +41,7 @@
 		"solid-codemirror": "^2.3.1",
 		"solid-colorful": "^0.0.2",
 		"solid-js": "^1.9.3",
-		"solid-kitx": "^0.1.5",
+		"solid-kitx": "file:../solid-kit/solid-kitx-0.2.0.tgz",
 		"solid-motionone": "^1.0.3",
 		"solid-textarea-autosize": "^0.0.5",
 		"tailwindcss": "^4.0.3"

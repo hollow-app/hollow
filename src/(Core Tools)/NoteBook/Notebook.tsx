@@ -36,6 +36,7 @@ type NotebookProps = {
 	card: ICard;
 	noteBook: NotebookType;
 };
+
 export default function Notebook({ card, noteBook }: NotebookProps) {
 	const [showList, setShowList] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
@@ -92,7 +93,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			// check if the new note's title doesn't already exists;
 			if (!doesNoteTitleAlreadyExists) {
 				NotebookManager.getSelf().setNote(
-					card.name,
+					card.data.extra.name,
 					note().attributes.title,
 					NotebookManager.getSelf().rebuildMarkdown(note()),
 				);
@@ -102,7 +103,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 					tags: note().attributes.tags.split(","),
 					content: note().body,
 					// meta: { ...note.dates },
-					source: { tool: "notebook", card: card.name },
+					source: { tool: "notebook", card: card.data.extra.name },
 				});
 				setEditMode(false);
 				setNote((prev) => ({ ...prev, newNote: false }));
@@ -120,7 +121,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			}
 		} else {
 			await NotebookManager.getSelf().setNote(
-				card.name,
+				card.data.extra.name,
 				book().last,
 				NotebookManager.getSelf().rebuildMarkdown(note()),
 				note().attributes.title,
@@ -147,7 +148,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 					attributes: { ...prev.attributes, banner: url },
 				}));
 				await NotebookManager.getSelf().setNote(
-					card.name,
+					card.data.extra.name,
 					note().attributes.title,
 					NotebookManager.getSelf().rebuildMarkdown(note()),
 				);
@@ -164,12 +165,12 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 			last: null,
 			notes: prev.notes.filter((i) => i.attributes.title !== title),
 		}));
-		NotebookManager.getSelf().deleteNote(card.name, title);
+		NotebookManager.getSelf().deleteNote(card.data.extra.name, title);
 	};
 	//
 	const onContextMenu = () => {
 		const cmItems: ContextMenuItem = {
-			id: `notebook-${card.name}`,
+			id: `notebook-${card.data.extra.name}`,
 			header: "Note",
 			items: [
 				{
@@ -199,7 +200,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 	const showSettings = () => {
 		const settings: ToolOptions = {
 			tool: "NoteBook",
-			card: card.name,
+			card: card.data.extra.name,
 			save: updateBook,
 			options: [
 				{
@@ -250,13 +251,13 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 	onMount(() => {
 		card.toolEvent.on(`${card.id}-settings`, showSettings);
 		card.app.on("tags", setHollowTags);
-		card.toolEvent.on(`${card.name}-remove-entry`, removeNote);
+		card.toolEvent.on(`${card.data.extra.name}-remove-entry`, removeNote);
 		card.toolEvent.on(`${card.id}-expand`, setExpand);
 	});
 	onCleanup(() => {
 		card.toolEvent.off(`${card.id}-settings`, showSettings);
 		card.app.off("tags", setHollowTags);
-		card.toolEvent.off(`${card.name}-remove-entry`, removeNote);
+		card.toolEvent.off(`${card.data.extra.name}-remove-entry`, removeNote);
 		card.toolEvent.off(`${card.id}-expand`, setExpand);
 	});
 
@@ -499,7 +500,7 @@ function NoteList({ card, book, changeSelected }: NoteListProps) {
 			message: `Deleting ${total} Note${total > 1 && "s"}...`,
 		});
 		for (const i of selectedGroup()) {
-			await NotebookManager.getSelf().deleteNote(card.name, i);
+			await NotebookManager.getSelf().deleteNote(card.data.extra.name, i);
 		}
 		card.app.emit(
 			"remove-entry",

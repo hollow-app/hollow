@@ -47,9 +47,9 @@ export default function Expand({ isVisible }: ExpandProps) {
 			.filter((card) => {
 				const f = filter();
 
-				if (f.favourite && !card.isFavored) return false;
-				if (!f.placed && card.isPlaced) return false;
-				if (!f.unplaced && !card.isPlaced) return false;
+				if (f.favourite && !card.data.extra.isFavored) return false;
+				if (!f.placed && card.data.extra.isPlaced) return false;
+				if (!f.unplaced && !card.data.extra.isPlaced) return false;
 
 				return true;
 			}),

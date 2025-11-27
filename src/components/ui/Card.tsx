@@ -1,14 +1,12 @@
-import { ContextMenuItem } from "@type/hollow";
+import { CardType, ContextMenuItem } from "@type/hollow";
 import { createSignal, onCleanup, onMount, Setter } from "solid-js";
-import { Opthand } from "@type/Opthand";
 import { hollow } from "hollow";
-import { PartialOptions } from "overlayscrollbars";
 
-type CardProps = {
-	cardInfo: Opthand;
-};
-
-export default function Card(cardInfo: Opthand) {
+interface CardProps {
+	node: CardType;
+}
+export default function Card(props: CardProps) {
+	const tool = props.node.data.extra.tool;
 	let vault!: HTMLDivElement;
 	const [isLoaded, setLoaded] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
@@ -63,37 +61,37 @@ export default function Card(cardInfo: Opthand) {
 
 	const showEditor = () => {
 		hollow.pevents.emit("editor", {
-			tool: cardInfo.tool,
-			cardId: cardInfo.id,
+			tool: tool,
+			cardId: props.node.id,
 		});
 		hollow.events.emit("context-menu", false);
 	};
 	const showSettings = () => {
 		hollow.toolManager
-			.getToolEvents(cardInfo.tool)
-			.emit(`${cardInfo.id}-settings`, true);
+			.getToolEvents(tool)
+			.emit(`${props.node.id}-settings`, true);
 		hollow.events.emit("context-menu", false);
 	};
 	const expand = () => {
 		hollow.toolManager
-			.getToolEvents(cardInfo.tool)
-			.toggle(`${cardInfo.id}-expand`);
+			.getToolEvents(tool)
+			.toggle(`${props.node.id}-expand`);
 	};
 	onMount(async () => {
-		setLoaded(await hollow.toolManager.loadCard(cardInfo, cardInfo.tool));
+		setLoaded(await hollow.toolManager.loadCard(props.node, tool));
 		hollow.toolManager
-			.getToolEvents(cardInfo.tool)
-			.on(`${cardInfo.id}-expand`, showExpand);
+			.getToolEvents(tool)
+			.on(`${props.node.id}-expand`, showExpand);
 	});
 	onCleanup(() => {
 		hollow.toolManager
-			.getToolEvents(cardInfo.tool)
-			.off(`${cardInfo.id}-expand`, showExpand);
+			.getToolEvents(tool)
+			.off(`${props.node.id}-expand`, showExpand);
 	});
 	return (
 		<div
 			ref={vault}
-			class={"box-border h-full w-full"}
+			class={"z-50 box-border h-full w-full"}
 			style={{
 				...(isExpand()
 					? {
@@ -104,12 +102,12 @@ export default function Card(cardInfo: Opthand) {
 							"z-index": 999,
 						}
 					: {}),
-				position: isExpand() ? "sticky" : "absolute",
+				position: isExpand() ? "sticky" : "static",
 			}}
-			oncontextmenu={onContextMenu}
+			onContextMenu={onContextMenu}
 		>
 			<div
-				id={cardInfo.id + "-i"}
+				id={props.node.id}
 				class="h-full w-full"
 				classList={{
 					"card-spot": !isLoaded(),

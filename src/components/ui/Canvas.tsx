@@ -1,34 +1,24 @@
 import { hollow } from "hollow";
-import { createSignal } from "solid-js";
-import { NodeType, SolidKitx } from "solid-kitx";
+import { createMemo } from "solid-js";
+import { ConnectionType, NodeType, SolidKitx, ViewPort } from "solid-kitx";
 import Card from "./Card";
+import { createStore, unwrap } from "solid-js/store";
+import { createSignal } from "solid-js";
+import { RealmManager } from "@managers/RealmManager";
 
 type CanvasProps = {
 	isGridVisible: () => boolean;
 };
 
+const vpKey = `${RealmManager.getSelf().getCurrent().id}-viewport`;
 export default function Canvas({ isGridVisible }: CanvasProps) {
-	const [nodes, setNodes] = createSignal<NodeType[]>(
-		Object.values(hollow.group()).map((c) => {
-			const {
-				tool,
-				name,
-				emoji,
-				isPlaced,
-				isFavored,
-				CreatedDate,
-				...rest
-			} = c;
-			const node: NodeType = rest;
-			node.data = {
-				component: {
-					type: "default",
-					props: c,
-				},
-			};
-			return node;
-		}),
-	);
+	const connectionsStore = createStore<ConnectionType[]>([]);
+
+	// u
+	const onNodesChange = (nodes: NodeType[]) => {};
+	const onViewportChange = (vp: ViewPort) => {
+		localStorage.setItem(vpKey, JSON.stringify(vp));
+	};
 
 	return (
 		<div class="bg-secondary/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border">
@@ -43,16 +33,23 @@ export default function Canvas({ isGridVisible }: CanvasProps) {
 				}}
 			/>
 			<SolidKitx
-				nodes={nodes()}
-				onNodesChange={() => {}}
-				connections={[]}
+				nodesStore={[hollow.cards(), hollow.setCards]}
+				connectionsStore={connectionsStore}
+				onNodesChange={onNodesChange}
 				onConnectionsChange={() => {}}
-				viewport={{ x: 0, y: 0, zoom: 1 }}
-				onViewportChange={() => {}}
+				viewport={JSON.parse(
+					localStorage.getItem(vpKey) ?? '{"x":0, "y":0, "zoom":1}',
+				)}
+				onViewportChange={onViewportChange}
 				components={{
 					default: Card,
 				}}
 				gridSize={1}
+				disableZoom
+				disableEdgeDrag
+				disableNodeDrag
+				disableAnchorConnectionCreation
+				disableNodeAnchors
 			/>
 		</div>
 	);

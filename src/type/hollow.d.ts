@@ -583,28 +583,33 @@ export type FormOption = {
 export type CardType = {
 	/** Unique identifier */
 	id: string;
-
-	/** Name of the card. */
-	name: string;
-
-	/** Emoji associated with the card. */
-	emoji: string;
-
-	/** Whether the card is placed. */
-	isPlaced: boolean;
-
-	/** Whether the card is marked as favored. */
-	isFavored: boolean;
-
-	/** Date when the card was created (ISO string). */
-	CreatedDate: string;
-
 	x: number;
 	y: number;
 	width: number;
 	height: number;
 	class?: string;
 	style?: JSX.CSSProperties;
+	data: {
+		component: string;
+		extra: {
+			/** Name of the card. */
+			name: string;
+
+			/** Emoji associated with the card. */
+			emoji: string;
+
+			/** Whether the card is placed. */
+			isPlaced: boolean;
+
+			/** Whether the card is marked as favored. */
+			isFavored: boolean;
+
+			/** Date when the card was created (ISO string). */
+			CreatedDate: string;
+
+			[key: string]: any;
+		};
+	};
 };
 
 export type ConfirmType = {

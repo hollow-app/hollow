@@ -22,6 +22,7 @@
     "noFallthroughCasesInSwitch": true,
 	"paths": {
 	    "@app/*": ["app/*"],
+	    "@utils/*": ["utils/*"],
 	    "@coretools/*": ["(Core Tools)/*"],
 	    "@components/*": ["components/*"],
 	    "@managers/*": ["managers/*"],

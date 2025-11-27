@@ -946,33 +946,10 @@ a.no-underline-alt {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-
-				&:hover {
-					.node-anchor {
-						--opacity: 1;
-					}
-				}
+				cursor: default;
 
 			}
 
-			.node-anchor {
-				opacity: var(--opacity, 0);
-				background-color: var(--color-secondary-20);
-				border: 2px solid var(--color-secondary-25);
-				width: 10px;
-				height: 10px;
-				position: absolute;
-				border-radius: 100%;
-				transition: opacity 0.1s;
-
-				&:hover {
-					cursor: crosshair;
-				}
-			}
-
-			.node-anchor.visible {
-				--opacity: 1;
-			}
 		}
 
 		.node:hover {

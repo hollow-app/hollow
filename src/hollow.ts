@@ -4,11 +4,14 @@ import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import { ToolManager } from "@managers/ToolManager";
 import { Character } from "@type/Character";
-import { AppEventReturns, AppEvents, HollowEvent } from "@type/hollow";
-import { Opthand } from "@type/Opthand";
+import {
+	AppEventReturns,
+	AppEvents,
+	CardType,
+	HollowEvent,
+} from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
 
-type GroupType = Record<string, Opthand>;
 type hollowType = {
 	onCopy?: () => void;
 	onCut?: () => void;
@@ -19,15 +22,15 @@ type hollowType = {
 	entryManager?: EntryManager;
 	markdownManager?: MarkdownManager;
 	hotkeysManager?: hotkeysManager;
-	group: () => GroupType;
-	setGroup: SetStoreFunction<GroupType>;
+	cards: () => CardType[];
+	setCards: SetStoreFunction<CardType[]>;
 };
-const [group, setGroup] = createStore({});
+const [cards, setCards] = createStore([]);
 export const hollow: hollowType = {
 	events: new EventsManager() as HollowEvent<AppEvents, AppEventReturns>,
 	pevents: new EventsManager() as HollowEvent<PrivateEvents>,
-	group: () => group,
-	setGroup,
+	cards: () => cards,
+	setCards,
 	// toolmanager is assigned in init
 };
 

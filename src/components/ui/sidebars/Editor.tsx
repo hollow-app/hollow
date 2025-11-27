@@ -14,6 +14,7 @@ import {
 import { hollow } from "hollow";
 import Dropdown from "@components/Dropdown";
 import type { Opthand } from "@type/Opthand";
+import { CardType } from "@type/hollow";
 
 type EditorProps = {
 	isVisible: Accessor<boolean>;
@@ -26,27 +27,25 @@ interface SelectedCard {
 }
 
 export default function Editor({ isVisible, setVisible }: EditorProps) {
-	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>({
-		tool: "",
-		cardId: "",
-	});
+	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>(null);
 
-	let initialState: Opthand | null = null;
+	let initialState: CardType | null = null;
 
 	const cardData = createMemo(() => {
+		if (!selectedCard()) return null;
 		const id = selectedCard().cardId;
-		return id ? hollow.group()[id] : null;
+		return id ? hollow.cards().find((c) => c.id === id) : null;
 	});
 	const cardStyle = createMemo(() => cardData()?.style ?? {});
 
-	const updateRootProp = (key: keyof Opthand, value: any) => {
+	const updateRootProp = (key: keyof CardType, value: any) => {
 		const id = selectedCard().cardId;
-		hollow.setGroup(id, key, value);
+		hollow.setCards((c) => c.id === id, key, value);
 	};
 
 	const updateStyleProp = (key: string, value: any) => {
 		const id = selectedCard().cardId;
-		hollow.setGroup(id, "style", key, value);
+		hollow.setCards((c) => c.id === id, "style", key, value);
 	};
 
 	const selectCard = (payload: SelectedCard) => {
@@ -54,7 +53,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 
 		if (selectedCard().cardId === payload.cardId) return;
 
-		const data = hollow.group()[payload.cardId];
+		const data = hollow.cards().find((i) => i.id === payload.cardId);
 		if (!data) return;
 
 		initialState = data;
@@ -68,14 +67,18 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 
 	const onSave = () => {
 		const id = selectedCard().cardId;
-		const { tool, ...rest } = hollow.group()[id];
-		hollow.toolManager.setCard(selectedCard().tool, id, rest);
+		const card = hollow.cards().find((i) => i.id === id);
+		delete card.data.extra.tool;
+		hollow.toolManager.setCard(selectedCard().tool, id, card);
 		hollow.events.emit("editor", null);
 	};
 
 	const onCancel = () => {
 		if (initialState) {
-			hollow.setGroup(selectedCard().cardId, initialState);
+			hollow.setCards(
+				(c) => c.id === selectedCard().cardId,
+				initialState,
+			);
 		}
 		hollow.events.emit("editor", null);
 	};
@@ -87,7 +90,11 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 		<Sidepanel isVisible={isVisible}>
 			<div class="px-5 py-3">
 				<Show when={isVisible()}>
-					<Header selected={selectedCard} selectCard={selectCard} />
+					<Header
+						selected={selectedCard}
+						selectCard={selectCard}
+						setSelected={setSelectedCard}
+					/>
 				</Show>
 			</div>
 
@@ -109,11 +116,13 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 							<NumRow
 								label="Width"
 								value={() => cardData().width}
+								step={50}
 								setValue={(v) => updateRootProp("width", v)}
 							/>
 							<NumRow
 								label="Height"
 								value={() => cardData().height}
+								step={50}
 								setValue={(v) => updateRootProp("height", v)}
 							/>
 						</div>
@@ -122,9 +131,15 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 							<NumRow
 								label="Corner"
-								value={() => cardStyle()["border-radius"]}
+								value={() =>
+									Number(
+										cardStyle()["border-radius"].split(
+											"px",
+										)[0],
+									)
+								}
 								setValue={(v) =>
-									updateStyleProp("border-radius", v)
+									updateStyleProp("border-radius", v + "px")
 								}
 							/>
 
@@ -150,12 +165,16 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 									<div class="w-70 max-w-[90%]">
 										<NumberInput
 											value={() =>
-												cardStyle()["outline-width"]
+												Number(
+													cardStyle()[
+														"outline-width"
+													].split("px")[0],
+												)
 											}
 											setValue={(v) =>
 												updateStyleProp(
 													"outline-width",
-													v,
+													v + "px",
 												)
 											}
 											direct
@@ -203,7 +222,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 							/>
 							<NumRow
 								label="Z"
-								value={() => cardStyle().z}
+								value={() => cardStyle().z ?? 0}
 								setValue={(v) => updateStyleProp("z", v)}
 							/>
 						</div>
@@ -269,16 +288,21 @@ function ToggleRow(props: {
 
 function Header(props: {
 	selected: Accessor<SelectedCard>;
+	setSelected: Setter<SelectedCard>;
 	selectCard: (v: SelectedCard) => void;
 }) {
-	const [toolName, setToolName] = createSignal("");
-
-	const cardList = createMemo(() => {
-		if (!toolName()) return [];
+	const cardList = createMemo<{ name: string; id: string }[]>(() => {
+		if (!props.selected()) return [];
+		const toolName = props.selected().tool;
+		if (!toolName) return [];
 		const tool = hollow.toolManager
 			.getHand()
-			.find((t) => t.name === toolName());
-		return tool?.cards.filter((c) => c.isPlaced).map((c) => c.name) ?? [];
+			.find((t) => t.name === toolName);
+		return (
+			tool?.cards
+				.filter((c) => c.data.extra.isPlaced)
+				.map((c) => ({ name: c.data.extra.name, id: c.id })) ?? []
+		);
 	});
 
 	return (
@@ -287,8 +311,10 @@ function Header(props: {
 				<h1 class="text-xl font-bold">Editor</h1>
 				<div class="flex gap-2">
 					<Dropdown
-						value={toolName}
-						onSelect={setToolName}
+						value={() => props.selected()?.tool ?? ""}
+						onSelect={(v) =>
+							props.setSelected({ tool: v, cardId: null })
+						}
 						options={() => [
 							{
 								items: hollow.toolManager
@@ -300,14 +326,21 @@ function Header(props: {
 					/>
 
 					<Dropdown
-						value={() => props.selected().cardId}
-						onSelect={(id) =>
-							props.selectCard({
-								tool: toolName(),
-								cardId: id,
-							})
+						value={() =>
+							cardList().find(
+								(c) => c.id === props.selected().cardId,
+							)?.name ?? ""
 						}
-						options={() => [{ items: cardList() }]}
+						onSelect={(n) => {
+							if (!props.selected()) return;
+							props.selectCard({
+								tool: props.selected().tool,
+								cardId: cardList().find((c) => c.name === n).id,
+							});
+						}}
+						options={() => [
+							{ items: cardList().map((i) => i.name) },
+						]}
 						placeholder="Card"
 					/>
 				</div>

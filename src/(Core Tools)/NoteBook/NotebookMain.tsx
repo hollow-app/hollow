@@ -16,7 +16,7 @@ export class NotebookMain implements IPlugin {
 	async onCreate(card: ICard): Promise<boolean> {
 		const book: NotebookType = {
 			id: card.id,
-			name: card.name,
+			name: card.data.extra.name,
 			last: null,
 			structure: defaultStruture,
 		};
@@ -33,7 +33,10 @@ export class NotebookMain implements IPlugin {
 		const targetContainer = document.getElementById(card.id);
 		if (targetContainer && !this.roots.has(card.id)) {
 			const book: NotebookType =
-				await NotebookManager.getSelf().getNotebook(card.id, card.name);
+				await NotebookManager.getSelf().getNotebook(
+					card.id,
+					card.data.extra.name,
+				);
 			const dispose = createRoot((dispose) => {
 				render(
 					() => <Notebook card={card} noteBook={book} />,

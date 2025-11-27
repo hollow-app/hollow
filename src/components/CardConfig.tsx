@@ -19,7 +19,7 @@ export default function CardConfig({
 	myCard: CardType & { tool: string; icon: string; title: string };
 	setHand: Setter<HandType[]>;
 }) {
-	const [isPlaced, setPlaced] = createSignal(myCard.isPlaced);
+	const [isPlaced, setPlaced] = createSignal(myCard.data.extra.isPlaced);
 
 	const handlePlacement = () => {
 		hollow.toolManager.togglePlacement(myCard.id, myCard.tool);
@@ -56,12 +56,12 @@ export default function CardConfig({
 						<div class="mt-1 flex items-center gap-2">
 							<div class="bg-secondary-10 hover:border-secondary-15 size-7 cursor-pointer rounded border border-transparent p-1 text-center text-sm">
 								<EmojiPick
-									emo={myCard.emoji}
+									emo={myCard.data.extra.emoji}
 									emoChanged={onEmojiChanged}
 								/>
 							</div>
 							<span class="text-neutral-800 dark:text-neutral-200">
-								{myCard.name}
+								{myCard.data.extra.name}
 							</span>
 						</div>
 					</div>
@@ -70,14 +70,14 @@ export default function CardConfig({
 							class="text-secondary-30 fill-secondary-30 size-4 cursor-pointer transition-all hover:rotate-45"
 							classList={{
 								"text-yellow-500 fill-yellow-500":
-									myCard.isFavored,
+									myCard.data.extra.isFavored,
 							}}
 						/>
 					</div>
 				</div>
 				<div class="text-xs text-neutral-500">
-					<p title={myCard.CreatedDate}>
-						Created: {timeDifference(myCard.CreatedDate)}
+					<p title={myCard.data.extra.CreatedDate}>
+						Created: {timeDifference(myCard.data.extra.CreatedDate)}
 					</p>
 				</div>
 				<div class="ml-auto flex w-fit gap-2">

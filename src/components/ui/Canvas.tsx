@@ -1,17 +1,28 @@
 import { hollow } from "hollow";
-import { createMemo } from "solid-js";
-import { ConnectionType, NodeType, SolidKitx, ViewPort } from "solid-kitx";
+import { Accessor, createMemo } from "solid-js";
+import {
+	ConfigsType,
+	ConnectionType,
+	NodeType,
+	SolidKitx,
+	ViewPort,
+} from "solid-kitx";
 import { createStore, unwrap } from "solid-js/store";
 import { createSignal } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
 import { Card } from "./Card";
 
-type CanvasProps = {};
+type CanvasProps = {
+	canvasConfigs: Accessor<ConfigsType>;
+	setCanvasConfigs: Accessor<ConfigsType>;
+};
 
 const vpKey = `${RealmManager.getSelf().getCurrent().id}-viewport`;
-export default function Canvas({}: CanvasProps) {
+export default function Canvas(props: CanvasProps) {
 	const connectionsStore = createStore<ConnectionType[]>([]);
-
+	const viewportSignal = createSignal(
+		JSON.parse(localStorage.getItem(vpKey) ?? '{"x":0, "y":0, "zoom":1}'),
+	);
 	// u
 	const onNodesChange = (nodes: NodeType[]) => {};
 	const onViewportChange = (vp: ViewPort) => {
@@ -35,19 +46,12 @@ export default function Canvas({}: CanvasProps) {
 				connectionsStore={connectionsStore}
 				onNodesChange={onNodesChange}
 				onConnectionsChange={() => {}}
-				viewport={JSON.parse(
-					localStorage.getItem(vpKey) ?? '{"x":0, "y":0, "zoom":1}',
-				)}
+				viewportSignal={viewportSignal}
 				onViewportChange={onViewportChange}
 				components={{
 					default: Card,
 				}}
-				gridSize={1}
-				disableZoom
-				disableEdgeDrag
-				disableNodeDrag
-				disableAnchorConnectionCreation
-				disableNodeAnchors
+				{...props.canvasConfigs()}
 			/>
 		</div>
 	);

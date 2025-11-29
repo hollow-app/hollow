@@ -1,3 +1,5 @@
+import { Component, JSX } from "solid-js";
+
 // Represents a plugin with lifecycle methods that interact with cards and the app.
 export interface IPlugin {
 	/**
@@ -682,6 +684,16 @@ export interface SideLayout {
 	panels: string[];
 }
 
+export interface SideBarButton {
+	Icon: Component;
+	onClick: () => void;
+	tooltip?: string;
+	selectedCondition?: () => boolean;
+}
+interface SideBar {
+	top: SideBarButton[];
+	bottom: SideBarButton[];
+}
 export interface LayoutSignal {
 	left: SideLayout;
 	right: SideLayout;

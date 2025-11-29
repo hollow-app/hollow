@@ -4,114 +4,144 @@ import BellIcon from "@assets/icons/bell-ringing.svg";
 import MosaicIcon from "@assets/icons/mosaic.svg";
 import PenRulerIcon from "@assets/icons/pen-ruler.svg";
 import ChartPieIcon from "@assets/icons/chart-pie.svg";
+import PenIcon from "@assets/icons/pen.svg";
 import { NotifyManager } from "@managers/NotifyManager";
 import { Move } from "lucide-solid";
-import { createMemo, onMount, Setter } from "solid-js";
+import { createMemo, For, onMount, Setter, Show } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import VaultIcon from "@assets/icons/vault.svg";
 import { hollow } from "hollow";
-import { Layout } from "@type/hollow";
+import { Layout, SideBarButton } from "@type/hollow";
+import { isDate } from "util/types";
+import { Dynamic } from "solid-js/web";
+import { ConfigsType } from "solid-kitx";
 
 type SideBarProps = {
 	layout: Layout;
 	setSettings: Setter<boolean>;
-	isDrag: Accessor<boolean>;
-	setDrag: Setter<boolean>;
+	canvasConfigs: Accessor<ConfigsType>;
+	setCanvasConfigs: Setter<ConfigsType>;
 };
 export default function SideBar({
 	layout,
-	setDrag,
-	isDrag,
 	setSettings,
+	setCanvasConfigs,
+	canvasConfigs,
 }: SideBarProps) {
-	const toggleDragAndDrop = () => {
-		document.getElementById("root").classList.toggle("dnd-mode");
-		setDrag(!isDrag());
-	};
-
 	const [alert, setAlert] = createSignal(NotifyManager.getSelf().isAlert());
 
+	const top: SideBarButton[] = [
+		{
+			Icon: MosaicIcon,
+			onClick: () => layout.selectPanel("left", "expand"),
+			selectedCondition: () => layout.isPanelVisible("left", "expand"),
+		},
+		{
+			Icon: ChartPieIcon,
+			onClick: () => hollow.events.toggle("show-entries"),
+		},
+		{
+			Icon: PenRulerIcon,
+			onClick: () => layout.selectPanel("right", "editor"),
+			selectedCondition: () => layout.isPanelVisible("right", "editor"),
+		},
+	];
+	const bottom: SideBarButton[] = [
+		{
+			Icon: PenIcon,
+			onClick: () =>
+				setCanvasConfigs((p) => ({
+					...p,
+					disableEdgeDrag: !p.disableEdgeDrag,
+					disableNodeDrag: !p.disableNodeDrag,
+				})),
+			selectedCondition: () => !canvasConfigs().disableNodeDrag,
+			tooltip: "Edit cards directly in the canvas",
+		},
+		{
+			Icon: VaultIcon,
+			onClick: () => hollow.events.toggle("show-vault"),
+		},
+		{
+			Icon: BellIcon,
+			onClick: () => layout.selectPanel("right", "notifications"),
+			selectedCondition: () =>
+				layout.isPanelVisible("right", "notifications"),
+		},
+		{
+			Icon: GearIcon,
+			onClick: () => setSettings((prev) => !prev),
+		},
+	];
 	onMount(() => {
 		hollow.events.on("notify-status", setAlert);
 	});
 	return (
 		<div class="bg-secondary-10/0 mr-2 flex w-14 flex-col gap-4 rounded-xl py-4">
-			<button
-				//class="bg-secondary-05 border-secondary-10 hover:text-secondary-95 text-secondary-80 mx-auto w-fit rounded-lg border p-1"
-				onclick={() => layout.selectPanel("left", "character")}
-			>
+			<button onclick={() => layout.selectPanel("left", "character")}>
 				<Hollow class="orbit mx-auto size-9" />
 			</button>
 			<hr class="border-secondary-10 bg-secondary mx-auto h-px w-10 border-t" />
-			<div class="mx-auto flex flex-1 flex-col gap-3">
-				<button
-					class="button-control"
-					classList={{
-						selected: layout.isPanelVisible("left", "expand"),
-					}}
-					onclick={() => layout.selectPanel("left", "expand")}
-				>
-					<MosaicIcon class="m-auto size-5" />
-				</button>
-				<button
-					class="button-control"
-					onclick={() => hollow.events.toggle("show-entries")}
-				>
-					<ChartPieIcon class="size-5" />
-				</button>
-				<button
-					class="button-control"
-					classList={{
-						selected: layout.isPanelVisible("right", "editor"),
-					}}
-					onclick={() => layout.selectPanel("right", "editor")}
-				>
-					<PenRulerIcon class="size-5" />
-				</button>
+			{/* t	 */}
+			<div class="z-1 mx-auto flex flex-1 flex-col gap-3">
+				<For each={top}>
+					{(btn) => (
+						<button
+							class="button-control"
+							classList={{
+								"tool-tip": !!btn.tooltip,
+								selected:
+									btn.selectedCondition &&
+									btn.selectedCondition(),
+							}}
+							onclick={btn.onClick}
+						>
+							<Show when={btn.tooltip}>
+								<span
+									data-side="right"
+									class="tool-tip-content"
+								>
+									{btn.tooltip}
+								</span>
+							</Show>
+							<Dynamic
+								component={btn.Icon}
+								{...{ class: "ma-auto size-5" }}
+							/>
+						</button>
+					)}
+				</For>
 			</div>
-			<div class="mx-auto flex flex-col gap-2">
-				<button
-					class={"button-control tool-tip"}
-					classList={{
-						selected: isDrag(),
-					}}
-					onclick={toggleDragAndDrop}
-				>
-					<span data-side="right" class="tool-tip-content">
-						Turn on drag-drop for cards
-					</span>
-					<Move class="m-auto size-5" />
-				</button>
-				<button
-					class="button-control"
-					onclick={() => hollow.events.toggle("show-vault")}
-				>
-					<VaultIcon class="size-5" />
-				</button>
 
-				<button
-					class="button-control"
-					classList={{
-						selected: layout.isPanelVisible(
-							"right",
-							"notifications",
-						),
-					}}
-					onclick={() => layout.selectPanel("right", "notifications")}
-				>
-					<BellIcon
-						class="size-5"
-						style={{
-							"--opacity": alert() ? "0.5" : "0",
-						}}
-					/>
-				</button>
-				<button
-					class="button-control"
-					onclick={() => setSettings((prev) => !prev)}
-				>
-					<GearIcon class="size-5" />
-				</button>
+			{/* bottom */}
+			<div class="z-1 mx-auto flex flex-col gap-2">
+				<For each={bottom}>
+					{(btn) => (
+						<button
+							class="button-control"
+							classList={{
+								"tool-tip": !!btn.tooltip,
+								selected:
+									btn.selectedCondition &&
+									btn.selectedCondition(),
+							}}
+							onclick={btn.onClick}
+						>
+							<Show when={btn.tooltip}>
+								<span
+									data-side="right"
+									class="tool-tip-content"
+								>
+									{btn.tooltip}
+								</span>
+							</Show>
+							<Dynamic
+								component={btn.Icon}
+								{...{ class: "ma-auto size-5" }}
+							/>
+						</button>
+					)}
+				</For>
 			</div>
 		</div>
 	);

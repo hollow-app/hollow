@@ -5,13 +5,14 @@ import { createLayout } from "@utils/layout";
 import { hollow } from "hollow";
 import { Accessor, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
+import { ConfigsType } from "solid-kitx";
 
 export type StateType = {
 	controller: Layout;
 	isSettings: Accessor<boolean>;
-	isDrag: Accessor<boolean>;
 	setSettings: Setter<boolean>;
-	setDrag: Setter<boolean>;
+	canvasConfigs: Accessor<ConfigsType>;
+	setCanvasConfigs: Setter<ConfigsType>;
 };
 
 export const createContainerState = (
@@ -20,7 +21,14 @@ export const createContainerState = (
 ): StateType => {
 	const controller = createLayout();
 	const [isSettings, setSettings] = createSignal(false);
-	const [isDrag, setDrag] = createSignal(false);
+	const [canvasConfigs, setCanvasConfigs] = createSignal<ConfigsType>({
+		gridSize: 50,
+		disableZoom: true,
+		disableEdgeDrag: true,
+		disableNodeDrag: true,
+		disableAnchorConnectionCreation: true,
+		disableNodeAnchors: true,
+	});
 
 	onMount(() => {
 		hollow.pevents.on("editor", () => {
@@ -31,7 +39,7 @@ export const createContainerState = (
 		controller,
 		isSettings,
 		setSettings,
-		isDrag,
-		setDrag,
+		canvasConfigs,
+		setCanvasConfigs,
 	};
 };

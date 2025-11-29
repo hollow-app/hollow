@@ -934,7 +934,7 @@ a.no-underline-alt {
 			box-shadow: var(--node-shadow, 0 2px 5px rgba(0, 0, 0, 0.1));
 			font-size: var(--node-font-size, 14px);
 			font-family: var(--node-font-family, sans-serif);
-			cursor: var(--node-cursor, default);
+			cursor: default;
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -946,7 +946,7 @@ a.no-underline-alt {
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				cursor: default;
+				cursor: var(--cursor);
 
 			}
 

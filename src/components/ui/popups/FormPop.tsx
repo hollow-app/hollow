@@ -1,4 +1,4 @@
-import { FormType } from "@type/hollow";
+import { FormOption, FormType, ToolOption } from "@type/hollow";
 import { Accessor, For } from "solid-js";
 import { createSignal } from "solid-js";
 import ColorPick from "@components/ColorPick";
@@ -10,6 +10,7 @@ import ImportFile from "@components/ImportFile";
 import { hollow } from "hollow";
 import Dropdown from "@components/Dropdown";
 import { Show } from "solid-js";
+import DynamicOption from "@components/DynamicOption";
 
 type FormPopProps = {
 	form: Accessor<FormType>;
@@ -121,197 +122,10 @@ export default function FormPop({ form }: FormPopProps) {
 											</Show>
 										</h2>
 									</div>
-									{(() => {
-										switch (option.type) {
-											case "text":
-												return (
-													<input
-														type="text"
-														class="input w-full"
-														{...option.attributes}
-														value={
-															option.value ?? ""
-														}
-														onInput={(e) =>
-															option.onAction(
-																e.currentTarget
-																	.value,
-															)
-														}
-														required={
-															!option.optional
-														}
-													/>
-												);
-											case "longtext":
-												return (
-													<textarea
-														class="input resize-none"
-														{...option.attributes}
-														value={
-															option.value ?? ""
-														}
-														onInput={(e) =>
-															option.onAction(
-																e.currentTarget
-																	.value,
-															)
-														}
-														required={
-															!option.optional
-														}
-													/>
-												);
-
-											case "number":
-												return (
-													<NumberInput
-														value={() =>
-															option.value ??
-															option.min
-														}
-														setValue={
-															option.onAction
-														}
-														min={option.min}
-														max={option.max}
-														direct
-													/>
-												);
-
-											case "boolean":
-												return (
-													<div class="toggle-switch">
-														<input
-															class="toggle-input"
-															id={`tool-option-toggle-${index()}`}
-															type="checkbox"
-															checked={
-																!!option.value
-															}
-															onchange={(e) =>
-																option.onAction(
-																	e
-																		.currentTarget
-																		.checked,
-																)
-															}
-														/>
-														<label
-															class="toggle-label"
-															for={`tool-option-toggle-${index()}`}
-														></label>
-													</div>
-												);
-
-											case "button":
-												return (
-													<button
-														onClick={
-															option.onAction
-														}
-														class="button-secondary"
-														type="button"
-													>
-														click
-													</button>
-												);
-
-											case "color":
-												return (
-													<ColorPick
-														color={() =>
-															option.value ??
-															"#FFFFFF"
-														}
-														setColor={
-															option.onAction
-														}
-													/>
-												);
-
-											case "emoji":
-												return (
-													<button
-														class={
-															"bg-secondary-10 h-10 w-10 content-center rounded-xl text-center text-2xl text-gray-900 select-none dark:text-gray-50"
-														}
-														type="button"
-													>
-														<EmojiPick
-															emo={
-																option.value ??
-																"☂️"
-															}
-															emoChanged={
-																option.onAction
-															}
-														/>
-													</button>
-												);
-
-											case "dropdown":
-												return (
-													<Dropdown
-														value={() =>
-															option.value ?? ""
-														}
-														placeholder={
-															option.placeholder
-														}
-														options={() =>
-															option.options
-														}
-														onSelect={
-															option.onAction
-														}
-													/>
-												);
-											case "file":
-												return (
-													<ImportFile
-														xfile={option.value}
-														onChange={
-															option.onAction
-														}
-													/>
-												);
-											case "range":
-												return (
-													<Slider
-														min={option.min}
-														max={option.max}
-														value={
-															option.value ??
-															option.min
-														}
-														setValue={
-															option.onAction
-														}
-													/>
-												);
-
-											case "keywords":
-												return (
-													<div class="max-h-40 max-w-full">
-														<WordInput
-															words={() =>
-																option.value
-															}
-															setWords={
-																option.onAction
-															}
-															placeholder={
-																option.placeholder
-															}
-														/>
-													</div>
-												);
-
-											default:
-												return null;
-										}
-									})()}
+									<DynamicOption
+										option={option as ToolOption}
+										index={index}
+									/>
 								</div>
 							);
 						}}

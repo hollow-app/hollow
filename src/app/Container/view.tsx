@@ -21,9 +21,9 @@ export const ContainerView = (
 			<div class="relative flex h-full flex-1">
 				<SideBar
 					layout={state.controller}
-					setDrag={state.setDrag}
-					isDrag={state.isDrag}
 					setSettings={state.setSettings}
+					canvasConfigs={state.canvasConfigs}
+					setCanvasConfigs={state.setCanvasConfigs}
 				/>
 				<Sidepanel
 					type="left"
@@ -33,7 +33,10 @@ export const ContainerView = (
 				<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
 					<Navbar />
 					<div class="flex min-h-0 w-full flex-1 pb-2">
-						<Canvas />
+						<Canvas
+							canvasConfigs={state.canvasConfigs}
+							setCanvasConfigs={state.setCanvasConfigs}
+						/>
 						<Sidepanel
 							type="right"
 							controller={state.controller}

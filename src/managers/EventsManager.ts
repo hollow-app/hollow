@@ -64,9 +64,7 @@ export class EventsManager<
 	}
 
 	// will return a callback.
-	getCurrentData<K extends keyof EventMap>(
-		eventName: K,
-	): EventMap[K] | undefined {
+	getData<K extends keyof EventMap>(eventName: K): EventMap[K] | undefined {
 		return this.currentData[eventName];
 	}
 
@@ -76,7 +74,7 @@ export class EventsManager<
 
 	toggle<K extends keyof EventMap>(eventName: K): void {
 		//@ts-ignore
-		const data: EventMap[K] = !this.getCurrentData(eventName);
+		const data: EventMap[K] = !this.getData(eventName);
 		this.wildcard.forEach((fn) => fn({ event: eventName, data }));
 		const eventListeners = this.listeners[eventName];
 		this.currentData[eventName] = data;

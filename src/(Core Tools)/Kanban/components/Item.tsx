@@ -57,7 +57,7 @@ export default function Item({
 	};
 	// context menu
 	const handleContextMenu = () => {
-		const metadata: ToolMetadata = toolEvent.getCurrentData("metadata");
+		const metadata: ToolMetadata = toolEvent.getData("metadata");
 		const columns = metadata.cards
 			.filter((i) => i.name !== cardName && i.isPlaced)
 			.map((i) => {

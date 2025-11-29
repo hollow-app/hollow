@@ -59,7 +59,7 @@ export default function Notebook({ card, noteBook }: NotebookProps) {
 		}
 	});
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		card.app.getCurrentData("tags"),
+		card.app.getData("tags"),
 	);
 
 	const updateBook = () => {

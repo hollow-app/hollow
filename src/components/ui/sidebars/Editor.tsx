@@ -1,33 +1,26 @@
-import Sidepanel from "@components/animations/Sidepanel";
 import ColorPick from "@components/ColorPick";
 import NumberInput from "@components/NumberInput";
 import { TentTreeIcon } from "lucide-solid";
 import {
 	createMemo,
 	createSignal,
-	onCleanup,
-	onMount,
 	Show,
 	type Accessor,
 	type Setter,
 } from "solid-js";
 import { hollow } from "hollow";
 import Dropdown from "@components/Dropdown";
-import type { Opthand } from "@type/Opthand";
 import { CardType } from "@type/hollow";
-
-type EditorProps = {
-	isVisible: Accessor<boolean>;
-	setVisible: Setter<boolean>;
-};
 
 interface SelectedCard {
 	tool: string;
 	cardId: string;
 }
 
-export default function Editor({ isVisible, setVisible }: EditorProps) {
-	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>(null);
+export default function Editor() {
+	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>(
+		hollow.pevents.getData("editor"),
+	);
 
 	let initialState: CardType | null = null;
 
@@ -62,7 +55,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 
 	const toggleEditor = (v: SelectedCard) => {
 		setSelectedCard(v);
-		setVisible((current) => !current);
+		// setVisible((current) => !current);
 	};
 
 	const onSave = () => {
@@ -70,7 +63,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 		const card = hollow.cards().find((i) => i.id === id);
 		delete card.data.extra.tool;
 		hollow.toolManager.setCard(selectedCard().tool, id, card);
-		hollow.events.emit("editor", null);
+		hollow.pevents.emit("editor", null);
 	};
 
 	const onCancel = () => {
@@ -80,22 +73,17 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 				initialState,
 			);
 		}
-		hollow.events.emit("editor", null);
+		hollow.pevents.emit("editor", null);
 	};
 
-	onMount(() => hollow.pevents.on("editor", toggleEditor));
-	onCleanup(() => hollow.pevents.off("editor", toggleEditor));
-
 	return (
-		<Sidepanel isVisible={isVisible}>
+		<div class="size-full">
 			<div class="px-5 py-3">
-				<Show when={isVisible()}>
-					<Header
-						selected={selectedCard}
-						selectCard={selectCard}
-						setSelected={setSelectedCard}
-					/>
-				</Show>
+				<Header
+					selected={selectedCard}
+					selectCard={selectCard}
+					setSelected={setSelectedCard}
+				/>
 			</div>
 
 			<Show
@@ -238,7 +226,7 @@ export default function Editor({ isVisible, setVisible }: EditorProps) {
 					</div>
 				</>
 			</Show>
-		</Sidepanel>
+		</div>
 	);
 }
 

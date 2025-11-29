@@ -203,7 +203,7 @@ export class ToolManager {
 		cardName: string;
 		fs: CardFs;
 	}) {
-		const group = props.toolEvent.getCurrentData("cards-fs");
+		const group = props.toolEvent.getData("cards-fs");
 		if (!group) {
 			props.toolEvent.emit("cards-fs", { [props.cardName]: props.fs });
 		} else {
@@ -344,7 +344,7 @@ export class ToolManager {
 				emit: happ.emit.bind(happ),
 				clear: happ.clear.bind(happ),
 				toggle: happ.toggle.bind(happ),
-				getCurrentData: happ.getCurrentData.bind(happ),
+				getData: happ.getData.bind(happ),
 			},
 			toolEvent,
 		};
@@ -513,7 +513,7 @@ export class ToolManager {
 		if (card.data.extra.isPlaced) {
 			const toolInstance = this.toolMap.get(toolName);
 			toolInstance?.onUnload(id);
-			const group = toolEvent.getCurrentData("cards-fs");
+			const group = toolEvent.getData("cards-fs");
 			if (group) {
 				delete group[card.data.extra.name];
 				toolEvent.emit("cards-fs", group);

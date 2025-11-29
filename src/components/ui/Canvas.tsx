@@ -1,17 +1,15 @@
 import { hollow } from "hollow";
 import { createMemo } from "solid-js";
 import { ConnectionType, NodeType, SolidKitx, ViewPort } from "solid-kitx";
-import Card from "./Card";
 import { createStore, unwrap } from "solid-js/store";
 import { createSignal } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
+import { Card } from "./Card";
 
-type CanvasProps = {
-	isGridVisible: () => boolean;
-};
+type CanvasProps = {};
 
 const vpKey = `${RealmManager.getSelf().getCurrent().id}-viewport`;
-export default function Canvas({ isGridVisible }: CanvasProps) {
+export default function Canvas({}: CanvasProps) {
 	const connectionsStore = createStore<ConnectionType[]>([]);
 
 	// u

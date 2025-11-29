@@ -2,8 +2,8 @@ import { lazy, onMount, Show } from "solid-js";
 import { createSignal } from "solid-js";
 import { hollow } from "hollow";
 
-import ContextMenu from "../ContextMenu";
-import VaultStorage from "./VaultStorage";
+import { ContextMenu } from "../ContextMenu";
+import { Vault } from "./Vault";
 import ToolSettings from "./ToolSettings";
 
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
@@ -79,7 +79,7 @@ export default function Popups() {
 			</Show>
 
 			<Show when={vault()}>
-				<VaultStorage {...vault()} />
+				<Vault {...vault()} />
 			</Show>
 
 			<Show when={form()}>

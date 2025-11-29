@@ -102,9 +102,7 @@ export type HollowEvent<
 	 * @param eventName - The name of the event.
 	 * @returns The current data associated with the event, or undefined.
 	 */
-	getCurrentData<K extends keyof EventMap>(
-		eventName: K,
-	): EventMap[K] | undefined;
+	getData<K extends keyof EventMap>(eventName: K): EventMap[K] | undefined;
 
 	/**
 	 * Clears all listeners for a specific event.
@@ -673,3 +671,28 @@ export type CardFs = {
 	remove(path: string): Promise<void>;
 	rename(path: string, newPath: string): Promise<void>;
 };
+
+export type PanelType = "left" | "right";
+
+export type PanelMap = Record<string, Component>;
+
+export interface SideLayout {
+	visible: boolean;
+	current?: string;
+	panels: string[];
+}
+
+export interface LayoutSignal {
+	left: SideLayout;
+	right: SideLayout;
+}
+
+export interface Layout {
+	get: LayoutSignal;
+	addPanel: (type: PanelType, name: string, component: Component) => void;
+	removePanel: (type: PanelType, name: string) => void;
+	selectPanel: (type: PanelType, name: string) => void;
+	togglePanel: (type: PanelType) => void;
+	isPanelVisible: (type: PanelType, name: string) => boolean;
+	panels: Record<PanelType, PanelMap>;
+}

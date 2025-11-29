@@ -1,90 +1,40 @@
-import Sidepanel from "@components/animations/Sidepanel";
+import { CharacterProps } from ".";
 import IconInner from "@components/Icon";
-import { CharacterManager } from "@managers/CharacterManager";
-import { Check, ImageUpIcon, SaveIcon, XIcon } from "lucide-solid";
-import { Character } from "@type/Character";
-import { For, onMount, Setter } from "solid-js";
-import { onCleanup } from "solid-js";
-import { createSignal, Show } from "solid-js";
-import { Accessor } from "solid-js";
-import { FormType } from "@type/hollow";
+import type { StateType } from "./state";
+import type { LogicType } from "./logic";
+import type { HelperType } from "./helper";
+import Sidepanel from "@components/animations/Sidepanel";
+import { createSignal, For, Setter, Show } from "solid-js";
+import { Check, ImageUpIcon, XIcon } from "lucide-solid";
 import { RealmManager } from "@managers/RealmManager";
-import { hollow } from "hollow";
-import { Realm } from "@type/Realm";
+import { Character } from "@type/Character";
+import { CharacterManager } from "@managers/CharacterManager";
+import { onCleanup } from "solid-js";
 
-type CharacterPanelProps = {
-	isVisible: Accessor<boolean>;
-};
-
-export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
-	const [character, setCharacter] = createSignal<Character>(null);
-
-	const import_image = async (key: string) => {
-		hollow.events.emit("show-vault", {
-			onSelect: (image: string) => {
-				setCharacter((prev) => ({ ...prev, [key]: image }));
-				CharacterManager.getSelf().setCharacter({ [key]: image });
-			},
-		});
-	};
-
-	const settings = () => {
-		const form: FormType = {
-			id: "character",
-			title: "Character",
-			update: true,
-			options: [
-				{
-					key: "username",
-					type: "text",
-					label: "Name",
-					value: character().username ?? "",
-				},
-				{
-					key: "bio",
-					type: "longtext",
-					label: "Description",
-					value: character().bio ?? "",
-				},
-				{
-					key: "title",
-					type: "dropdown",
-					// TODO form != multi-onSelect
-					options: [
-						{
-							items: character().titles,
-						},
-					],
-					label: "Title",
-					value: character().title,
-				},
-			],
-			submit: () => {},
-		};
-		hollow.events.emit("form", form);
-	};
-
-	onMount(() => {
-		hollow.pevents.on("ui-set-character", (c) =>
-			setCharacter((prev) => ({ ...prev, ...c })),
-		);
-		setCharacter(CharacterManager.getSelf().getCharacter());
-	});
+export const CharacterView = (
+	state: StateType,
+	logic: LogicType,
+	props: CharacterProps,
+	helper?: HelperType,
+) => {
 	return (
-		<Sidepanel isVisible={isVisible}>
+		<div class="size-full">
 			<div class="h-full py-2">
 				<div class="border-secondary-10 bg-secondary h-full w-102 overflow-hidden rounded-xl border">
 					<div class="group relative h-32 w-full">
-						<Show when={character()?.banner}>
+						<Show when={state.character()?.banner}>
 							<img
-								src={character().banner || "/placeholder.svg"}
+								src={
+									state.character().banner ||
+									"/placeholder.svg"
+								}
 								alt="Character banner"
 								class="h-full w-full object-cover"
 							/>
 						</Show>
 						<button
 							class="bg-secondary-05/60 hover:bg-secondary-05 absolute top-2 right-2 flex items-center rounded p-1 text-xs opacity-0 transition-opacity group-hover:opacity-100"
-							onclick={() => import_image("banner")}
+							onclick={() => logic.import_image("banner")}
 						>
 							<ImageUpIcon class="size-5 pr-1" /> Import
 						</button>
@@ -95,26 +45,28 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 						<div class="pointer-events-none -mt-12 flex justify-start">
 							<div class="pointer-events-auto relative">
 								<div class="group border-secondary-20 bg-secondary-05 relative h-20 w-20 overflow-hidden rounded-2xl border-3 object-cover shadow-lg">
-									<Show when={character()?.avatar}>
+									<Show when={state.character()?.avatar}>
 										<img
 											src={
-												character().avatar ||
+												state.character().avatar ||
 												"/placeholder.svg"
 											}
-											alt={character().username}
+											alt={state.character().username}
 										/>
 									</Show>
 
 									<button
 										class="bg-secondary-05/50 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-										onclick={() => import_image("avatar")}
+										onclick={() =>
+											logic.import_image("avatar")
+										}
 									>
 										<ImageUpIcon class="mx-auto p-1" />
 									</button>
 								</div>
-								<Show when={character()?.level}>
+								<Show when={state.character()?.level}>
 									<div class="bg-secondary-90 text-secondary border-secondary absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-lg border-2 text-xs font-bold shadow-sm">
-										{character().level}
+										{state.character().level}
 									</div>
 								</Show>
 							</div>
@@ -124,40 +76,36 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 						<div class="pointer-events-auto mt-4 space-y-4 text-left">
 							<div class="space-y-1">
 								<h2 class="text-2xl font-bold tracking-tight">
-									{character()?.username}
+									{state.character()?.username}
 								</h2>
-								<Show when={character()?.title}>
+								<Show when={state.character()?.title}>
 									<div class="bg-secondary-10 border-secondary-25 w-fit rounded border-0 px-1 text-xs tracking-wide">
-										{character().title}
+										{state.character().title}
 									</div>
 								</Show>
 							</div>
 							<div class="text-sm text-gray-400">
 								<span class="text-secondary-50">Realm:</span>{" "}
 								<span class="text-secondary-95 pl-2">
-									{
-										(
-											RealmManager.getSelf().getCurrent() as Realm
-										).name
-									}
+									{RealmManager.getSelf().getCurrent().name}
 								</span>
 							</div>
 							{/* XP Progress */}
-							<Show when={character()?.xp !== undefined}>
+							<Show when={state.character()?.xp !== undefined}>
 								<div class="space-y-2">
 									<div class="flex justify-between text-sm">
 										<span class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
 											Experience
 										</span>
 										<span class="font-medium text-neutral-500">
-											{character().xp} XP
+											{state.character().xp} XP
 										</span>
 									</div>
 									<div class="bg-secondary-10 h-1.5 overflow-hidden rounded-full">
 										<hr
 											class="from-primary-30 to-primary h-full border-0 bg-linear-to-r"
 											style={{
-												width: `${character().xp / character().level}%`,
+												width: `${state.character().xp / state.character().level}%`,
 											}}
 										/>
 									</div>
@@ -165,32 +113,39 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 							</Show>
 							{/* Bio */}
 							<p class="text-sm leading-relaxed text-neutral-500">
-								{character()?.bio}
+								{state.character()?.bio}
 							</p>
 							{/* Mrta */}
-							<Show when={character()?.meta.length > 0}>
+							<Show when={state.character()?.meta.length > 0}>
 								<div class="space-y-3">
 									<h3 class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
 										Meta
 									</h3>
 
 									<Show
-										when={character().meta.some(
-											(i) => typeof i.value === "number",
-										)}
-									>
-										<For
-											each={character().meta.filter(
+										when={state
+											.character()
+											.meta.some(
 												(i) =>
 													typeof i.value === "number",
 											)}
+									>
+										<For
+											each={state
+												.character()
+												.meta.filter(
+													(i) =>
+														typeof i.value ===
+														"number",
+												)}
 										>
 											{(m) => (
 												<ProgressBar
 													{...{
 														...m,
 														value: () => m.value,
-														setCharacter,
+														setCharacter:
+															state.setCharacter,
 													}}
 												/>
 											)}
@@ -198,17 +153,22 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 									</Show>
 									<div class="flex flex-wrap gap-2">
 										<Show
-											when={character().meta.some(
-												(i) =>
-													typeof i.value === "string",
-											)}
-										>
-											<For
-												each={character().meta.filter(
+											when={state
+												.character()
+												.meta.some(
 													(i) =>
 														typeof i.value ===
 														"string",
 												)}
+										>
+											<For
+												each={state
+													.character()
+													.meta.filter(
+														(i) =>
+															typeof i.value ===
+															"string",
+													)}
 											>
 												{(m) => (
 													<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1">
@@ -236,8 +196,8 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 							{/* Achievements */}
 							<Show
 								when={
-									character()?.achievements &&
-									character()?.achievements.length > 0
+									state.character()?.achievements &&
+									state.character()?.achievements.length > 0
 								}
 							>
 								<div class="space-y-3">
@@ -246,10 +206,9 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 									</h3>
 									<div class="flex flex-wrap gap-2">
 										<For
-											each={character().achievements.slice(
-												0,
-												10,
-											)}
+											each={state
+												.character()
+												.achievements.slice(0, 10)}
 										>
 											{(achievement) => (
 												<div class="bg-secondary-10 rounded-md px-2 py-1 text-xs">
@@ -259,13 +218,13 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 										</For>
 										<Show
 											when={
-												character().achievements
+												state.character().achievements
 													.length > 10
 											}
 										>
 											<div class="bg-secondary-10 rounded-md px-2 py-1 text-xs">
 												+
-												{character().achievements
+												{state.character().achievements
 													.length - 10}
 											</div>
 										</Show>
@@ -276,9 +235,9 @@ export default function CharacterPanel({ isVisible }: CharacterPanelProps) {
 					</div>
 				</div>
 			</div>
-		</Sidepanel>
+		</div>
 	);
-}
+};
 
 type ProgressBarProps = {
 	id: string;
@@ -299,9 +258,9 @@ function ProgressBar({
 }: ProgressBarProps) {
 	const [value, setValue] = createSignal(initialValue());
 	const [isDragging, setIsDragging] = createSignal(false);
-	let barRef;
+	let barRef!: HTMLDivElement;
 
-	const handleMouseMove = (e) => {
+	const handleMouseMove = (e: MouseEvent) => {
 		if (!isDragging()) return;
 		const rect = barRef.getBoundingClientRect();
 		let newPercent = ((e.clientX - rect.left) / rect.width) * 100;
@@ -315,7 +274,9 @@ function ProgressBar({
 		document.removeEventListener("mouseup", handleMouseUp);
 	};
 
-	const handleMouseDown = (e: Event & { currentTarget: HTMLDivElement }) => {
+	const handleMouseDown = (
+		e: MouseEvent & { currentTarget: HTMLDivElement },
+	) => {
 		setIsDragging(true);
 		// @ts-ignore
 		if (!e.target.closest("button")) {

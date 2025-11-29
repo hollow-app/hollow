@@ -6,32 +6,23 @@ import PenRulerIcon from "@assets/icons/pen-ruler.svg";
 import ChartPieIcon from "@assets/icons/chart-pie.svg";
 import { NotifyManager } from "@managers/NotifyManager";
 import { Move } from "lucide-solid";
-import { onMount, Setter } from "solid-js";
+import { createMemo, onMount, Setter } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import VaultIcon from "@assets/icons/vault.svg";
 import { hollow } from "hollow";
+import { Layout } from "@type/hollow";
 
 type SideBarProps = {
-	toggleChara: () => void;
-	isExpand: Accessor<boolean>;
-	isEditor: Accessor<boolean>;
-	toggleExpand: () => void;
-	toggleEditor: () => void;
+	layout: Layout;
 	setSettings: Setter<boolean>;
 	isDrag: Accessor<boolean>;
 	setDrag: Setter<boolean>;
-	setNotifications: Setter<boolean>;
 };
 export default function SideBar({
-	isExpand,
-	isEditor,
+	layout,
 	setDrag,
 	isDrag,
 	setSettings,
-	toggleChara,
-	toggleExpand,
-	toggleEditor,
-	setNotifications,
 }: SideBarProps) {
 	const toggleDragAndDrop = () => {
 		document.getElementById("root").classList.toggle("dnd-mode");
@@ -47,7 +38,7 @@ export default function SideBar({
 		<div class="bg-secondary-10/0 mr-2 flex w-14 flex-col gap-4 rounded-xl py-4">
 			<button
 				//class="bg-secondary-05 border-secondary-10 hover:text-secondary-95 text-secondary-80 mx-auto w-fit rounded-lg border p-1"
-				onclick={() => toggleChara()}
+				onclick={() => layout.selectPanel("left", "character")}
 			>
 				<Hollow class="orbit mx-auto size-9" />
 			</button>
@@ -55,8 +46,10 @@ export default function SideBar({
 			<div class="mx-auto flex flex-1 flex-col gap-3">
 				<button
 					class="button-control"
-					classList={{ selected: isExpand() }}
-					onclick={toggleExpand}
+					classList={{
+						selected: layout.isPanelVisible("left", "expand"),
+					}}
+					onclick={() => layout.selectPanel("left", "expand")}
 				>
 					<MosaicIcon class="m-auto size-5" />
 				</button>
@@ -68,8 +61,10 @@ export default function SideBar({
 				</button>
 				<button
 					class="button-control"
-					classList={{ selected: isEditor() }}
-					onclick={toggleEditor}
+					classList={{
+						selected: layout.isPanelVisible("right", "editor"),
+					}}
+					onclick={() => layout.selectPanel("right", "editor")}
 				>
 					<PenRulerIcon class="size-5" />
 				</button>
@@ -96,7 +91,13 @@ export default function SideBar({
 
 				<button
 					class="button-control"
-					onclick={() => setNotifications((prev) => !prev)}
+					classList={{
+						selected: layout.isPanelVisible(
+							"right",
+							"notifications",
+						),
+					}}
+					onclick={() => layout.selectPanel("right", "notifications")}
 				>
 					<BellIcon
 						class="size-5"

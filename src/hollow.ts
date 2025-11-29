@@ -10,6 +10,7 @@ import {
 	CardType,
 	HollowEvent,
 } from "@type/hollow";
+import { LayoutController } from "@type/Layout";
 import { createStore, SetStoreFunction } from "solid-js/store";
 
 type hollowType = {

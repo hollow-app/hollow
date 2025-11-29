@@ -32,7 +32,7 @@ export default function EntriesViewer() {
 	const [entries, setEntries] = createSignal(EntryManager.getSelf().entries);
 
 	const hollowTags = createMemo(
-		() => hollow.events.getCurrentData("tags") as TagType[],
+		() => hollow.events.getData("tags") as TagType[],
 	);
 
 	const [filter, setFilter] = createSignal<filterType>({

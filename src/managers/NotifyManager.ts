@@ -30,7 +30,7 @@ export class NotifyManager {
 		} else {
 			this.update();
 		}
-		if (hollow.events.getCurrentData("network-state")) {
+		if (hollow.events.getData("network-state")) {
 			// this.checkRepo();
 		} else {
 			const waitToFetch = (state: boolean) => {

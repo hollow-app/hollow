@@ -1,8 +1,10 @@
 import VaultIcon from "@assets/icons/vault.svg";
-import VaultManager from "@managers/VaultManager";
-import { FormType, FormOption } from "@type/hollow";
-import { VaultItem } from "@type/VaultItem";
-import { createSignal, For, Show } from "solid-js";
+import { VaultProps } from ".";
+import type { StateType } from "./state";
+import type { LogicType } from "./logic";
+import type { HelperType } from "./helper";
+import PopupWrapper from "@components/ui/PopupWrapper";
+import { hollow } from "hollow";
 import {
 	CopyIcon,
 	ImageUpIcon,
@@ -11,119 +13,15 @@ import {
 	SearchIcon,
 	Trash2Icon,
 } from "lucide-solid";
-import PopupWrapper from "../PopupWrapper";
-import { hollow } from "hollow";
 import FilterButton from "@components/FilterButton";
-import { open } from "@tauri-apps/plugin-dialog";
+import { createSignal, For, Show } from "solid-js";
 
-type VaultStorageProps = {
-	onSelect?: (p: string) => void;
-};
-export default function VaultStorage({ onSelect }: VaultStorageProps) {
-	const [images, setImages] = createSignal<VaultItem[]>([
-		...VaultManager.getSelf().getVault(),
-	]);
-	const [start, setStart] = createSignal(0);
-	const [selectedItem, setSelectedItem] = createSignal<VaultItem | null>(
-		null,
-	);
-	const [filter, setFilter] = createSignal<{
-		search: string;
-		tags: string[];
-	}>({ search: "", tags: [] });
-
-	const importImages = async () => {
-		const images = await open({
-			multiple: true,
-			title: "Select Image/s",
-			filters: [
-				{
-					name: "Images",
-					extensions: ["png", "jpg", "jpeg", "gif", "webp"],
-				},
-			],
-		});
-		await VaultManager.getSelf().addItems(images);
-		setImages(VaultManager.getSelf().getVault());
-	};
-	const importImageFromLink = async (imageUrl: string) => {
-		await VaultManager.getSelf().addUrlItem(imageUrl);
-		setImages(VaultManager.getSelf().getVault());
-	};
-
-	const copyItem = () => {
-		navigator.clipboard.writeText(selectedItem().url);
-	};
-
-	const editItem = () => {
-		const { path, url } = selectedItem();
-		const save = async (data: any) => {
-			const { id, ...wantedData } = data;
-			await VaultManager.getSelf().editItem({ ...wantedData, path, url });
-			setImages((prev) =>
-				prev.map((i) => (i.url === url ? { ...i, ...wantedData } : i)),
-			);
-			setSelectedItem((prev) => ({ ...prev, ...wantedData }));
-		};
-		submitForm(save, url);
-	};
-
-	const removeItem = () => {
-		hollow.events.emit("confirm", {
-			title: `Delete ${selectedItem().name}`,
-			message: "You sure ?",
-			onAccept: () => {
-				setImages((prev) => [
-					...prev.filter((i) => i.url !== selectedItem().url),
-				]);
-				VaultManager.getSelf().removeItems([selectedItem().url]);
-				setSelectedItem(null);
-			},
-		});
-	};
-
-	const submitForm = (save: (data: any) => void, id?: string) => {
-		const target = selectedItem();
-		const options: FormOption[] = [
-			{
-				key: "name",
-				label: "Name",
-				type: "text",
-				value: target?.name ?? "",
-				attributes: { placeholder: "File Name" },
-				row: true,
-			},
-			{
-				key: "tags",
-				label: "Tags",
-				optional: true,
-				type: "keywords",
-				value: target?.tags ?? [],
-			},
-		];
-		const form: FormType = {
-			id: id ?? crypto.randomUUID(),
-			title: "Update Item",
-			submit: save,
-			update: true,
-			options: options,
-		};
-		hollow.events.emit("form", form);
-	};
-
-	const onImageClick = (item: VaultItem) => {
-		setSelectedItem(item);
-	};
-
-	const onImageSelected = (url: string) => {
-		onSelect(url);
-		hollow.events.toggle("show-vault");
-	};
-
-	const filterByTags = (v: string[]) => {
-		setFilter((prev) => ({ ...prev, tags: v }));
-	};
-
+export const VaultView = (
+	state: StateType,
+	logic: LogicType,
+	props: VaultProps,
+	helper?: HelperType,
+) => {
 	return (
 		<PopupWrapper
 			Icon={VaultIcon}
@@ -134,14 +32,14 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 				<div class="flex items-center pb-3">
 					<p class="text-secondary-40 px-3 text-sm tracking-wider">
 						Storage for images — and more to come | Total:{" "}
-						{images().length}.
+						{state.images().length}.
 					</p>
 
 					<div class="relative z-1 ml-auto flex h-fit w-fit items-center justify-end gap-3 pr-3">
-						<AddUrl onAdd={importImageFromLink} />
+						<AddUrl onAdd={logic.importImageFromLink} />
 						<button
 							class="button-control tool-tip"
-							onClick={importImages}
+							onClick={logic.importImages}
 						>
 							<span class="tool-tip-content" data-side="top">
 								import
@@ -155,14 +53,18 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 									isCheckBox: true,
 									items: [
 										...new Set(
-											images().flatMap((i) => i.tags),
+											state
+												.images()
+												.flatMap((i) => i.tags),
 										),
 									].map((i) => ({
 										label: i,
-										checked: filter().tags.includes(i),
+										checked: state
+											.filter()
+											.tags.includes(i),
 									})),
 
-									onSelect: filterByTags,
+									onSelect: logic.filterByTags,
 								},
 							]}
 						/>
@@ -178,7 +80,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 								"--bg-color-f": "var(--secondary-color-15)",
 							}}
 							onInput={(e) =>
-								setFilter((prev) => ({
+								state.setFilter((prev) => ({
 									...prev,
 									search: e.currentTarget.value,
 								}))
@@ -195,20 +97,28 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 					<div class="grid w-full grid-cols-7 grid-rows-5 gap-2 py-3">
 						<For
 							each={[
-								...images().filter(
-									(i) =>
-										i.name.includes(filter().search) &&
-										(filter().tags.length === 0 ||
-											filter().tags.some((j) =>
-												(i.tags ?? []).includes(j),
-											)),
-								),
-							].slice(start(), start() + 35)}
+								...state
+									.images()
+									.filter(
+										(i) =>
+											i.name.includes(
+												state.filter().search,
+											) &&
+											(state.filter().tags.length === 0 ||
+												state
+													.filter()
+													.tags.some((j) =>
+														(i.tags ?? []).includes(
+															j,
+														),
+													)),
+									),
+							].slice(state.start(), state.start() + 35)}
 						>
 							{(img) => (
 								<button
 									class="group flex w-full flex-col"
-									onclick={() => onImageClick(img)}
+									onclick={() => logic.onImageClick(img)}
 								>
 									<img
 										src={img.url}
@@ -226,42 +136,47 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 					<div
 						class="border-secondary-05 box-content w-0 shrink-0 border-l opacity-0 transition-all duration-300 ease-in-out"
 						classList={{
-							"w-92 opacity-100 pl-3 py-3": !!selectedItem(),
+							"w-92 opacity-100 pl-3 py-3":
+								!!state.selectedItem(),
 						}}
 					>
-						<Show when={selectedItem()}>
+						<Show when={state.selectedItem()}>
 							<div class="flex h-full flex-col gap-2">
 								<div class="flex items-start justify-between text-neutral-800 dark:text-neutral-200">
 									<h2 class="text-xl font-bold">
-										{selectedItem()?.name}
+										{state.selectedItem()?.name}
 									</h2>
 									<button
 										class="button-ctl"
-										onclick={() => setSelectedItem(null)}
+										onclick={() =>
+											state.setSelectedItem(null)
+										}
 									>
 										✕
 									</button>
 								</div>
 								<img
-									src={selectedItem()?.url}
+									src={state.selectedItem()?.url}
 									class="bg-secondary-10 h-40 w-full rounded object-contain"
 								/>
 								<div class="space-y-1 text-xs text-neutral-700 dark:text-neutral-300">
 									<p class="flex justify-between rounded p-1">
 										<b>Type</b>
 										<span class="tracking-widest text-neutral-500">
-											{selectedItem()?.type}
+											{state.selectedItem()?.type}
 										</span>
 									</p>
 									<p class="flex justify-between rounded p-1">
 										<b>Uploaded</b>
 										<span class="tracking-widest text-neutral-500">
-											{selectedItem()?.uploadedAt.toLocaleString()}
+											{state
+												.selectedItem()
+												?.uploadedAt.toLocaleString()}
 										</span>
 									</p>
 								</div>
 								<div class="flex flex-wrap gap-1">
-									<For each={selectedItem()?.tags}>
+									<For each={state.selectedItem()?.tags}>
 										{(t) => (
 											<span class="bg-secondary-10 text-secondary-50 rounded px-2 py-1 text-xs">
 												{t}
@@ -271,12 +186,12 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 								</div>
 
 								<div class="mt-auto flex">
-									<Show when={onSelect}>
+									<Show when={props.onSelect}>
 										<button
 											class="button-primary"
 											onclick={() =>
-												onImageSelected(
-													selectedItem().url,
+												logic.onImageSelected(
+													state.selectedItem().url,
 												)
 											}
 										>
@@ -286,19 +201,19 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 									<div class="ml-auto space-x-2">
 										<button
 											class="button-control"
-											onclick={copyItem}
+											onclick={logic.copyItem}
 										>
 											<CopyIcon class="size-5" />
 										</button>
 										<button
 											class="button-control"
-											onclick={editItem}
+											onclick={logic.editItem}
 										>
 											<PencilIcon class="size-5" />
 										</button>
 										<button
 											class="button-control red"
-											onclick={removeItem}
+											onclick={logic.removeItem}
 										>
 											<Trash2Icon class="size-5" />
 										</button>
@@ -308,22 +223,25 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 						</Show>
 					</div>
 				</div>
-				<Show when={images().length > 35}>
+				<Show when={state.images().length > 35}>
 					<div class="border-secondary-05 flex h-fit w-full justify-center gap-5 rounded border-t pt-3">
 						<For
 							each={[
-								...new Array(Math.ceil(images().length / 35)),
+								...new Array(
+									Math.ceil(state.images().length / 35),
+								),
 							]}
 						>
 							{(_, index) => (
 								<button
 									class="button-control"
 									classList={{
-										selected: start() === index() * 35,
+										selected:
+											state.start() === index() * 35,
 									}}
 									onclick={() => {
-										if (start() !== index() * 35) {
-											setStart(index() * 35);
+										if (state.start() !== index() * 35) {
+											state.setStart(index() * 35);
 										}
 									}}
 								>
@@ -336,7 +254,7 @@ export default function VaultStorage({ onSelect }: VaultStorageProps) {
 			</div>
 		</PopupWrapper>
 	);
-}
+};
 
 type AddUrlProps = {
 	onAdd: (url: string) => void;
@@ -378,3 +296,4 @@ function AddUrl({ onAdd }: AddUrlProps) {
 		</div>
 	);
 }
+

@@ -1,13 +1,6 @@
 import { InsightType } from "@type/hollow";
 import ScrollIcon from "@assets/icons/scroll.svg";
-import {
-	Accessor,
-	createSignal,
-	For,
-	onCleanup,
-	onMount,
-	Show,
-} from "solid-js";
+import { Accessor, For, Show } from "solid-js";
 
 type InsightPopProps = {
 	data: Accessor<InsightType>;

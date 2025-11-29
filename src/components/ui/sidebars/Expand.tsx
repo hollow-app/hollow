@@ -1,4 +1,3 @@
-import Sidepanel from "@components/animations/Sidepanel";
 import CardConfig from "@components/CardConfig";
 import { FormType, CardType } from "@type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
@@ -16,11 +15,7 @@ type FilterType = {
 	unplaced: boolean;
 };
 
-type ExpandProps = {
-	isVisible: Accessor<boolean>;
-};
-
-export default function Expand({ isVisible }: ExpandProps) {
+export default function Expand() {
 	// TODO 11
 	const [hand, setHand] = createSignal(hollow.toolManager.getHand());
 	const [filter, setFilter] = createSignal<FilterType>({
@@ -122,7 +117,7 @@ export default function Expand({ isVisible }: ExpandProps) {
 	};
 
 	return (
-		<Sidepanel isVisible={isVisible} overflowVisible>
+		<div class="size-full">
 			<div class="border-secondary-10 flex h-full flex-col gap-3 border-l py-5">
 				<div class="flex px-5">
 					<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
@@ -242,6 +237,6 @@ export default function Expand({ isVisible }: ExpandProps) {
 					/>
 				</div>
 			</div>
-		</Sidepanel>
+		</div>
 	);
 }

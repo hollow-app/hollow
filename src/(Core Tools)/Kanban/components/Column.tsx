@@ -35,13 +35,13 @@ export default function Column({ card, data }: ColumnProps) {
 	const [activeItem, setActiveItem] = createSignal<string | null>(null);
 	const [selectedGroup, setSelectedGroup] = createSignal([]);
 	const [meta, setMeta] = createSignal(
-		(card.toolEvent.getCurrentData("metadata") as ToolMetadata).cards.find(
+		(card.toolEvent.getData("metadata") as ToolMetadata).cards.find(
 			(i) => i.name === card.name,
 		),
 	);
 
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		card.app.getCurrentData("tags"),
+		card.app.getData("tags"),
 	);
 
 	// Items Management
@@ -191,7 +191,7 @@ export default function Column({ card, data }: ColumnProps) {
 			if (selectedGroup().length > 0) {
 				const nSelected = selectedGroup().length;
 				const metadata: ToolMetadata =
-					card.toolEvent.getCurrentData("metadata");
+					card.toolEvent.getData("metadata");
 				metadata.cards.some((i) => i.name !== card.name) &&
 					menuItems.push({
 						icon: "Send",

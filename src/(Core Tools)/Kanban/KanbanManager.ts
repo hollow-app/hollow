@@ -26,7 +26,7 @@ export class KanbanManager {
 
 	init(toolEvent: HollowEvent<ToolEvents>) {
 		this.toolEvent = toolEvent;
-		this.store = this.toolEvent.getCurrentData("config");
+		this.store = this.toolEvent.getData("config");
 	}
 
 	async getColumn(columnId: string): Promise<ColumnType | null> {

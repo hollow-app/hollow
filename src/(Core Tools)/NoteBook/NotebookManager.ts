@@ -18,7 +18,7 @@ export class NotebookManager {
 	private constructor() {}
 	init(toolEvent: HollowEvent<ToolEvents>) {
 		this.toolEvent = toolEvent;
-		this.store = this.toolEvent.getCurrentData("config");
+		this.store = this.toolEvent.getData("config");
 	}
 
 	rebuildMarkdown(obj: NoteType) {
@@ -75,6 +75,6 @@ export class NotebookManager {
 	}
 	//
 	private getCardFs(cardName: string): CardFs {
-		return this.toolEvent.getCurrentData("cards-fs")[cardName];
+		return this.toolEvent.getData("cards-fs")[cardName];
 	}
 }

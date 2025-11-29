@@ -23,7 +23,7 @@ export class EmbedMain implements IPlugin {
 	private store: IStore = null;
 
 	constructor(toolEvent: HollowEvent<ToolEvents>) {
-		this.store = toolEvent.getCurrentData("config");
+		this.store = toolEvent.getData("config");
 	}
 
 	async onCreate(card: ICard): Promise<boolean> {

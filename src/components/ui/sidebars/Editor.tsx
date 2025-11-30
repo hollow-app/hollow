@@ -4,6 +4,7 @@ import { TentTreeIcon } from "lucide-solid";
 import {
 	createMemo,
 	createSignal,
+	JSX,
 	Show,
 	type Accessor,
 	type Setter,
@@ -36,7 +37,7 @@ export default function Editor() {
 		hollow.setCards((c) => c.id === id, key, value);
 	};
 
-	const updateStyleProp = (key: string, value: any) => {
+	const updateStyleProp = (key: keyof JSX.CSSProperties, value: any) => {
 		const id = selectedCard().cardId;
 		hollow.setCards((c) => c.id === id, "style", key, value);
 	};
@@ -62,7 +63,7 @@ export default function Editor() {
 		const id = selectedCard().cardId;
 		const card = hollow.cards().find((i) => i.id === id);
 		delete card.data.extra.tool;
-		hollow.toolManager.setCard(selectedCard().tool, id, card);
+		hollow.toolManager.updateCard(selectedCard().tool, card);
 		hollow.pevents.emit("editor", null);
 	};
 
@@ -98,7 +99,7 @@ export default function Editor() {
 				}
 			>
 				<>
-					<div class="h-full max-h-full overflow-y-scroll pr-3 pl-[calc(var(--spacing)*3+8px)] text-gray-950 dark:text-gray-50">
+					<div class="max-h-full overflow-y-scroll pr-3 pl-[calc(var(--spacing)*3+8px)] text-gray-950 dark:text-gray-50">
 						<h1 class="mt-5 text-2xl font-bold">Size</h1>
 						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 							<NumRow
@@ -121,9 +122,9 @@ export default function Editor() {
 								label="Corner"
 								value={() =>
 									Number(
-										cardStyle()["border-radius"].split(
-											"px",
-										)[0],
+										cardStyle()
+											["border-radius"].toString()
+											.split("px")[0],
 									)
 								}
 								setValue={(v) =>
@@ -133,10 +134,18 @@ export default function Editor() {
 
 							<NumRow
 								label="Opacity"
-								value={() => cardStyle().opacity}
-								setValue={(v) => updateStyleProp("opacity", v)}
-								step={0.1}
-								max={1}
+								value={() =>
+									Number(
+										(cardStyle()["--opacity"] ?? "100%")
+											.toString()
+											.split("%")[0],
+									)
+								}
+								setValue={(v) =>
+									updateStyleProp("--opacity", `${v}%`)
+								}
+								step={5}
+								max={100}
 							/>
 
 							<div class="flex items-center justify-between">
@@ -154,9 +163,11 @@ export default function Editor() {
 										<NumberInput
 											value={() =>
 												Number(
-													cardStyle()[
-														"outline-width"
-													].split("px")[0],
+													cardStyle()
+														[
+															"outline-width"
+														].toString()
+														.split("px")[0],
 												)
 											}
 											setValue={(v) =>
@@ -186,10 +197,12 @@ export default function Editor() {
 
 							<ToggleRow
 								label="Shadow"
-								checked={() => cardStyle().shadow !== "none"}
+								checked={() =>
+									cardStyle()["box-shadow"] !== "none"
+								}
 								onToggle={(on) =>
 									updateStyleProp(
-										"shadow",
+										"box-shadow",
 										on ? "var(--shadow-sm)" : "none",
 									)
 								}
@@ -210,13 +223,15 @@ export default function Editor() {
 							/>
 							<NumRow
 								label="Z"
-								value={() => cardStyle().z ?? 0}
-								setValue={(v) => updateStyleProp("z", v)}
+								value={() =>
+									Number(cardStyle()["z-index"]) ?? 0
+								}
+								setValue={(v) => updateStyleProp("z-index", v)}
 							/>
 						</div>
 					</div>
 
-					<div class="mt-2 flex min-h-20 w-full gap-4 pr-3 pl-[calc(var(--spacing)*3+8px)]">
+					<div class="mt-2 flex h-fit min-h-20 w-full gap-4 pr-3 pl-[calc(var(--spacing)*3+8px)]">
 						<button class="button-primary" onclick={onSave}>
 							Save
 						</button>

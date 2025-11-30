@@ -31,7 +31,7 @@ export default function Sidepanel({ type, controller, width }: SidepanelProps) {
 								width: "0px",
 							}}
 							transition={{ duration: 0.5 }}
-							class="bg-secondary flex h-full shrink-0 flex-col overflow-hidden"
+							class="bg-secondary flex h-full shrink-0 flex-col overflow-hidden overflow-y-scroll"
 						>
 							<Dynamic
 								component={controller.panels[type][panel]}

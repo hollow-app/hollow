@@ -1,27 +1,23 @@
-import { FormOption, FormType, ToolOption } from "@type/hollow";
-import { Accessor, For } from "solid-js";
+import ScrollIcon from "@assets/icons/scroll.svg";
+import { FormType, ToolOption } from "@type/hollow";
+import { Accessor, For, Setter } from "solid-js";
 import { createSignal } from "solid-js";
-import ColorPick from "@components/ColorPick";
-import EmojiPick from "@components/EmojiPick";
-import NumberInput from "@components/NumberInput";
-import Slider from "@components/Slider";
-import WordInput from "@components/WordInput";
-import ImportFile from "@components/ImportFile";
 import { hollow } from "hollow";
-import Dropdown from "@components/Dropdown";
 import { Show } from "solid-js";
 import DynamicOption from "@components/DynamicOption";
+import PopupWrapper from "../PopupWrapper";
 
-type FormPopProps = {
-	form: Accessor<FormType>;
+type FormProps = {
+	form: FormType;
+	setForm: Setter<FormType[]>;
 };
-export default function FormPop({ form }: FormPopProps) {
+export default function Form({ form, setForm }: FormProps) {
 	const [result, setResult] = createSignal({
-		...form().options.reduce((acc: Record<string, any>, obj) => {
+		...form.options.reduce((acc: Record<string, any>, obj) => {
 			acc[obj.key] = obj.value;
 			return acc;
 		}, {}),
-		id: form().id,
+		id: form.id,
 	});
 	const onSave = (e) => {
 		e.preventDefault();
@@ -31,7 +27,7 @@ export default function FormPop({ form }: FormPopProps) {
 		// 	- 2: if the option is optional you skip it
 		// 	- 3: if it depends on another option, you check if it's value is included in the ok list (dependsOn.conditions)
 		if (
-			!form().options.some((i) => {
+			!form.options.some((i) => {
 				if (i.optional) return false;
 				return i.dependsOn
 					? i.dependsOn.conditions.includes(
@@ -40,32 +36,28 @@ export default function FormPop({ form }: FormPopProps) {
 					: !submission[i.key];
 			})
 		) {
-			form().submit(submission);
-			hollow.events.emit("form", null);
+			form.submit(submission);
+			onCancel();
 		}
 	};
 	const onCancel = () => {
-		hollow.events.emit("form", null);
+		setForm((prev) => prev.filter((i) => i.id !== form.id));
 	};
 	return (
-		<form class="pop-up" onsubmit={onSave}>
-			<div class="up-pop pointer-events-auto absolute flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 p-5">
-				<div class="border-secondary-15 flex items-start gap-5 border-b border-dashed pb-5">
-					<div>
-						<h1 class="text-4xl font-bold text-neutral-900 dark:text-neutral-100">
-							Form
-							<span class="text-xl font-light text-neutral-500">
-								:{form().title}
-							</span>
-						</h1>
+		<PopupWrapper title={`Form: ${form.title}`} Icon={ScrollIcon}>
+			<form
+				class="flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 px-5 pb-5"
+				onsubmit={onSave}
+			>
+				<Show when={form.description}>
+					<div class="border-secondary-15 flex items-start gap-5 border-b border-dashed pb-5">
 						<h3 class="bg-secondary-10 rounded px-2 text-sm font-medium tracking-wider text-neutral-500 uppercase">
-							{form().description}
+							{form.description}
 						</h3>
 					</div>
-				</div>
-
+				</Show>
 				<div class="flex h-full flex-wrap overflow-x-hidden overflow-y-auto">
-					<For each={form().options}>
+					<For each={form.options}>
 						{(preOption, index) => {
 							const option = {
 								...preOption,
@@ -133,14 +125,14 @@ export default function FormPop({ form }: FormPopProps) {
 				</div>
 				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded px-[3rem] py-5">
 					<button class="button-primary" type="submit">
-						{form().update ? "Update" : "Submit"}
+						{form.update ? "Update" : "Submit"}
 					</button>
 					<button class="button-secondary" onclick={onCancel}>
 						Cancel
 					</button>
 				</div>
-			</div>
-		</form>
+			</form>
+		</PopupWrapper>
 	);
 }
 //

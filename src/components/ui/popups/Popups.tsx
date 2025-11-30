@@ -1,27 +1,28 @@
-import { lazy, onMount, Show } from "solid-js";
+import { For, lazy, onMount, Show } from "solid-js";
 import { createSignal } from "solid-js";
 import { hollow } from "hollow";
 
 import { ContextMenu } from "../ContextMenu";
 import { Vault } from "./Vault";
 import ToolSettings from "./ToolSettings";
+import { ConfirmType, FormType } from "@type/hollow";
 
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
-const ConfirmPop = lazy(() => import("@components/ui/popups/ConfirmPop"));
+const Confirm = lazy(() => import("@components/ui/popups/Confirm"));
 const EmojiPicker = lazy(() => import("@components/ui/popups/EmojiPicker"));
 const EntriesViewer = lazy(() => import("@components/ui/popups/EntriesViewer"));
-const FormPop = lazy(() => import("@components/ui/popups/FormPop"));
+const Form = lazy(() => import("@components/ui/popups/Form"));
 const ToolPop = lazy(() => import("@components/ui/popups/ToolPop"));
-const InsightPop = lazy(() => import("@components/ui/popups/InsightPop"));
+const Insight = lazy(() => import("@components/ui/popups/Insight"));
 
 export default function Popups() {
 	const [tool, setTool] = createSignal(null);
 	const [emoji, setEmoji] = createSignal(null);
 	const [color, setColor] = createSignal(null);
 	const [entries, setEntries] = createSignal(false);
-	const [form, setForm] = createSignal(null);
+	const [form, setForm] = createSignal<FormType[]>([]);
 	const [insight, setInsight] = createSignal(null);
-	const [confirm, setConfirm] = createSignal(null);
+	const [confirm, setConfirm] = createSignal<ConfirmType>(null);
 	const [toolSettings, setToolSettings] = createSignal(null);
 	const [vault, setVault] = createSignal(null);
 
@@ -52,7 +53,7 @@ export default function Popups() {
 						setVault(data);
 						break;
 					case "form":
-						setForm(data);
+						data && setForm((prev) => [...prev, data]);
 						break;
 					case "insight":
 						setInsight(data);
@@ -82,8 +83,10 @@ export default function Popups() {
 				<Vault {...vault()} />
 			</Show>
 
-			<Show when={form()}>
-				<FormPop form={form} />
+			<Show when={form().length > 0}>
+				<For each={form()}>
+					{(form) => <Form form={form} setForm={setForm} />}
+				</For>
 			</Show>
 
 			<Show when={emoji()}>
@@ -95,11 +98,11 @@ export default function Popups() {
 			</Show>
 
 			<Show when={insight()}>
-				<InsightPop data={insight()} hide={() => setInsight(null)} />
+				<Insight data={insight()} hide={() => setInsight(null)} />
 			</Show>
 
 			<Show when={confirm()}>
-				<ConfirmPop pack={confirm()} />
+				<Confirm pack={confirm()} />
 			</Show>
 
 			<ContextMenu />

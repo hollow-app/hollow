@@ -25,7 +25,6 @@ import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import { CardFileManager } from "./CardFileManager";
 import { reconcile } from "solid-js/store";
-import { NodeType } from "solid-kitx";
 
 type ToolMethods = {
 	name: string;
@@ -80,7 +79,6 @@ export class ToolManager {
 		} else {
 			parsedData = parsedData.filter((i) => i.signed);
 		}
-
 		hollow.setCards(
 			parsedData.flatMap(({ cards, name }) =>
 				cards.map((c) => ({
@@ -362,7 +360,11 @@ export class ToolManager {
 			.cards.find((i) => i.id === cardId);
 	}
 
-	setCard(toolName: string, cardId: string, updates: Record<string, any>) {
+	private setCard(
+		toolName: string,
+		cardId: string,
+		updates: Record<string, any>,
+	) {
 		const root = this.getHand();
 		const tool = root.find((i) => i.name === toolName);
 		if (!tool) return;
@@ -375,10 +377,19 @@ export class ToolManager {
 							...card.data,
 							extra: { ...card.data.extra, ...updates },
 						},
-					} // ⬅️ merge multiple updates
+					}
 				: card,
 		);
 
+		this.store.set("__root__", root);
+	}
+	updateCard(toolName: string, newCard: CardType) {
+		const root = this.getHand();
+		const tool = root.find((i) => i.name === toolName);
+		if (!tool) return;
+		tool.cards = tool.cards.map((card) =>
+			card.id === newCard.id ? newCard : card,
+		);
 		this.store.set("__root__", root);
 	}
 
@@ -470,7 +481,7 @@ export class ToolManager {
 			y: 10,
 			style: {
 				"border-radius": "10",
-				opacity: 1,
+				"--opacity": "100%",
 				"outline-color": "#3d3d3d",
 				"outline-width": "2",
 				background:

@@ -11,6 +11,8 @@ export class Storage {
 
 	static async create({ path, options }: StoreType) {
 		const store = await load(path, options);
+		// store.reload();
+		// path.endsWith("main.json") && console.log(store.get("__root__"));
 		const instance = new Storage(store);
 		await instance.init();
 		return instance;

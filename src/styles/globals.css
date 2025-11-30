@@ -157,37 +157,10 @@ a {
 	height: 100%;
 }
 
-.dnd-mode {
-	user-select: none;
-}
-
-.grid-lines {
-	--visible: var(--static-grid-lines);
-	--simi-visible: color-mix(in oklab, var(--static-grid-lines), transparent 50%);
-	--n: 4;
-	--t: 1px;
-	--g: 10px;
-	--c: var(--visible) 25%, #0000 0;
-
-	& .canvas {
-		background:
-			conic-gradient(at var(--g) var(--t), var(--c)) calc((var(--cw) / var(--n) - var(--g) + var(--t)) / 2) calc(var(--rh) - 1px) / calc(var(--cw) / var(--n)) var(--rh),
-			conic-gradient(from 180deg at var(--t) var(--g),
-				var(--c)) calc(var(--cw) - 1px) calc((var(--rh) / var(--n) - var(--g) + var(--t)) / 2) / var(--cw) calc(var(--rh) / var(--n));
-	}
-}
-
-
-
 .os-theme-native {
 	--os-size: 8px !important;
 	--os-handle-bg: var(--secondary-color-05) !important;
 }
-
-
-
-
-
 
 .react-colorful {
 	width: 100% !important;
@@ -741,7 +714,6 @@ a {
 	--border-color: var(--color-secondary-10);
 	--shadow: #4d4d4d;
 	--position: absolute;
-	/* overflow: hidden; */
 	position: var(--position);
 	background: var(--bg-color);
 	border-radius: var(--radius-lg);
@@ -898,12 +870,6 @@ a.no-underline-alt {
 
 
 /* KITX */
-.kit-controls {
-	button.on {
-		--controls-button-bg: var(--color-primary);
-		--color: var(--color-primary-95);
-	}
-}
 
 .solid-kitx {
 	width: 100%;
@@ -912,6 +878,10 @@ a.no-underline-alt {
 	position: relative;
 	background-color: var(--color-secondary);
 	background-image: none;
+
+	.background-grid {
+		color: var(--color-secondary-20);
+	}
 
 	.container {
 		transform-origin: 0 0;

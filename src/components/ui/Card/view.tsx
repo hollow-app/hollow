@@ -16,14 +16,15 @@ export const CardView = (
 			style={{
 				...(state.isExpand()
 					? {
-							top: 0,
-							left: 0,
+							top: -props.kit.viewport().y - props.node.x + "px",
+							left: -props.kit.viewport().x - props.node.y + "px",
 							width: "calc(100vw - calc(var(--spacing) * 20) - 2px)",
 							height: "calc(100vh - calc(var(--spacing) * 4) - 2px)",
 							"z-index": 999,
+							background: "var(--color-secondary)",
 						}
 					: {}),
-				position: state.isExpand() ? "sticky" : "static",
+				position: state.isExpand() ? "absolute" : "static",
 			}}
 			onContextMenu={logic.onContextMenu}
 		>
@@ -37,4 +38,3 @@ export const CardView = (
 		</div>
 	);
 };
-

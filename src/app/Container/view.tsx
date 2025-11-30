@@ -22,8 +22,8 @@ export const ContainerView = (
 				<SideBar
 					layout={state.controller}
 					setSettings={state.setSettings}
-					canvasConfigs={state.canvasConfigs}
 					setCanvasConfigs={state.setCanvasConfigs}
+					isLiveEditor={state.isLiveEditor}
 				/>
 				<Sidepanel
 					type="left"
@@ -36,6 +36,7 @@ export const ContainerView = (
 						<Canvas
 							canvasConfigs={state.canvasConfigs}
 							setCanvasConfigs={state.setCanvasConfigs}
+							isLiveEditor={state.isLiveEditor}
 						/>
 						<Sidepanel
 							type="right"

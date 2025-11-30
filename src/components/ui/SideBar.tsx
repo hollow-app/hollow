@@ -6,27 +6,25 @@ import PenRulerIcon from "@assets/icons/pen-ruler.svg";
 import ChartPieIcon from "@assets/icons/chart-pie.svg";
 import PenIcon from "@assets/icons/pen.svg";
 import { NotifyManager } from "@managers/NotifyManager";
-import { Move } from "lucide-solid";
 import { createMemo, For, onMount, Setter, Show } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import VaultIcon from "@assets/icons/vault.svg";
 import { hollow } from "hollow";
 import { Layout, SideBarButton } from "@type/hollow";
-import { isDate } from "util/types";
 import { Dynamic } from "solid-js/web";
 import { ConfigsType } from "solid-kitx";
 
 type SideBarProps = {
 	layout: Layout;
 	setSettings: Setter<boolean>;
-	canvasConfigs: Accessor<ConfigsType>;
 	setCanvasConfigs: Setter<ConfigsType>;
+	isLiveEditor: Accessor<boolean>;
 };
 export default function SideBar({
 	layout,
 	setSettings,
 	setCanvasConfigs,
-	canvasConfigs,
+	isLiveEditor,
 }: SideBarProps) {
 	const [alert, setAlert] = createSignal(NotifyManager.getSelf().isAlert());
 
@@ -54,8 +52,10 @@ export default function SideBar({
 					...p,
 					disableEdgeDrag: !p.disableEdgeDrag,
 					disableNodeDrag: !p.disableNodeDrag,
+					disableVerticalPan: !p.disableVerticalPan,
+					disableHorizontalPan: !p.disableHorizontalPan,
 				})),
-			selectedCondition: () => !canvasConfigs().disableNodeDrag,
+			selectedCondition: isLiveEditor,
 			tooltip: "Edit cards directly in the canvas",
 		},
 		{

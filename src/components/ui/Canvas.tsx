@@ -1,8 +1,10 @@
 import { hollow } from "hollow";
-import { Accessor, createMemo } from "solid-js";
+import { Accessor, createMemo, onMount, Show } from "solid-js";
 import {
+	BackgroundGrid,
 	ConfigsType,
 	ConnectionType,
+	Kit,
 	NodeType,
 	SolidKitx,
 	ViewPort,
@@ -15,6 +17,7 @@ import { Card } from "./Card";
 type CanvasProps = {
 	canvasConfigs: Accessor<ConfigsType>;
 	setCanvasConfigs: Accessor<ConfigsType>;
+	isLiveEditor: Accessor<boolean>;
 };
 
 const vpKey = `${RealmManager.getSelf().getCurrent().id}-viewport`;
@@ -52,7 +55,15 @@ export default function Canvas(props: CanvasProps) {
 					default: Card,
 				}}
 				{...props.canvasConfigs()}
-			/>
+			>
+				{(kit: Kit) => (
+					<>
+						<Show when={props.isLiveEditor()}>
+							<BackgroundGrid kit={kit} type="dash" />
+						</Show>
+					</>
+				)}
+			</SolidKitx>
 		</div>
 	);
 }

@@ -83,7 +83,7 @@ export default function SideBar({
 			</button>
 			<hr class="border-secondary-10 bg-secondary mx-auto h-px w-10 border-t" />
 			{/* t	 */}
-			<div class="z-1 mx-auto flex flex-1 flex-col gap-3">
+			<div class="mx-auto flex flex-1 flex-col gap-3">
 				<For each={top}>
 					{(btn) => (
 						<button

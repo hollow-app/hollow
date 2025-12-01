@@ -13,7 +13,7 @@ import { ChevronDownIcon } from "lucide-solid";
 import { useDropdownPosition } from "../hooks/useDropdownPosition";
 
 export type DropdownProps = {
-	value?: () => string;
+	value: () => string | undefined;
 	options: () => { title?: string; items: string[] }[];
 	onSelect: (v: string) => void;
 	placeholder?: string;
@@ -26,16 +26,20 @@ export default function Dropdown({
 	placeholder,
 }: DropdownProps) {
 	const [isOpen, setIsOpen] = createSignal(false);
-	const [innerValue, setInnerValue] = createSignal(value ? value() : "");
+	const [innerValue, setInnerValue] = createSignal(value() ?? "");
 	let dropdownRef: HTMLDivElement | undefined;
 	let listRef: HTMLUListElement | undefined;
 	let inputRef: HTMLInputElement | undefined;
 
 	// TODO
 	createEffect(
-		on(value, (v) => {
-			setInnerValue(v);
-		}),
+		on(
+			value,
+			(v) => {
+				setInnerValue(v);
+			},
+			{ defer: true },
+		),
 	);
 
 	const { pos, updatePosition, handleClickOutside } = useDropdownPosition();
@@ -58,9 +62,9 @@ export default function Dropdown({
 		setIsOpen(false);
 	};
 
-	onMount(() =>
-		document.addEventListener("resize", () => updatePosition(inputRef)),
-	);
+	onMount(() => {
+		document.addEventListener("resize", () => updatePosition(inputRef));
+	});
 	onCleanup(() =>
 		document.removeEventListener("resize", () => updatePosition(inputRef)),
 	);

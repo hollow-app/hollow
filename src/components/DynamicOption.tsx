@@ -142,7 +142,7 @@ const EmojiOption = (props: { option: OptionType<"emoji"> }) => (
 
 const DropdownOption = (props: { option: OptionType<"dropdown"> }) => (
 	<Dropdown
-		value={props.option.value}
+		value={() => props.option.value}
 		placeholder={props.option.placeholder}
 		options={() => props.option.options}
 		onSelect={props.option.onAction}

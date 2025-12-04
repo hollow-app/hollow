@@ -27,6 +27,5 @@ This project is far from perfect, so contributions are always welcome! Whether i
 
 ### Current Plugins
 
-- [Radarite](https://github.com/Ryusufe/radarite)
 - [Calendar](https://github.com/ryusufe/Calendar)
 

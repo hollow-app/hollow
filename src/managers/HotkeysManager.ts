@@ -178,9 +178,6 @@ export class hotkeysManager {
 			case "Reload App":
 				RustManager.getSelf().reload();
 				break;
-			case "Toggle Entries Viewer":
-				hollow.events.toggle("show-entries");
-				break;
 			case "Toggle Placement":
 				break;
 			case "Go to Realm Selector":
@@ -243,12 +240,6 @@ const iniData: HotKeysData = {
 			name: "Toggle Expand",
 			keys: ["Ctrl", "E"],
 			description: "Expand or collapse the left sidebar",
-			type: "View Controls",
-		},
-		{
-			name: "Toggle Entries Viewer",
-			keys: ["Ctrl", "F"],
-			description: "Show or hide the entries viewer",
 			type: "View Controls",
 		},
 		{

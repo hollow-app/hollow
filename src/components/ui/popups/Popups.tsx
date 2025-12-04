@@ -10,7 +10,6 @@ import { ConfirmType, FormType } from "@type/hollow";
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
 const Confirm = lazy(() => import("@components/ui/popups/Confirm"));
 const EmojiPicker = lazy(() => import("@components/ui/popups/EmojiPicker"));
-const EntriesViewer = lazy(() => import("@components/ui/popups/EntriesViewer"));
 const Form = lazy(() => import("@components/ui/popups/Form"));
 const ToolPop = lazy(() => import("@components/ui/popups/ToolPop"));
 const Insight = lazy(() => import("@components/ui/popups/Insight"));
@@ -19,7 +18,6 @@ export default function Popups() {
 	const [tool, setTool] = createSignal(null);
 	const [emoji, setEmoji] = createSignal(null);
 	const [color, setColor] = createSignal(null);
-	const [entries, setEntries] = createSignal(false);
 	const [form, setForm] = createSignal<FormType[]>([]);
 	const [insight, setInsight] = createSignal(null);
 	const [confirm, setConfirm] = createSignal<ConfirmType>(null);
@@ -46,9 +44,6 @@ export default function Popups() {
 					case "tool-settings":
 						setToolSettings(data);
 						break;
-					case "show-entries":
-						setEntries((prev) => !prev);
-						break;
 					case "show-vault":
 						setVault(data);
 						break;
@@ -73,10 +68,6 @@ export default function Popups() {
 
 			<Show when={tool()}>
 				<ToolPop tool={tool()} setTool={setTool} />
-			</Show>
-
-			<Show when={entries()}>
-				<EntriesViewer />
 			</Show>
 
 			<Show when={vault()}>

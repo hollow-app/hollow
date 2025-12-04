@@ -4,7 +4,7 @@ import { createRoot, lazy } from "solid-js";
 import { ColumnType } from "./types/ColumnType";
 import { KanbanManager } from "./KanbanManager";
 
-const Column = lazy(() => import("./components/Column"));
+const Column = lazy(() => import("./Kanban"));
 
 export class KanbanMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
@@ -15,7 +15,7 @@ export class KanbanMain implements IPlugin {
 	async onCreate(card: ICard): Promise<boolean> {
 		KanbanManager.getSelf().saveColumn({
 			id: card.id,
-			name: card.name,
+			name: card.data.extra.name,
 			items: [],
 			max: 10,
 			accent: "#278ee9",

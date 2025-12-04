@@ -1,13 +1,4 @@
-import {
-	AppEvents,
-	DataBase,
-	DataBaseRequest,
-	HollowEvent,
-	ICard,
-	IPlugin,
-	IStore,
-	ToolEvents,
-} from "@type/hollow";
+import { HollowEvent, ICard, IPlugin, IStore, ToolEvents } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";

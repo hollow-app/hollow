@@ -1,4 +1,4 @@
-import { Layout } from "@type/hollow";
+import { CardType, Layout } from "@type/hollow";
 import { ContainerProps } from ".";
 import type { HelperType } from "./helper";
 import { createLayout } from "@utils/layout";
@@ -31,8 +31,9 @@ export const createContainerState = (
 		disableNodeAnchors: true,
 		disableHorizontalPan: true,
 		disableVerticalPan: true,
+		filterNodes: (n: CardType) => n.data.extra.isPlaced,
 	});
-	const isLiveEditor = createMemo(() => !canvasConfigs().disableEdgeDrag);
+	const isLiveEditor = createMemo(() => !canvasConfigs().disableNodeDrag);
 
 	onMount(() => {
 		hollow.pevents.on("editor", () => {

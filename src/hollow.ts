@@ -1,4 +1,3 @@
-import { EntryManager } from "@managers/EntryManager";
 import { EventsManager } from "@managers/EventsManager";
 import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
@@ -19,7 +18,6 @@ type hollowType = {
 	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
 	toolManager?: ToolManager;
-	entryManager?: EntryManager;
 	markdownManager?: MarkdownManager;
 	hotkeysManager?: hotkeysManager;
 	cards: () => CardType[];

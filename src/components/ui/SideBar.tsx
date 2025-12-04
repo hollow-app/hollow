@@ -35,13 +35,13 @@ export default function SideBar({
 			selectedCondition: () => layout.isPanelVisible("left", "expand"),
 		},
 		{
-			Icon: ChartPieIcon,
-			onClick: () => hollow.events.toggle("show-entries"),
-		},
-		{
 			Icon: PenRulerIcon,
 			onClick: () => layout.selectPanel("right", "editor"),
 			selectedCondition: () => layout.isPanelVisible("right", "editor"),
+		},
+		{
+			Icon: VaultIcon,
+			onClick: () => hollow.events.toggle("show-vault"),
 		},
 	];
 	const bottom: SideBarButton[] = [
@@ -50,17 +50,12 @@ export default function SideBar({
 			onClick: () =>
 				setCanvasConfigs((p) => ({
 					...p,
-					disableEdgeDrag: !p.disableEdgeDrag,
 					disableNodeDrag: !p.disableNodeDrag,
 					disableVerticalPan: !p.disableVerticalPan,
 					disableHorizontalPan: !p.disableHorizontalPan,
 				})),
 			selectedCondition: isLiveEditor,
 			tooltip: "Edit cards directly in the canvas",
-		},
-		{
-			Icon: VaultIcon,
-			onClick: () => hollow.events.toggle("show-vault"),
 		},
 		{
 			Icon: BellIcon,

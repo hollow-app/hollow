@@ -1,5 +1,12 @@
 import { hollow } from "hollow";
-import { Accessor, createMemo, onMount, Show } from "solid-js";
+import {
+	Accessor,
+	createEffect,
+	createMemo,
+	on,
+	onMount,
+	Show,
+} from "solid-js";
 import {
 	BackgroundGrid,
 	ConfigsType,
@@ -22,15 +29,23 @@ type CanvasProps = {
 
 const vpKey = `${RealmManager.getSelf().getCurrent().id}-viewport`;
 export default function Canvas(props: CanvasProps) {
+	let nodes: NodeType[] = unwrap(hollow.cards());
 	const connectionsStore = createStore<ConnectionType[]>([]);
 	const viewportSignal = createSignal(
 		JSON.parse(localStorage.getItem(vpKey) ?? '{"x":0, "y":0, "zoom":1}'),
 	);
-	// u
-	const onNodesChange = (nodes: NodeType[]) => {};
+	const onNodesChange = (nodes: NodeType[]) => {
+		nodes = nodes;
+	};
 	const onViewportChange = (vp: ViewPort) => {
 		localStorage.setItem(vpKey, JSON.stringify(vp));
 	};
+
+	// createEffect(on(props.isLiveEditor,(v)=>{
+	// 	if(!v){
+	// 		hollow.toolManager.updateCard(selectedCard().tool, card);
+	// 	}
+	// }, {defer:true}))
 
 	return (
 		<div class="bg-secondary/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border">

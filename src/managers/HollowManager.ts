@@ -4,7 +4,6 @@ import { CharacterManager } from "./CharacterManager";
 import VaultManager from "./VaultManager";
 import { RustManager } from "./RustManager";
 import { ToolManager } from "./ToolManager";
-import { EntryManager } from "./EntryManager";
 import { useColor } from "@hooks/useColor";
 import setStyle from "@hooks/setStyle";
 import { RealmManager } from "./RealmManager";
@@ -89,7 +88,6 @@ export class HollowManager {
 		//
 		hollow.toolManager = await ToolManager.create(devData.loadunsigned);
 		await SettingsManager.getSelf().start();
-		await EntryManager.getSelf().start();
 		await MarkdownManager.getSelf().start();
 		NotifyManager.init();
 		CodeThemeManager.init();

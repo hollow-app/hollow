@@ -1,11 +1,17 @@
 import fm from "front-matter";
 import { NotebookType } from "./NotebookType";
-import { CardFs, HollowEvent, IStore, ToolEvents } from "@type/hollow";
+import {
+	CardFs,
+	HollowEvent,
+	IStore,
+	ToolEventReturns,
+	ToolEvents,
+} from "@type/hollow";
 import { NoteType } from "./NoteType";
 
 export class NotebookManager {
 	private store: IStore = null;
-	private toolEvent: HollowEvent<ToolEvents>;
+	private toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
 	private static self: NotebookManager;
 
 	static getSelf() {
@@ -16,7 +22,7 @@ export class NotebookManager {
 	}
 
 	private constructor() {}
-	init(toolEvent: HollowEvent<ToolEvents>) {
+	init(toolEvent: HollowEvent<ToolEvents, ToolEventReturns>) {
 		this.toolEvent = toolEvent;
 		this.store = this.toolEvent.getData("config");
 	}
@@ -25,7 +31,9 @@ export class NotebookManager {
 		if (!obj || !obj.frontmatter || !obj.body) {
 			return obj.body || "";
 		}
-		return `---\n${obj.frontmatter}\n---\n${obj.body}`;
+		return `---\n${Object.entries(obj.attributes)
+			.map(([k, v]) => `${k}: ${v}`)
+			.join("\n")}\n---\n${obj.body}`;
 	}
 
 	// fs
@@ -75,6 +83,6 @@ export class NotebookManager {
 	}
 	//
 	private getCardFs(cardName: string): CardFs {
-		return this.toolEvent.getData("cards-fs")[cardName];
+		return this.toolEvent.emit("card-fs", { cardName });
 	}
 }

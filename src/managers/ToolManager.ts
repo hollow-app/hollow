@@ -18,7 +18,6 @@ import { EventsManager } from "./EventsManager";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { RustManager } from "@managers/RustManager";
 import { RealmManager } from "./RealmManager";
-import { EntryManager } from "./EntryManager";
 import { hollow } from "hollow";
 import DEFAULT from "@assets/configs/main.json?raw";
 import { join } from "@tauri-apps/api/path";
@@ -97,6 +96,11 @@ export class ToolManager {
 				this.toolMap.set(tool.name, toolInstance);
 			}
 			if (!tool) return;
+			toolInstance.toolEvent.on(
+				"card-fs",
+				({ cardName }: { cardName: string }) =>
+					this.getCardFs(tool.name, cardName),
+			);
 			const metadata: ToolMetadata = {
 				cards: tool?.cards || [],
 			};
@@ -172,7 +176,6 @@ export class ToolManager {
 			({ cardName, store }: { cardName: string; store: StoreType }) =>
 				this.giveCardStore(toolName, cardName, store),
 		);
-		toolEvent.on("add-card-fs", this.registerCardFs);
 		return toolEvent;
 	}
 
@@ -194,22 +197,6 @@ export class ToolManager {
 			);
 			return await Storage.create({ path, options: store.options });
 		};
-	}
-
-	private registerCardFs(props: {
-		toolEvent: HollowEvent<ToolEvents>;
-		cardName: string;
-		fs: CardFs;
-	}) {
-		const group = props.toolEvent.getData("cards-fs");
-		if (!group) {
-			props.toolEvent.emit("cards-fs", { [props.cardName]: props.fs });
-		} else {
-			props.toolEvent.emit("cards-fs", {
-				...group,
-				[props.cardName]: props.fs,
-			});
-		}
 	}
 
 	// simple internal classes organizer
@@ -258,32 +245,6 @@ export class ToolManager {
 				root.push(newTool);
 				this.store.set("__root__", root);
 				this.toolMap.set(newTool.name, loadRequest);
-				// TODO ??
-				// this.setHand((prev) => [
-				// 	...prev,
-				// 	{
-				// 		tool: newTool.name,
-				// 		card: "",
-				// 		isPlaced: false,
-				// 		kit: {
-				// 			width: 2,
-				// 			height: 2,
-				// 			corner: 10,
-				// 			opacity: 1,
-				// 			border: {
-				// 				c: "#3d3d3d",
-				// 				n: 2,
-				// 			},
-				// 			glass: false,
-				// 			shadow: false,
-				// 			xyz: {
-				// 				x: 0,
-				// 				y: 0,
-				// 				z: 0,
-				// 			},
-				// 		},
-				// 	},
-				// ]);
 			}
 			// await RustManager.getSelf().create_dir(
 			// 	await join(
@@ -303,7 +264,7 @@ export class ToolManager {
 		});
 
 		const group = hollow.cards();
-		const cards = hollow.cards().filter((i) => i.data.extra.tool === name);
+		const cards = group.filter((i) => i.data.extra.tool === name);
 		if (cards) {
 			cards.forEach((card) =>
 				this.deleteCard(card.data.extra.name, name, false),
@@ -412,11 +373,6 @@ export class ToolManager {
 	// IPLUGIN
 	async loadCard(cardInfo: CardType, toolName: string): Promise<boolean> {
 		const tool = this.toolMap.get(toolName);
-		tool.toolEvent.emit("add-card-fs", {
-			toolEvent: tool.toolEvent,
-			cardName: cardInfo.data.extra.name,
-			fs: this.getCardFs(toolName, cardInfo.data.extra.name),
-		});
 		return await tool.onLoad({
 			...this.getICard(toolName, cardInfo.id),
 			id: cardInfo.id,
@@ -444,10 +400,6 @@ export class ToolManager {
 			reconcile(hollow.cards().filter((c) => c.id !== cardId)),
 		);
 
-		const entries = EntryManager.getSelf().entries.filter(
-			(e) => e.source.card === card.data.extra.name,
-		);
-		EntryManager.getSelf().removeEntry(entries.map((i) => i.id));
 		fs &&
 			(await RustManager.getSelf().remove_dir(
 				await join(
@@ -524,11 +476,6 @@ export class ToolManager {
 		if (card.data.extra.isPlaced) {
 			const toolInstance = this.toolMap.get(toolName);
 			toolInstance?.onUnload(id);
-			const group = toolEvent.getData("cards-fs");
-			if (group) {
-				delete group[card.data.extra.name];
-				toolEvent.emit("cards-fs", group);
-			}
 		}
 		this.setCard(toolName, id, { isPlaced: !card.data.extra.isPlaced });
 		hollow.setCards(
@@ -536,7 +483,7 @@ export class ToolManager {
 			"data",
 			"extra",
 			"isPlaced",
-			!card.data.extra.isPlaced,
+			(v) => !v,
 		);
 		const metadata: ToolMetadata = {
 			cards: this.getHand().find((i) => i.name === toolName).cards,

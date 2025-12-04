@@ -1,4 +1,11 @@
-import { HollowEvent, ICard, IPlugin, IStore, ToolEvents } from "@type/hollow";
+import {
+	HollowEvent,
+	ICard,
+	IPlugin,
+	IStore,
+	ToolEventReturns,
+	ToolEvents,
+} from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
@@ -10,7 +17,7 @@ const Notebook = lazy(() => import("./Notebook"));
 export class NotebookMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
 
-	constructor(toolEvent: HollowEvent<ToolEvents>) {
+	constructor(toolEvent: HollowEvent<ToolEvents, ToolEventReturns>) {
 		NotebookManager.getSelf().init(toolEvent);
 	}
 	async onCreate(card: ICard): Promise<boolean> {

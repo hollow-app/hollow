@@ -13,7 +13,7 @@ export default function Embed({ card, data, store }: EmbedProps) {
 	const setSettingsVisible = () => {
 		const ini: ToolOptions = {
 			tool: "Embed",
-			card: card.name,
+			card: card.data.extra.name,
 			save: () => {
 				store.set(card.id, embed());
 			},

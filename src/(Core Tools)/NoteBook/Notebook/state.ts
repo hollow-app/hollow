@@ -1,0 +1,67 @@
+import { Accessor, createSignal, Setter } from "solid-js";
+import { NotebookProps } from ".";
+import type { HelperType } from "./helper";
+import { NotebookType } from "../NotebookType";
+import { NoteType } from "../NoteType";
+import { createMemo } from "solid-js";
+import { TagType } from "@type/hollow";
+
+export type StateType = {
+	showList: Accessor<boolean>;
+	setShowList: Setter<boolean>;
+	isExpand: Accessor<boolean>;
+	setExpand: Setter<boolean>;
+	editMode: Accessor<boolean>;
+	setEditMode: Setter<boolean>;
+	book: Accessor<NotebookType>;
+	setBook: Setter<NotebookType>;
+	note: Accessor<NoteType>;
+	setNote: Setter<NoteType>;
+	panel: Accessor<number>;
+	hollowTags: Accessor<TagType[]>;
+	setHollowTags: Setter<TagType[]>;
+};
+
+export const createNotebookState = (
+	props: NotebookProps,
+	helper?: HelperType,
+): StateType => {
+	const [showList, setShowList] = createSignal(false);
+	const [isExpand, setExpand] = createSignal(false);
+	const [editMode, setEditMode] = createSignal(false);
+	const [book, setBook] = createSignal<NotebookType>(props.noteBook);
+	const [note, setNote] = createSignal<NoteType>(
+		book().last
+			? book().notes.find((i) => i.attributes.title === book().last)
+			: null,
+	);
+
+	const panel = createMemo(() => {
+		// 0: nothing, 1: list, 2: selected
+		if (showList()) {
+			return 1;
+		} else if ((note() || editMode()) && !showList()) {
+			return 2;
+		} else {
+			return 0;
+		}
+	});
+	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
+		props.card.app.getData("tags"),
+	);
+	return {
+		showList,
+		setShowList,
+		isExpand,
+		setExpand,
+		editMode,
+		setEditMode,
+		book,
+		setBook,
+		note,
+		setNote,
+		panel,
+		hollowTags,
+		setHollowTags,
+	};
+};

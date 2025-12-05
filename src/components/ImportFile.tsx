@@ -1,7 +1,7 @@
 import { Trash2Icon } from "lucide-solid";
 import { Show } from "solid-js";
 import { createSignal } from "solid-js";
-import { open } from "@tauri-apps/plugin-dialog";
+import { hollow } from "hollow";
 
 type ImportFileProps = {
 	xfile?: string;
@@ -11,29 +11,22 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 	const [file, setFile] = createSignal(xfile);
 
 	const onImport = async () => {
-		const path = await open({
-			multiple: false,
-			title: "Select an image",
-			filters: [
-				{
-					name: "Images",
-					extensions: ["png", "jpg", "jpeg", "gif", "webp"],
-				},
-			],
+		hollow.events.emit("show-vault", {
+			onSelect: (s) => {
+				onChange(s);
+				setFile(s);
+			},
 		});
-		setFile(path);
-		onChange(path);
 	};
 
 	return (
 		<div class="flex w-full items-center justify-end gap-2">
 			<Show when={file()}>
 				<>
-					<span class="w-fit text-xs text-neutral-300 dark:text-neutral-700">
-						{file()}
-					</span>
+					<img class="h-full w-30 rounded" src={file()} />
 					<button
 						class="button-control red"
+						type="button"
 						onclick={() => {
 							setFile("");
 							onChange("");
@@ -43,7 +36,7 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 					</button>
 				</>
 			</Show>
-			<button class="button-secondary" onclick={onImport}>
+			<button class="button-secondary" type="button" onclick={onImport}>
 				Upload
 			</button>
 		</div>

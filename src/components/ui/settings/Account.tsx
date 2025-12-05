@@ -52,6 +52,7 @@ export default function Account() {
 					label: "Label",
 					optional: true,
 					type: "text",
+					inline: true,
 					attributes: { placeholder: "Enter label" },
 					value: target?.label ?? "",
 				},
@@ -60,6 +61,7 @@ export default function Account() {
 					label: "Icon",
 					optional: true,
 					type: "text",
+					inline: true,
 					description:
 						"Enter the icon you want to use for this meta data, names are available at lucide.dev",
 					attributes: { placeholder: "Enter icon name" },
@@ -111,14 +113,18 @@ export default function Account() {
 					label: "Value",
 					description:
 						"This will be displayed as a progress bar ranging from 0 to 100",
-					type: "number",
+					type: "range",
 					min: 0,
 					max: 100,
+					row: true,
 					dependsOn: {
 						key: "type",
 						conditions: ["progress"],
 					},
-					value: !Array.isArray(target?.value) ? target?.value : 0,
+					value:
+						!Array.isArray(target?.value) && target?.value != null
+							? target.value
+							: 0,
 				},
 				{
 					key: "color",
@@ -128,6 +134,7 @@ export default function Account() {
 						key: "type",
 						conditions: ["progress"],
 					},
+					row: true,
 					value: target?.color ?? "#3BA936",
 				},
 			],

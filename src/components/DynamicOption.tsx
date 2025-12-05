@@ -115,7 +115,11 @@ const BooleanOption = (props: {
 );
 
 const ButtonOption = (props: { option: OptionType<"button"> }) => (
-	<button onClick={props.option.onAction} class="button-secondary">
+	<button
+		type="button"
+		onClick={props.option.onAction}
+		class="button-secondary"
+	>
 		{props.option.value}
 	</button>
 );
@@ -129,6 +133,7 @@ const ColorOption = (props: { option: OptionType<"color"> }) => (
 
 const EmojiOption = (props: { option: OptionType<"emoji"> }) => (
 	<button
+		type="button"
 		class={
 			"bg-secondary-10 h-10 w-10 content-center rounded-xl text-center text-2xl text-gray-900 select-none dark:text-gray-50"
 		}

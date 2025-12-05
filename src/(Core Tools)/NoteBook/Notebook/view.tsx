@@ -114,7 +114,7 @@ export const NotebookView = (
 							>
 								<input
 									class="focus:border-secondary-10 w-full max-w-full overflow-hidden rounded border-transparent text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-gray-900 dark:text-gray-50"
-									value={state.note().attributes.title}
+									value={state.note().title}
 									onchange={(e) =>
 										state.setNote((prev) => ({
 											...prev,
@@ -210,7 +210,7 @@ export const NotebookView = (
 										}));
 									}}
 									uniqueNote={() =>
-										`${state.book().name.toLowerCase()}-${state.note().attributes.title.toLowerCase()}`
+										`${state.book().name.toLowerCase()}-${state.note().title.toLowerCase()}`
 									}
 								/>
 							</div>

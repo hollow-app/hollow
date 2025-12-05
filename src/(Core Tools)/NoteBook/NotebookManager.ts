@@ -51,7 +51,10 @@ export class NotebookManager {
 		const notes = await Promise.all(
 			entries
 				.filter((i) => i.isFile)
-				.map(async (i) => fm(await this.getNote(cardName, i.name))),
+				.map(async (i) => ({
+					...fm(await this.getNote(cardName, i.name)),
+					title: i.name,
+				})),
 		);
 		return { ...this.store.get(id), notes };
 	}

@@ -4,7 +4,7 @@ import type { HelperType } from "./helper";
 import { open } from "@tauri-apps/plugin-dialog";
 import VaultManager from "@managers/VaultManager";
 import { hollow } from "hollow";
-import { FormOption, FormType } from "@type/hollow";
+import { ConfirmType, FormOption, FormType } from "@type/hollow";
 import { VaultItem } from "@type/VaultItem";
 
 export type LogicType = {
@@ -15,7 +15,6 @@ export type LogicType = {
 	removeItem: () => void;
 	onImageClick: (item: VaultItem) => void;
 	onImageSelected: (url: string) => void;
-	filterByTags: (v: string[]) => void;
 };
 
 export const VaultLogic = (
@@ -26,11 +25,11 @@ export const VaultLogic = (
 	const importImages = async () => {
 		const images = await open({
 			multiple: true,
-			title: "Select Image/s",
+			title: "Select File",
 			filters: [
 				{
 					name: "Images",
-					extensions: ["png", "jpg", "jpeg", "gif", "webp"],
+					extensions: ["png", "jpg", "jpeg", "gif", "webp", "svg"],
 				},
 			],
 		});
@@ -60,7 +59,7 @@ export const VaultLogic = (
 	};
 
 	const removeItem = () => {
-		hollow.events.emit("confirm", {
+		const pack: ConfirmType = {
 			title: `Delete ${state.selectedItem().name}`,
 			message: "You sure ?",
 			onAccept: () => {
@@ -70,7 +69,8 @@ export const VaultLogic = (
 				VaultManager.getSelf().removeItems([state.selectedItem().url]);
 				state.setSelectedItem(null);
 			},
-		});
+		};
+		hollow.events.emit("confirm", pack);
 	};
 
 	const submitForm = (save: (data: any) => void, id?: string) => {
@@ -111,18 +111,13 @@ export const VaultLogic = (
 		hollow.events.toggle("show-vault");
 	};
 
-	const filterByTags = (v: string[]) => {
-		state.setFilter((prev) => ({ ...prev, tags: v }));
-	};
 	return {
 		onImageSelected,
 		copyItem,
 		editItem,
-		filterByTags,
 		importImageFromLink,
 		importImages,
 		onImageClick,
 		removeItem,
 	};
 };
-

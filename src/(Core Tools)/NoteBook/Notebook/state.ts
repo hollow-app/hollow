@@ -31,9 +31,7 @@ export const createNotebookState = (
 	const [editMode, setEditMode] = createSignal(false);
 	const [book, setBook] = createSignal<NotebookType>(props.noteBook);
 	const [note, setNote] = createSignal<NoteType>(
-		book().last
-			? book().notes.find((i) => i.attributes.title === book().last)
-			: null,
+		book().last ? book().notes.find((i) => i.title === book().last) : null,
 	);
 
 	const panel = createMemo(() => {

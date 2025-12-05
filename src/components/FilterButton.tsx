@@ -40,9 +40,9 @@ export default function FilterButton({ options }: FilterButtonProps) {
 		setIsOpen(!isOpen());
 	};
 
-	onMount(() =>
-		document.addEventListener("resize", () => updatePosition(dropdownRef)),
-	);
+	onMount(() => {
+		document.addEventListener("resize", () => updatePosition(dropdownRef));
+	});
 	onCleanup(() =>
 		document.removeEventListener("resize", () =>
 			updatePosition(dropdownRef),
@@ -68,7 +68,7 @@ export default function FilterButton({ options }: FilterButtonProps) {
 				<Portal>
 					<ul
 						ref={listRef}
-						class="bg-secondary-05 border-secondary-10 fixed z-50 max-h-60 overflow-y-auto rounded-md border text-sm shadow-lg"
+						class="bg-secondary-05 border-secondary-10 fixed z-50 max-h-60 overflow-x-hidden overflow-y-auto rounded-md border text-sm shadow-lg"
 						style={{
 							top: `${pos().top}px`,
 							left: `${pos().left}px`,
@@ -83,7 +83,6 @@ export default function FilterButton({ options }: FilterButtonProps) {
 												<h1 class="py-1 pl-2 text-xs text-neutral-500 uppercase">
 													{group.title}
 												</h1>
-												<hr class="bg-secondary-15 h-px flex-1 border-0" />
 											</div>
 										</Show>
 										<ItemsList
@@ -130,7 +129,7 @@ export function ItemsList({
 		<For each={items().sort((a, b) => a.label.localeCompare(b.label))}>
 			{(item) => (
 				<li
-					class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full cursor-pointer justify-between rounded bg-transparent px-3 py-2 text-xs"
+					class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full min-w-30 cursor-pointer justify-between gap-5 rounded bg-transparent px-3 py-2 text-xs"
 					role="option"
 					classList={{
 						"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
@@ -154,9 +153,9 @@ export function ItemsList({
 					{item.label}
 					<Show when={isCheckBox}>
 						<input
-							class="checkbox"
+							class="checkbox shrink-0"
 							type="checkbox"
-							style={{ "--margin": "0 0 0 10px" }}
+							style={{ "--margin": "0" }}
 							checked={selected().includes(item.label)}
 						/>
 					</Show>

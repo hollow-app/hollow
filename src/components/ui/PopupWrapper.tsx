@@ -26,7 +26,7 @@ export default function PopupWrapper({
 	shadow = true,
 }: PopupWrapperProps) {
 	const [position, setPosition] = createSignal({ x: 0, y: 0 });
-	const [isFocus, setFocus] = createSignal(false);
+	const [isFocus, setFocus] = createSignal(true);
 	let winRef!: HTMLDivElement;
 	let dragging = false;
 	let offset = { x: 0, y: 0 };

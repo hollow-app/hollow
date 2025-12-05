@@ -47,7 +47,7 @@ export default class VaultManager {
 		const urlItem: VaultItem = {
 			url: image,
 			name: "unamed",
-			type: "image",
+			type: image.split(".")[-1] ?? "unknown",
 			uploadedAt: new Date(),
 		};
 
@@ -83,7 +83,7 @@ export default class VaultManager {
 					path: i,
 					url: convertFileSrc(i),
 					name: "unamed",
-					type: "image",
+					type: i.split(".").pop() ?? "unknown",
 					uploadedAt: new Date(),
 				};
 			});

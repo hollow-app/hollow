@@ -360,7 +360,7 @@ export type TypedOptionMap = {
 		placeholder?: string;
 	};
 	// ??
-	file: { accept?: string };
+	file: {};
 	range: { min: number; max: number; step?: number };
 	keywords: { placeholder?: string };
 };

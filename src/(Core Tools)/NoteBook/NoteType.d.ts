@@ -9,4 +9,5 @@ export type NoteType = {
 	bodyBegin?: number;
 	frontmatter?: string;
 	newNote?: boolean;
+	title?: string;
 };

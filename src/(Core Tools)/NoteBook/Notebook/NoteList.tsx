@@ -58,7 +58,7 @@ export default function NoteList({
 
 		let result = book().notes.filter((note) => {
 			const matchesSearch =
-				note.attributes.title.toLowerCase().includes(term) ||
+				note.title.toLowerCase().includes(term) ||
 				note.body.toLowerCase().includes(term);
 			const matchesTags =
 				tags.length === 0 ||
@@ -113,7 +113,7 @@ export default function NoteList({
 				/>
 			</div>
 
-			<div class="grid w-full flex-1 grid-cols-1 gap-2 @lg:grid-cols-2 @4xl:grid-cols-3">
+			<div class="grid w-full flex-1 auto-rows-min grid-cols-1 gap-2 @lg:grid-cols-2 @4xl:grid-cols-3">
 				<For each={filteredNotes()}>
 					{(note) => (
 						<NotePreview
@@ -149,21 +149,19 @@ function NotePreview({
 	selectedGroup,
 	setSelectedGroup,
 }: NotePreviewProps) {
-	const selected = createMemo(() =>
-		selectedGroup().includes(note.attributes.title),
-	);
+	const selected = createMemo(() => selectedGroup().includes(note.title));
 	const onSelect = () => {
 		setSelectedGroup((prev) =>
-			prev.includes(note.attributes.title)
-				? prev.filter((i) => i !== note.attributes.title)
-				: [...prev, note.attributes.title],
+			prev.includes(note.title)
+				? prev.filter((i) => i !== note.title)
+				: [...prev, note.title],
 		);
 	};
 	return (
 		<div
 			class="group bg-secondary-05 border-primary relative mx-auto flex h-fit w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
 			onclick={(e) =>
-				e.ctrlKey ? onSelect() : changeSelected(note.attributes.title)
+				e.ctrlKey ? onSelect() : changeSelected(note.title)
 			}
 			classList={{
 				"border-secondary-10 hover:border-secondary-10": !selected(),
@@ -189,7 +187,7 @@ function NotePreview({
 
 			<div class="flex flex-col gap-1 p-2 px-3 text-xs text-neutral-500">
 				<h2 class="truncate text-lg font-medium text-neutral-800 dark:text-neutral-200">
-					{note.attributes.title}
+					{note.title}
 				</h2>
 				<span class="truncate" title={note.attributes?.tags}>
 					Tags: {note.attributes.tags}

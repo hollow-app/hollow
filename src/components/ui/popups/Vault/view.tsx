@@ -14,7 +14,7 @@ import {
 	Trash2Icon,
 } from "lucide-solid";
 import FilterButton from "@components/FilterButton";
-import { createSignal, For, Show } from "solid-js";
+import { createSignal, For, onMount, Show } from "solid-js";
 
 export const VaultView = (
 	state: StateType,
@@ -46,28 +46,7 @@ export const VaultView = (
 							</span>
 							<ImageUpIcon class="size-5" />
 						</button>
-						<FilterButton
-							options={() => [
-								{
-									title: "By Tags",
-									isCheckBox: true,
-									items: [
-										...new Set(
-											state
-												.images()
-												.flatMap((i) => i.tags),
-										),
-									].map((i) => ({
-										label: i,
-										checked: state
-											.filter()
-											.tags.includes(i),
-									})),
-
-									onSelect: logic.filterByTags,
-								},
-							]}
-						/>
+						<FilterButton options={state.filterOptions} />
 					</div>
 					<div class="relative w-80">
 						<input
@@ -96,24 +75,9 @@ export const VaultView = (
 					{/* Gallery */}
 					<div class="grid w-full grid-cols-7 grid-rows-5 gap-2 py-3">
 						<For
-							each={[
-								...state
-									.images()
-									.filter(
-										(i) =>
-											i.name.includes(
-												state.filter().search,
-											) &&
-											(state.filter().tags.length === 0 ||
-												state
-													.filter()
-													.tags.some((j) =>
-														(i.tags ?? []).includes(
-															j,
-														),
-													)),
-									),
-							].slice(state.start(), state.start() + 35)}
+							each={state
+								.filteredImages()
+								.slice(state.start(), state.start() + 35)}
 						>
 							{(img) => (
 								<button
@@ -296,4 +260,3 @@ function AddUrl({ onAdd }: AddUrlProps) {
 		</div>
 	);
 }
-

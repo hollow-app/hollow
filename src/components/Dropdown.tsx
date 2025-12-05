@@ -71,7 +71,11 @@ export default function Dropdown({
 
 	return (
 		<div ref={dropdownRef} class="drop-down relative h-fit">
-			<button onClick={toggleOpen} style={{ width: "var(--w)" }}>
+			<button
+				type="button"
+				onClick={toggleOpen}
+				style={{ width: "var(--w)" }}
+			>
 				<input
 					ref={inputRef}
 					type="text"

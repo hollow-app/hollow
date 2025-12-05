@@ -34,20 +34,20 @@ export const NotebookLogic = (
 			...data,
 			attributes: {
 				...data.attributes,
-				title: "Note",
 				id: crypto.randomUUID(),
 			},
 			newNote: true,
+			title: "Note",
 		};
 		// state.setNote(newNote);
 		// state.setShowList(false);
-		changeSelected(newNote.attributes.title);
+		changeSelected(newNote.title);
 		state.setEditMode(true);
 	};
 
 	const onSave = async () => {
 		const doesNoteTitleAlreadyExists =
-			!!state.book().notes[state.note().attributes.title];
+			!!state.book().notes[state.note().title];
 
 		// check if the note is new;
 		if (state.note().newNote) {
@@ -55,7 +55,7 @@ export const NotebookLogic = (
 			if (!doesNoteTitleAlreadyExists) {
 				NotebookManager.getSelf().setNote(
 					props.card.data.extra.name,
-					state.note().attributes.title,
+					state.note().title,
 					NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				);
 				state.setEditMode(false);
@@ -69,7 +69,7 @@ export const NotebookLogic = (
 				props.card.app.emit("alert", {
 					type: "error",
 					title: "Notebook",
-					message: `Title "${state.note().attributes.title}" already exists`,
+					message: `Title "${state.note().title}" already exists`,
 				});
 			}
 		} else {
@@ -77,13 +77,13 @@ export const NotebookLogic = (
 				props.card.data.extra.name,
 				state.book().last,
 				NotebookManager.getSelf().rebuildMarkdown(state.note()),
-				state.note().attributes.title,
+				state.note().title,
 			);
 			doesNoteTitleAlreadyExists &&
 				state.setBook((prev) => ({
 					...prev,
 					notes: prev.notes.map((i) =>
-						i.attributes.title === state.note().attributes.title
+						i.title === state.note().title
 							? { ...i, ...state.note() }
 							: i,
 					),
@@ -101,21 +101,21 @@ export const NotebookLogic = (
 				}));
 				await NotebookManager.getSelf().setNote(
 					props.card.data.extra.name,
-					state.note().attributes.title,
+					state.note().title,
 					NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				);
 			},
 		});
 	};
 	const removeNote = (title: string) => {
-		if (state.note().attributes.title === title) {
+		if (state.note().title === title) {
 			state.setNote(null);
 			state.setEditMode(false);
 		}
 		state.setBook((prev: NotebookType) => ({
 			...prev,
 			last: null,
-			notes: prev.notes.filter((i) => i.attributes.title !== title),
+			notes: prev.notes.filter((i) => i.title !== title),
 		}));
 		NotebookManager.getSelf().deleteNote(props.card.data.extra.name, title);
 	};
@@ -136,7 +136,7 @@ export const NotebookLogic = (
 								icon: "Trash2",
 								label: "Delete Note",
 								onclick: () => {
-									removeNote(state.note().attributes.title);
+									removeNote(state.note().title);
 								},
 							},
 						]
@@ -191,9 +191,7 @@ export const NotebookLogic = (
 		// 	card.name,
 		// 	title,
 		// );
-		state.setNote(
-			state.book().notes.find((i) => i.attributes.title === title),
-		);
+		state.setNote(state.book().notes.find((i) => i.title === title));
 		state.setBook((prev) => ({ ...prev, last: title }));
 		state.setShowList(false);
 		updateBook();

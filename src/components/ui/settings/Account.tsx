@@ -60,11 +60,9 @@ export default function Account() {
 					key: "icon",
 					label: "Icon",
 					optional: true,
-					type: "text",
+					type: "file",
 					inline: true,
-					description:
-						"Enter the icon you want to use for this meta data, names are available at lucide.dev",
-					attributes: { placeholder: "Enter icon name" },
+					description: "Select an svg icon.",
 					value: target?.icon ?? "",
 				},
 				{

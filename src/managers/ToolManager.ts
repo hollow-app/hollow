@@ -36,8 +36,7 @@ type ToolMethods = {
 
 type ToolMap = Map<string, ToolMethods>;
 
-const CORE_TOOLS = ["image", "notebook", "kanban", "embed"];
-type CoreTool = (typeof CORE_TOOLS)[number];
+type CoreTool = (typeof hollow.coreTools)[number];
 
 export class ToolManager {
 	private store: Storage;
@@ -79,15 +78,21 @@ export class ToolManager {
 			parsedData = parsedData.filter((i) => i.signed);
 		}
 		hollow.setCards(
-			parsedData.flatMap(({ cards, name }) =>
-				cards.map((c) => ({
-					...c,
-					data: {
-						...c.data,
-						extra: { ...c.data.extra, tool: name },
-					},
-				})),
-			),
+			parsedData
+				.flatMap(({ cards, name }) =>
+					cards.map((c) => ({
+						...c,
+						data: {
+							...c.data,
+							extra: { ...c.data.extra, tool: name },
+						},
+					})),
+				)
+				.sort(
+					(p, n) =>
+						new Date(p.data.extra.CreatedDate).getTime() -
+						new Date(n.data.extra.CreatedDate).getTime(),
+				),
 		);
 
 		parsedData.forEach(async (tool) => {
@@ -112,7 +117,7 @@ export class ToolManager {
 	private async createToolInstance(
 		tool: HandType,
 	): Promise<ToolMethods | null> {
-		if (CORE_TOOLS.includes(tool.name as CoreTool)) {
+		if (hollow.coreTools.includes(tool.name as CoreTool)) {
 			const toolEvent = await this.createToolEvent(tool.name);
 			const toolClass = this.createCoreTool(
 				tool.name as CoreTool,
@@ -233,6 +238,7 @@ export class ToolManager {
 			const manifest = JSON.parse(request.manifest);
 			const newTool: HandType = {
 				...manifest,
+				icon: request.icon,
 				name: manifest.name.toLowerCase(),
 				title: manifest.name,
 				cards: [],
@@ -321,11 +327,7 @@ export class ToolManager {
 			.cards.find((i) => i.id === cardId);
 	}
 
-	private setCard(
-		toolName: string,
-		cardId: string,
-		updates: Record<string, any>,
-	) {
+	setCard(toolName: string, cardId: string, updates: Record<string, any>) {
 		const root = this.getHand();
 		const tool = root.find((i) => i.name === toolName);
 		if (!tool) return;

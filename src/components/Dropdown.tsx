@@ -114,24 +114,35 @@ export default function Dropdown({
 											</div>
 										</Show>
 										<div>
-											<For each={group.items}>
-												{(item) => (
-													<li
-														class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full cursor-pointer justify-between rounded bg-transparent px-3 py-2 text-xs"
-														role="option"
-														classList={{
-															"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
-																innerValue() ===
-																item,
-														}}
-														onClick={() => {
-															selectItem(item);
-														}}
-													>
-														{item}
-													</li>
-												)}
-											</For>
+											<Show
+												when={group.items.length > 0}
+												fallback={
+													<span class="w-full text-center text-xs text-neutral-500">
+														Nothing here.
+													</span>
+												}
+											>
+												<For each={group.items}>
+													{(item) => (
+														<li
+															class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full cursor-pointer justify-between rounded bg-transparent px-3 py-2 text-xs"
+															role="option"
+															classList={{
+																"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
+																	innerValue() ===
+																	item,
+															}}
+															onClick={() => {
+																selectItem(
+																	item,
+																);
+															}}
+														>
+															{item}
+														</li>
+													)}
+												</For>
+											</Show>
 										</div>
 									</div>
 								)}

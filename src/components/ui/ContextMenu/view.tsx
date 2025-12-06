@@ -3,7 +3,7 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import { Motion, Presence } from "solid-motionone";
-import { Show, Suspense } from "solid-js";
+import { Accessor, JSX, Show, Suspense } from "solid-js";
 import { hollow } from "hollow";
 import {
 	ChevronRightIcon,
@@ -18,7 +18,7 @@ import { lazy } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
 import { RustManager } from "@managers/RustManager";
 import { createSignal } from "solid-js";
-const Icon = lazy(() => import("@components/Icon"));
+import ToolIcon from "@components/ToolIcon";
 
 export const ContextMenuView = (
 	state: StateType,
@@ -111,14 +111,13 @@ export const ContextMenuView = (
 															<Show
 																when={item.icon}
 															>
-																<Suspense>
-																	<Icon
-																		name={
-																			item.icon
-																		}
-																		class="h-4 w-4"
-																	/>
-																</Suspense>
+																{(() => {
+																	const Icon =
+																		item.icon;
+																	return (
+																		<Icon class="h-4 w-4" />
+																	);
+																})()}
 															</Show>
 															{item.label}
 														</button>
@@ -179,9 +178,12 @@ function ContextMenuSide({
 	return (
 		<div class="relative" onMouseLeave={handleMouseLeave}>
 			<button class="button-cm" onMouseOver={handleMouseOver}>
-				<Suspense>
-					<Icon name={icon} class="h-4 w-4" />
-				</Suspense>
+				<Show when={icon}>
+					{(() => {
+						const Icon = icon;
+						return <Icon class="h-4 w-4" />;
+					})()}
+				</Show>
 				{label}
 				{children && (
 					<ChevronRightIcon class="text-secondary-30 ml-auto" />
@@ -216,12 +218,10 @@ function ContextMenuSide({
 									}}
 								>
 									<Show when={child.icon}>
-										<Suspense>
-											<Icon
-												name={child.icon}
-												class="h-4 w-4"
-											/>
-										</Suspense>
+										{(() => {
+											const Icon = child.icon;
+											return <Icon class="h-4 w-4" />;
+										})()}
 									</Show>
 									{child.label}
 								</button>
@@ -238,4 +238,3 @@ function ContextMenuSide({
 		</div>
 	);
 }
-

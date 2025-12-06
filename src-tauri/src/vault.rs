@@ -59,7 +59,7 @@ pub fn vault_remove(
         let file_path = vault_dir.join(&name);
 
         if file_path.exists() {
-            if let Err(e) = fs::remove_file(&file_path) {
+            if let Err(e) = trash::delete(&file_path) {
                 log::error!("Could not remove {}: {}", name, e);
                 had_errors = true;
             } else {
@@ -76,4 +76,43 @@ pub fn vault_remove(
     } else {
         Ok(())
     }
+}
+
+#[command]
+pub async fn vault_add_url(
+    url: String,
+    state: State<'_, Mutex<crate::app::AppData>>,
+) -> Result<PathBuf, String> {
+    let vault_dir = get_full_path("vault", &state)?;
+
+    let extension = Path::new(&url)
+        .extension()
+        .and_then(|s| s.to_str())
+        .unwrap_or("");
+
+    let id = Uuid::new_v4().to_string();
+
+    let new_file_name = if extension.is_empty() {
+        id.clone()
+    } else {
+        format!("{}.{}", id, extension)
+    };
+
+    let dest_path = vault_dir.join(&new_file_name);
+
+    let resp = reqwest::get(&url)
+        .await
+        .map_err(|e| format!("Failed to fetch {}: {}", url, e))?;
+
+    let bytes = resp
+        .bytes()
+        .await
+        .map_err(|e| format!("Failed to read bytes from {}: {}", url, e))?;
+
+    fs::write(&dest_path, &bytes)
+        .map_err(|e| format!("Failed to write file {}: {}", dest_path.display(), e))?;
+
+    log::info!("Downloaded {} to {}", url, dest_path.display());
+
+    Ok(dest_path)
 }

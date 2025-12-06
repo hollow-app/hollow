@@ -5,6 +5,7 @@ import { join } from "@tauri-apps/api/path";
 import { RealmManager } from "./RealmManager";
 import { hollow } from "hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { writeFile } from "@tauri-apps/plugin-fs";
 
 export default class VaultManager {
 	private static self: VaultManager;
@@ -43,36 +44,49 @@ export default class VaultManager {
 		);
 		this.store.set("__root__", vault);
 	}
-	public async addUrlItem(image: string) {
-		const urlItem: VaultItem = {
-			url: image,
-			name: "unamed",
-			type: image.split(".")[-1] ?? "unknown",
-			uploadedAt: new Date(),
-		};
-
-		this.store.set("__root__", [
-			...(this.store.get("__root__") as VaultItem[]),
-			urlItem,
-		]);
-		hollow.events.emit("alert", {
-			type: "success",
-			title: "Vault",
-			message: `added 1 image`,
-		});
+	public async addUrlItem(image: string, name?: string) {
+		try {
+			const removeAlert = hollow.events.emit("alert", {
+				type: "loading",
+				title: "Loading",
+				message: "Downloading...",
+			});
+			const path = await RustManager.getSelf().vault_add_url({
+				url: image,
+			});
+			const url = convertFileSrc(path);
+			const urlItem: VaultItem = {
+				path,
+				url,
+				name: name ?? "unamed",
+				type: path.split(".").pop() ?? "unknown",
+				uploadedAt: new Date(),
+			};
+			removeAlert();
+			this.store.set("__root__", [
+				...(this.store.get("__root__") as VaultItem[]),
+				urlItem,
+			]);
+			hollow.events.emit("alert", {
+				type: "success",
+				title: "Vault",
+				message: `added 1 image`,
+			});
+			return url;
+		} catch {
+			hollow.events.emit("alert", {
+				type: "error",
+				title: "Vault",
+				message: `Failed to add 1 image`,
+			});
+		}
 	}
 	public async addItems(images: string[]) {
 		if (images.length > 0) {
-			const removeAlert = hollow.events.emit("alert", {
-				type: "loading",
-				title: "Vault",
-				message: `adding ${images.length} images`,
-			});
 			const addedImagesPaths: string[] =
 				await RustManager.getSelf().vault_add({
 					paths: images,
 				});
-			removeAlert();
 			hollow.events.emit("alert", {
 				type: addedImagesPaths.length > 0 ? "success" : "warning",
 				title: "Vault",
@@ -94,10 +108,7 @@ export default class VaultManager {
 		}
 	}
 
-	public async removeItems(urls: string[]) {
-		const paths = (this.store.get("__root__") as VaultItem[])
-			.filter((i) => urls.includes(i.url) && !i.url.startsWith("https"))
-			.map((i) => i.path);
+	public async removeItems(paths: string[]) {
 		if (paths.length > 0) {
 			const targetFiles = paths
 				.filter((i) => !i.startsWith("https"))
@@ -108,7 +119,7 @@ export default class VaultManager {
 		}
 		this.store.set("__root__", [
 			...(this.store.get("__root__") as VaultItem[]).filter(
-				(i) => !urls.includes(i.url),
+				(i) => !paths.includes(i.path),
 			),
 		]);
 	}

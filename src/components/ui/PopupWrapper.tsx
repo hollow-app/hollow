@@ -1,14 +1,13 @@
-import { setFips } from "crypto";
 import { XIcon } from "lucide-solid";
 import {
 	ComponentProps,
 	createSignal,
+	createUniqueId,
 	JSX,
 	onCleanup,
 	onMount,
 	Show,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
 
 type PopupWrapperProps = {
 	Icon: (props: ComponentProps<"svg">) => any;
@@ -18,6 +17,7 @@ type PopupWrapperProps = {
 	shadow?: boolean;
 };
 
+const [focusedId, setFocusedId] = createSignal<string | null>(null);
 export default function PopupWrapper({
 	Icon,
 	title,
@@ -25,8 +25,9 @@ export default function PopupWrapper({
 	onClose,
 	shadow = true,
 }: PopupWrapperProps) {
+	const id = createUniqueId();
 	const [position, setPosition] = createSignal({ x: 0, y: 0 });
-	const [isFocus, setFocus] = createSignal(true);
+	const isFocus = () => focusedId() === id;
 	let winRef!: HTMLDivElement;
 	let dragging = false;
 	let offset = { x: 0, y: 0 };
@@ -52,11 +53,6 @@ export default function PopupWrapper({
 		dragging = false;
 		window.removeEventListener("pointermove", move);
 	};
-	const onOutside = (e: PointerEvent) => {
-		if (!winRef.contains(e.target as Node)) {
-			setFocus(false);
-		}
-	};
 
 	onMount(() => {
 		const winRect = winRef.getBoundingClientRect();
@@ -64,15 +60,14 @@ export default function PopupWrapper({
 			x: (window.innerWidth - winRect.width) / 2,
 			y: (window.innerHeight - winRect.height) / 2,
 		});
-		window.addEventListener("pointerdown", onOutside);
+		setFocusedId(id);
 	});
 	onCleanup(() => {
-		window.removeEventListener("pointerdown", onOutside);
+		isFocus() && setFocusedId(null);
 	});
 	return (
 		<div
 			ref={winRef}
-			onPointerDown={() => setFocus(true)}
 			class="up-pop pointer-events-auto top-0 left-0 flex flex-col gap-3 transition-none"
 			style={{
 				transform: `translate(${position().x}px, ${position().y}px)`,

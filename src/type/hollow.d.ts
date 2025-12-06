@@ -248,7 +248,7 @@ export type ContextMenuItemButton = {
 	/**
 	 * The name of the icon from lucide.dev in PascalCase format.
 	 */
-	icon?: string;
+	icon?: any;
 
 	/**
 	 * The text label displayed on the button.

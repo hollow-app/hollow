@@ -5,7 +5,7 @@ import Dropdown from "@components/Dropdown";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 
-const keys = ["settings", "tools", "color-primary", "color-secondary"];
+const keys = ["color-primary", "color-secondary"];
 
 export default function Modifier() {
 	const [key, setKey] = createSignal("");
@@ -126,6 +126,7 @@ export default function Modifier() {
 							</div>
 							<div class="w-[50%]">
 								<Dropdown
+									value={() => undefined}
 									placeholder="Select Key"
 									options={() => [{ items: keys }]}
 									onSelect={(v) => {

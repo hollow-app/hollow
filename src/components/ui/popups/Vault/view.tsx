@@ -100,7 +100,7 @@ export const VaultView = (
 					<div
 						class="border-secondary-05 box-content w-0 shrink-0 border-l opacity-0 transition-all duration-300 ease-in-out"
 						classList={{
-							"w-92 opacity-100 pl-3 py-3":
+							"w-92 opacity-100 pl-3 ml-3 py-3":
 								!!state.selectedItem(),
 						}}
 					>

@@ -2,11 +2,8 @@ import CardConfig from "@components/CardConfig";
 import { FormType, CardType } from "@type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
-import { lazy } from "solid-js";
 import { hollow } from "hollow";
 import FilterButton from "@components/FilterButton";
-
-const IconInner = lazy(() => import("@components/Icon"));
 
 type FilterType = {
 	tools: string[];
@@ -17,38 +14,44 @@ type FilterType = {
 
 export default function Expand() {
 	// TODO 11
-	const [hand, setHand] = createSignal(hollow.toolManager.getHand());
+	const hand = createMemo(() => hollow.toolManager.getHand());
+	const icons = createMemo(() =>
+		hand().reduce((a, i) => {
+			a[i.name] = i.icon;
+			return a;
+		}),
+	);
 	const [filter, setFilter] = createSignal<FilterType>({
 		tools: [],
 		favourite: false,
 		placed: true,
 		unplaced: true,
 	});
-	const cards = createMemo(() =>
-		hand()
-			.filter(
-				(i) =>
-					filter().tools.length === 0 ||
-					filter().tools.includes(i.name),
-			)
-			.flatMap((i) =>
-				i.cards.map((card) => ({
-					...card,
-					tool: i.name,
-					icon: i.icon,
-					title: i.title,
-				})),
-			)
-			.filter((card) => {
-				const f = filter();
-
-				if (f.favourite && !card.data.extra.isFavored) return false;
-				if (!f.placed && card.data.extra.isPlaced) return false;
-				if (!f.unplaced && !card.data.extra.isPlaced) return false;
-
-				return true;
-			}),
-	);
+	// const cards = createMemo(() =>
+	// 	hand()
+	// 		.filter(
+	// 			(i) =>
+	// 				filter().tools.length === 0 ||
+	// 				filter().tools.includes(i.name),
+	// 		)
+	// 		.flatMap((i) =>
+	// 			i.cards.map((card) => ({
+	// 				...card,
+	// 				icon: i.icon,
+	// 				tool: i.name,
+	// 				title: i.title,
+	// 			})),
+	// 		)
+	// 		.filter((card) => {
+	// 			const f = filter();
+	//
+	// 			if (f.favourite && !card.data.extra.isFavored) return false;
+	// 			if (!f.placed && card.data.extra.isPlaced) return false;
+	// 			if (!f.unplaced && !card.data.extra.isPlaced) return false;
+	//
+	// 			return true;
+	// 		}),
+	// );
 
 	const addNewCard = () => {
 		const onSave = (data: any) => {
@@ -57,7 +60,7 @@ export default function Expand() {
 				data.tool.toLowerCase(),
 				data.emoji,
 			);
-			setHand([...hollow.toolManager.getHand()]);
+			// setHand([...hollow.toolManager.getHand()]);
 		};
 		const form: FormType = {
 			id: crypto.randomUUID(),
@@ -119,41 +122,6 @@ export default function Expand() {
 	return (
 		<div class="size-full">
 			<div class="border-secondary-10 flex h-full flex-col gap-3 border-l py-5">
-				<div class="flex px-5">
-					<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
-						<div class="h-fit flex-1">
-							<h1 class="text-xl font-medium whitespace-nowrap text-neutral-900 dark:text-neutral-100">
-								Tools & Cards
-							</h1>
-							<div class="flex h-fit w-84 shrink-0 flex-wrap gap-2 pt-2">
-								<For each={hand()}>
-									{(h) => (
-										<button
-											class="flex w-fit items-center gap-1 rounded p-1.5 text-sm font-medium transition-colors"
-											onclick={() => selectTool(h.name)}
-											classList={{
-												"bg-primary/20 text-primary":
-													filter().tools.includes(
-														h.name,
-													),
-												"bg-secondary-10/80 text-secondary-30":
-													!filter().tools.includes(
-														h.name,
-													),
-											}}
-										>
-											<IconInner
-												class="size-4"
-												name={h.icon}
-											/>
-											{h.title}
-										</button>
-									)}
-								</For>
-							</div>
-						</div>
-					</div>
-				</div>
 				<div class="flex items-center gap-3 px-5">
 					<div class="relative flex-1">
 						<input
@@ -218,14 +186,13 @@ export default function Expand() {
 						}}
 					/>
 					<div class="flex h-[calc(100%-2px)] flex-col gap-1 overflow-hidden overflow-y-auto px-5">
-						<For each={cards()}>
-							{(
-								c: CardType & {
-									tool: string;
-									icon: string;
-									title: string;
-								},
-							) => <CardConfig myCard={c} setHand={setHand} />}
+						<For each={hollow.cards()}>
+							{(c: CardType) => (
+								<CardConfig
+									myCard={c}
+									icon={icons()[c.data.extra.tool]}
+								/>
+							)}
 						</For>
 					</div>
 					<hr

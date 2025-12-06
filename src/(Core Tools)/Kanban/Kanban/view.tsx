@@ -26,7 +26,7 @@ export const KanbanView = (
 ) => {
 	return (
 		<div
-			class="@container relative box-border flex h-full flex-col gap-2"
+			class="@container relative box-border flex h-full flex-col gap-2 p-3"
 			style={{ "--accent-color": state.kanban().accent }}
 			onContextMenu={logic.handleContextMenu}
 		>

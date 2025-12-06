@@ -8,6 +8,7 @@ import { ContextMenuItem, FormType, ToolOptions } from "@type/hollow";
 import { onCleanup, onMount } from "solid-js";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { DragEventHandler } from "@thisbeyond/solid-dnd";
+import { SendIcon, Trash2Icon } from "lucide-solid";
 
 export type LogicType = {
 	handleContextMenu: () => void;
@@ -171,7 +172,7 @@ export const KanbanLogic = (
 					(i) => i.data.extra.name !== props.card.data.extra.name,
 				) &&
 					menuItems.push({
-						icon: "Send",
+						icon: SendIcon,
 						label: `Send (${nSelected})`,
 						children: metadata.cards
 							.filter(
@@ -201,7 +202,7 @@ export const KanbanLogic = (
 					});
 
 				menuItems.push({
-					icon: "Trash2",
+					icon: Trash2Icon,
 					label: `Delete (${nSelected})`,
 					onclick: () => {
 						props.card.app.emit("confirm", {

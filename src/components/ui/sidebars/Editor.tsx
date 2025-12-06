@@ -5,6 +5,7 @@ import {
 	createMemo,
 	createSignal,
 	JSX,
+	onMount,
 	Show,
 	type Accessor,
 	type Setter,
@@ -12,6 +13,7 @@ import {
 import { hollow } from "hollow";
 import Dropdown from "@components/Dropdown";
 import { CardType } from "@type/hollow";
+import { unwrap } from "solid-js/store";
 
 interface SelectedCard {
 	tool: string;
@@ -23,13 +25,12 @@ export default function Editor() {
 		hollow.pevents.getData("editor"),
 	);
 
-	let initialState: CardType | null = null;
-
 	const cardData = createMemo(() => {
 		if (!selectedCard()) return null;
 		const id = selectedCard().cardId;
 		return id ? hollow.cards().find((c) => c.id === id) : null;
 	});
+	let initialState: CardType | null = { ...unwrap(cardData()) };
 	const cardStyle = createMemo(() => cardData()?.style ?? {});
 
 	const updateRootProp = (key: keyof CardType, value: any) => {
@@ -50,13 +51,8 @@ export default function Editor() {
 		const data = hollow.cards().find((i) => i.id === payload.cardId);
 		if (!data) return;
 
-		initialState = data;
+		initialState = { ...unwrap(data) };
 		setSelectedCard(payload);
-	};
-
-	const toggleEditor = (v: SelectedCard) => {
-		setSelectedCard(v);
-		// setVisible((current) => !current);
 	};
 
 	const onSave = () => {
@@ -68,6 +64,7 @@ export default function Editor() {
 	};
 
 	const onCancel = () => {
+		console.log(initialState);
 		if (initialState) {
 			hollow.setCards(
 				(c) => c.id === selectedCard().cardId,
@@ -76,6 +73,9 @@ export default function Editor() {
 		}
 		hollow.pevents.emit("editor", null);
 	};
+	onMount(() => {
+		!initialState && (initialState = unwrap(cardData()));
+	});
 
 	return (
 		<div class="size-full">
@@ -215,16 +215,20 @@ export default function Editor() {
 								label="X"
 								value={() => cardData().x}
 								setValue={(v) => updateRootProp("x", v)}
+								step={50}
+								min={-10000}
 							/>
 							<NumRow
 								label="Y"
 								value={() => cardData().y}
 								setValue={(v) => updateRootProp("y", v)}
+								step={50}
+								min={-10000}
 							/>
 							<NumRow
 								label="Z"
 								value={() =>
-									Number(cardStyle()["z-index"]) ?? 0
+									Number(cardStyle()["z-index"] ?? 0)
 								}
 								setValue={(v) => updateStyleProp("z-index", v)}
 							/>
@@ -251,6 +255,7 @@ function NumRow(props: {
 	setValue: (v: number) => void;
 	step?: number;
 	max?: number;
+	min?: number;
 }) {
 	return (
 		<div class="flex items-center justify-between">
@@ -261,6 +266,7 @@ function NumRow(props: {
 					setValue={props.setValue}
 					step={props.step}
 					max={props.max}
+					min={props.min}
 					direct
 				/>
 			</div>
@@ -309,9 +315,8 @@ function Header(props: {
 	});
 
 	return (
-		<div class="bg-secondary-05/50 border-secondary-10 flex h-fit w-full gap-2 rounded-lg border p-4">
+		<div class="border-secondary-10 flex h-fit w-full gap-2">
 			<div class="flex-1 space-y-1">
-				<h1 class="text-xl font-bold">Editor</h1>
 				<div class="flex gap-2">
 					<Dropdown
 						value={() => props.selected()?.tool ?? ""}

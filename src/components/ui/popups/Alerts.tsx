@@ -7,7 +7,6 @@ import { AlertType } from "@type/hollow";
 import { hollow } from "hollow";
 import { createSignal, For, JSX, onCleanup, onMount, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import { cursorTo } from "readline";
 
 const alertTypes: Record<string, (props: any) => JSX.Element> = {
 	success: CheckSquareOutlineIcon,

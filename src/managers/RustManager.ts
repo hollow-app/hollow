@@ -9,8 +9,9 @@ import {
 	ToolEvents,
 } from "@type/hollow";
 import { exists, mkdir, remove } from "@tauri-apps/plugin-fs";
+import VaultManager from "./VaultManager";
 
-const PLUGIN_FILES = ["index.js", "manifest.json"] as const;
+const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
 
 type FetchProps = {
 	url: string;
@@ -112,24 +113,30 @@ export class RustManager {
 	}
 
 	async add_plugin({ name, repo }: AddPluginProps): Promise<any> {
-		let manifest = "";
-		for (let i = 0; i < 2; i++) {
+		const result = {
+			state: true,
+			manifest: "",
+			icon: "",
+		};
+		for (const file of PLUGIN_FILES) {
 			try {
-				const response = await fetch(
-					`https://raw.githubusercontent.com/${repo}/main/${PLUGIN_FILES[i]}`,
-					{
-						headers: {
-							Accept: "application/vnd.github.v3+json",
-						},
+				const url = `https://raw.githubusercontent.com/${repo}/main/${file}`;
+				if (file === "icon.svg") {
+					result.icon = await VaultManager.getSelf().addUrlItem(url);
+					continue;
+				}
+				const response = await fetch(url, {
+					headers: {
+						Accept: "application/vnd.github.v3+json",
 					},
-				);
+				});
 
 				const data = await response.text();
 
 				// make file
-				if (i === 1) {
-					manifest = data;
-				} else {
+				if (file === "manifest.json") {
+					result.manifest = data;
+				} else if (file === "index.js") {
 					invoke("add_plugin", {
 						pluginName: name.toLowerCase(),
 						content: data,
@@ -140,10 +147,7 @@ export class RustManager {
 				return { state: false };
 			}
 		}
-		return {
-			state: true,
-			manifest,
-		};
+		return result;
 	}
 
 	async remove_plugin({ name }: RemovePluginProps): Promise<any> {
@@ -196,6 +200,10 @@ export class RustManager {
 	}
 	async vault_remove(props: vaultRemoveProps): Promise<string> {
 		return await invoke("vault_remove", props);
+	}
+
+	async vault_add_url(props: { url: string }): Promise<string> {
+		return await invoke("vault_add_url", props);
 	}
 
 	// TODO is it needed?

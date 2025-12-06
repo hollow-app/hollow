@@ -8,29 +8,46 @@ import {
 } from "lucide-solid";
 import { createSignal, Setter, Show } from "solid-js";
 import EmojiPick from "./EmojiPick";
-import Icon from "./Icon";
 import { timeDifference } from "@managers/manipulation/strings";
 import { hollow } from "hollow";
+import ToolIcon from "./ToolIcon";
 
 export default function CardConfig({
 	myCard,
-	setHand,
+	// setHand,
+	icon,
 }: {
-	myCard: CardType & { tool: string; icon: string; title: string };
-	setHand: Setter<HandType[]>;
+	myCard: CardType;
+	icon: string;
+	// setHand: Setter<HandType[]>;
 }) {
 	const [isPlaced, setPlaced] = createSignal(myCard.data.extra.isPlaced);
+	const [isFav, setFav] = createSignal(myCard.data.extra.isFavored);
 
 	const handlePlacement = () => {
-		hollow.toolManager.togglePlacement(myCard.id, myCard.tool);
+		hollow.toolManager.togglePlacement(myCard.id, myCard.data.extra.tool);
 		setPlaced(!isPlaced());
 	};
 	const handleDelete = async () => {
-		await hollow.toolManager.deleteCard(myCard.id, myCard.tool, true);
-		setHand([...hollow.toolManager.getHand()]);
+		await hollow.toolManager.deleteCard(
+			myCard.id,
+			myCard.data.extra.tool,
+			true,
+		);
+		// setHand([...hollow.toolManager.getHand()]);
+	};
+	const handleFav = async () => {
+		hollow.toolManager.setCard(myCard.data.extra.tool, myCard.id, {
+			isFavored: !isFav(),
+		});
+		setFav(!isFav());
 	};
 	const onEmojiChanged = (newEmoji: string) => {
-		hollow.toolManager.changeEmoji(newEmoji, myCard.id, myCard.tool);
+		hollow.toolManager.changeEmoji(
+			newEmoji,
+			myCard.id,
+			myCard.data.extra.tool,
+		);
 		// TODO
 		hollow.events.off("emoji-picker-changed", onEmojiChanged);
 	};
@@ -42,8 +59,13 @@ export default function CardConfig({
 					<div>
 						<div class="w-fit">
 							<div class="text-secondary-25 flex w-fit items-center gap-1 p-1">
-								<Icon name={myCard.icon} class="size-4" />
-								<span class="text-xs">{myCard.title}</span>
+								<ToolIcon
+									toolName={icon ?? myCard.data.extra.tool}
+									class="size-4"
+								/>
+								<span class="text-xs">
+									{myCard.data.extra.tool}
+								</span>
 							</div>
 							<hr
 								class="h-px w-full shrink-0 border-0"
@@ -68,9 +90,9 @@ export default function CardConfig({
 					<div class="p-2">
 						<StarIcon
 							class="text-secondary-30 fill-secondary-30 size-4 cursor-pointer transition-all hover:rotate-45"
+							onclick={handleFav}
 							classList={{
-								"text-yellow-500 fill-yellow-500":
-									myCard.data.extra.isFavored,
+								"text-yellow-500 fill-yellow-500": isFav(),
 							}}
 						/>
 					</div>

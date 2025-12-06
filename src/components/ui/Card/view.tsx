@@ -12,7 +12,7 @@ export const CardView = (
 	return (
 		<div
 			ref={state.vault}
-			class={"z-50 box-border h-full w-full"}
+			class={"box-border h-full w-full"}
 			style={{
 				...(state.isExpand()
 					? {

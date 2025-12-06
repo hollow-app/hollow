@@ -11,8 +11,6 @@ import {
 	XIcon,
 } from "lucide-solid";
 
-const Icon = lazy(() => import("@components/Icon"));
-
 export const NotificationsView = (
 	state: StateType,
 	logic: LogicType,
@@ -41,22 +39,26 @@ export const NotificationsView = (
 				<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
 					<For each={state.notifications()}>
 						{(noti) => {
-							const tp = logic.getIconFromType(noti.type);
+							{
+								/* const tp = logic.getIconFromType(noti.type); */
+							}
 							const [expand, setExpand] = createSignal(false);
 							return (
 								<div class="bg-secondary-05 border-secondary-15/60 pointer-events-auto h-fit w-full rounded-xl border p-2">
 									<div
 										class="flex items-center gap-4"
-										style={{
-											color: tp.color,
-										}}
+										style={
+											{
+												//color: tp.color,
+											}
+										}
 									>
-										<Suspense>
-											<Icon
-												class="bg-secondary-15/60 size-10 shrink-0 rounded-lg p-2.5"
-												name={tp.icon}
-											/>
-										</Suspense>
+										{/* <Suspense> */}
+										{/* 	<Icon */}
+										{/* 		class="bg-secondary-15/60 size-10 shrink-0 rounded-lg p-2.5" */}
+										{/* 		name={tp.icon} */}
+										{/* 	/> */}
+										{/* </Suspense> */}
 										<Show
 											when={noti.attachment}
 											fallback={

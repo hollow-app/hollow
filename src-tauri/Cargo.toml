@@ -31,6 +31,9 @@ tauri-plugin-store = "2"
 tauri-plugin-fs = { version = "2.0.0", features = ["watch"] }
 tauri-plugin-log = "2"
 uuid = { version = "1.4", features = ["v4"] }
+reqwest = { version = "0.12", features = ["json"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+trash = "3"
 
 [profile.dev]
 incremental = true

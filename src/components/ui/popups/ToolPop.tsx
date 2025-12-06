@@ -2,6 +2,7 @@ import { HandType } from "@type/HandType";
 import { Setter } from "solid-js";
 import Icon from "../../Icon";
 import { hollow } from "hollow";
+import ToolIcon from "@components/ToolIcon";
 
 export default function ToolPop({
 	tool,
@@ -17,8 +18,8 @@ export default function ToolPop({
 		<div class="bg-secondary border-secondary-15 animate-fadeIn pointer-events-auto absolute z-3 h-fit w-fit rounded-xl border-1">
 			<div class="box-border flex h-fit w-[280px] flex-col justify-between gap-4 p-4">
 				<div class="mx-auto flex items-center gap-3">
-					<Icon
-						name={tool.icon}
+					<ToolIcon
+						toolName={tool.name}
 						class="border-secondary-15 h-16 w-16 rounded-xl border-2 p-2 text-gray-950 transition-all duration-200 hover:scale-105 dark:text-gray-50"
 					/>
 					<div class="flex flex-col items-center gap-1">

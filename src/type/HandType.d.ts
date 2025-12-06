@@ -2,7 +2,7 @@ import { CardType } from "./hollow";
 
 export type HandType = {
 	version: string;
-	icon: string;
+	icon?: string;
 	/**
 	 * name : id, same as title but lowercased
 	 */

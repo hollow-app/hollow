@@ -6,6 +6,7 @@ import { Motion } from "solid-motionone";
 import FilterButton from "@components/FilterButton";
 import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
+import { Trash2Icon } from "lucide-solid";
 
 type NoteListProps = {
 	card: ICard;
@@ -42,7 +43,7 @@ export default function NoteList({
 				header: "notebook",
 				items: [
 					{
-						icon: "Trash2",
+						icon: Trash2Icon,
 						label: `Remove (${selectedGroup().length})`,
 						onclick: removeGroup,
 					},

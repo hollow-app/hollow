@@ -66,7 +66,7 @@ export const VaultLogic = (
 				state.setImages((prev) => [
 					...prev.filter((i) => i.url !== state.selectedItem().url),
 				]);
-				VaultManager.getSelf().removeItems([state.selectedItem().url]);
+				VaultManager.getSelf().removeItems([state.selectedItem().path]);
 				state.setSelectedItem(null);
 			},
 		};

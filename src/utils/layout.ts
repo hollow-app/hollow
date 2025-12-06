@@ -1,4 +1,5 @@
 import { Layout, LayoutSignal, PanelMap, PanelType } from "@type/hollow";
+import { hollow } from "hollow";
 import { Component, lazy } from "solid-js";
 import { createStore } from "solid-js/store";
 //

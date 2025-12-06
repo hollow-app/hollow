@@ -8,6 +8,7 @@ import Slider from "@components/Slider";
 import WordInput from "@components/WordInput";
 import { ToolOption, ToolOptions } from "@type/hollow";
 import { hollow } from "hollow";
+import { options } from "marked";
 import { createMemo, For } from "solid-js";
 
 type ToolSettingsProps = {
@@ -28,7 +29,8 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 
 	const onCancel = () => {
 		pluginSettings.options.forEach((option) => {
-			option.type !== "custom" && option.onAction(option.value);
+			if (option.type !== "custom" && option.type !== "file")
+				option.onAction(option.value);
 		});
 		hollow.events.emit("tool-settings", null);
 	};
@@ -115,10 +117,18 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 					</For>
 				</div>
 				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded p-5">
-					<button class="button-primary" onclick={onSave}>
+					<button
+						type="button"
+						class="button-primary"
+						onclick={onSave}
+					>
 						Save
 					</button>
-					<button class="button-secondary" onclick={onCancel}>
+					<button
+						type="button"
+						class="button-secondary"
+						onclick={onCancel}
+					>
 						Cancel
 					</button>
 				</div>

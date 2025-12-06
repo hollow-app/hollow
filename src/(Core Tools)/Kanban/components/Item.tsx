@@ -1,6 +1,6 @@
 import { Accessor, createMemo, For, Setter } from "solid-js";
 import Tag from "../../../components/Tag";
-import { Clock8Icon } from "lucide-solid";
+import { Clock8Icon, PenLineIcon, Trash2Icon } from "lucide-solid";
 import { TagType } from "@type/hollow";
 import { HollowEvent } from "@type/hollow";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
@@ -76,12 +76,12 @@ export default function Item({
 			});
 		const menuItems: any = [
 			{
-				icon: "Trash2",
+				icon: Trash2Icon,
 				label: "Delete",
 				onclick: () => removeItem(item().id, true),
 			},
 			{
-				icon: "PenLine",
+				icon: PenLineIcon,
 				label: "Edit",
 				onclick: () => {
 					showForm((data) => {

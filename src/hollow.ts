@@ -8,6 +8,7 @@ import {
 	AppEvents,
 	CardType,
 	HollowEvent,
+	Layout,
 } from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
 
@@ -15,6 +16,7 @@ type hollowType = {
 	onCopy?: () => void;
 	onCut?: () => void;
 	onPaste?: () => void;
+	coreTools: string[];
 	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
 	toolManager?: ToolManager;
@@ -25,6 +27,7 @@ type hollowType = {
 };
 const [cards, setCards] = createStore([]);
 export const hollow: hollowType = {
+	coreTools: ["image", "notebook", "kanban", "embed"],
 	events: new EventsManager() as HollowEvent<AppEvents, AppEventReturns>,
 	pevents: new EventsManager() as HollowEvent<PrivateEvents>,
 	cards: () => cards,

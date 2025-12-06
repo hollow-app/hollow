@@ -14,6 +14,7 @@ import WordInput from "@components/WordInput";
 import Tag from "@components/Tag";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
+import { hollow } from "hollow.ts";
 
 export const NotebookView = (
 	state: StateType,
@@ -66,9 +67,9 @@ export const NotebookView = (
 					</button>
 					<button
 						class="button-control"
-						onclick={() =>
-							state.setShowList((prev: boolean) => !prev)
-						}
+						onclick={() => {
+							state.setShowList((prev: boolean) => !prev);
+						}}
 						style={{
 							"--p": 1,
 							"--border-radius": "var(--radius-sm)",

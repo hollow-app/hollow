@@ -23,7 +23,7 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 		<div class="flex w-full items-center justify-end gap-2">
 			<Show when={file()}>
 				<>
-					<img class="h-full w-30 rounded" src={file()} />
+					<img class="h-full max-h-10 w-30 rounded" src={file()} />
 					<button
 						class="button-control red"
 						type="button"

@@ -1,15 +1,16 @@
 import { CharacterProps } from ".";
-import IconInner from "@components/Icon";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
-import Sidepanel from "@components/animations/Sidepanel";
-import { createSignal, For, Setter, Show } from "solid-js";
+import { createSignal, For, Setter, Show, Suspense } from "solid-js";
 import { Check, ImageUpIcon, XIcon } from "lucide-solid";
 import { RealmManager } from "@managers/RealmManager";
 import { Character } from "@type/Character";
 import { CharacterManager } from "@managers/CharacterManager";
 import { onCleanup } from "solid-js";
+import styles from "./index.module.css";
+import FetchedIcon from "@components/FetchedIcon";
+import { style } from "solid-js/web";
 
 export const CharacterView = (
 	state: StateType,
@@ -170,24 +171,30 @@ export const CharacterView = (
 															"string",
 													)}
 											>
-												{(m) => (
-													<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1">
-														<Show when={m.icon}>
-															<IconInner
-																name={m.icon}
-																class="size-4"
-															/>
-														</Show>
-														<Show when={m.label}>
-															<span class="text-secondary-40 text-sm font-medium uppercase">
-																{m.label}
+												{(m) => {
+													return (
+														<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1">
+															<Show when={m.icon}>
+																<FetchedIcon
+																	class={
+																		"size-4"
+																	}
+																	url={m.icon}
+																/>
+															</Show>
+															<Show
+																when={m.label}
+															>
+																<span class="text-secondary-40 text-sm font-medium uppercase">
+																	{m.label}
+																</span>
+															</Show>
+															<span class="text-xs">
+																{m.value}
 															</span>
-														</Show>
-														<span class="text-xs">
-															{m.value}
-														</span>
-													</div>
-												)}
+														</div>
+													);
+												}}
 											</For>
 										</Show>
 									</div>
@@ -312,7 +319,11 @@ function ProgressBar({
 	return (
 		<div class="relative flex items-center gap-2">
 			<div class="bg-secondary-10 flex items-center gap-1 rounded p-1">
-				<IconInner name={icon} class="size-4" style={{ color }} />
+				<FetchedIcon
+					class={"size-4"}
+					style={{ color: color }}
+					url={icon}
+				/>
 				<Show when={label}>
 					<h3 class="text-sm font-medium text-neutral-700 uppercase dark:text-neutral-300">
 						{label}

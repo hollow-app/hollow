@@ -4,6 +4,7 @@ import type { HelperType } from "./helper";
 import { ContextMenuItem } from "@type/hollow";
 import { hollow } from "hollow";
 import { onCleanup, onMount } from "solid-js";
+import { ExpandIcon, PencilRulerIcon, SettingsIcon } from "lucide-solid";
 
 export type LogicType = {
 	onContextMenu: () => void;
@@ -21,17 +22,17 @@ export const CardLogic = (
 			header: "Card",
 			items: [
 				{
-					icon: "Expand",
+					icon: ExpandIcon,
 					label: "Focus Mode",
 					onclick: () => expand(),
 				},
 				{
-					icon: "PencilRuler",
+					icon: PencilRulerIcon,
 					label: "Modify",
 					onclick: showEditor,
 				},
 				{
-					icon: "Settings",
+					icon: SettingsIcon,
 					label: "Settings",
 					onclick: showSettings,
 				},
@@ -71,4 +72,3 @@ export const CardLogic = (
 	});
 	return { onContextMenu };
 };
-

@@ -58,6 +58,7 @@ pub fn run() {
             plugins::remove_plugin,
             vault::vault_add,
             vault::vault_remove,
+            vault::vault_add_url,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

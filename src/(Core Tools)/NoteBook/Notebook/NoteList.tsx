@@ -1,4 +1,4 @@
-import { ContextMenuItem, ICard } from "@type/hollow";
+import { CardType, ContextMenuItem } from "@type/hollow";
 import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
 import { NotebookType } from "../NotebookType";
 import { NotebookManager } from "../NotebookManager";
@@ -6,9 +6,10 @@ import FilterButton from "@components/FilterButton";
 import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
 import { Trash2Icon } from "lucide-solid";
+import { hollow } from "hollow";
 
 type NoteListProps = {
-	card: ICard;
+	card: CardType;
 	book: NotebookType;
 	changeSelected: (id: string) => void;
 	isExpand?: boolean;
@@ -35,7 +36,7 @@ export default function NoteList(props: NoteListProps) {
 
 	const removeGroup = async () => {
 		const total = selectedGroup().length;
-		const onDone = props.card.app.emit("alert", {
+		const onDone = hollow.events.emit("alert", {
 			type: "loading",
 			title: "Notebook",
 			message: `Deleting ${total} Note${total > 1 && "s"}...`,
@@ -62,7 +63,7 @@ export default function NoteList(props: NoteListProps) {
 					},
 				],
 			};
-			props.card.app.emit("context-menu-extend", cm);
+			hollow.events.emit("context-menu-extend", cm);
 		}
 	};
 

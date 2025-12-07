@@ -1,13 +1,4 @@
-import {
-	AppEvents,
-	DataBase,
-	DataBaseRequest,
-	HollowEvent,
-	ICard,
-	IPlugin,
-	IStore,
-	ToolEvents,
-} from "@type/hollow";
+import { CardType, IPlugin, IStore, ToolApi } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
@@ -17,13 +8,15 @@ const Image = lazy(() => import("./Image"));
 
 export class ImageMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
+	private toolEvents: ToolApi;
 	private store: IStore = null;
 
-	constructor(toolEvent: HollowEvent<ToolEvents>) {
+	constructor(_, toolEvent: ToolApi) {
+		this.toolEvents = toolEvent;
 		this.store = toolEvent.getData("config");
 	}
 
-	async onCreate(card: ICard): Promise<boolean> {
+	async onCreate(card: CardType): Promise<boolean> {
 		this.store.set(card.id, {
 			url: "",
 			caption: "",
@@ -34,19 +27,26 @@ export class ImageMain implements IPlugin {
 		return true;
 	}
 
-	async onDelete(card: ICard): Promise<boolean> {
+	async onDelete(card: CardType): Promise<boolean> {
 		this.store.remove(card.id);
 		return true;
 	}
 
-	async onLoad(card: ICard): Promise<boolean> {
+	async onLoad(card: CardType): Promise<boolean> {
 		const targetContainer = document.getElementById(card.id);
 
 		if (targetContainer && !this.roots.has(card.id)) {
 			const data: ImageType = this.store.get(card.id);
 			const dispose = createRoot((dispose) => {
 				render(
-					() => <Image store={this.store} card={card} data={data} />,
+					() => (
+						<Image
+							store={this.store}
+							toolEvents={this.toolEvents}
+							card={card}
+							data={data}
+						/>
+					),
 					targetContainer,
 				);
 				return dispose;

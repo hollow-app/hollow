@@ -6,13 +6,15 @@ import {
 	AppEventReturns,
 	ToolEvents,
 	IStore,
+	ToolApi,
 } from "@type/hollow";
 import { ItemType } from "./types/ItemType";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
+import { hollow } from "hollow";
 
 export class KanbanManager {
 	private store: IStore = null;
-	private toolEvent: HollowEvent<ToolEvents>;
+	private toolEvent: ToolApi;
 	private static self: KanbanManager;
 
 	static getSelf() {
@@ -24,9 +26,13 @@ export class KanbanManager {
 
 	private constructor() {}
 
-	init(toolEvent: HollowEvent<ToolEvents>) {
+	init(toolEvent: ToolApi) {
 		this.toolEvent = toolEvent;
 		this.store = this.toolEvent.getData("config");
+	}
+
+	getEvents() {
+		return this.toolEvent;
 	}
 
 	async getColumn(columnId: string): Promise<ColumnType | null> {
@@ -48,10 +54,8 @@ export class KanbanManager {
 		this.store.remove(columnId);
 	}
 
-	showInsight(
-		column: ColumnType,
-		app: HollowEvent<AppEvents, AppEventReturns>,
-	) {
+	showInsight(column: ColumnType) {
+		const app = hollow.events;
 		const items = column.items ?? [];
 
 		const totalItems = items.length;

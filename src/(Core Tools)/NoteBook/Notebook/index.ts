@@ -6,11 +6,11 @@ import type { LogicType } from "./logic.tsx";
 import { NotebookView } from "./view";
 import { NotebookHelper } from "./helper";
 import type { HelperType } from "./helper";
-import { ICard } from "@type/hollow";
 import { NotebookType } from "../NotebookType";
+import { CardType } from "@type/hollow.js";
 
 export type NotebookProps = {
-	card: ICard;
+	card: CardType;
 	noteBook: NotebookType;
 };
 

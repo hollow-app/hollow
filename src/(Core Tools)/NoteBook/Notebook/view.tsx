@@ -7,29 +7,13 @@ import FolderCloseIcon from "@assets/icons/folder-close.svg";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic.tsx";
 import type { HelperType } from "./helper";
-import {
-	Accessor,
-	createEffect,
-	createResource,
-	For,
-	on,
-	onCleanup,
-	Setter,
-	Show,
-	Suspense,
-	Switch,
-} from "solid-js";
+import { For, Show, Switch } from "solid-js";
 import MarkdownEditor from "@components/MarkdownEditor";
-import { Motion, Presence } from "solid-motionone";
 import WordInput from "@components/WordInput";
 import Tag from "@components/Tag";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import { Match } from "solid-js";
-import { Portal } from "solid-js/web";
-import { hollow } from "hollow";
-import { ICard } from "@type/hollow.js";
-import { NotebookType } from "../NotebookType";
 
 export const NotebookView = (
 	state: StateType,

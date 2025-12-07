@@ -1,7 +1,6 @@
 import { HandType } from "@type/HandType";
 import {
 	HollowEvent,
-	ICard,
 	IPlugin,
 	CardType,
 	ToolEvents,
@@ -9,6 +8,10 @@ import {
 	IStore,
 	StoreType,
 	ToolEventReturns,
+	AppEvents,
+	AppEventReturns,
+	ToolApi,
+	AppApi,
 } from "@type/hollow";
 import { ImageMain } from "@coretools/Image/ImageMain";
 import { NotebookMain } from "@coretools/NoteBook/NotebookMain";
@@ -27,11 +30,11 @@ import { reconcile } from "solid-js/store";
 
 type ToolMethods = {
 	name: string;
-	onCreate(card: ICard): Promise<boolean>;
-	onDelete(card: ICard): Promise<boolean>;
-	onLoad(card: ICard): Promise<boolean>;
+	onCreate(card: CardType): Promise<boolean>;
+	onDelete(card: CardType): Promise<boolean>;
+	onLoad(card: CardType): Promise<boolean>;
 	onUnload(name: string): void;
-	toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
+	toolEvent: ToolApi;
 };
 
 type ToolMap = Map<string, ToolMethods>;
@@ -159,9 +162,7 @@ export class ToolManager {
 	}
 
 	// create the HollowEvent of a singal tool;
-	private async createToolEvent(
-		toolName: string,
-	): Promise<HollowEvent<ToolEvents, ToolEventReturns>> {
+	private async createToolEvent(toolName: string): Promise<ToolApi> {
 		const toolEvent = new EventsManager() as HollowEvent<
 			ToolEvents,
 			ToolEventReturns
@@ -205,15 +206,10 @@ export class ToolManager {
 	}
 
 	// simple internal classes organizer
-	private createCoreTool(
-		name: CoreTool,
-		toolEvent: HollowEvent<ToolEvents, ToolEventReturns>,
-	): IPlugin | null {
+	private createCoreTool(name: CoreTool, toolEvent: ToolApi): IPlugin | null {
 		const toolMap: Record<
 			CoreTool,
-			new (
-				toolEvent: HollowEvent<ToolEvents, ToolEventReturns>,
-			) => IPlugin
+			new (app: AppApi, toolEvent: ToolApi) => IPlugin
 		> = {
 			// TODO
 			// @ts-ignore
@@ -225,7 +221,7 @@ export class ToolManager {
 			// @ts-ignore
 			embed: EmbedMain,
 		};
-		return new toolMap[name](toolEvent);
+		return new toolMap[name](hollow.events, toolEvent);
 	}
 
 	// PLUGINS
@@ -297,24 +293,6 @@ export class ToolManager {
 	}
 
 	// INTERNAL UTILS
-	private getICard(toolName: string, cardId: string) {
-		const toolEvent = this.getToolEvents(toolName);
-		const card = this.getCard(toolName, cardId);
-		const happ = hollow.events;
-		const cardobj: ICard = {
-			...card,
-			app: {
-				on: happ.on.bind(happ),
-				off: happ.off.bind(happ),
-				emit: happ.emit.bind(happ),
-				clear: happ.clear.bind(happ),
-				toggle: happ.toggle.bind(happ),
-				getData: happ.getData.bind(happ),
-			},
-			toolEvent,
-		};
-		return cardobj;
-	}
 
 	private updateToolMetadata(toolName: string, metadata: ToolMetadata): void {
 		this.getToolEvents(toolName)?.emit("metadata", metadata);
@@ -376,7 +354,7 @@ export class ToolManager {
 	async loadCard(cardInfo: CardType, toolName: string): Promise<boolean> {
 		const tool = this.toolMap.get(toolName);
 		return await tool.onLoad({
-			...this.getICard(toolName, cardInfo.id),
+			...this.getCard(toolName, cardInfo.id),
 			id: cardInfo.id,
 		});
 	}
@@ -391,7 +369,7 @@ export class ToolManager {
 		if (card.data.extra.isPlaced) {
 			toolInstance?.onUnload(cardId);
 		}
-		await toolInstance?.onDelete(this.getICard(toolName, cardId));
+		await toolInstance?.onDelete(this.getCard(toolName, cardId));
 
 		const hand: HandType[] = this.getHand();
 		const tool = hand.find((i) => i.name === toolName);
@@ -454,7 +432,7 @@ export class ToolManager {
 		};
 
 		tool.cards = [...tool.cards, newCard];
-		this.toolMap.get(toolName)?.onCreate(this.getICard(toolName, id));
+		this.toolMap.get(toolName)?.onCreate(this.getCard(toolName, id));
 
 		this.store.set("__root__", root);
 		const newNode: CardType = newCard;
@@ -505,7 +483,7 @@ export class ToolManager {
 	}
 
 	// EXTERNAL UTILS
-	getToolEvents(tool: string): HollowEvent<ToolEvents, ToolEventReturns> {
+	getToolEvents(tool: string): ToolApi {
 		return this.toolMap.get(tool).toolEvent;
 	}
 

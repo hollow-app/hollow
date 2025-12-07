@@ -7,14 +7,14 @@ export interface IPlugin {
 	 * @param name - The name of the card being created.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onCreate(card: ICard): Promise<boolean>;
+	onCreate(card: CardType): Promise<boolean>;
 
 	/**
 	 * Called when a card is deleted.
 	 * @param name - The name of the card being deleted.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onDelete(card: ICard): Promise<boolean>;
+	onDelete(card: CardType): Promise<boolean>;
 
 	/**
 	 * Called when a card is loaded.
@@ -22,7 +22,7 @@ export interface IPlugin {
 	 * @param app - The HollowEvent instance for interacting with the app.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onLoad(card: ICard): Promise<boolean>;
+	onLoad(card: CardType): Promise<boolean>;
 
 	/**
 	 * Called when a card is unloaded.
@@ -33,17 +33,17 @@ export interface IPlugin {
 }
 
 // Represents a card in the app, with properties and methods for interaction.
-export type ICard = {
-	/**
-	 * The HollowEvent instance of the whole app.
-	 */
-	app: HollowEvent<AppEvents, AppEventReturns>;
-
-	/**
-	 * The HollowEvent instance for cards of the same tool to interacting with each other.
-	 */
-	toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
-} & Omit<CardType, "kit">;
+// export type ICard = {
+// 	/**
+// 	 * The HollowEvent instance of the whole app.
+// 	 */
+// 	app: HollowEvent<AppEvents, AppEventReturns>;
+//
+// 	/**
+// 	 * The HollowEvent instance for cards of the same tool to interacting with each other.
+// 	 */
+// 	toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
+// } & Omit<CardType, "kit">;
 
 // A type representing an event listener callback.
 type Listener<T> = (data?: T) => void;
@@ -168,6 +168,10 @@ export type ToolEventReturns = {
 } & {
 	[key: string]: any;
 };
+
+export type AppApi = HollowEvent<AppEvents, AppEventReturns>;
+export type ToolApi = HollowEvent<ToolEvents, ToolEventReturns>;
+
 /**
  * Represents an advanced IndexedDB-like database interface.
  * Supports multiple object stores, indexed queries, and management utilities.

@@ -1,16 +1,24 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { DataBase, HollowEvent, ICard, IStore, ToolOption } from "@type/hollow";
+import {
+	CardType,
+	DataBase,
+	HollowEvent,
+	IStore,
+	ToolApi,
+	ToolOption,
+} from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
 import { ImageType } from "./ImageType";
-import WordInput from "@components/WordInput";
+import { hollow } from "hollow";
 
 type ImageProps = {
 	data: ImageType;
-	card: ICard;
+	card: CardType;
 	store: IStore;
+	toolEvents: ToolApi;
 };
-export default function Image({ data, card, store }: ImageProps) {
+export default function Image({ data, card, store, toolEvents }: ImageProps) {
 	const [image, setImage] = createSignal(data);
 	const [isDragging, setIsDragging] = createSignal(false);
 	const [startPos, setStartPos] = createSignal({ x: 0, y: 0 });
@@ -77,7 +85,7 @@ export default function Image({ data, card, store }: ImageProps) {
 			setImage((prev) => ({ ...prev, url: url }));
 			return;
 		}
-		card.app.emit("show-vault", {
+		hollow.events.emit("show-vault", {
 			onSelect: (newUrl) =>
 				setImage((prev) => ({ ...prev, url: newUrl })),
 		});
@@ -139,15 +147,15 @@ export default function Image({ data, card, store }: ImageProps) {
 				},
 			],
 		};
-		card.app.emit("tool-settings", settings);
+		hollow.events.emit("tool-settings", settings);
 	};
 
 	onMount(() => {
-		card.toolEvent.on(`${card.id}-settings`, setSettingsVisible);
+		toolEvents.on(`${card.id}-settings`, setSettingsVisible);
 	});
 
 	onCleanup(() => {
-		card.toolEvent.off(`${card.id}-settings`, setSettingsVisible);
+		toolEvents.off(`${card.id}-settings`, setSettingsVisible);
 	});
 
 	return (

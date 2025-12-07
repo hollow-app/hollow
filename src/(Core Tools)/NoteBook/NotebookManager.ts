@@ -1,17 +1,11 @@
 import fm from "front-matter";
 import { NotebookType } from "./NotebookType";
-import {
-	CardFs,
-	HollowEvent,
-	IStore,
-	ToolEventReturns,
-	ToolEvents,
-} from "@type/hollow";
+import { AppApi, CardFs, IStore, ToolApi } from "@type/hollow";
 import { NoteType } from "./NoteType";
 
 export class NotebookManager {
 	private store: IStore = null;
-	private toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
+	private toolEvent: ToolApi;
 	private static self: NotebookManager;
 
 	static getSelf() {
@@ -22,9 +16,14 @@ export class NotebookManager {
 	}
 
 	private constructor() {}
-	init(toolEvent: HollowEvent<ToolEvents, ToolEventReturns>) {
+
+	init(toolEvent: ToolApi) {
 		this.toolEvent = toolEvent;
 		this.store = this.toolEvent.getData("config");
+	}
+
+	getEvents() {
+		return this.toolEvent;
 	}
 
 	rebuildMarkdown(obj: NoteType) {

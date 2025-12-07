@@ -1,11 +1,4 @@
-import {
-	Accessor,
-	createEffect,
-	createResource,
-	createSignal,
-	on,
-	Setter,
-} from "solid-js";
+import { Accessor, createSignal, Setter } from "solid-js";
 import { NotebookProps } from ".";
 import type { HelperType } from "./helper";
 import { NotebookType } from "../NotebookType";
@@ -54,7 +47,7 @@ export const createNotebookState = (
 		}
 	});
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		props.card.app.getData("tags"),
+		hollow.events.getData("tags"),
 	);
 
 	return {

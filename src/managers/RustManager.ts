@@ -2,9 +2,10 @@ import { invoke } from "@tauri-apps/api/core";
 import { HandType } from "@type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
+	CardType,
 	HollowEvent,
-	ICard,
 	IPlugin,
+	ToolApi,
 	ToolEventReturns,
 	ToolEvents,
 } from "@type/hollow";
@@ -159,7 +160,7 @@ export class RustManager {
 		toolEvent,
 	}: {
 		fullPath: string;
-		toolEvent: HollowEvent<ToolEvents, ToolEventReturns>;
+		toolEvent: ToolApi;
 	}): Promise<IPlugin | null> {
 		//
 		const indexJS: string = await invoke("read_file", {
@@ -169,22 +170,20 @@ export class RustManager {
 			const pluginWrapper = new Function("exports", "module", indexJS);
 			const module = {
 				exports: {} as {
-					default: new (
-						app: HollowEvent<ToolEvents, ToolEventReturns>,
-					) => IPlugin;
+					default: new (app: ToolApi) => IPlugin;
 				},
 			};
 			pluginWrapper(module.exports, module);
 			const PluginClass = module.exports.default;
 			const instance: IPlugin = new PluginClass(toolEvent);
 			return {
-				onCreate: (card: ICard): Promise<boolean> => {
+				onCreate: (card: CardType): Promise<boolean> => {
 					return instance.onCreate(card);
 				},
-				onDelete: (card: ICard): Promise<boolean> => {
+				onDelete: (card: CardType): Promise<boolean> => {
 					return instance.onDelete(card);
 				},
-				onLoad: (card_info: ICard) => {
+				onLoad: (card_info: CardType) => {
 					return instance.onLoad(card_info);
 				},
 				onUnload: (id: string) => {

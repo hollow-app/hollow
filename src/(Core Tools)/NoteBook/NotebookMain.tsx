@@ -1,11 +1,4 @@
-import {
-	HollowEvent,
-	ICard,
-	IPlugin,
-	IStore,
-	ToolEventReturns,
-	ToolEvents,
-} from "@type/hollow";
+import { AppApi, CardType, IPlugin, ToolApi } from "@type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
@@ -17,10 +10,11 @@ const Notebook = lazy(() => import("./Notebook"));
 export class NotebookMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
 
-	constructor(toolEvent: HollowEvent<ToolEvents, ToolEventReturns>) {
+	constructor(_, toolEvent: ToolApi) {
 		NotebookManager.getSelf().init(toolEvent);
 	}
-	async onCreate(card: ICard): Promise<boolean> {
+
+	async onCreate(card: CardType): Promise<boolean> {
 		const book: NotebookType = {
 			id: card.id,
 			name: card.data.extra.name,
@@ -31,12 +25,12 @@ export class NotebookMain implements IPlugin {
 		return true;
 	}
 
-	async onDelete(card: ICard): Promise<boolean> {
+	async onDelete(card: CardType): Promise<boolean> {
 		NotebookManager.getSelf().deleteNotebook(card.id);
 		return true;
 	}
 
-	async onLoad(card: ICard): Promise<boolean> {
+	async onLoad(card: CardType): Promise<boolean> {
 		const targetContainer = document.getElementById(card.id);
 		if (targetContainer && !this.roots.has(card.id)) {
 			const book: NotebookType =

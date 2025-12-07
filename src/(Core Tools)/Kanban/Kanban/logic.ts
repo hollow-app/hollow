@@ -9,6 +9,7 @@ import { onCleanup, onMount } from "solid-js";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { DragEventHandler } from "@thisbeyond/solid-dnd";
 import { SendIcon, Trash2Icon } from "lucide-solid";
+import { hollow } from "hollow";
 
 export type LogicType = {
 	handleContextMenu: () => void;
@@ -124,7 +125,7 @@ export const KanbanLogic = (
 				},
 			],
 		};
-		props.card.app.emit("tool-settings", settings);
+		hollow.events.emit("tool-settings", settings);
 	};
 	const handleReceiveTask = (tasks: ItemType[]) => {
 		state.setKanban((prev: ColumnType) => ({
@@ -167,7 +168,7 @@ export const KanbanLogic = (
 			if (state.selectedGroup().length > 0) {
 				const nSelected = state.selectedGroup().length;
 				const metadata: ToolMetadata =
-					props.card.toolEvent.getData("metadata");
+					helper?.toolEvents.getData("metadata");
 				metadata.cards.some(
 					(i) => i.data.extra.name !== props.card.data.extra.name,
 				) &&
@@ -184,7 +185,7 @@ export const KanbanLogic = (
 							.map((i) => ({
 								label: `${i.data.extra.emoji} ${i.data.extra.name}`,
 								onclick: () => {
-									props.card.toolEvent.emit(
+									helper?.toolEvents.emit(
 										`${i.data.extra.name}-receive-task`,
 										state
 											.kanban()
@@ -205,7 +206,7 @@ export const KanbanLogic = (
 					icon: Trash2Icon,
 					label: `Delete (${nSelected})`,
 					onclick: () => {
-						props.card.app.emit("confirm", {
+						hollow.events.emit("confirm", {
 							title: "Warning",
 							message: `You sure you want to remove (${nSelected}) items`,
 							onAccept: () => {
@@ -222,7 +223,7 @@ export const KanbanLogic = (
 				header: "Kanban",
 				items: menuItems,
 			};
-			props.card.app.emit("context-menu-extend", cm);
+			hollow.events.emit("context-menu-extend", cm);
 		}
 	};
 	const showForm = (onSubmit: (data: any) => void, item?: ItemType) => {
@@ -236,7 +237,20 @@ export const KanbanLogic = (
 					type: "text",
 					label: "Title",
 					attributes: { placeholder: "Enter Title" },
+					inline: true,
 					value: item?.title ?? "",
+				},
+				{
+					key: "priority",
+					type: "dropdown",
+					label: "Priority",
+					inline: true,
+					options: [
+						{
+							items: ["low", "medium", "high", "urgent"],
+						},
+					],
+					value: item?.priority ?? "medium",
 				},
 				{
 					key: "content",
@@ -248,20 +262,10 @@ export const KanbanLogic = (
 					value: item?.content ?? "",
 				},
 				{
-					key: "priority",
-					type: "dropdown",
-					label: "Priority",
-					options: [
-						{
-							items: ["low", "medium", "high", "urgent"],
-						},
-					],
-					value: item?.priority ?? "medium",
-				},
-				{
 					key: "progress",
 					type: "range",
 					label: "Progress",
+					row: true,
 					min: 0,
 					max: 100,
 					value: item?.progress ?? 0,
@@ -276,7 +280,7 @@ export const KanbanLogic = (
 			],
 			submit: onSubmit,
 		};
-		props.card.app.emit("form", form);
+		hollow.events.emit("form", form);
 	};
 	const updateKanban = () => {
 		KanbanManager.getSelf().saveColumn(state.kanban());
@@ -291,22 +295,22 @@ export const KanbanLogic = (
 		}
 	};
 	onMount(() => {
-		props.card.app.on("tags", state.setHollowTags);
-		props.card.toolEvent.on(`${props.card.id}-settings`, showSettings);
-		props.card.toolEvent.on(
+		hollow.events.on("tags", state.setHollowTags);
+		helper?.toolEvents.on(`${props.card.id}-settings`, showSettings);
+		helper?.toolEvents.on(
 			`${props.card.data.extra.name}-receive-task`,
 			handleReceiveTask,
 		);
-		props.card.toolEvent.on("metadata", updateMeta);
+		helper?.toolEvents.on("metadata", updateMeta);
 	});
 	onCleanup(() => {
-		props.card.app.off("tags", state.setHollowTags);
-		props.card.toolEvent.off(`${props.card.id}-settings`, showSettings);
-		props.card.toolEvent.off(
+		hollow.events.off("tags", state.setHollowTags);
+		helper?.toolEvents.off(`${props.card.id}-settings`, showSettings);
+		helper?.toolEvents.off(
 			`${props.card.data.extra.name}-receive-task`,
 			handleReceiveTask,
 		);
-		props.card.toolEvent.off("metadata", updateMeta);
+		helper?.toolEvents.off("metadata", updateMeta);
 	});
 	return {
 		handleContextMenu,

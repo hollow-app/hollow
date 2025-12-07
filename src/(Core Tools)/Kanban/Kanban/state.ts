@@ -4,6 +4,7 @@ import type { HelperType } from "./helper";
 import { ColumnType } from "../types/ColumnType";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { CardType, TagType } from "@type/hollow";
+import { hollow } from "hollow";
 
 export type StateType = {
 	listDiv: HTMLDivElement;
@@ -28,13 +29,13 @@ export const createKanbanState = (
 	const [activeItem, setActiveItem] = createSignal<string | null>(null);
 	const [selectedGroup, setSelectedGroup] = createSignal([]);
 	const [meta, setMeta] = createSignal<CardType>(
-		(props.card.toolEvent.getData("metadata") as ToolMetadata).cards.find(
+		(helper?.toolEvents.getData("metadata") as ToolMetadata).cards.find(
 			(i) => i.data.extra.name === props.card.data.extra.name,
 		),
 	);
 
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		props.card.app.getData("tags"),
+		hollow.events.getData("tags"),
 	);
 	return {
 		listDiv,
@@ -50,4 +51,3 @@ export const createKanbanState = (
 		setHollowTags,
 	};
 };
-

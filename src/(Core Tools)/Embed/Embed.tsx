@@ -1,13 +1,15 @@
-import { ICard, IStore, ToolOptions } from "@type/hollow";
+import { CardType, IStore, ToolApi, ToolOptions } from "@type/hollow";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { EmbedData } from "./EmbedMain";
+import { hollow } from "hollow";
 
 type EmbedProps = {
-	card: ICard;
+	card: CardType;
 	data: EmbedData;
+	toolEvents: ToolApi;
 	store: IStore;
 };
-export default function Embed({ card, data, store }: EmbedProps) {
+export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 	const [embed, setEmbed] = createSignal(data);
 
 	const setSettingsVisible = () => {
@@ -33,15 +35,15 @@ export default function Embed({ card, data, store }: EmbedProps) {
 				},
 			],
 		};
-		card.app.emit("tool-settings", ini);
+		hollow.events.emit("tool-settings", ini);
 	};
 
 	onMount(() => {
-		card.toolEvent.on(`${card.id}-settings`, setSettingsVisible);
+		toolEvents.on(`${card.id}-settings`, setSettingsVisible);
 	});
 
 	onCleanup(() => {
-		card.toolEvent.off(`${card.id}-settings`, setSettingsVisible);
+		toolEvents.off(`${card.id}-settings`, setSettingsVisible);
 	});
 	return (
 		<div class="h-full w-full">

@@ -7,11 +7,11 @@ import { KanbanView } from "./view";
 import { KanbanHelper } from "./helper";
 import type { HelperType } from "./helper";
 import { ColumnType } from "../types/ColumnType";
-import { ICard } from "@type/hollow";
+import { CardType } from "@type/hollow";
 
 export type KanbanProps = {
 	data: ColumnType;
-	card: ICard;
+	card: CardType;
 };
 
 const Kanban = createModule<StateType, LogicType, KanbanProps, HelperType>({
@@ -35,4 +35,3 @@ const Kanban = createModule<StateType, LogicType, KanbanProps, HelperType>({
 });
 
 export default Kanban;
-

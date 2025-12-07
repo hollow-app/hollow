@@ -17,6 +17,7 @@ import { PlusIcon } from "lucide-solid";
 import { ItemType } from "../types/ItemType";
 import ItemMini from "../components/ItemMini";
 import { log } from "console";
+import { hollow } from "hollow";
 
 export const KanbanView = (
 	state: StateType,
@@ -43,7 +44,7 @@ export const KanbanView = (
 				<h1 class="text-2xl font-medium">{state.kanban().name}</h1>
 				<ControlButtons
 					{...{
-						app: props.card.app,
+						app: hollow.events,
 						addItem: logic.addItem,
 						showForm: logic.showForm,
 					}}
@@ -77,7 +78,7 @@ export const KanbanView = (
 											accentColor={() =>
 												state.kanban().accent
 											}
-											toolEvent={props.card.toolEvent}
+											toolEvent={helper?.toolEvents}
 											cardName={
 												props.card.data.extra.name
 											}
@@ -121,10 +122,7 @@ export const KanbanView = (
 					class="button-secondary"
 					style={{ "--w": "100%" }}
 					onclick={() =>
-						KanbanManager.getSelf().showInsight(
-							state.kanban(),
-							props.card.app,
-						)
+						KanbanManager.getSelf().showInsight(state.kanban())
 					}
 				>
 					Summary

@@ -18,6 +18,20 @@ export default function NoteList(props: NoteListProps) {
 	const [selectedGroup, setSelectedGroup] = createSignal<string[]>([]);
 	const [searchTerm, setSearchTerm] = createSignal("");
 	const [selectedTags, setSelectedTags] = createSignal<string[]>([]);
+	const filter = createMemo(() =>
+		props.book.notes
+			.flatMap((note) =>
+				note.attributes.tags
+					.split(",")
+					.map((tag) => tag.trim())
+					.filter((tag) => tag),
+			)
+			.filter((tag, index, arr) => arr.indexOf(tag) === index)
+			.map((tag) => ({
+				label: tag,
+				checked: selectedTags().includes(tag),
+			})),
+	);
 
 	const removeGroup = async () => {
 		const total = selectedGroup().length;
@@ -73,7 +87,11 @@ export default function NoteList(props: NoteListProps) {
 
 	return (
 		<div
-			class="bg-secondary flex h-full w-full flex-col justify-center gap-2 px-0 pt-2 pb-5"
+			class="bg-secondary flex h-full w-full flex-col justify-center gap-2 px-0"
+			classList={{
+				// "border-l border-secondary-10 pl-2 py-5": props.isExpand,
+				"pt-2 pb-5": !props.isExpand,
+			}}
 			oncontextmenu={onContextMenu}
 		>
 			<div class="flex gap-1">
@@ -93,16 +111,7 @@ export default function NoteList(props: NoteListProps) {
 						{
 							isCheckBox: true,
 							title: "Tags",
-							items: [
-								...new Set(
-									props.book.notes.flatMap(
-										(i) => i.attributes.tags,
-									),
-								),
-							].map((tag) => ({
-								label: tag,
-								checked: selectedTags().includes(tag),
-							})),
+							items: filter(),
 							onSelect: (tags: string[]) => setSelectedTags(tags),
 						},
 					]}

@@ -41,16 +41,25 @@ export function createLayout(): Layout {
 	const add_layout = async (props: {
 		type: PanelType;
 		id: string;
+		onClose: () => void;
 	}): Promise<{ close: () => void }> => {
+		const key = `layout-${props.type}`;
+		const currentChild = hollow.promises.get(key);
+		if (currentChild) {
+			currentChild.close();
+			hollow.promises.delete(key);
+		}
+		const close = () => {
+			props.onClose();
+			setLayout(props.type, "visible", false);
+		};
 		const mounted = new Promise<void>((resolve) => {
-			hollow.promises.set(props.type, { resolve, id: props.id });
+			hollow.promises.set(key, { resolve, id: props.id, close });
 		});
 		setLayout(props.type, { visible: true, current: "wrapper" });
 		await mounted;
 		return {
-			close: () => {
-				setLayout(props.type, "visible", false);
-			},
+			close,
 		};
 	};
 	hollow.events.emit("add-layout", add_layout);

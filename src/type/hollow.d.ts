@@ -142,6 +142,7 @@ export type AppEvents = {
 	"add-layout": (props: {
 		type: PanelType;
 		id: string;
+		onClose: () => void;
 	}) => Promise<{ close: () => void }>;
 } & {
 	[key: string]: any;

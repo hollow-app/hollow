@@ -1,4 +1,11 @@
-import { Accessor, createSignal, Setter } from "solid-js";
+import {
+	Accessor,
+	createEffect,
+	createResource,
+	createSignal,
+	on,
+	Setter,
+} from "solid-js";
 import { NotebookProps } from ".";
 import type { HelperType } from "./helper";
 import { NotebookType } from "../NotebookType";
@@ -6,6 +13,7 @@ import { NoteType } from "../NoteType";
 import { createMemo } from "solid-js";
 import { TagType } from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
+import { hollow } from "hollow";
 
 export type StateType = {
 	showList: Accessor<boolean>;
@@ -21,6 +29,7 @@ export type StateType = {
 	panel: Accessor<number>;
 	hollowTags: Accessor<TagType[]>;
 	setHollowTags: Setter<TagType[]>;
+	portalTarget: Accessor<{ el: HTMLElement; close: () => void } | null>;
 };
 
 export const createNotebookState = (
@@ -48,6 +57,28 @@ export const createNotebookState = (
 	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
 		props.card.app.getData("tags"),
 	);
+
+	const [portalTarget] = createResource(isExpand, async () => {
+		const id = crypto.randomUUID();
+		const { close } = await hollow.events.getData("add-layout")({
+			type: "left",
+			id,
+			onClose: () => setExpand(false),
+		});
+		return { el: document.getElementById(id), close };
+	});
+	createEffect(
+		on(
+			isExpand,
+			(v) => {
+				if (!v) {
+					portalTarget().close();
+				}
+			},
+			{ defer: true },
+		),
+	);
+
 	return {
 		showList,
 		setShowList,
@@ -62,5 +93,6 @@ export const createNotebookState = (
 		panel,
 		hollowTags,
 		setHollowTags,
+		portalTarget,
 	};
 };

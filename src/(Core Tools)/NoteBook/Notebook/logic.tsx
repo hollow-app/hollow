@@ -52,18 +52,19 @@ export const NotebookLogic = (
 	};
 
 	const onSave = async () => {
-		const doesNoteTitleAlreadyExists =
-			!!state.book.notes[state.note().title];
-
-		// check if the note is new;
+		const isDuplicateTitle = state.book.notes.some(
+			(note) =>
+				note.title === state.note().title &&
+				note.title !== state.book.last,
+		);
 		if (state.note().newNote) {
-			// check if the new note's title doesn't already exists;
-			if (!doesNoteTitleAlreadyExists) {
+			if (!isDuplicateTitle) {
 				NotebookManager.getSelf().setNote(
 					props.card.data.extra.name,
 					state.note().title,
 					NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				);
+
 				state.setEditMode(false);
 				state.setNote((prev) => ({ ...prev, newNote: false }));
 				state.setBook((prev) => ({
@@ -79,25 +80,38 @@ export const NotebookLogic = (
 				});
 			}
 		} else {
+			// editing existing note
+			if (isDuplicateTitle) {
+				props.card.app.emit("alert", {
+					type: "error",
+					title: "Notebook",
+					message: `Title "${state.note().title}" already exists`,
+				});
+				return;
+			}
+
 			await NotebookManager.getSelf().setNote(
 				props.card.data.extra.name,
 				state.book.last,
 				NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				state.note().title,
 			);
-			if (doesNoteTitleAlreadyExists) {
-				state.setBook((prev) => ({
-					...prev,
-					notes: prev.notes.map((i) =>
-						i.title === prev.last ? { ...i, ...state.note() } : i,
-					),
-					last: state.note().title,
-				}));
-				updateBook();
-			}
+
+			state.setBook((prev) => ({
+				...prev,
+				notes: prev.notes.map((note) =>
+					note.title === prev.last
+						? { ...note, ...state.note() }
+						: note,
+				),
+				last: state.note().title,
+			}));
+
+			updateBook();
 			state.setEditMode(false);
 		}
 	};
+
 	const changeBanner = async () => {
 		props.card.app.emit("show-vault", {
 			onSelect: async (url: string) => {
@@ -205,50 +219,6 @@ export const NotebookLogic = (
 	const onFolder = () => {
 		state.setShowList((prev: boolean) => !prev);
 	};
-	const expandPack = {
-		dispose: () => {},
-		close: () => {},
-	};
-	createEffect(
-		on(
-			state.isExpand,
-			async (v) => {
-				if (v) {
-					const id = crypto.randomUUID();
-
-					const { close } = await hollow.events.getData("add-layout")(
-						{
-							type: "left",
-							id,
-						},
-					);
-
-					const target = document.getElementById(id);
-					expandPack.close = close;
-
-					if (target) {
-						expandPack.dispose = createRoot((dispose) => {
-							render(
-								() => (
-									<NoteList
-										card={props.card}
-										book={state.book}
-										changeSelected={changeSelected}
-									/>
-								),
-								target,
-							);
-							return dispose;
-						});
-					}
-				} else {
-					expandPack.dispose?.();
-					expandPack.close?.();
-				}
-			},
-			{ defer: true },
-		),
-	);
 	onMount(() => {
 		props.card.toolEvent.on(`${props.card.id}-settings`, showSettings);
 		props.card.app.on("tags", state.setHollowTags);

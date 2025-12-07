@@ -8,11 +8,10 @@ interface PanelWrapperProps {
 	// onMounted: () => void;
 }
 export function PanelWrapper(props: PanelWrapperProps) {
-	const obj = hollow.promises.get(props.type);
+	const obj = hollow.promises.get(`layout-${props.type}`);
 	onMount(() => {
 		if (obj) {
 			obj.resolve();
-			hollow.promises.delete(props.type);
 		}
 	});
 	return <div class="h-full w-full" id={obj.id} />;

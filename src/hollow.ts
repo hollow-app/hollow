@@ -23,7 +23,11 @@ type hollowType = {
 	hotkeysManager?: hotkeysManager;
 	cards: () => CardType[];
 	setCards: SetStoreFunction<CardType[]>;
-	promises: Map<string, { resolve: () => void; id: string }>;
+	// promises should accept future diff types
+	promises: Map<
+		string,
+		{ resolve: () => void; id: string; close: () => void }
+	>;
 };
 const [cards, setCards] = createStore([]);
 export const hollow: hollowType = {
@@ -32,7 +36,10 @@ export const hollow: hollowType = {
 	pevents: new EventsManager() as HollowEvent<PrivateEvents>,
 	cards: () => cards,
 	setCards,
-	promises: new Map<string, { resolve: () => void; id: string }>(),
+	promises: new Map<
+		string,
+		{ resolve: () => void; id: string; close: () => void }
+	>(),
 	// toolmanager is assigned in init
 };
 

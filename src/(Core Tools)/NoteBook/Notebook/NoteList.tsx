@@ -2,7 +2,6 @@ import { ContextMenuItem, ICard } from "@type/hollow";
 import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
 import { NotebookType } from "../NotebookType";
 import { NotebookManager } from "../NotebookManager";
-import { Motion } from "solid-motionone";
 import FilterButton from "@components/FilterButton";
 import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
@@ -12,26 +11,26 @@ type NoteListProps = {
 	card: ICard;
 	book: NotebookType;
 	changeSelected: (id: string) => void;
+	isExpand?: boolean;
 };
 
-export default function NoteList({
-	card,
-	book,
-	changeSelected,
-}: NoteListProps) {
+export default function NoteList(props: NoteListProps) {
 	const [selectedGroup, setSelectedGroup] = createSignal<string[]>([]);
 	const [searchTerm, setSearchTerm] = createSignal("");
 	const [selectedTags, setSelectedTags] = createSignal<string[]>([]);
 
 	const removeGroup = async () => {
 		const total = selectedGroup().length;
-		const onDone = card.app.emit("alert", {
+		const onDone = props.card.app.emit("alert", {
 			type: "loading",
 			title: "Notebook",
 			message: `Deleting ${total} Note${total > 1 && "s"}...`,
 		});
 		for (const i of selectedGroup()) {
-			await NotebookManager.getSelf().deleteNote(card.data.extra.name, i);
+			await NotebookManager.getSelf().deleteNote(
+				props.card.data.extra.name,
+				i,
+			);
 		}
 		onDone();
 	};
@@ -49,7 +48,7 @@ export default function NoteList({
 					},
 				],
 			};
-			card.app.emit("context-menu-extend", cm);
+			props.card.app.emit("context-menu-extend", cm);
 		}
 	};
 
@@ -57,7 +56,7 @@ export default function NoteList({
 		const term = searchTerm().toLowerCase();
 		const tags = selectedTags();
 
-		let result = book.notes.filter((note) => {
+		let result = props.book.notes.filter((note) => {
 			const matchesSearch =
 				note.title.toLowerCase().includes(term) ||
 				note.body.toLowerCase().includes(term);
@@ -96,7 +95,7 @@ export default function NoteList({
 							title: "Tags",
 							items: [
 								...new Set(
-									book.notes.flatMap(
+									props.book.notes.flatMap(
 										(i) => i.attributes.tags,
 									),
 								),
@@ -114,16 +113,13 @@ export default function NoteList({
 				<For each={filteredNotes()}>
 					{(note) => (
 						<NotePreview
-							{...{
-								note,
-								changeSelected,
-								setSelectedGroup,
-								selectedGroup,
-							}}
+							note={note}
+							changeSelected={props.changeSelected}
+							setSelectedGroup={setSelectedGroup}
+							selectedGroup={selectedGroup}
 						/>
 					)}
 				</For>
-
 				<Show when={filteredNotes().length === 0}>
 					<p class="mt-4 text-center text-sm opacity-60">
 						No notes found.

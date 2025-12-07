@@ -7,7 +7,7 @@ import FolderCloseIcon from "@assets/icons/folder-close.svg";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic.tsx";
 import type { HelperType } from "./helper";
-import { For, Show, Switch } from "solid-js";
+import { For, onCleanup, Show, Suspense, Switch } from "solid-js";
 import MarkdownEditor from "@components/MarkdownEditor";
 import { Motion, Presence } from "solid-motionone";
 import WordInput from "@components/WordInput";
@@ -15,6 +15,8 @@ import Tag from "@components/Tag";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import { Match } from "solid-js";
+import { Portal } from "solid-js/web";
+import { hollow } from "hollow.ts";
 
 export const NotebookView = (
 	state: StateType,
@@ -65,23 +67,21 @@ export const NotebookView = (
 					>
 						<FilePlusIcon class="size-5" />
 					</button>
-					<Show when={!state.isExpand()}>
-						<button
-							class="button-control"
-							onclick={logic.onFolder}
-							style={{
-								"--p": 1,
-								"--border-radius": "var(--radius-sm)",
-							}}
+					<button
+						class="button-control"
+						onclick={logic.onFolder}
+						style={{
+							"--p": 1,
+							"--border-radius": "var(--radius-sm)",
+						}}
+					>
+						<Show
+							when={state.showList()}
+							fallback={<FolderCloseIcon class="size-5" />}
 						>
-							<Show
-								when={state.showList()}
-								fallback={<FolderCloseIcon class="size-5" />}
-							>
-								<FolderOpenIcon class="size-5" />
-							</Show>
-						</button>
-					</Show>
+							<FolderOpenIcon class="size-5" />
+						</Show>
+					</button>
 				</div>
 			</div>
 			{/* Body */}
@@ -240,16 +240,25 @@ export const NotebookView = (
 							class="h-full w-full"
 						>
 							<NoteList
-								{...{
-									card: props.card,
-									book: state.book,
-									changeSelected: logic.changeSelected,
-								}}
+								card={props.card}
+								book={state.book}
+								changeSelected={logic.changeSelected}
 							/>
 						</Motion.div>
 					</Match>
 				</Switch>
 			</Presence>
+			<Show when={state.isExpand()}>
+				<Suspense>
+					<Portal mount={state.portalTarget().el}>
+						<NoteList
+							card={props.card}
+							book={state.book}
+							changeSelected={logic.changeSelected}
+						/>
+					</Portal>
+				</Suspense>
+			</Show>
 		</div>
 	);
 };

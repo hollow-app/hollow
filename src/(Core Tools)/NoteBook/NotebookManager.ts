@@ -53,7 +53,7 @@ export class NotebookManager {
 				.filter((i) => i.isFile)
 				.map(async (i) => ({
 					...fm(await this.getNote(cardName, i.name)),
-					title: i.name,
+					title: i.name.split(".md")[0],
 				})),
 		);
 		return { ...this.store.get(id), notes };

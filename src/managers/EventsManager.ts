@@ -1,4 +1,5 @@
 import { HollowEvent } from "@type/hollow";
+import { ErrorBoundary } from "solid-js";
 
 export class EventsManager<
 	EventMap extends Record<string, any> = Record<string, any>,

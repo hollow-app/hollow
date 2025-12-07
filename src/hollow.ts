@@ -11,7 +11,6 @@ import {
 	Layout,
 } from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
-
 type hollowType = {
 	onCopy?: () => void;
 	onCut?: () => void;
@@ -24,6 +23,7 @@ type hollowType = {
 	hotkeysManager?: hotkeysManager;
 	cards: () => CardType[];
 	setCards: SetStoreFunction<CardType[]>;
+	promises: Map<string, { resolve: () => void; id: string }>;
 };
 const [cards, setCards] = createStore([]);
 export const hollow: hollowType = {
@@ -32,6 +32,7 @@ export const hollow: hollowType = {
 	pevents: new EventsManager() as HollowEvent<PrivateEvents>,
 	cards: () => cards,
 	setCards,
+	promises: new Map<string, { resolve: () => void; id: string }>(),
 	// toolmanager is assigned in init
 };
 

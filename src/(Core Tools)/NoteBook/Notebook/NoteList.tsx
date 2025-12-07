@@ -10,7 +10,7 @@ import { Trash2Icon } from "lucide-solid";
 
 type NoteListProps = {
 	card: ICard;
-	book: Accessor<NotebookType>;
+	book: NotebookType;
 	changeSelected: (id: string) => void;
 };
 
@@ -57,7 +57,7 @@ export default function NoteList({
 		const term = searchTerm().toLowerCase();
 		const tags = selectedTags();
 
-		let result = book().notes.filter((note) => {
+		let result = book.notes.filter((note) => {
 			const matchesSearch =
 				note.title.toLowerCase().includes(term) ||
 				note.body.toLowerCase().includes(term);
@@ -73,13 +73,9 @@ export default function NoteList({
 	});
 
 	return (
-		<Motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			transition={{ duration: 0.3 }}
-			oncontextmenu={onContextMenu}
+		<div
 			class="bg-secondary flex h-full w-full flex-col justify-center gap-2 px-0 pt-2 pb-5"
+			oncontextmenu={onContextMenu}
 		>
 			<div class="flex gap-1">
 				<input
@@ -100,7 +96,7 @@ export default function NoteList({
 							title: "Tags",
 							items: [
 								...new Set(
-									book().notes.flatMap(
+									book.notes.flatMap(
 										(i) => i.attributes.tags,
 									),
 								),
@@ -134,7 +130,7 @@ export default function NoteList({
 					</p>
 				</Show>
 			</div>
-		</Motion.div>
+		</div>
 	);
 }
 

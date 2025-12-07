@@ -139,6 +139,10 @@ export type AppEvents = {
 	"network-state": boolean;
 	alert: AlertType;
 	store: (props: StoreType) => Promise<IStore>;
+	"add-layout": (props: {
+		type: PanelType;
+		id: string;
+	}) => Promise<{ close: () => void }>;
 } & {
 	[key: string]: any;
 };

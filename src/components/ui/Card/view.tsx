@@ -16,11 +16,12 @@ export const CardView = (
 			style={{
 				...(state.isExpand()
 					? {
-							top: -props.kit.viewport().y - props.node.x + "px",
-							left: -props.kit.viewport().x - props.node.y + "px",
-							width: "calc(100vw - calc(var(--spacing) * 20) - 2px)",
+							top:
+								-(props.kit.viewport().y + props.node.y) + "px",
+							left:
+								-(props.kit.viewport().x + props.node.x) + "px",
+							width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 20) - 2px)",
 							height: "calc(100vh - calc(var(--spacing) * 4) - 2px)",
-							"z-index": 999,
 							background: "var(--color-secondary)",
 						}
 					: {}),

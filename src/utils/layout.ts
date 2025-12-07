@@ -1,7 +1,8 @@
 import { Layout, LayoutSignal, PanelMap, PanelType } from "@type/hollow";
 import { hollow } from "hollow";
-import { Component, lazy } from "solid-js";
+import { Component, createEffect, lazy, on } from "solid-js";
 import { createStore } from "solid-js/store";
+import { PanelWrapper } from "./PanelWrapper";
 //
 const Expand = lazy(() => import("@components/ui/sidebars/Expand"));
 const Character = lazy(() => import("@components/ui/sidebars/Character"));
@@ -13,18 +14,22 @@ export function createLayout(): Layout {
 		left: {
 			visible: false,
 			current: "expand",
-			panels: ["expand", "character"],
+			panels: ["expand", "character", "wrapper"],
 		},
 		right: {
 			visible: false,
 			current: "editor",
-			panels: ["editor", "notifications"],
+			panels: ["editor", "notifications", "wrapper"],
 		},
 	});
 
 	const panels: Record<PanelType, PanelMap> = {
-		left: { expand: Expand, character: Character },
-		right: { editor: Editor, notifications: Notifications },
+		left: { wrapper: PanelWrapper, expand: Expand, character: Character },
+		right: {
+			wrapper: PanelWrapper,
+			editor: Editor,
+			notifications: Notifications,
+		},
 	};
 
 	const addPanel = (type: PanelType, name: string, component: Component) => {
@@ -33,6 +38,22 @@ export function createLayout(): Layout {
 			list.includes(name) ? list : [...list, name],
 		);
 	};
+	const add_layout = async (props: {
+		type: PanelType;
+		id: string;
+	}): Promise<{ close: () => void }> => {
+		const mounted = new Promise<void>((resolve) => {
+			hollow.promises.set(props.type, { resolve, id: props.id });
+		});
+		setLayout(props.type, { visible: true, current: "wrapper" });
+		await mounted;
+		return {
+			close: () => {
+				setLayout(props.type, "visible", false);
+			},
+		};
+	};
+	hollow.events.emit("add-layout", add_layout);
 
 	const removePanel = (type: PanelType, name: string) => {
 		setLayout(type, "panels", (list) => list.filter((i) => i !== name));

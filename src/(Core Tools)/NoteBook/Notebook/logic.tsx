@@ -7,15 +7,20 @@ import { NoteType } from "../NoteType";
 import fm from "front-matter";
 import { NotebookType } from "../NotebookType";
 import { ContextMenuItem, ToolOptions } from "@type/hollow";
-import { onMount } from "solid-js";
+import { createEffect, createRoot, on, onMount } from "solid-js";
 import { onCleanup } from "solid-js";
 import { ImageIcon, Trash2Icon } from "lucide-solid";
+import { hollow } from "hollow";
+import { Portal, render } from "solid-js/web";
+import NoteList from "./NoteList";
+import { unwrap } from "solid-js/store";
 
 export type LogicType = {
 	onSave: () => Promise<void>;
 	onNewNote: () => void;
 	onContextMenu: () => void;
 	changeSelected: (title: string) => Promise<void>;
+	onFolder: () => void;
 };
 
 export const NotebookLogic = (
@@ -24,13 +29,13 @@ export const NotebookLogic = (
 	helper?: HelperType,
 ): LogicType => {
 	const updateBook = () => {
-		NotebookManager.getSelf().setNotebook(state.book());
+		NotebookManager.getSelf().setNotebook(unwrap(state.book));
 	};
 
 	const onNewNote = () => {
 		// TODO
 		// setBook(prev=>({...prev, last: "new-00-note" }));
-		const data: any = fm(state.book().structure);
+		const data: any = fm(state.book.structure);
 		const newNote: NoteType = {
 			...data,
 			attributes: {
@@ -48,7 +53,7 @@ export const NotebookLogic = (
 
 	const onSave = async () => {
 		const doesNoteTitleAlreadyExists =
-			!!state.book().notes[state.note().title];
+			!!state.book.notes[state.note().title];
 
 		// check if the note is new;
 		if (state.note().newNote) {
@@ -76,20 +81,20 @@ export const NotebookLogic = (
 		} else {
 			await NotebookManager.getSelf().setNote(
 				props.card.data.extra.name,
-				state.book().last,
+				state.book.last,
 				NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				state.note().title,
 			);
-			doesNoteTitleAlreadyExists &&
+			if (doesNoteTitleAlreadyExists) {
 				state.setBook((prev) => ({
 					...prev,
 					notes: prev.notes.map((i) =>
-						i.title === state.note().title
-							? { ...i, ...state.note() }
-							: i,
+						i.title === prev.last ? { ...i, ...state.note() } : i,
 					),
+					last: state.note().title,
 				}));
-
+				updateBook();
+			}
 			state.setEditMode(false);
 		}
 	};
@@ -156,7 +161,7 @@ export const NotebookLogic = (
 					type: "text",
 					label: "Name",
 					description: "Note Book's name",
-					value: state.book().name,
+					value: state.book.name,
 					onAction: (v: string) =>
 						state.setBook((prev) => ({
 							...prev,
@@ -172,7 +177,7 @@ export const NotebookLogic = (
 							style={{
 								"--bg-color": "var(--color-secondary-10)",
 							}}
-							value={state.book().structure}
+							value={state.book.structure}
 							onChange={(e) =>
 								state.setBook((prev) => ({
 									...prev,
@@ -192,11 +197,58 @@ export const NotebookLogic = (
 		// 	card.name,
 		// 	title,
 		// );
-		state.setNote(state.book().notes.find((i) => i.title === title));
+		state.setNote(unwrap(state.book).notes.find((i) => i.title === title));
 		state.setBook((prev) => ({ ...prev, last: title }));
 		state.setShowList(false);
 		updateBook();
 	};
+	const onFolder = () => {
+		state.setShowList((prev: boolean) => !prev);
+	};
+	const expandPack = {
+		dispose: () => {},
+		close: () => {},
+	};
+	createEffect(
+		on(
+			state.isExpand,
+			async (v) => {
+				if (v) {
+					const id = crypto.randomUUID();
+
+					const { close } = await hollow.events.getData("add-layout")(
+						{
+							type: "left",
+							id,
+						},
+					);
+
+					const target = document.getElementById(id);
+					expandPack.close = close;
+
+					if (target) {
+						expandPack.dispose = createRoot((dispose) => {
+							render(
+								() => (
+									<NoteList
+										card={props.card}
+										book={state.book}
+										changeSelected={changeSelected}
+									/>
+								),
+								target,
+							);
+							return dispose;
+						});
+					}
+				} else {
+					expandPack.dispose?.();
+					expandPack.close?.();
+				}
+			},
+			{ defer: true },
+		),
+	);
 	onMount(() => {
 		props.card.toolEvent.on(`${props.card.id}-settings`, showSettings);
 		props.card.app.on("tags", state.setHollowTags);
@@ -212,5 +264,6 @@ export const NotebookLogic = (
 		onNewNote,
 		onContextMenu,
 		changeSelected,
+		onFolder,
 	};
 };

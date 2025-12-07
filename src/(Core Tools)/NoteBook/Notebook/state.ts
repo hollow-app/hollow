@@ -5,6 +5,7 @@ import { NotebookType } from "../NotebookType";
 import { NoteType } from "../NoteType";
 import { createMemo } from "solid-js";
 import { TagType } from "@type/hollow";
+import { createStore, SetStoreFunction } from "solid-js/store";
 
 export type StateType = {
 	showList: Accessor<boolean>;
@@ -13,8 +14,8 @@ export type StateType = {
 	setExpand: Setter<boolean>;
 	editMode: Accessor<boolean>;
 	setEditMode: Setter<boolean>;
-	book: Accessor<NotebookType>;
-	setBook: Setter<NotebookType>;
+	book: NotebookType;
+	setBook: SetStoreFunction<NotebookType>;
 	note: Accessor<NoteType>;
 	setNote: Setter<NoteType>;
 	panel: Accessor<number>;
@@ -29,9 +30,9 @@ export const createNotebookState = (
 	const [showList, setShowList] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
 	const [editMode, setEditMode] = createSignal(false);
-	const [book, setBook] = createSignal<NotebookType>(props.noteBook);
+	const [book, setBook] = createStore<NotebookType>(props.noteBook);
 	const [note, setNote] = createSignal<NoteType>(
-		book().last ? book().notes.find((i) => i.title === book().last) : null,
+		book.last ? book.notes.find((i) => i.title === book.last) : null,
 	);
 
 	const panel = createMemo(() => {

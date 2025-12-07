@@ -1,17 +1,30 @@
-import { LayoutController, PanelType, SideLayout } from "@type/Layout";
+import setStyle from "@hooks/setStyle";
+import { Layout, PanelType } from "@type/hollow";
 import { hollow } from "hollow";
-import { createMemo, For, Show } from "solid-js";
+import { createEffect, createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
 
 type SidepanelProps = {
 	type: PanelType;
-	controller: LayoutController;
+	controller: Layout;
 	width: string;
 };
 
 export default function Sidepanel({ type, controller, width }: SidepanelProps) {
 	const layout = createMemo(() => controller.get[type]);
+
+	createEffect(
+		on(
+			() => layout().visible,
+			(v) => {
+				const value = v ? width : "0px";
+				setStyle([{ name: `--layout-${type}`, value }]);
+			},
+			{ defer: true },
+		),
+	);
+
 	return (
 		<Presence exitBeforeEnter>
 			<For each={layout().panels}>
@@ -38,6 +51,7 @@ export default function Sidepanel({ type, controller, width }: SidepanelProps) {
 								{...{
 									hide: () =>
 										controller.selectPanel(type, panel),
+									type: type,
 								}}
 							/>
 						</Motion.div>

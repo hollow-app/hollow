@@ -15,9 +15,8 @@ import { For, Show } from "solid-js";
 import Sortable from "@components/Sortable";
 import { PlusIcon } from "lucide-solid";
 import { ItemType } from "../types/ItemType";
-import ItemMini from "../components/ItemMini";
-import { log } from "console";
 import { hollow } from "hollow";
+import ItemDisplay from "../components/ItemDisplay";
 
 export const KanbanView = (
 	state: StateType,
@@ -36,12 +35,12 @@ export const KanbanView = (
 				<div
 					class="flex size-8 items-center justify-center rounded-lg text-xl"
 					style={{
-						background: `color-mix(in oklab, ${state.kanban().accent}, transparent 80%)`,
+						background: `color-mix(in oklab, var(--accent-color), transparent 80%)`,
 					}}
 				>
 					{state.meta().data.extra.emoji}
 				</div>
-				<h1 class="text-2xl font-medium">{state.kanban().name}</h1>
+				<h1 class="text-lg font-medium">{state.kanban().name}</h1>
 				<ControlButtons
 					{...{
 						app: hollow.events,
@@ -96,7 +95,7 @@ export const KanbanView = (
 					<DragOverlay>
 						<div class="sortable">
 							<Show when={state.activeItem()}>
-								<ItemMini
+								<ItemDisplay
 									item={() =>
 										state
 											.kanban()
@@ -106,11 +105,12 @@ export const KanbanView = (
 											)
 									}
 									hollowTags={state.hollowTags}
-									parentWidth={() =>
-										state.listDiv.scrollWidth
+									showBorderDivider={false}
+									containerStyle={{
+										width: state.listDiv.scrollWidth
 											? `${state.listDiv.scrollWidth}px`
-											: "100%"
-									}
+											: "100%",
+									}}
 								/>
 							</Show>
 						</div>

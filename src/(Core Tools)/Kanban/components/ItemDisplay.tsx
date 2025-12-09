@@ -1,21 +1,27 @@
-import { Accessor, createMemo, For } from "solid-js";
+import { Accessor, createMemo, For, JSX, Show } from "solid-js";
 import Tag from "../../../components/Tag";
 import { Clock8Icon } from "lucide-solid";
 import { TagType } from "@type/hollow";
 import { ItemType } from "../types/ItemType";
-import { Show } from "solid-js";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
 
-type ItemMiniProps = {
+type ItemDisplayProps = {
 	item: () => ItemType;
 	hollowTags: Accessor<TagType[]>;
-	parentWidth: () => string;
+	headerContent?: JSX.Element;
+	containerClass?: string;
+	containerStyle?: JSX.CSSProperties;
+	showBorderDivider?: boolean;
 };
-export default function ItemMini({
+
+export default function ItemDisplay({
 	item,
 	hollowTags,
-	parentWidth,
-}: ItemMiniProps) {
+	headerContent,
+	containerClass = "",
+	containerStyle = {},
+	showBorderDivider = true,
+}: ItemDisplayProps) {
 	const tagColors = createMemo(() => {
 		const tags = item().tags;
 		return tags.map((tag) => {
@@ -30,21 +36,33 @@ export default function ItemMini({
 
 	return (
 		<div
-			class="group border-secondary-10 bg-secondary relative box-border h-fit rounded-xl border text-black shadow-md transition-colors dark:text-white"
+			class={`group border-secondary-10 bg-secondary relative box-border h-fit w-full rounded-lg border text-black shadow-md transition-colors dark:text-white ${containerClass}`}
 			style={{
 				"line-height": "normal",
-				width: parentWidth(),
+				...containerStyle,
 			}}
 		>
-			<div class="">
-				<p class="border-secondary-10 truncate border-b border-dashed p-3 text-sm">
-					<span class="text-neutral-500">Title: </span>
-					{item().title}
+			<div>
+				<Show
+					when={showBorderDivider}
+					fallback={
+						<div class="flex justify-between p-2 text-sm">
+							<p class="truncate text-sm">{item().title}</p>
+							{headerContent}
+						</div>
+					}
+				>
+					<div class="border-secondary-10 flex justify-between border-b border-dashed p-2 text-sm">
+						<p class="truncate text-sm">{item().title}</p>
+						{headerContent}
+					</div>
+				</Show>
+				<p class="p-2 text-xs text-neutral-600 dark:text-neutral-400">
+					{item().content}
 				</p>
-				<p class="p-3 text-sm">{item().content}</p>
 				<Show when={item().tags.length > 0}>
 					<div
-						class="flex flex-wrap gap-1.5 px-3"
+						class="flex flex-wrap gap-1.5 px-2"
 						style={{
 							"font-size": "0.8rem",
 						}}
@@ -59,7 +77,7 @@ export default function ItemMini({
 						</For>
 					</div>
 				</Show>
-				<div class="flex items-center px-3 pt-5 pb-3">
+				<div class="flex items-center px-2 pt-3 pb-2">
 					<div class="relative size-3">
 						<svg
 							class="size-full -rotate-90"

@@ -1,5 +1,5 @@
 import { InsightType } from "@type/hollow";
-import ScrollIcon from "@assets/icons/scroll.svg";
+import ScrollIcon from "@assets/icons/note-fill.svg";
 import { Accessor, For, Show } from "solid-js";
 
 type InsightPopProps = {
@@ -28,9 +28,19 @@ export default function InsightPop({ data, hide }: InsightPopProps) {
 	return (
 		<div class="bg-secondary-05 border-secondary-10 pointer-events-auto fixed right-4 bottom-4 flex max-h-[calc(100%-calc(var(--spacing)*8))] min-w-64 cursor-default flex-col gap-4 rounded-lg border p-3 text-sm shadow-lg select-none">
 			{/* Header */}
-			<div class="flex items-center gap-2">
-				<ScrollIcon class="size-4" />
-				<span class="text-xs font-semibold">{data().title}</span>
+			<div class="flex items-center justify-between">
+				<div class="flex items-center gap-2">
+					<ScrollIcon class="size-4" />
+					<span class="text-xs font-semibold">{data().title}</span>
+				</div>
+
+				{/* Close button */}
+				<button
+					class="self-end text-[10px] opacity-50 hover:opacity-80"
+					onclick={hide}
+				>
+					Close
+				</button>
 			</div>
 
 			{/* Message */}
@@ -66,14 +76,6 @@ export default function InsightPop({ data, hide }: InsightPopProps) {
 					</For>
 				</ul>
 			</Show>
-
-			{/* Close button */}
-			<button
-				class="self-end text-[10px] opacity-50 hover:opacity-80"
-				onclick={hide}
-			>
-				Close
-			</button>
 		</div>
 	);
 }

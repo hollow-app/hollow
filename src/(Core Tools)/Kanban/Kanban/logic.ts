@@ -8,7 +8,7 @@ import { ContextMenuItem, FormType, ToolOptions } from "@type/hollow";
 import { onCleanup, onMount } from "solid-js";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { DragEventHandler } from "@thisbeyond/solid-dnd";
-import { SendIcon, Trash2Icon } from "lucide-solid";
+import { CheckCheckIcon, SendIcon, Trash2Icon, XIcon } from "lucide-solid";
 import { hollow } from "hollow";
 
 export type LogicType = {
@@ -148,7 +148,7 @@ export const KanbanLogic = (
 		if (state.kanban().items.length > 0) {
 			const menuItems: any = [
 				{
-					icon: "CheckCheck",
+					icon: CheckCheckIcon,
 					label: "Select All",
 					onclick: () =>
 						state.setSelectedGroup(
@@ -158,7 +158,7 @@ export const KanbanLogic = (
 				...(state.selectedGroup().length > 0
 					? [
 							{
-								icon: "X",
+								icon: XIcon,
 								label: "UnSelect All",
 								onclick: () => state.setSelectedGroup([]),
 							},

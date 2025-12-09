@@ -89,7 +89,7 @@ export default function Popups() {
 			</Show>
 
 			<Show when={insight()}>
-				<Insight data={insight()} hide={() => setInsight(null)} />
+				<Insight data={insight} hide={() => setInsight(null)} />
 			</Show>
 
 			<Show when={confirm()}>

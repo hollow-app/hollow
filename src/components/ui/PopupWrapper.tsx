@@ -44,8 +44,8 @@ export default function PopupWrapper({
 	const move = (e: PointerEvent) => {
 		if (dragging) {
 			setPosition({
-				x: e.clientX - offset.x,
-				y: e.clientY - offset.y,
+				x: Math.round(e.clientX - offset.x),
+				y: Math.round(e.clientY - offset.y),
 			});
 		}
 	};
@@ -57,8 +57,8 @@ export default function PopupWrapper({
 	onMount(() => {
 		const winRect = winRef.getBoundingClientRect();
 		setPosition({
-			x: (window.innerWidth - winRect.width) / 2,
-			y: (window.innerHeight - winRect.height) / 2,
+			x: Math.round((window.innerWidth - winRect.width) / 2),
+			y: Math.round((window.innerHeight - winRect.height) / 2),
 		});
 		setFocusedId(id);
 	});
@@ -68,7 +68,7 @@ export default function PopupWrapper({
 	return (
 		<div
 			ref={winRef}
-			class="up-pop pointer-events-auto top-0 left-0 flex flex-col gap-3 transition-none"
+			class="up-pop pointer-events-auto top-0 left-0 flex flex-col gap-3"
 			style={{
 				transform: `translate(${position().x}px, ${position().y}px)`,
 			}}

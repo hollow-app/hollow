@@ -23,7 +23,6 @@ export const createContainerState = (
 	const controller = createLayout();
 	const [isSettings, setSettings] = createSignal(false);
 	const [canvasConfigs, setCanvasConfigs] = createSignal<ConfigsType>({
-		gridSize: 100,
 		disableZoom: true,
 		disableEdgeDrag: true,
 		disableNodeDrag: true,

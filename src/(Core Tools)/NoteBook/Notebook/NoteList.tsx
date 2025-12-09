@@ -22,7 +22,7 @@ export default function NoteList(props: NoteListProps) {
 	const filter = createMemo(() =>
 		props.book.notes
 			.flatMap((note) =>
-				note.attributes.tags
+				(note.attributes.tags ?? "")
 					.split(",")
 					.map((tag) => tag.trim())
 					.filter((tag) => tag),
@@ -192,9 +192,11 @@ function NotePreview({
 				<h2 class="truncate text-lg font-medium text-neutral-800 dark:text-neutral-200">
 					{note.title}
 				</h2>
-				<span class="truncate" title={note.attributes?.tags}>
-					Tags: {note.attributes.tags}
-				</span>
+				<Show when={note.attributes.tags}>
+					<span class="truncate" title={note.attributes?.tags}>
+						Tags: {note.attributes.tags}
+					</span>
+				</Show>
 			</div>
 		</div>
 	);

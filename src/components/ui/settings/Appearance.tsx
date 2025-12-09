@@ -12,7 +12,7 @@ import {
 	Show,
 	Suspense,
 } from "solid-js";
-import { TagType } from "@type/hollow";
+import { FormType, TagType } from "@type/hollow";
 import useTags from "@hooks/useTags";
 import { readableColor } from "polished";
 import Slider from "@components/Slider";
@@ -24,12 +24,16 @@ import { MarkdownManager } from "@managers/MarkdownManager";
 import Loading from "@components/Loading";
 import { SettingsManager } from "@managers/SettingsManager";
 import Dropdown from "@components/Dropdown";
+import { setgid } from "process";
+import { CircleFadingPlus, CircleFadingPlusIcon } from "lucide-solid";
+import Tag from "@components/Tag";
+import { backup } from "node:sqlite";
 
 export default function Appearance() {
 	const settingsManager = SettingsManager.getSelf();
 	return (
 		<div class="h-full p-10">
-			<GridSettings settingsManager={settingsManager} />
+			<CanvasSettings />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<ColorSettings />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
@@ -44,127 +48,28 @@ export default function Appearance() {
 type CommonSettings = {
 	settingsManager: SettingsManager;
 };
-function GridSettings({ settingsManager }: CommonSettings) {
-	const columns = createMemo(() => settingsManager.getConfig("columns"));
-	const offColumns = createMemo(() =>
-		settingsManager.getConfig("offcolumns"),
-	);
-	const rows = createMemo(() => settingsManager.getConfig("rows"));
-	const offRows = createMemo(() => settingsManager.getConfig("offrows"));
-	const staticGridLines = createMemo(() =>
-		settingsManager.getConfig("static-grid-lines"),
-	);
 
-	const setColumns = (n: number) => {
-		useGrid([{ name: "columns", value: n }]);
-		settingsManager.setConfig("columns", n);
-	};
-	const setMoreColumns = (n: number) => {
-		useGrid([{ name: "offcolumns", value: n }]);
-		settingsManager.setConfig("offcolumns", n);
-	};
-	const setRows = (n: number) => {
-		useGrid([{ name: "rows", value: n }]);
-		settingsManager.setConfig("rows", n);
-	};
-	const setMoreRows = (n: number) => {
-		useGrid([{ name: "offrows", value: n }]);
-		settingsManager.setConfig("offrows", n);
-	};
-
+function CanvasSettings() {
+	const [grid, setGrid] = SettingsManager.getSelf().gridSize;
 	return (
 		<>
-			<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-				Grid
+			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
+				Canvas
 			</h1>
-			<div class="w-full pb-4">
-				<div class="flex w-full flex-col gap-5 p-5">
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Columns
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Number of columns that fit within the screen
-								width.
-							</p>
-						</div>
-						<div class="w-70 max-w-[50%]">
-							<NumberInput
-								value={columns}
-								setValue={setColumns}
-							/>
-						</div>
-					</div>
-					<div class="bg-secondary-10/40 mx-auto flex w-full items-center justify-between rounded-lg p-2">
-						<h2 class="text-sm text-neutral-600 dark:text-neutral-400">
-							Off screen columns
-						</h2>
-						<div class="w-70 max-w-[50%]">
-							<NumberInput
-								value={offColumns}
-								setValue={setMoreColumns}
-							/>
-						</div>
-					</div>
-					<hr class="bg-secondary-10 h-px w-full border-0" />
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Rows
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Number of rowss that fit within the screen
-								height.
-							</p>
-						</div>
-						<div class="w-70 max-w-[50%]">
-							<NumberInput value={rows} setValue={setRows} />
-						</div>
-					</div>
-					<div class="bg-secondary-10/40 mx-auto flex w-full items-center justify-between rounded-lg p-2">
-						<h2 class="text-sm text-neutral-600 dark:text-neutral-400">
-							Off screen rows
-						</h2>
-						<div class="w-70 max-w-[50%]">
-							<NumberInput
-								value={offRows}
-								setValue={setMoreRows}
-							/>
-						</div>
-					</div>
-					<hr class="bg-secondary-10 h-px w-full border-0" />
-					<div class="flex items-center justify-between">
-						<h1 class="text-sm tracking-widest uppercase">
-							Static Grid Lines
-						</h1>
 
-						<div class="toggle-switch">
-							<input
-								class="toggle-input"
-								type="checkbox"
-								id="static-grid-lines-toggle"
-								checked={staticGridLines()}
-								onchange={(e) => {
-									const check = e.currentTarget.checked;
-									settingsManager.setConfig(
-										"static-grid-lines",
-										check,
-									);
-									setStyle([
-										{
-											name: "--static-grid-lines",
-											value: check
-												? "var(--secondary-color-15)"
-												: "transparent",
-										},
-									]);
-								}}
-							/>
-							<label
-								class="toggle-label"
-								for="static-grid-lines-toggle"
-							></label>
+			<div class="w-full pb-4">
+				<div class="flex flex-col gap-5 p-5">
+					<div class="flex justify-between">
+						<div>
+							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
+								Grid Size
+							</h2>
+							<p class="text-sm text-neutral-600 dark:text-neutral-400">
+								Grid size of the canvas
+							</p>
+						</div>
+						<div class="w-50">
+							<NumberInput value={grid} setValue={setGrid} />
 						</div>
 					</div>
 				</div>
@@ -172,7 +77,6 @@ function GridSettings({ settingsManager }: CommonSettings) {
 		</>
 	);
 }
-
 function ColorSettings() {
 	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
 	const primaryColor = createMemo(
@@ -380,32 +284,56 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 		settingsManager.getConfig("custom-tags"),
 	);
 
-	const [newTag, setNewTag] = createSignal<TagType>({
-		name: "",
-		foreground: "",
-		background: "#151515",
-	});
-	const submit = () => {
-		const { name, background } = newTag();
-		if (
-			name !== "" &&
-			!tags()
-				.map((i) => i.name)
-				.includes(`${name}`)
-		) {
-			const newTags = [
-				...tags(),
-				{
-					name,
-					background,
-					foreground: readableColor(background),
-				},
-			];
+	const submit = (
+		data: { name: string; background: string },
+		prev?: { name: string; background: string },
+	) => {
+		const { name, background } = data;
+		const updateNewName = prev && !tags().some((i) => i.name === prev.name);
+		const newTag = {
+			name,
+			background,
+			foreground: readableColor(background),
+		};
+		if (name !== "") {
+			const newTags = updateNewName
+				? [newTag, ...tags().filter((i) => i.name !== prev!.name)]
+				: prev
+					? tags().map((t) => (t.name === prev.name ? newTag : t))
+					: [...tags(), newTag];
 			setTags(newTags);
 			settingsManager.setConfig("custom-tags", newTags);
 			useTags(newTags);
-			setNewTag({ name: "", background: "#151515", foreground: "" });
 		}
+	};
+	const onNewTag = (data?: { name: string; background: string }) => {
+		const update = !!data;
+		const form: FormType = {
+			id: (update ? "update" : "new") + "-tag-form",
+			title: (update ? "Update" : "New") + " Tag",
+			update,
+			options: [
+				{
+					key: "name",
+					type: "text",
+					label: "Label",
+					value: data?.name,
+					attributes: {
+						placeholder: "tag label",
+					},
+				},
+				{
+					key: "background",
+					row: true,
+					label: "Color",
+					value: data?.background,
+					type: "color",
+				},
+			],
+			submit: (new_data) =>
+				update ? submit(new_data, data) : submit(new_data),
+		};
+		hollow.events.emit("form", form);
 	};
 	const toTags = (v: TagType[] | ((prev: TagType[]) => TagType[])) => {
 		const newTags = typeof v === "function" ? v(tags()) : v;
@@ -416,47 +344,39 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 
 	return (
 		<div class="w-full py-4">
-			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-				Tags
-			</h1>
-			<p class="pt-2 text-sm text-neutral-600 dark:text-neutral-400">
-				Custom tags that will be used by tools.{" "}
-			</p>
-			<div class="bg-secondary-10/40 flex h-fit w-full items-center justify-between rounded p-3">
-				<h3 class="font-bold text-neutral-950 dark:text-neutral-50">
-					New Tag
-				</h3>
-				<div class="flex items-center gap-2">
-					<input
-						class="input"
-						type="tag-name"
-						name="tagName"
-						placeholder="Name"
-						style={{
-							"--bg-color": "var(--color-secondary-10)",
-							"--bg-color-f": "var(--color-secondary-15)",
-						}}
-						oninput={(e) =>
-							setNewTag((prev) => ({
-								...prev,
-								name: e.currentTarget.value,
-							}))
-						}
-					/>
-					<ColorPick
-						color={() => newTag().background}
-						setColor={(c) =>
-							setNewTag((prev) => ({ ...prev, background: c }))
-						}
-					/>
+			<div class="flex justify-between pt-8">
+				<div>
+					<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
+						Tags
+					</h1>
+					<p class="mt-1 mb-5 text-xs text-neutral-500">
+						{" "}
+						Custom tags that will be used by tools.{" "}
+					</p>
 				</div>
-				<button class="button-secondary" onclick={submit}>
-					Add
+				<button
+					class="button-secondary"
+					style={{ "--padding-y": "calc(var(--spacing) * 3)" }}
+					onclick={() => onNewTag()}
+				>
+					<CircleFadingPlusIcon class="size-5" />
 				</button>
 			</div>
-			<div class="flex flex-wrap justify-center gap-3 pt-5 pb-60">
+			<div class="flex flex-wrap justify-center gap-3 pt-5 pb-60 text-lg">
 				<For each={tags()}>
-					{(tag) => <TagEditor tag={tag} setTags={toTags} />}
+					{(tag) => (
+						<button
+							class="flex transition-transform hover:rotate-12 active:scale-120"
+							onclick={() =>
+								onNewTag({
+									name: tag.name,
+									background: tag.background,
+								})
+							}
+						>
+							<Tag tag={tag.name} />
+						</button>
+					)}
 				</For>
 			</div>
 		</div>

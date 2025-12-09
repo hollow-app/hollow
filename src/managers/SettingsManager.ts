@@ -3,12 +3,10 @@ import { RealmManager } from "./RealmManager";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import DEFAULT from "@assets/configs/settings.json?raw";
+import { createSignal, Signal } from "solid-js";
 
 type SettingsConfig = {
-	columns: number;
-	offcolumns: number;
-	rows: number;
-	offrows: number;
+	"grid-size": number;
 	"static-grid-lines": boolean;
 	"background-image": string | null;
 	"background-opacity": number;
@@ -24,6 +22,7 @@ type SettingsKey = keyof SettingsConfig;
 export class SettingsManager {
 	private static self: SettingsManager;
 	private store: Storage;
+	public gridSize: Signal<number>;
 
 	async start() {
 		const path = await join(
@@ -39,6 +38,7 @@ export class SettingsManager {
 				defaults: JSON.parse(DEFAULT),
 			},
 		});
+		this.gridSize = createSignal(this.store.get("grid-size"));
 	}
 
 	static getSelf() {

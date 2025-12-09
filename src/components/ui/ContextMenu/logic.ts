@@ -109,4 +109,3 @@ export const ContextMenuLogic = (
 	const showContextMenu = (b: boolean) => state.setVisible(b);
 	return {};
 };
-

@@ -20,6 +20,7 @@ import { createStore, unwrap } from "solid-js/store";
 import { createSignal } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
 import { Card } from "./Card";
+import { SettingsManager } from "@managers/SettingsManager";
 
 type CanvasProps = {
 	canvasConfigs: Accessor<ConfigsType>;
@@ -29,7 +30,6 @@ type CanvasProps = {
 
 const vpKey = `${RealmManager.getSelf().getCurrent().id}-viewport`;
 export default function Canvas(props: CanvasProps) {
-	let nodes: NodeType[] = unwrap(hollow.cards());
 	const connectionsStore = createStore<ConnectionType[]>([]);
 	const viewportSignal = createSignal(
 		JSON.parse(localStorage.getItem(vpKey) ?? '{"x":0, "y":0, "zoom":1}'),
@@ -69,11 +69,17 @@ export default function Canvas(props: CanvasProps) {
 				components={{
 					default: Card,
 				}}
+				gridSize={SettingsManager.getSelf().gridSize[0]()}
 				{...props.canvasConfigs()}
 			>
 				{(kit: Kit) => (
 					<>
-						<Show when={props.isLiveEditor()}>
+						<Show
+							when={
+								props.isLiveEditor() &&
+								SettingsManager.getSelf().gridSize[0]() >= 30
+							}
+						>
 							<BackgroundGrid kit={kit} type="dash" />
 						</Show>
 					</>

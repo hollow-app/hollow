@@ -1,6 +1,8 @@
 import { Show } from "solid-js";
-import DoubleArrowRightIcon from "@assets/icons/double-arrow-right.svg";
+// import DoubleArrowRightIcon from "@assets/icons/double-arrow-right.svg";
+import MyIcons from "./MyIcon";
 import { createResource, Suspense } from "solid-js";
+import MyIcon from "./MyIcon";
 
 interface FetchedIconProps {
 	url: string;
@@ -38,9 +40,10 @@ export default function FetchedIcon(props: FetchedIconProps) {
 			<Show
 				when={!Icon.error}
 				fallback={
-					<DoubleArrowRightIcon
-						class={props.class ?? ""}
-						style={props.style ?? {}}
+					<MyIcon
+						name="double-arrow-right"
+						class={props.class}
+						style={props.style}
 					/>
 				}
 			>

@@ -4,11 +4,24 @@ import type { HelperType } from "./helper";
 import { ItemType } from "../types/ItemType";
 import { ColumnType } from "../types/ColumnType";
 import { KanbanManager } from "../KanbanManager";
-import { ContextMenuItem, FormType, ToolOptions } from "@type/hollow";
-import { onCleanup, onMount } from "solid-js";
+import {
+	ContextMenuItem,
+	ContextMenuItemButton,
+	FormType,
+	ToolOptions,
+} from "@type/hollow";
+import { lazy, onCleanup, onMount } from "solid-js";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { DragEventHandler } from "@thisbeyond/solid-dnd";
-import { CheckCheckIcon, SendIcon, Trash2Icon, XIcon } from "lucide-solid";
+import {
+	ChartGantt,
+	ChartGanttIcon,
+	ChartNoAxesGantt,
+	CheckCheckIcon,
+	SendIcon,
+	Trash2Icon,
+	XIcon,
+} from "lucide-solid";
 import { hollow } from "hollow";
 
 export type LogicType = {
@@ -146,7 +159,13 @@ export const KanbanLogic = (
 	};
 	const handleContextMenu = () => {
 		if (state.kanban().items.length > 0) {
-			const menuItems: any = [
+			const menuItems: ContextMenuItemButton[] = [
+				{
+					icon: ChartGanttIcon,
+					label: "Stats",
+					onclick: () =>
+						KanbanManager.getSelf().showInsight(state.kanban()),
+				},
 				{
 					icon: CheckCheckIcon,
 					label: "Select All",

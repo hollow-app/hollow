@@ -3,7 +3,6 @@ import GearIcon from "@assets/icons/gear.svg";
 import BellIcon from "@assets/icons/bell-ringing.svg";
 import MosaicIcon from "@assets/icons/mosaic.svg";
 import PenRulerIcon from "@assets/icons/pen-ruler.svg";
-import ChartPieIcon from "@assets/icons/chart-pie.svg";
 import PenIcon from "@assets/icons/pen.svg";
 import { NotifyManager } from "@managers/NotifyManager";
 import { createMemo, For, onMount, Setter, Show } from "solid-js";

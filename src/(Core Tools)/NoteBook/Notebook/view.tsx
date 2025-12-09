@@ -1,9 +1,4 @@
 import { NotebookProps } from ".";
-import FileCheckIcon from "@assets/icons/files/file-check.svg";
-import FilePenIcon from "@assets/icons/files/file-pen.svg";
-import FilePlusIcon from "@assets/icons/files/file-plus.svg";
-import FolderOpenIcon from "@assets/icons/folder-open.svg";
-import FolderCloseIcon from "@assets/icons/folder-close.svg";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic.tsx";
 import type { HelperType } from "./helper";
@@ -14,6 +9,7 @@ import Tag from "@components/Tag";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import { Match } from "solid-js";
+import MyIcon from "@components/MyIcon.tsx";
 
 export const NotebookView = (
 	state: StateType,
@@ -48,9 +44,17 @@ export const NotebookView = (
 						>
 							<Show
 								when={state.editMode()}
-								fallback={<FilePenIcon class="size-5" />}
+								fallback={
+									<MyIcon
+										name="files/file-pen"
+										class="size-5"
+									/>
+								}
 							>
-								<FileCheckIcon class="size-5" />
+								<MyIcon
+									name="files/file-check"
+									class="size-5"
+								/>
 							</Show>
 						</button>
 					</Show>
@@ -62,7 +66,7 @@ export const NotebookView = (
 							"--border-radius": "var(--radius-sm)",
 						}}
 					>
-						<FilePlusIcon class="size-5" />
+						<MyIcon name="files/file-plus" class="size-5" />
 					</button>
 					<button
 						class="button-control"
@@ -74,9 +78,11 @@ export const NotebookView = (
 					>
 						<Show
 							when={state.showList()}
-							fallback={<FolderCloseIcon class="size-5" />}
+							fallback={
+								<MyIcon name="folder-close" class="size-5" />
+							}
 						>
-							<FolderOpenIcon class="size-5" />
+							<MyIcon name="folder-open" class="size-5" />
 						</Show>
 					</button>
 				</div>
@@ -160,28 +166,13 @@ export const NotebookView = (
 														.note()
 														.attributes?.tags?.split(
 															",",
-														) ?? []
+														)
+														.map((i) => i.trim()) ??
+													[]
 												}
 											>
 												{(tag) => {
-													const target = () =>
-														state
-															.hollowTags()
-															.find(
-																(i) =>
-																	i.name ===
-																	tag,
-															);
-													return (
-														<Tag
-															tag={() => tag}
-															background={() =>
-																target()
-																	?.background ??
-																"var(--color-secondary-95)"
-															}
-														/>
-													);
+													return <Tag tag={tag} />;
 												}}
 											</For>
 										</div>

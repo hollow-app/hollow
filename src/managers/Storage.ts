@@ -1,4 +1,4 @@
-import { load, Store, StoreOptions } from "@tauri-apps/plugin-store";
+import { load, Store } from "@tauri-apps/plugin-store";
 import { StoreType } from "@type/hollow";
 
 export class Storage {

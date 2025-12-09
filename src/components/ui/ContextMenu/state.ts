@@ -43,4 +43,3 @@ export const createContextMenuState = (
 		isVisible,
 	};
 };
-

@@ -1,8 +1,5 @@
 {
-	"columns": 20,
-	"offcolumns": 0,
-	"rows": 10,
-	"offrows": 0,
+	"grid-size": 50,
 	"static-grid-lines": false,
 	"background-image": null,
 	"background-opacity": 50,

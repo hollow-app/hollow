@@ -4,6 +4,7 @@ import { RealmManager } from "@managers/RealmManager";
 import { SettingsManager } from "@managers/SettingsManager";
 import { hollow } from "hollow";
 import { BaseDirectory, open } from "@tauri-apps/plugin-fs";
+import { join } from "@tauri-apps/api/path";
 
 // jk
 export default function Developers() {
@@ -99,9 +100,15 @@ export default function Developers() {
 							<span
 								class="text-primary cursor-pointer underline"
 								onclick={async () => {
-									await open("plugins", {
-										baseDir: BaseDirectory.AppData,
-									});
+									await open(
+										await join(
+											...[
+												RealmManager.getSelf().getCurrent()
+													.location,
+												"plugins",
+											],
+										),
+									);
 								}}
 							>
 								Plugins Folder

@@ -11,12 +11,13 @@ import {
 	DragOverlay,
 	SortableProvider,
 } from "@thisbeyond/solid-dnd";
-import { For, Show } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import Sortable from "@components/Sortable";
-import { PlusIcon } from "lucide-solid";
+import { CirclePlusIcon, EllipsisVerticalIcon, Mouse } from "lucide-solid";
 import { ItemType } from "../types/ItemType";
-import { hollow } from "hollow";
 import ItemDisplay from "../components/ItemDisplay";
+import Floater from "@utils/Floater";
+import { ColumnType } from "../types/ColumnType";
 
 export const KanbanView = (
 	state: StateType,
@@ -42,11 +43,9 @@ export const KanbanView = (
 				</div>
 				<h1 class="text-lg font-medium">{state.kanban().name}</h1>
 				<ControlButtons
-					{...{
-						app: hollow.events,
-						addItem: logic.addItem,
-						showForm: logic.showForm,
-					}}
+					addItem={logic.addItem}
+					showForm={logic.showForm}
+					kanban={state.kanban()}
 				/>
 			</div>
 			{/* List */}
@@ -68,15 +67,13 @@ export const KanbanView = (
 								{(item) => (
 									<Sortable id={item.id}>
 										<KanbanItem
-											item={() => item}
+											item={item}
 											hollowTags={state.hollowTags}
 											updateItem={logic.updateItem}
 											removeItem={(id: string) => {
 												logic.removeItem(id);
 											}}
-											accentColor={() =>
-												state.kanban().accent
-											}
+											accentColor={state.kanban().accent}
 											toolEvent={helper?.toolEvents}
 											cardName={
 												props.card.data.extra.name
@@ -96,37 +93,24 @@ export const KanbanView = (
 						<div class="sortable">
 							<Show when={state.activeItem()}>
 								<ItemDisplay
-									item={() =>
-										state
-											.kanban()
-											.items.find(
-												(i) =>
-													i.id == state.activeItem(),
-											)
-									}
+									item={state
+										.kanban()
+										.items.find(
+											(i) => i.id == state.activeItem(),
+										)}
 									hollowTags={state.hollowTags}
 									showBorderDivider={false}
 									containerStyle={{
 										width: state.listDiv.scrollWidth
 											? `${state.listDiv.scrollWidth}px`
 											: "100%",
+										"border-color": state.kanban().accent,
 									}}
 								/>
 							</Show>
 						</div>
 					</DragOverlay>
 				</DragDropProvider>
-			</div>
-			<div>
-				<button
-					class="button-secondary"
-					style={{ "--w": "100%" }}
-					onclick={() =>
-						KanbanManager.getSelf().showInsight(state.kanban())
-					}
-				>
-					Summary
-				</button>
 			</div>
 		</div>
 	);
@@ -135,11 +119,13 @@ export const KanbanView = (
 type ControlButtonsProps = {
 	addItem: (item: ItemType) => void;
 	showForm: (onSubmit: (data: any) => void, item?: ItemType) => void;
+	kanban: ColumnType;
 };
-function ControlButtons({ addItem, showForm }: ControlButtonsProps) {
+function ControlButtons(props: ControlButtonsProps) {
+	let parent!: HTMLDivElement;
 	const onNewItem = () => {
-		showForm((data) =>
-			addItem({
+		props.showForm((data) =>
+			props.addItem({
 				...data,
 				dates: { createdAt: new Date().toISOString() },
 			}),
@@ -147,13 +133,32 @@ function ControlButtons({ addItem, showForm }: ControlButtonsProps) {
 	};
 
 	return (
-		<div class="relative ml-auto">
+		<div ref={parent} class="relative ml-auto flex gap-1">
 			<button
-				class="hover:bg-secondary-10 rounded p-1 active:scale-90"
+				class="hover:bg-secondary-10 shrink-0 rounded p-1 active:scale-90"
 				onclick={onNewItem}
 			>
-				<PlusIcon class="size-4" />
+				<CirclePlusIcon class="size-4" />
 			</button>
+			<div class="relative">
+				<button
+					class="hover:bg-secondary-10 shtink-0 rounded p-1 active:scale-90"
+					onclick={(e) =>
+						parent.dispatchEvent(
+							new MouseEvent("contextmenu", {
+								bubbles: true,
+								cancelable: true,
+								button: 2,
+								buttons: 2,
+								clientX: e.clientX,
+								clientY: e.clientY,
+							}),
+						)
+					}
+				>
+					<EllipsisVerticalIcon class="size-4" />
+				</button>
+			</div>
 		</div>
 	);
 }

@@ -480,6 +480,10 @@ export class ToolManager {
 			"emoji",
 			emoji,
 		);
+		const metadata: ToolMetadata = {
+			cards: this.getHand().find((i) => i.name === toolName).cards,
+		};
+		this.updateToolMetadata(toolName, metadata);
 	}
 
 	// EXTERNAL UTILS

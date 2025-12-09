@@ -73,14 +73,13 @@
 }
 
 *::-webkit-scrollbar-thumb {
-	background: var(--color-neutral-700);
-	/* border-radius: 0.25rem; */
-	opacity: 0.3;
+	background: color-mix(in oklab, var(--tc-700) 10%, transparent);
+	border-radius: 0.25rem;
 }
 
 *:hover::-webkit-scrollbar-thumb {
 	background: var(--color-neutral-700);
-	opacity: 1;
+	background: color-mix(in oklab, var(--tc-700) 90%, transparent);
 }
 
 *::-webkit-scrollbar {

@@ -1,6 +1,6 @@
 import { HandType } from "@type/HandType";
 import { Setter } from "solid-js";
-import Icon from "../../Icon";
+import Icon from "../../MyIcon";
 import { hollow } from "hollow";
 import ToolIcon from "@components/ToolIcon";
 

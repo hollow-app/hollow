@@ -1,6 +1,6 @@
 import { RustManager } from "@managers/RustManager";
 import { createResource, Suspense } from "solid-js";
-import BuyMeCoffeeIcon from "@assets/icons/buymecoffee.svg";
+import { HeartHandshakeIcon } from "lucide-solid";
 
 export default function General() {
 	const [version] = createResource(() => RustManager.getSelf().get_version());
@@ -19,7 +19,7 @@ export default function General() {
 					href={"buymeacoffee.com/ryusufe"}
 					target="_blank"
 				>
-					<BuyMeCoffeeIcon class="my-auto size-6" />
+					<HeartHandshakeIcon class="my-auto size-6" />
 				</a>
 			</div>
 			<hr class="bg-secondary-10 h-px w-full border-0" />

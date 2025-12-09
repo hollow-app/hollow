@@ -1,10 +1,8 @@
 import { NotificationsProps } from ".";
-import BellIcon from "@assets/icons/bell.svg";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import { createSignal, For, lazy, Show, Suspense } from "solid-js";
-import PopupWrapper from "../PopupWrapper";
 import {
 	ChevronDownIcon,
 	SquareArrowOutUpRightIcon,

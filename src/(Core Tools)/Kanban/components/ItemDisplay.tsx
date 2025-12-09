@@ -6,7 +6,7 @@ import { ItemType } from "../types/ItemType";
 import { timeDifferenceMin } from "@managers/manipulation/strings";
 
 type ItemDisplayProps = {
-	item: () => ItemType;
+	item: ItemType;
 	hollowTags: Accessor<TagType[]>;
 	headerContent?: JSX.Element;
 	containerClass?: string;
@@ -14,18 +14,11 @@ type ItemDisplayProps = {
 	showBorderDivider?: boolean;
 };
 
-export default function ItemDisplay({
-	item,
-	hollowTags,
-	headerContent,
-	containerClass = "",
-	containerStyle = {},
-	showBorderDivider = true,
-}: ItemDisplayProps) {
+export default function ItemDisplay(props: ItemDisplayProps) {
 	const tagColors = createMemo(() => {
-		const tags = item().tags;
+		const tags = props.item.tags;
 		return tags.map((tag) => {
-			const target = hollowTags().find((i) => i.name === tag);
+			const target = props.hollowTags().find((i) => i.name === tag);
 			return {
 				tag,
 				background: target?.background ?? "var(--color-secondary-95)",
@@ -36,31 +29,26 @@ export default function ItemDisplay({
 
 	return (
 		<div
-			class={`group border-secondary-10 bg-secondary relative box-border h-fit w-full rounded-lg border text-black shadow-md transition-colors dark:text-white ${containerClass}`}
+			class={`group bg-secondary-05 relative box-border h-fit w-full rounded-xl border text-black shadow-md transition-colors dark:text-white ${props.containerClass}`}
 			style={{
 				"line-height": "normal",
-				...containerStyle,
+				"border-color": "var(--color-secondary-15)",
+				...props.containerStyle,
 			}}
 		>
 			<div>
-				<Show
-					when={showBorderDivider}
-					fallback={
-						<div class="flex justify-between p-2 text-sm">
-							<p class="truncate text-sm">{item().title}</p>
-							{headerContent}
-						</div>
-					}
-				>
-					<div class="border-secondary-10 flex justify-between border-b border-dashed p-2 text-sm">
-						<p class="truncate text-sm">{item().title}</p>
-						{headerContent}
-					</div>
-				</Show>
+				<div class="border-secondary-15 flex justify-between border-b border-dashed p-2 text-sm">
+					<p class="truncate text-lg font-medium">
+						{props.item.title}
+					</p>
+					<Show when={props.headerContent}>
+						{props.headerContent}
+					</Show>
+				</div>
 				<p class="p-2 text-xs text-neutral-600 dark:text-neutral-400">
-					{item().content}
+					{props.item.content}
 				</p>
-				<Show when={item().tags.length > 0}>
+				<Show when={props.item.tags.length > 0}>
 					<div
 						class="flex flex-wrap gap-1.5 px-2"
 						style={{
@@ -68,12 +56,7 @@ export default function ItemDisplay({
 						}}
 					>
 						<For each={tagColors()}>
-							{(tagData) => (
-								<Tag
-									tag={() => tagData.tag}
-									background={() => tagData.background}
-								/>
-							)}
+							{(tagData) => <Tag tag={tagData.tag} />}
 						</For>
 					</div>
 				</Show>
@@ -100,30 +83,30 @@ export default function ItemDisplay({
 								fill="none"
 								stroke-width="6"
 								stroke-dasharray="100"
-								stroke-dashoffset={100 - item().progress}
+								stroke-dashoffset={100 - props.item.progress}
 								stroke-linecap="round"
 							></circle>
 						</svg>
 					</div>
 					<span class="pl-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400">
-						{item().progress}%
+						{props.item.progress}%
 					</span>
 					<span
 						class="border-secondary-10 ml-2 border-l pl-2 text-xs font-medium"
 						classList={{
-							"text-green-400": item().priority === "low",
-							"text-yellow-400": item().priority === "medium",
-							"text-orange-400": item().priority === "high",
-							"text-red-400": item().priority === "urgent",
+							"text-green-400": props.item.priority === "low",
+							"text-yellow-400": props.item.priority === "medium",
+							"text-orange-400": props.item.priority === "high",
+							"text-red-400": props.item.priority === "urgent",
 						}}
 					>
-						{item().priority}
+						{props.item.priority}
 					</span>
 
 					<div class="ml-auto flex items-center text-neutral-500">
 						<Clock8Icon class="size-3" />
 						<span class="pl-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-400">
-							{timeDifferenceMin(item().dates.createdAt)}
+							{timeDifferenceMin(props.item.dates.createdAt)}
 						</span>
 					</div>
 				</div>

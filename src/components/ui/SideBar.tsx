@@ -50,6 +50,7 @@ export default function SideBar({
 				setCanvasConfigs((p) => ({
 					...p,
 					disableNodeDrag: !p.disableNodeDrag,
+					disableEdgeDrag: !p.disableEdgeDrag,
 					disableVerticalPan: !p.disableVerticalPan,
 					disableHorizontalPan: !p.disableHorizontalPan,
 				})),

@@ -7,6 +7,7 @@ import { createSignal, Signal } from "solid-js";
 
 type SettingsConfig = {
 	"grid-size": number;
+	"grid-type": "dot" | "dash";
 	"static-grid-lines": boolean;
 	"background-image": string | null;
 	"background-opacity": number;

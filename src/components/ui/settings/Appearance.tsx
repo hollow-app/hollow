@@ -1,22 +1,20 @@
 import ColorPick from "@components/ColorPick";
 import NumberInput from "@components/NumberInput";
-import TagEditor from "@components/TagEditor";
 import { useBackground } from "@hooks/useBackground";
 import { useColor } from "@hooks/useColor";
-import useGrid from "@hooks/useGrid";
 import {
 	createMemo,
 	createResource,
 	createSignal,
 	For,
+	onCleanup,
 	Show,
 	Suspense,
 } from "solid-js";
-import { FormType, TagType } from "@type/hollow";
+import { FormType } from "@type/hollow";
 import useTags from "@hooks/useTags";
 import { readableColor } from "polished";
 import Slider from "@components/Slider";
-import setStyle from "@hooks/setStyle";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 import { CodeThemeManager } from "@managers/CodeThemeManager";
@@ -24,10 +22,8 @@ import { MarkdownManager } from "@managers/MarkdownManager";
 import Loading from "@components/Loading";
 import { SettingsManager } from "@managers/SettingsManager";
 import Dropdown from "@components/Dropdown";
-import { setgid } from "process";
-import { CircleFadingPlus, CircleFadingPlusIcon } from "lucide-solid";
+import { CircleFadingPlusIcon } from "lucide-solid";
 import Tag from "@components/Tag";
-import { backup } from "node:sqlite";
 
 export default function Appearance() {
 	const settingsManager = SettingsManager.getSelf();
@@ -51,6 +47,10 @@ type CommonSettings = {
 
 function CanvasSettings() {
 	const [grid, setGrid] = SettingsManager.getSelf().gridSize;
+
+	onCleanup(() => {
+		SettingsManager.getSelf().setConfig("grid-size", grid());
+	});
 	return (
 		<>
 			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
@@ -70,6 +70,32 @@ function CanvasSettings() {
 						</div>
 						<div class="w-50">
 							<NumberInput value={grid} setValue={setGrid} />
+						</div>
+					</div>
+					<div class="flex justify-between">
+						<div>
+							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
+								Grid Type
+							</h2>
+							<p class="text-sm text-neutral-600 dark:text-neutral-400">
+								Grid's Background type of the canvas
+							</p>
+						</div>
+						<div class="w-50">
+							<Dropdown
+								value={() =>
+									SettingsManager.getSelf().getConfig(
+										"grid-type",
+									)
+								}
+								options={() => [{ items: ["dot", "dash"] }]}
+								onSelect={(v: "dash" | "dot") =>
+									SettingsManager.getSelf().setConfig(
+										"grid-type",
+										v,
+									)
+								}
+							/>
 						</div>
 					</div>
 				</div>
@@ -334,12 +360,6 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 				update ? submit(new_data, data) : submit(new_data),
 		};
 		hollow.events.emit("form", form);
-	};
-	const toTags = (v: TagType[] | ((prev: TagType[]) => TagType[])) => {
-		const newTags = typeof v === "function" ? v(tags()) : v;
-		settingsManager.setConfig("custom-tags", newTags);
-		setTags(newTags);
-		useTags(newTags);
 	};
 
 	return (

@@ -205,10 +205,6 @@ export const NotebookLogic = (
 	};
 
 	const changeSelected = async (title: string) => {
-		// const content = await NotebookManager.getSelf().getNote(
-		// 	card.name,
-		// 	title,
-		// );
 		state.setNote(unwrap(state.book).notes.find((i) => i.title === title));
 		state.setBook((prev) => ({ ...prev, last: title }));
 		state.setShowList(false);
@@ -219,15 +215,12 @@ export const NotebookLogic = (
 	};
 	onMount(() => {
 		const toolEvents = NotebookManager.getSelf().getEvents();
-
 		toolEvents.on(`${props.card.id}-settings`, showSettings);
-		hollow.events.on("tags", state.setHollowTags);
 		toolEvents.on(`${props.card.id}-expand`, state.setExpand);
 	});
 	onCleanup(() => {
 		const toolEvents = NotebookManager.getSelf().getEvents();
 		toolEvents.off(`${props.card.id}-settings`, showSettings);
-		hollow.events.off("tags", state.setHollowTags);
 		toolEvents.off(`${props.card.id}-expand`, state.setExpand);
 	});
 	return {

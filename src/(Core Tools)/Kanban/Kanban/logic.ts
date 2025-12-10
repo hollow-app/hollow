@@ -314,7 +314,6 @@ export const KanbanLogic = (
 		}
 	};
 	onMount(() => {
-		hollow.events.on("tags", state.setHollowTags);
 		helper?.toolEvents.on(`${props.card.id}-settings`, showSettings);
 		helper?.toolEvents.on(
 			`${props.card.data.extra.name}-receive-task`,
@@ -323,7 +322,6 @@ export const KanbanLogic = (
 		helper?.toolEvents.on("metadata", updateMeta);
 	});
 	onCleanup(() => {
-		hollow.events.off("tags", state.setHollowTags);
 		helper?.toolEvents.off(`${props.card.id}-settings`, showSettings);
 		helper?.toolEvents.off(
 			`${props.card.data.extra.name}-receive-task`,

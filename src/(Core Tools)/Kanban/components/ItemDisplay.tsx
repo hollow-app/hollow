@@ -7,7 +7,6 @@ import { timeDifferenceMin } from "@managers/manipulation/strings";
 
 type ItemDisplayProps = {
 	item: ItemType;
-	hollowTags: Accessor<TagType[]>;
 	headerContent?: JSX.Element;
 	containerClass?: string;
 	containerStyle?: JSX.CSSProperties;
@@ -15,18 +14,6 @@ type ItemDisplayProps = {
 };
 
 export default function ItemDisplay(props: ItemDisplayProps) {
-	const tagColors = createMemo(() => {
-		const tags = props.item.tags;
-		return tags.map((tag) => {
-			const target = props.hollowTags().find((i) => i.name === tag);
-			return {
-				tag,
-				background: target?.background ?? "var(--color-secondary-95)",
-				foreground: target?.foreground ?? "var(--color-secondary)",
-			};
-		});
-	});
-
 	return (
 		<div
 			class={`group bg-secondary-05 relative box-border h-fit w-full rounded-xl border text-black shadow-md transition-colors dark:text-white ${props.containerClass}`}
@@ -55,8 +42,8 @@ export default function ItemDisplay(props: ItemDisplayProps) {
 							"font-size": "0.8rem",
 						}}
 					>
-						<For each={tagColors()}>
-							{(tagData) => <Tag tag={tagData.tag} />}
+						<For each={props.item.tags}>
+							{(tag) => <Tag tag={tag} />}
 						</For>
 					</div>
 				</Show>

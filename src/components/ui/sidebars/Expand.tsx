@@ -76,7 +76,7 @@ export default function Expand() {
 					// TODO multi select in dropdown yet one for FORM
 					options: [
 						{
-							items: hand().map((i) => i.title),
+							items: hand().map((i) => i.name),
 						},
 					],
 				},

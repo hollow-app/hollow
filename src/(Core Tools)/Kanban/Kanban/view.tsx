@@ -68,7 +68,6 @@ export const KanbanView = (
 									<Sortable id={item.id}>
 										<KanbanItem
 											item={item}
-											hollowTags={state.hollowTags}
 											updateItem={logic.updateItem}
 											removeItem={(id: string) => {
 												logic.removeItem(id);
@@ -98,7 +97,6 @@ export const KanbanView = (
 										.items.find(
 											(i) => i.id == state.activeItem(),
 										)}
-									hollowTags={state.hollowTags}
 									showBorderDivider={false}
 									containerStyle={{
 										width: state.listDiv.scrollWidth

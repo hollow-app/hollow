@@ -17,6 +17,8 @@ import { CodeThemeManager } from "./CodeThemeManager";
 import { SettingsManager } from "./SettingsManager";
 import { MarkdownManager } from "./MarkdownManager";
 import { Storage } from "./Storage";
+import { initAnalytics } from "@utils/analytics";
+import { DeepLinkManager } from "./DeepLinkManager";
 
 export class HollowManager {
 	private static self: HollowManager;
@@ -63,6 +65,7 @@ export class HollowManager {
 				void forward(message);
 			};
 		}
+		//
 	}
 
 	async preRealmSelection() {
@@ -91,7 +94,7 @@ export class HollowManager {
 		await MarkdownManager.getSelf().start();
 		NotifyManager.init();
 		CodeThemeManager.init();
-		// DeepLinkManager.init();
+		await DeepLinkManager.start();
 		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });

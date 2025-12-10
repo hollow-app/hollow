@@ -1,42 +1,15 @@
 import { Character } from "@type/Character";
 import { hollow } from "hollow";
-import { Setter } from "solid-js";
 import DEFAULT from "@assets/configs/account.json?raw";
-import { SecretsManager } from "./SecretsManager";
-import { ActivityIcon } from "lucide-solid";
+import { createStore, SetStoreFunction, Store, unwrap } from "solid-js/store";
 
 export class CharacterManager {
-	private character: Character = {
-		username: "New Adventurer",
-		level: 1,
-		xp: 5,
-		avatar: null,
-		banner: null,
-		title: "Elder",
-		bio: "Welcome to Hollow!",
-		achievements: ["🌀 First Step"],
-		titles: ["Elder", "The Original Few"],
-		meta: [
-			{
-				id: "example-1",
-				label: "Study",
-				icon: "Leaf",
-				value: 90,
-				color: "#3BA936",
-			},
-		],
-	};
+	private characterStore: [get: Character, set: SetStoreFunction<Character>];
 	private static self: CharacterManager;
 
 	public async start() {
-		if (!localStorage.getItem("character")) {
-			this.character = JSON.parse(DEFAULT);
-		} else {
-			this.character =
-				(await SecretsManager.getSelf().decryptObject(
-					localStorage.getItem("character"),
-				)) ?? JSON.parse(DEFAULT);
-		}
+		const item = localStorage.getItem("character");
+		this.characterStore = createStore(JSON.parse(item ?? DEFAULT));
 		hollow.events.on("character-add-achievement", this.addAchievement);
 		hollow.events.on("character-add-title", this.addTitle);
 		hollow.events.on("character-add-xp", this.addXp);
@@ -49,11 +22,11 @@ export class CharacterManager {
 	}
 
 	public getCharacter(): Character {
-		return this.character;
+		return this.characterStore[0];
 	}
 
 	public setCharacter(props: Partial<Character>) {
-		this.character = { ...this.character, ...props };
+		this.characterStore[1]((prev: Character) => ({ ...prev, ...props }));
 		this.update();
 	}
 
@@ -61,13 +34,14 @@ export class CharacterManager {
 		key: K,
 		value: Character[K],
 	): void {
-		this.character[key] = value;
+		this.characterStore[1](key, value);
 		this.update();
 	}
 
 	public addTitle(title: string) {
-		if (!this.character.titles.includes(title)) {
-			this.character.titles.push(title);
+		const character = this.getCharacter();
+		if (!character.titles.includes(title)) {
+			this.characterStore[1]("titles", (l) => [...l, title]);
 			hollow.events.emit("alert", {
 				title: "Title Gained",
 				message: title,
@@ -77,8 +51,9 @@ export class CharacterManager {
 	}
 
 	public addAchievement(achievement: string): void {
-		if (!this.character.achievements.includes(achievement)) {
-			this.character.achievements.push(achievement);
+		const character = this.getCharacter();
+		if (!character.achievements.includes(achievement)) {
+			this.characterStore[1]("achievements", (l) => [...l, achievement]);
 			hollow.events.emit("alert", {
 				title: "Achievement Gained",
 				message: achievement,
@@ -88,45 +63,44 @@ export class CharacterManager {
 	}
 
 	public setMeta(props: any): void {
-		if (!this.character.meta) this.character.meta = [];
-		const idx = this.character.meta.findIndex((m) => m.id === props.id);
+		const character = this.getCharacter();
+		const idx = character.meta.findIndex((m) => m.id === props.id);
 		if (idx >= 0) {
-			this.character.meta[idx] = {
-				...this.character.meta[idx],
-				...props,
-			};
+			this.characterStore[1]("meta", idx, (p) => ({ ...p, ...props }));
 		} else {
-			this.character.meta.push({ ...props });
+			this.characterStore[1]("meta", (l) => [...l, props]);
 		}
 		this.update();
 	}
 
 	public levelUp(amount: number = 1): void {
-		this.character.level = (this.character.level ?? 1) + amount;
+		this.characterStore[1](
+			"level",
+			(this.getCharacter().level ?? 1) + amount,
+		);
 		this.update();
 	}
 
 	public addXp(amount: number): void {
-		let xp = (this.character.xp ?? 0) + amount;
+		const character = this.getCharacter();
+		let xp = (character.xp ?? 0) + amount;
 		let lvlAmount = 0;
-		while (xp >= (this.character.level + lvlAmount) * 100) {
-			xp -= (this.character.level + lvlAmount) * 100;
+		while (xp >= (character.level + lvlAmount) * 100) {
+			xp -= (character.level + lvlAmount) * 100;
 			lvlAmount++;
 		}
-		this.character.xp = xp;
+		this.characterStore[1]("xp", xp);
 		if (lvlAmount > 0) {
 			this.levelUp(lvlAmount);
 		} else {
-			this.character.xp = xp;
 			this.update();
 		}
 	}
 
 	private async update() {
-		hollow.pevents.emit("ui-set-character", () => this.character);
-		const encrypted = await SecretsManager.getSelf().encryptObject(
-			this.character,
+		localStorage.setItem(
+			"character",
+			JSON.stringify(unwrap(this.getCharacter())),
 		);
-		localStorage.setItem("character", encrypted);
 	}
 }

@@ -7,11 +7,9 @@ export type HandType = {
 	 * name : id, same as title but lowercased
 	 */
 	name: string;
-	title?: string;
 	description: string;
 	author: string;
 	authorUrl: string;
-	dbVersion: number;
 	cards: CardType[];
 	signed?: boolean;
 };

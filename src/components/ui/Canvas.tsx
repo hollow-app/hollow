@@ -21,6 +21,7 @@ import { createSignal } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
 import { Card } from "./Card";
 import { SettingsManager } from "@managers/SettingsManager";
+import { ToolManager } from "@managers/ToolManager";
 
 type CanvasProps = {
 	canvasConfigs: Accessor<ConfigsType>;
@@ -34,8 +35,21 @@ export default function Canvas(props: CanvasProps) {
 	const viewportSignal = createSignal(
 		JSON.parse(localStorage.getItem(vpKey) ?? '{"x":0, "y":0, "zoom":1}'),
 	);
-	const onNodesChange = (nodes: NodeType[]) => {
-		nodes = nodes;
+	const onNodesChange = (nodes?: string[]) => {
+		if (nodes && props.isLiveEditor()) {
+			const cards = hollow.cards();
+			nodes.forEach((id) => {
+				const target = cards.find((i) => i.id === id);
+				if (target) {
+					hollow.toolManager.setCard(
+						target.data.extra.tool,
+						id,
+						{},
+						target,
+					);
+				}
+			});
+		}
 	};
 	const onViewportChange = (vp: ViewPort) => {
 		localStorage.setItem(vpKey, JSON.stringify(vp));
@@ -80,7 +94,12 @@ export default function Canvas(props: CanvasProps) {
 								SettingsManager.getSelf().gridSize[0]() >= 30
 							}
 						>
-							<BackgroundGrid kit={kit} type="dash" />
+							<BackgroundGrid
+								kit={kit}
+								type={SettingsManager.getSelf().getConfig(
+									"grid-type",
+								)}
+							/>
 						</Show>
 					</>
 				)}

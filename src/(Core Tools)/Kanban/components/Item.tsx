@@ -12,7 +12,6 @@ type ItemProps = {
 	toolEvent?: HollowEvent;
 	cardName?: string;
 	item: ItemType;
-	hollowTags: Accessor<TagType[]>;
 	updateItem?: (item: ItemType) => void;
 	removeItem?: (id: string, byItemComponent?: boolean) => void;
 	isActive?: boolean;
@@ -94,7 +93,6 @@ export default function Item(props: ItemProps) {
 		>
 			<ItemDisplay
 				item={props.item}
-				hollowTags={props.hollowTags}
 				containerStyle={{
 					"border-color": selected()
 						? props.accentColor

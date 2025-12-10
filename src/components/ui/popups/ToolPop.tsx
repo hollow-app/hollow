@@ -52,13 +52,6 @@ export default function ToolPop({
 								{tool.description}
 							</span>
 						</div>
-
-						<div class="flex flex-col gap-1">
-							<span class="text-sm font-medium">DB Version</span>
-							<span class="text-sm text-gray-950 dark:text-gray-50">
-								{tool.dbVersion}
-							</span>
-						</div>
 					</div>
 				</div>
 

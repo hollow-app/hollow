@@ -20,8 +20,6 @@ export type StateType = {
 	note: Accessor<NoteType>;
 	setNote: Setter<NoteType>;
 	panel: Accessor<number>;
-	hollowTags: Accessor<TagType[]>;
-	setHollowTags: Setter<TagType[]>;
 };
 
 export const createNotebookState = (
@@ -46,10 +44,6 @@ export const createNotebookState = (
 			return 0;
 		}
 	});
-	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		hollow.events.getData("tags"),
-	);
-
 	return {
 		showList,
 		setShowList,
@@ -62,7 +56,5 @@ export const createNotebookState = (
 		note,
 		setNote,
 		panel,
-		hollowTags,
-		setHollowTags,
 	};
 };

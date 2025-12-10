@@ -236,7 +236,6 @@ export class ToolManager {
 				...manifest,
 				icon: request.icon,
 				name: manifest.name.toLowerCase(),
-				title: manifest.name,
 				cards: [],
 				signed: true,
 			};
@@ -259,10 +258,9 @@ export class ToolManager {
 		return request.state;
 	}
 
-	async uninstallTool(title: string): Promise<boolean> {
-		const name = title.toLowerCase();
+	async uninstallTool(name: string): Promise<boolean> {
 		const request = await RustManager.getSelf().remove_plugin({
-			name: title,
+			name: name,
 		});
 
 		const group = hollow.cards();
@@ -272,7 +270,7 @@ export class ToolManager {
 				this.deleteCard(card.data.extra.name, name, false),
 			);
 			let root: HandType[] = this.getHand();
-			root = root.filter((i) => i.name !== title.toLowerCase());
+			root = root.filter((i) => i.name !== name);
 			this.store.set("__root__", root);
 			this.toolMap.delete(name);
 			hollow.setCards(
@@ -305,7 +303,12 @@ export class ToolManager {
 			.cards.find((i) => i.id === cardId);
 	}
 
-	setCard(toolName: string, cardId: string, updates: Record<string, any>) {
+	setCard(
+		toolName: string,
+		cardId: string,
+		updates: Record<string, any>,
+		rect?: { x: number; y: number; width: number; height: number },
+	) {
 		const root = this.getHand();
 		const tool = root.find((i) => i.name === toolName);
 		if (!tool) return;
@@ -314,6 +317,7 @@ export class ToolManager {
 			card.id === cardId
 				? {
 						...card,
+						...rect,
 						data: {
 							...card.data,
 							extra: { ...card.data.extra, ...updates },

@@ -14,6 +14,7 @@ import { hollow } from "hollow";
 import Dropdown from "@components/Dropdown";
 import { CardType } from "@type/hollow";
 import { unwrap } from "solid-js/store";
+import { SettingsManager } from "@managers/SettingsManager";
 
 interface SelectedCard {
 	tool: string;
@@ -21,6 +22,7 @@ interface SelectedCard {
 }
 
 export default function Editor() {
+	const step = createMemo(() => SettingsManager.getSelf().gridSize[0]());
 	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>(
 		hollow.pevents.getData("editor"),
 	);
@@ -105,13 +107,13 @@ export default function Editor() {
 							<NumRow
 								label="Width"
 								value={() => cardData().width}
-								step={50}
+								step={step()}
 								setValue={(v) => updateRootProp("width", v)}
 							/>
 							<NumRow
 								label="Height"
 								value={() => cardData().height}
-								step={50}
+								step={step()}
 								setValue={(v) => updateRootProp("height", v)}
 							/>
 						</div>
@@ -215,14 +217,14 @@ export default function Editor() {
 								label="X"
 								value={() => cardData().x}
 								setValue={(v) => updateRootProp("x", v)}
-								step={50}
+								step={step()}
 								min={-10000}
 							/>
 							<NumRow
 								label="Y"
 								value={() => cardData().y}
 								setValue={(v) => updateRootProp("y", v)}
-								step={50}
+								step={step()}
 								min={-10000}
 							/>
 							<NumRow

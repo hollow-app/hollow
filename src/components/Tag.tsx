@@ -1,7 +1,7 @@
 import { SettingsManager } from "@managers/SettingsManager";
 import { TagType } from "@type/hollow";
 import { hollow } from "hollow";
-import { createMemo, createSignal, onMount } from "solid-js";
+import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
 type TagProps = {
 	tag: string;
@@ -26,6 +26,9 @@ export default function Tag(props: TagProps) {
 
 	onMount(() => {
 		hollow.events.on("tags", onUpdate);
+	});
+	onCleanup(() => {
+		hollow.events.off("tags", onUpdate);
 	});
 
 	return (

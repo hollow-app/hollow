@@ -91,7 +91,6 @@ export class RustManager {
 			...result.map((manifest) => ({
 				...manifest,
 				name: manifest.name.toLowerCase(),
-				title: manifest.name,
 				cards: [],
 				signed: false,
 			})),

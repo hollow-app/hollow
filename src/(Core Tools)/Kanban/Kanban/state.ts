@@ -16,8 +16,6 @@ export type StateType = {
 	setSelectedGroup: Setter<string[]>;
 	meta: Accessor<CardType>;
 	setMeta: Setter<CardType>;
-	hollowTags: Accessor<TagType[]>;
-	setHollowTags: Setter<TagType[]>;
 };
 
 export const createKanbanState = (
@@ -34,9 +32,6 @@ export const createKanbanState = (
 		),
 	);
 
-	const [hollowTags, setHollowTags] = createSignal<TagType[]>(
-		hollow.events.getData("tags"),
-	);
 	return {
 		listDiv,
 		kanban,
@@ -47,7 +42,5 @@ export const createKanbanState = (
 		setSelectedGroup,
 		meta,
 		setMeta,
-		hollowTags,
-		setHollowTags,
 	};
 };

@@ -5,8 +5,8 @@ import { NotebookManager } from "../NotebookManager";
 import FilterButton from "@components/FilterButton";
 import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
-import { Trash2Icon } from "lucide-solid";
 import { hollow } from "hollow";
+import { MyIconFun } from "@components/MyIcon";
 
 type NoteListProps = {
 	card: CardType;
@@ -57,7 +57,7 @@ export default function NoteList(props: NoteListProps) {
 				header: "notebook",
 				items: [
 					{
-						icon: Trash2Icon,
+						icon: MyIconFun({ name: "trash" }),
 						label: `Remove (${selectedGroup().length})`,
 						onclick: removeGroup,
 					},

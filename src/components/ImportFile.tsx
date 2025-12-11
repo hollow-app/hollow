@@ -1,7 +1,7 @@
-import { Trash2Icon } from "lucide-solid";
 import { Show } from "solid-js";
 import { createSignal } from "solid-js";
 import { hollow } from "hollow";
+import MyIcon from "./MyIcon";
 
 type ImportFileProps = {
 	xfile?: string;
@@ -32,7 +32,7 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 							onChange("");
 						}}
 					>
-						<Trash2Icon class="size-4.5" />
+						<MyIcon name="trash" class="size-4.5" />
 					</button>
 				</>
 			</Show>

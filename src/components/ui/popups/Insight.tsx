@@ -1,5 +1,5 @@
 import { InsightType } from "@type/hollow";
-import ScrollIcon from "@assets/icons/note-fill.svg";
+import ReceiptIcon from "@assets/icons/receipt.svg";
 import { Accessor, For, Show } from "solid-js";
 
 type InsightPopProps = {
@@ -30,7 +30,7 @@ export default function InsightPop({ data, hide }: InsightPopProps) {
 			{/* Header */}
 			<div class="flex items-center justify-between">
 				<div class="flex items-center gap-2">
-					<ScrollIcon class="size-4" />
+					<ReceiptIcon class="size-4" />
 					<span class="text-xs font-semibold">{data().title}</span>
 				</div>
 

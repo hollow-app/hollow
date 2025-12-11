@@ -1,9 +1,10 @@
 import Dropdown from "@components/Dropdown";
+import MyIcon from "@components/MyIcon";
 import { CharacterManager } from "@managers/CharacterManager";
 import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
 import { hollow } from "hollow";
-import { SquarePenIcon, Trash2Icon } from "lucide-solid";
+import { SquarePenIcon } from "lucide-solid";
 import { For, Show } from "solid-js";
 import { createSignal } from "solid-js";
 
@@ -317,7 +318,10 @@ export default function Account() {
 												}
 												title="Delete"
 											>
-												<Trash2Icon class="size-3.5" />
+												<MyIcon
+													name="trash"
+													class="size-3.5"
+												/>
 											</button>
 										</div>
 									</div>

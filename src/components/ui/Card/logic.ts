@@ -5,6 +5,7 @@ import { ContextMenuItem } from "@type/hollow";
 import { hollow } from "hollow";
 import { onCleanup, onMount } from "solid-js";
 import { ExpandIcon, PencilRulerIcon, SettingsIcon } from "lucide-solid";
+import MyIcon, { MyIconFun } from "@components/MyIcon";
 
 export type LogicType = {
 	onContextMenu: () => void;
@@ -27,13 +28,13 @@ export const CardLogic = (
 					onclick: () => expand(),
 				},
 				{
-					icon: PencilRulerIcon,
+					icon: MyIconFun({ name: "color-picker" }),
 					label: "Modify",
 					onclick: showEditor,
 				},
 				{
-					icon: SettingsIcon,
-					label: "Settings",
+					icon: MyIconFun({ name: "gear" }),
+					label: "Configure",
 					onclick: showSettings,
 				},
 			],

@@ -19,6 +19,7 @@ import { RealmManager } from "@managers/RealmManager";
 import { RustManager } from "@managers/RustManager";
 import { createSignal } from "solid-js";
 import ToolIcon from "@components/ToolIcon";
+import MyIcon from "@components/MyIcon";
 
 export const ContextMenuView = (
 	state: StateType,
@@ -115,7 +116,7 @@ export const ContextMenuView = (
 																	const Icon =
 																		item.icon;
 																	return (
-																		<Icon class="h-4 w-4" />
+																		<Icon class="h-4.5 w-4.5" />
 																	);
 																})()}
 															</Show>
@@ -124,6 +125,16 @@ export const ContextMenuView = (
 													</Show>
 												)}
 											</For>
+											<ContextMenuSide
+												position={state.position}
+												children={[
+													{
+														label: "example",
+														onclick: () => {},
+													},
+												]}
+												label="test"
+											/>
 										</div>
 									</>
 								)}
@@ -141,7 +152,7 @@ export const ContextMenuView = (
 								class="button-cm"
 								onclick={() => RustManager.getSelf().reload()}
 							>
-								<RefreshCcwIcon class="size-4" />
+								<MyIcon name={"comet"} class="size-5" />
 								Reload
 							</button>
 						</div>

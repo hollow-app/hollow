@@ -66,7 +66,6 @@ export default function Editor() {
 	};
 
 	const onCancel = () => {
-		console.log(initialState);
 		if (initialState) {
 			hollow.setCards(
 				(c) => c.id === selectedCard().cardId,

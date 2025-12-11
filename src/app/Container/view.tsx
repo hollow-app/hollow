@@ -3,11 +3,12 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import SideBar from "@components/ui/SideBar";
-import { lazy, Suspense } from "solid-js";
+import { Accessor, lazy, Suspense } from "solid-js";
 import Sidepanel from "./Sidepanel";
 import Navbar from "@components/ui/sidebars/Navbar";
 import Canvas from "@components/ui/Canvas";
 import { Show } from "solid-js";
+import { ConfigsType } from "solid-kitx";
 const Settings = lazy(async () => import("@components/ui/Settings"));
 
 export const ContainerView = (
@@ -22,6 +23,7 @@ export const ContainerView = (
 				<SideBar
 					layout={state.controller}
 					setSettings={state.setSettings}
+					//@ts-ignore
 					setCanvasConfigs={state.setCanvasConfigs}
 					isLiveEditor={state.isLiveEditor}
 				/>
@@ -34,7 +36,9 @@ export const ContainerView = (
 					<Navbar />
 					<div class="flex min-h-0 w-full flex-1 pb-2">
 						<Canvas
-							canvasConfigs={state.canvasConfigs}
+							canvasConfigs={
+								state.canvasConfigs as Accessor<ConfigsType>
+							}
 							setCanvasConfigs={state.setCanvasConfigs}
 							isLiveEditor={state.isLiveEditor}
 						/>

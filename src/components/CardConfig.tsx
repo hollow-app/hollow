@@ -1,16 +1,12 @@
 import { CardType } from "@type/hollow";
 import { HandType } from "@type/HandType";
-import {
-	Grid2X2PlusIcon,
-	Grid2x2XIcon,
-	StarIcon,
-	Trash2Icon,
-} from "lucide-solid";
+import { Grid2X2PlusIcon, Grid2x2XIcon, StarIcon } from "lucide-solid";
 import { createSignal, Setter, Show } from "solid-js";
 import EmojiPick from "./EmojiPick";
 import { timeDifference } from "@managers/manipulation/strings";
 import { hollow } from "hollow";
 import ToolIcon from "./ToolIcon";
+import MyIcon from "./MyIcon";
 
 export default function CardConfig({
 	myCard,
@@ -104,7 +100,7 @@ export default function CardConfig({
 				</div>
 				<div class="ml-auto flex w-fit gap-2">
 					<button class="button-control red" onclick={handleDelete}>
-						<Trash2Icon class="size-4" />
+						<MyIcon name="trash" class="size-4" />
 					</button>
 					<button class="button-control" onclick={handlePlacement}>
 						<Show

@@ -68,7 +68,8 @@ export default function WordInput({
 				}}
 			/>
 			<span class="text-secondary-25 absolute right-0.5 bottom-0.5 text-xs">
-				press Enter to add
+				press <span class="keyboard-button text-[0.7em]">Enter</span> to
+				add
 			</span>
 		</div>
 	);

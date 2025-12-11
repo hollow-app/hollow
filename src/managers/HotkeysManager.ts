@@ -8,12 +8,24 @@ type HotKeysData = {
 	};
 	hotkeys: HotKeyType[];
 };
+export type HotKeyName =
+	| "Go to Realm Selector"
+	| "Toggle Settings"
+	| "Toggle Drag and Drop Mode"
+	| "Reload App"
+	| "Toggle Notifications"
+	| "Toggle Expand"
+	| "Toggle Editor"
+	| "Toggle Vault"
+	| "Accept Confirm Message"
+	| "Refuse Confirm Message";
+
 export class hotkeysManager {
 	private hotkeys: HotKeyType[];
 	private key: string = "hotkeys";
 	private enabled: boolean = false;
 	private globalListener: ((e: KeyboardEvent) => void) | null = null;
-	public events: { [name: string]: () => void } = {};
+	public events: Partial<Record<HotKeyName, () => void>> = {};
 	private static self: hotkeysManager;
 
 	static init() {
@@ -27,7 +39,8 @@ export class hotkeysManager {
 	}
 
 	private constructor() {
-		const savedData = localStorage.getItem(this.key);
+		// const savedData = localStorage.getItem(this.key);
+		const savedData = null;
 		let parsedData: HotKeysData;
 		if (savedData) {
 			parsedData = JSON.parse(savedData);
@@ -180,6 +193,9 @@ export class hotkeysManager {
 				break;
 			case "Toggle Placement":
 				break;
+			case "Toggle Vault":
+				hollow.events.toggle("show-vault");
+				break;
 			case "Go to Realm Selector":
 				RealmManager.getSelf().toggleRealm();
 				break;
@@ -237,9 +253,21 @@ const iniData: HotKeysData = {
 			type: "View Controls",
 		},
 		{
+			name: "Toggle Editor",
+			keys: ["Ctrl", "I"],
+			description: "Toggle the editor on the right sidebar",
+			type: "View Controls",
+		},
+		{
 			name: "Toggle Expand",
 			keys: ["Ctrl", "E"],
 			description: "Expand or collapse the left sidebar",
+			type: "View Controls",
+		},
+		{
+			name: "Toggle Vault",
+			keys: ["Ctrl", "K"],
+			description: "Toggle the vault storage.",
 			type: "View Controls",
 		},
 		{
@@ -262,4 +290,4 @@ const iniData: HotKeysData = {
 			type: "System Controls",
 		},
 	],
-};
+} as const;

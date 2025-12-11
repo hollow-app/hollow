@@ -9,9 +9,9 @@ import { NotebookType } from "../NotebookType";
 import { ContextMenuItem, ToolOptions } from "@type/hollow";
 import { createEffect, createRoot, on, onMount } from "solid-js";
 import { onCleanup } from "solid-js";
-import { ImageIcon, Trash2Icon } from "lucide-solid";
 import { hollow } from "hollow";
 import { unwrap } from "solid-js/store";
+import { MyIconFun } from "@components/MyIcon";
 
 export type LogicType = {
 	onSave: () => Promise<void>;
@@ -144,14 +144,14 @@ export const NotebookLogic = (
 			header: "Note",
 			items: [
 				{
-					icon: ImageIcon,
+					icon: MyIconFun({ name: "image" }),
 					label: "Change Banner",
 					onclick: changeBanner,
 				},
 				...(state.note()
 					? [
 							{
-								icon: Trash2Icon,
+								icon: MyIconFun({ name: "trash" }),
 								label: "Delete Note",
 								onclick: () => {
 									removeNote(state.note().title);

@@ -13,16 +13,9 @@ import {
 import { lazy, onCleanup, onMount } from "solid-js";
 import { ToolMetadata } from "@type/ToolMetadata";
 import { DragEventHandler } from "@thisbeyond/solid-dnd";
-import {
-	ChartGantt,
-	ChartGanttIcon,
-	ChartNoAxesGantt,
-	CheckCheckIcon,
-	SendIcon,
-	Trash2Icon,
-	XIcon,
-} from "lucide-solid";
+import { CheckCheckIcon, SendIcon, XIcon } from "lucide-solid";
 import { hollow } from "hollow";
+import MyIcon, { MyIconFun } from "@components/MyIcon";
 
 export type LogicType = {
 	handleContextMenu: () => void;
@@ -161,7 +154,7 @@ export const KanbanLogic = (
 		if (state.kanban().items.length > 0) {
 			const menuItems: ContextMenuItemButton[] = [
 				{
-					icon: ChartGanttIcon,
+					icon: MyIconFun({ name: "receipt" }),
 					label: "Stats",
 					onclick: () =>
 						KanbanManager.getSelf().showInsight(state.kanban()),
@@ -222,7 +215,7 @@ export const KanbanLogic = (
 					});
 
 				menuItems.push({
-					icon: Trash2Icon,
+					icon: MyIconFun({ name: "trash" }),
 					label: `Delete (${nSelected})`,
 					onclick: () => {
 						hollow.events.emit("confirm", {

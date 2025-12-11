@@ -59,14 +59,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 								<button
 									class="button-control my-auto ml-auto shrink-0"
 									onclick={() =>
-										hollow.events.emit("confirm", {
-											title: "Warning",
-											message:
-												"Switching realms requires a restart of the application.\nWould you like to proceed?",
-
-											onAccept: () =>
-												RealmManager.getSelf().toggleRealm(),
-										})
+										RealmManager.getSelf().toggleRealm()
 									}
 								>
 									<ArrowDownUpIcon class="m-auto" />

@@ -18,6 +18,12 @@ export default function MyIcon(props: Props) {
 	);
 }
 
+export function MyIconFun(props: Props) {
+	return (ov: any) => {
+		return <MyIcon {...props} {...ov} />;
+	};
+}
+
 const HollowIcons = {
 	"alert-square-outline": () =>
 		import("@assets/icons/alert-square-outline.svg"),
@@ -28,8 +34,6 @@ const HollowIcons = {
 	"align-box-left-top": () => import("@assets/icons/align-box-left-top.svg"),
 	"bell-ringing": () => import("@assets/icons/bell-ringing.svg"),
 	bell: () => import("@assets/icons/bell.svg"),
-	buymecoffee: () => import("@assets/icons/buymecoffee.svg"),
-	"chart-pie": () => import("@assets/icons/chart-pie.svg"),
 	"check-square-outline": () =>
 		import("@assets/icons/check-square-outline.svg"),
 	"check-square": () => import("@assets/icons/check-square.svg"),
@@ -42,17 +46,19 @@ const HollowIcons = {
 	loader: () => import("@assets/icons/loader.svg"),
 	"mood-smile": () => import("@assets/icons/mood-smile.svg"),
 	mosaic: () => import("@assets/icons/mosaic.svg"),
-	"note-fill": () => import("@assets/icons/note-fill.svg"),
+	receipt: () => import("@assets/icons/receipt.svg"),
 	"pen-ruler": () => import("@assets/icons/pen-ruler.svg"),
 	pen: () => import("@assets/icons/pen.svg"),
+	"edit-pen": () => import("@assets/icons/edit-pen.svg"),
 	scroll: () => import("@assets/icons/scroll.svg"),
-	server: () => import("@assets/icons/server.svg"),
-	"tool-case": () => import("@assets/icons/tool-case.svg"),
 	trash: () => import("@assets/icons/trash.svg"),
 	"user-gear": () => import("@assets/icons/user-gear.svg"),
 	vault: () => import("@assets/icons/vault.svg"),
 	"x-square-outline": () => import("@assets/icons/x-square-outline.svg"),
 	"x-square": () => import("@assets/icons/x-square.svg"),
+	comet: () => import("@assets/icons/comet.svg"),
+	image: () => import("@assets/icons/image.svg"),
+	"pencil-alt": () => import("@assets/icons/pencil-alt.svg"),
 	// Files subdirectory
 	"files/file-check": () => import("@assets/icons/files/file-check.svg"),
 	"files/file-description": () =>

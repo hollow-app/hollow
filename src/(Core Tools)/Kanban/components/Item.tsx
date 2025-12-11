@@ -1,5 +1,5 @@
 import { Accessor, createMemo, Setter } from "solid-js";
-import { PenLineIcon, SendIcon, Trash2Icon } from "lucide-solid";
+import { PenLineIcon, SendIcon } from "lucide-solid";
 import { TagType } from "@type/hollow";
 import { HollowEvent } from "@type/hollow";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
@@ -7,6 +7,7 @@ import { ToolMetadata } from "@type/ToolMetadata";
 import { ItemType } from "../types/ItemType";
 import { hollow } from "hollow";
 import ItemDisplay from "./ItemDisplay";
+import { MyIconFun } from "@components/MyIcon";
 
 type ItemProps = {
 	toolEvent?: HollowEvent;
@@ -55,7 +56,7 @@ export default function Item(props: ItemProps) {
 			});
 		const menuItems: any = [
 			{
-				icon: PenLineIcon,
+				icon: MyIconFun({ name: "edit-pen" }),
 				label: "Edit",
 				onclick: () => {
 					props.showForm((data) => {
@@ -64,7 +65,7 @@ export default function Item(props: ItemProps) {
 				},
 			},
 			{
-				icon: Trash2Icon,
+				icon: MyIconFun({ name: "trash" }),
 				label: "Delete",
 				onclick: () => props.removeItem(props.item.id, true),
 			},

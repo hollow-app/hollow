@@ -11,10 +11,10 @@ import {
 	LinkIcon,
 	PencilIcon,
 	SearchIcon,
-	Trash2Icon,
 } from "lucide-solid";
 import FilterButton from "@components/FilterButton";
 import { createSignal, For, onMount, Show } from "solid-js";
+import MyIcon from "@components/MyIcon";
 
 export const VaultView = (
 	state: StateType,
@@ -179,7 +179,10 @@ export const VaultView = (
 											class="button-control red"
 											onclick={logic.removeItem}
 										>
-											<Trash2Icon class="size-5" />
+											<MyIcon
+												name="trash"
+												class="size-5"
+											/>
 										</button>
 									</div>
 								</div>

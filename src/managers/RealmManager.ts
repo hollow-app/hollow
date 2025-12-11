@@ -3,6 +3,7 @@ import { Setter } from "solid-js";
 import { RustManager } from "./RustManager";
 import { Storage } from "./Storage";
 import { appConfigDir, join } from "@tauri-apps/api/path";
+import { hollow } from "hollow";
 
 export class RealmManager {
 	public currentRealmId: string | null = null;
@@ -67,9 +68,17 @@ export class RealmManager {
 	}
 
 	public toggleRealm() {
-		this.setCurrentRealm((prev: string) =>
-			prev === undefined ? this.currentRealmId : undefined,
-		);
+		hollow.events.emit("confirm", {
+			title: "Warning",
+			message:
+				"Switching realms requires a restart of the application.\nWould you like to proceed?",
+
+			onAccept: () => {
+				this.setCurrentRealm((prev: string) =>
+					prev === undefined ? this.currentRealmId : undefined,
+				);
+			},
+		});
 	}
 	public getRealmFromId(id: string) {
 		return this.getRealms().find((i) => i.id === id);

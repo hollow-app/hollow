@@ -3,7 +3,7 @@ import type { StateType } from "./state";
 import type { HelperType } from "./helper";
 import { hollow } from "hollow";
 import { ContextMenuItem } from "@type/hollow";
-import { onCleanup, onMount } from "solid-js";
+import { createEffect, createMemo, on, onCleanup, onMount } from "solid-js";
 
 export type LogicType = {};
 
@@ -68,18 +68,24 @@ export const ContextMenuLogic = (
 		const y = e.clientY;
 
 		state.setVisible(true);
-		const flipx = x > window.innerWidth - state.contextMenu.scrollWidth;
-		const flipy = y > window.innerHeight - state.contextMenu.scrollHeight;
-		state.setPosition({
-			x: flipx ? x - state.contextMenu.scrollWidth : x,
-			y: flipy ? y - state.contextMenu.scrollHeight : y,
-			xflip: x > window.innerWidth - state.contextMenu.scrollWidth * 2,
-			yflip: y > window.innerHeight - state.contextMenu.scrollHeight * 2,
+		requestAnimationFrame(() => {
+			state.contextMenu.focus();
+			const flipx = x > window.innerWidth - state.contextMenu.scrollWidth;
+			const flipy =
+				y > window.innerHeight - state.contextMenu.scrollHeight;
+			state.setPosition({
+				x: flipx ? x - state.contextMenu.scrollWidth : x,
+				y: flipy ? y - state.contextMenu.scrollHeight : y,
+				// this condition is for the extra panels, has nothing to do with x and y above
+				xflip:
+					x > window.innerWidth - state.contextMenu.scrollWidth * 2,
+				yflip:
+					y > window.innerHeight - state.contextMenu.scrollHeight * 2,
+			});
 		});
-
-		requestAnimationFrame(() => state.contextMenu.focus());
 		document.body.addEventListener("mousedown", onFocusOut);
 	};
+
 	const onFocusOut = (e: MouseEvent) => {
 		if (
 			state.contextMenu &&

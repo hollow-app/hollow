@@ -4,7 +4,6 @@ import { Realm } from "@type/Realm";
 import HollowIcon from "@assets/logo.svg";
 import {
 	CalendarIcon,
-	Trash2Icon,
 	PlusIcon,
 	ArrowLeftIcon,
 	RocketIcon,
@@ -29,6 +28,7 @@ import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 import Dropdown from "@components/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
+import MyIcon from "@components/MyIcon";
 
 type SelectorProps = {
 	onSelect: (id: string) => void;
@@ -269,7 +269,10 @@ const RealmList = (props: {
 												)
 											}
 										>
-											<Trash2Icon />
+											<MyIcon
+												name="trash"
+												class="size-5"
+											/>
 										</button>
 									</div>
 								</div>
@@ -392,6 +395,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 											items: themes.map((i) => i.name),
 										},
 									]}
+									value={() => undefined}
 									onSelect={selectTheme}
 									placeholder="Select A Theme"
 								/>

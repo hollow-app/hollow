@@ -7,15 +7,6 @@ import {
 	onMount,
 	Show,
 } from "solid-js";
-import {
-	BackgroundGrid,
-	ConfigsType,
-	ConnectionType,
-	Kit,
-	NodeType,
-	SolidKitx,
-	ViewPort,
-} from "solid-kitx";
 import { createStore, unwrap } from "solid-js/store";
 import { createSignal } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
@@ -24,8 +15,8 @@ import { SettingsManager } from "@managers/SettingsManager";
 import { ToolManager } from "@managers/ToolManager";
 
 type CanvasProps = {
-	canvasConfigs: Accessor<ConfigsType>;
-	setCanvasConfigs: Accessor<ConfigsType>;
+	canvasConfigs: Accessor<any>;
+	setCanvasConfigs: Accessor<any>;
 	isLiveEditor: Accessor<boolean>;
 };
 

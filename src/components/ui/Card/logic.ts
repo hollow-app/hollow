@@ -28,12 +28,12 @@ export const CardLogic = (
 					onclick: () => expand(),
 				},
 				{
-					icon: MyIconFun({ name: "color-picker" }),
+					icon: MyIconFun({ name: "designtools-fill" }),
 					label: "Modify",
 					onclick: showEditor,
 				},
 				{
-					icon: MyIconFun({ name: "gear" }),
+					icon: MyIconFun({ name: "gear-fill" }),
 					label: "Configure",
 					onclick: showSettings,
 				},

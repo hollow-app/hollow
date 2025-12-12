@@ -423,24 +423,18 @@ a {
 .button-control {
 	--c: var(--tc-50);
 	--bg: var(--color-secondary-20);
-	--w: fit-content;
-	--p: 2;
-	--border-radius: var(--radius-md);
-	width: var(--w);
-	height: fit-content;
+	--border-radius: var(--radius-lg);
+	height: calc(var(--spacing) * 9);
+	width: calc(var(--spacing) * 9);
 	border-radius: var(--border-radius);
-	padding: calc(var(--spacing) * var(--p));
-	color: color-mix(in oklab, var(--c) 80%, transparent);
+	color: var(--color-secondary-60);
 	transition: all 0.2s ease-in-out;
 
 	&:hover {
 		background-color: color-mix(in oklab,
 				var(--bg) 50%,
 				transparent);
-		color: var(--c);
-		border-color: color-mix(in oklab,
-				var(--bg) 50%,
-				transparent);
+		color: var(--color-secondary-95);
 	}
 
 	&:active {
@@ -449,6 +443,10 @@ a {
 
 	&:disabled {
 		opacity: 0.4;
+	}
+
+	& svg {
+		margin: auto;
 	}
 
 }

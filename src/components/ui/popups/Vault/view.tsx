@@ -14,7 +14,7 @@ import {
 } from "lucide-solid";
 import FilterButton from "@components/FilterButton";
 import { createSignal, For, onMount, Show } from "solid-js";
-import MyIcon from "@components/MyIcon";
+import MyIcon, { MyIconFun } from "@components/MyIcon";
 
 export const VaultView = (
 	state: StateType,
@@ -24,7 +24,7 @@ export const VaultView = (
 ) => {
 	return (
 		<PopupWrapper
-			Icon={VaultIcon}
+			Icon={MyIconFun({ name: "strongbox-ghost" })}
 			title="Vault Storage"
 			onClose={() => hollow.events.toggle("show-vault")}
 		>

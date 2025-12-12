@@ -78,7 +78,7 @@ export default function PopupWrapper({
 				class="title-panel flex h-fit w-full cursor-grab items-center gap-2 rounded-t-lg select-none"
 				onPointerDown={down}
 			>
-				<Icon class="text-secondary-50 m-1 size-5" />
+				<Icon class="text-secondary-50 size-5" />
 				<h1 class="h1-title">{title}</h1>
 				<Show when={onClose}>
 					<button

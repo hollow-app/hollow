@@ -239,10 +239,11 @@ export const KanbanLogic = (
 		}
 	};
 	const showForm = (onSubmit: (data: any) => void, item?: ItemType) => {
+		const update = !!item;
 		const form: FormType = {
 			id: item?.id ?? crypto.randomUUID(),
-			title: "New Item",
-			update: !!item,
+			title: update ? "Update Item" : "New Item",
+			update,
 			options: [
 				{
 					key: "title",
@@ -254,13 +255,14 @@ export const KanbanLogic = (
 				},
 				{
 					key: "priority",
-					type: "dropdown",
+					type: "segmented",
 					label: "Priority",
 					inline: true,
 					options: [
-						{
-							items: ["low", "medium", "high", "urgent"],
-						},
+						{ key: "low", title: "low" },
+						{ key: "medium", title: "medium" },
+						{ key: "high", title: "high" },
+						{ key: "urgent", title: "urgent" },
 					],
 					value: item?.priority ?? "medium",
 				},

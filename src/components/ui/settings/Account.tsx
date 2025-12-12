@@ -1,4 +1,4 @@
-import Dropdown from "@components/Dropdown";
+import Dropdown from "@components/dynamic/Dropdown";
 import MyIcon from "@components/MyIcon";
 import { CharacterManager } from "@managers/CharacterManager";
 import { Character } from "@type/Character";
@@ -221,7 +221,7 @@ export default function Account() {
 					</div>
 					<div>
 						<Dropdown
-							options={() => [
+							options={[
 								{
 									items: character().titles,
 								},
@@ -232,7 +232,7 @@ export default function Account() {
 									title: t,
 								}))
 							}
-							value={() => character().title}
+							value={character().title}
 						/>
 					</div>
 				</div>

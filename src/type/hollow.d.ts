@@ -360,6 +360,7 @@ export type TypedOptionMap = {
 	longtext: { attributes?: JSX.TextAreaHTMLAttributes<HTMLTextAreaElement> };
 	number: { min?: number; max?: number };
 	boolean: {};
+	segmented: { options: { title?: string; key: any; icon?: any }[] };
 	// ??
 	button: {};
 	color: {};

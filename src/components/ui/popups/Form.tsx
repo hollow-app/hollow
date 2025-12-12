@@ -4,7 +4,7 @@ import { Accessor, For, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
 import { hollow } from "hollow";
 import { Show } from "solid-js";
-import DynamicOption from "@components/DynamicOption";
+import DynamicOption from "@components/dynamic/DynamicOption";
 import PopupWrapper from "../PopupWrapper";
 
 type FormProps = {
@@ -87,7 +87,7 @@ export default function Form({ form, setForm }: FormProps) {
 								>
 									<div class="mb-2 flex w-[50%] items-center gap-2">
 										<h2
-											class="flex gap-1 text-lg text-neutral-800 dark:text-neutral-200"
+											class="flex gap-1 text-lg font-medium text-neutral-800 dark:text-neutral-200"
 											classList={{
 												"tool-tip":
 													!!option.description,

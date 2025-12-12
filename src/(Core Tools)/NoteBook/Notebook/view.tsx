@@ -4,7 +4,7 @@ import type { LogicType } from "./logic.tsx";
 import type { HelperType } from "./helper";
 import { For, Show, Switch } from "solid-js";
 import MarkdownEditor from "@components/MarkdownEditor";
-import WordInput from "@components/WordInput";
+import WordInput from "@components/dynamic/WordInput.tsx";
 import Tag from "@components/Tag";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
@@ -133,7 +133,7 @@ export const NotebookView = (
 										when={!state.editMode()}
 										fallback={
 											<WordInput
-												words={() =>
+												words={
 													state
 														.note()
 														.attributes?.tags.split(

@@ -104,11 +104,11 @@ export const ContextMenuLogic = (
 	};
 	onMount(() => {
 		document.body.oncontextmenu = onContextMenu;
-		hollow.events.on("context-menu", showContextMenu);
+		hollow.pevents.on("context-menu", showContextMenu);
 		hollow.events.on("context-menu-extend", addItems);
 	});
 	onCleanup(() => {
-		hollow.events.off("context-menu", showContextMenu);
+		hollow.pevents.off("context-menu", showContextMenu);
 		hollow.events.off("context-menu-extend", addItems);
 	});
 	// TODO :?

@@ -105,7 +105,7 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 					value: image().url,
 				},
 				{
-					type: "dropdown",
+					type: "segmented",
 					label: "Fit Mode",
 					description: "How the image should fit in its container",
 					value: image().objectFit,
@@ -119,15 +119,11 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 						}));
 					},
 					options: [
-						{
-							items: [
-								"contain",
-								"cover",
-								"fill",
-								"none",
-								"scale-down",
-							],
-						},
+						{ key: "contain", title: "contain" },
+						{ key: "cover", title: "cover" },
+						{ key: "fill", title: "fill" },
+						{ key: "none", title: "none" },
+						{ key: "scale-down", title: "scale-down" },
 					],
 				},
 				{

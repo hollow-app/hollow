@@ -2,7 +2,6 @@ import {
 	on,
 	createSignal,
 	For,
-	JSX,
 	Show,
 	onMount,
 	onCleanup,
@@ -10,23 +9,18 @@ import {
 } from "solid-js";
 import { Portal } from "solid-js/web";
 import { ChevronDownIcon } from "lucide-solid";
-import { useDropdownPosition } from "../hooks/useDropdownPosition";
+import { useDropdownPosition } from "../../hooks/useDropdownPosition";
 
 export type DropdownProps = {
-	value: () => string | undefined;
-	options: () => { title?: string; items: string[] }[];
+	value?: string;
+	options: { title?: string; items: string[] }[];
 	onSelect: (v: string) => void;
 	placeholder?: string;
 };
 
-export default function Dropdown({
-	value,
-	options,
-	onSelect,
-	placeholder,
-}: DropdownProps) {
+export default function Dropdown(props: DropdownProps) {
 	const [isOpen, setIsOpen] = createSignal(false);
-	const [innerValue, setInnerValue] = createSignal(value() ?? "");
+	const [innerValue, setInnerValue] = createSignal(props.value ?? "");
 	let dropdownRef: HTMLDivElement | undefined;
 	let listRef: HTMLUListElement | undefined;
 	let inputRef: HTMLInputElement | undefined;
@@ -34,7 +28,7 @@ export default function Dropdown({
 	// TODO
 	createEffect(
 		on(
-			value,
+			() => props.value,
 			(v) => {
 				setInnerValue(v);
 			},
@@ -57,7 +51,7 @@ export default function Dropdown({
 	};
 
 	const selectItem = (item: string) => {
-		onSelect(item);
+		props.onSelect(item);
 		setInnerValue(item);
 		setIsOpen(false);
 	};
@@ -80,7 +74,7 @@ export default function Dropdown({
 					ref={inputRef}
 					type="text"
 					value={innerValue()}
-					placeholder={placeholder}
+					placeholder={props.placeholder}
 					readonly
 					class="border-secondary-20 text-secondary-70 placeholder:text-secondary-40 bg-secondary-10/75 text-md relative w-full cursor-pointer rounded-md px-3 py-2 shadow-sm"
 				/>
@@ -102,7 +96,7 @@ export default function Dropdown({
 						}}
 					>
 						<div class="p-1">
-							<For each={options()}>
+							<For each={props.options}>
 								{(group) => (
 									<div>
 										<Show when={group.title}>

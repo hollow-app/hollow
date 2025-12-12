@@ -2,13 +2,7 @@ import {
 	createCodeMirror,
 	createEditorControlledValue,
 } from "solid-codemirror";
-import {
-	Accessor,
-	createEffect,
-	createResource,
-	createSignal,
-	Suspense,
-} from "solid-js";
+import { Accessor, createResource, createSignal, Suspense } from "solid-js";
 import {
 	drawSelection,
 	EditorView,

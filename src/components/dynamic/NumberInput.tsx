@@ -1,38 +1,28 @@
 import { createEffect, createSignal, on, Setter } from "solid-js";
 
 type NumberInputProps = {
-	value: () => number;
+	value: number;
 	setValue: (v: number) => void;
 	step?: number;
 	max?: number;
 	min?: number;
 	direct?: boolean;
 };
-export default function NumberInput({
-	value,
-	setValue,
-	step = 1,
-	max = 1000,
-	min = 0,
-	direct,
-}: NumberInputProps) {
-	const [myValue, setMyValue] = createSignal(value());
-	createEffect(() => {
-		on(value, (v) => setMyValue(v));
-	});
+export default function NumberInput(props: NumberInputProps) {
+	const [myValue, setMyValue] = createSignal(props.value);
 	const minus = () => {
-		const n = parseFloat((myValue() - step).toFixed(10));
-		if (n >= min) {
+		const n = parseFloat((myValue() - (props.step ?? 1)).toFixed(10));
+		if (n >= props.min) {
 			setMyValue(n);
-			direct && setValue(n);
+			props.direct && props.setValue(n);
 		}
 	};
 
 	const plus = () => {
-		const n = parseFloat((myValue() + step).toFixed(10));
-		if (n <= max) {
+		const n = parseFloat((myValue() + (props.step ?? 1)).toFixed(10));
+		if (n <= props.max) {
 			setMyValue(n);
-			direct && setValue(n);
+			props.direct && props.setValue(n);
 		}
 	};
 
@@ -40,13 +30,13 @@ export default function NumberInput({
 		const newValue = Number((e.target as HTMLInputElement).value);
 		if (!isNaN(newValue)) {
 			setMyValue(newValue);
-			direct && setValue(newValue);
+			props.direct && props.setValue(newValue);
 		}
 	};
 
 	const commitValue = () => {
-		if (!direct) {
-			setValue(myValue());
+		if (!props.direct) {
+			props.setValue(myValue());
 		}
 	};
 	return (

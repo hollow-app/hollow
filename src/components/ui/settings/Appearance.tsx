@@ -1,5 +1,5 @@
-import ColorPick from "@components/ColorPick";
-import NumberInput from "@components/NumberInput";
+import ColorPick from "@components/dynamic/ColorPick";
+import NumberInput from "@components/dynamic/NumberInput";
 import { useBackground } from "@hooks/useBackground";
 import { useColor } from "@hooks/useColor";
 import {
@@ -14,16 +14,17 @@ import {
 import { FormType } from "@type/hollow";
 import useTags from "@hooks/useTags";
 import { readableColor } from "polished";
-import Slider from "@components/Slider";
+import Slider from "@components/dynamic/Slider";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 import { CodeThemeManager } from "@managers/CodeThemeManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
 import Loading from "@components/Loading";
 import { SettingsManager } from "@managers/SettingsManager";
-import Dropdown from "@components/Dropdown";
+import Dropdown from "@components/dynamic/Dropdown";
 import { CircleFadingPlusIcon } from "lucide-solid";
 import Tag from "@components/Tag";
+import Segmented from "@components/dynamic/Segmented";
 
 export default function Appearance() {
 	const settingsManager = SettingsManager.getSelf();
@@ -69,7 +70,7 @@ function CanvasSettings() {
 							</p>
 						</div>
 						<div class="w-50">
-							<NumberInput value={grid} setValue={setGrid} />
+							<NumberInput value={grid()} setValue={setGrid} />
 						</div>
 					</div>
 					<div class="flex justify-between">
@@ -82,17 +83,21 @@ function CanvasSettings() {
 							</p>
 						</div>
 						<div class="w-50">
-							<Dropdown
-								value={() =>
-									SettingsManager.getSelf().getConfig(
-										"grid-type",
-									)
-								}
-								options={() => [{ items: ["dot", "dash"] }]}
-								onSelect={(v: "dash" | "dot") =>
+							<Segmented
+								value={SettingsManager.getSelf().getConfig(
+									"grid-type",
+								)}
+								options={[
+									{
+										key: "dot",
+										title: "Dot",
+									},
+									{ title: "Dash", key: "dash" },
+								]}
+								setValue={(v: string) =>
 									SettingsManager.getSelf().setConfig(
 										"grid-type",
-										v,
+										v as "dash" | "dot",
 									)
 								}
 							/>
@@ -141,7 +146,7 @@ function ColorSettings() {
 							</p>
 						</div>
 						<ColorPick
-							color={primaryColor}
+							color={primaryColor()}
 							setColor={setPrimaryColor}
 						/>
 					</div>
@@ -156,7 +161,7 @@ function ColorSettings() {
 							</p>
 						</div>
 						<ColorPick
-							color={secondaryColor}
+							color={secondaryColor()}
 							setColor={setSecondaryColor}
 						/>
 					</div>
@@ -291,8 +296,8 @@ function CodeThemeSettings({ settingsManager }: CommonSettings) {
 				</div>
 				<div class="w-70">
 					<Dropdown
-						value={codeTheme}
-						options={() => [
+						value={codeTheme()}
+						options={[
 							{
 								items: codeThemes,
 							},

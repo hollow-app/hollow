@@ -182,21 +182,28 @@ export const NotebookLogic = (
 				},
 				{
 					type: "custom",
-
 					render: () => (
-						<TextareaAutosize
-							class="input"
-							style={{
-								"--bg-color": "var(--color-secondary-10)",
-							}}
-							value={state.book.structure}
-							onChange={(e) =>
-								state.setBook((prev) => ({
-									...prev,
-									structure: e.currentTarget.value,
-								}))
-							}
-						/>
+						<div class="w-full">
+							<div class="w-full">
+								<h1 class="text-lg font-bold">Structure</h1>
+								<h3 class="text-secondary-40">
+									Template structure for new notes.
+								</h3>
+							</div>
+							<TextareaAutosize
+								class="input"
+								style={{
+									"--bg-color": "var(--color-secondary-10)",
+								}}
+								value={state.book.structure}
+								onChange={(e) =>
+									state.setBook(
+										"structure",
+										e.currentTarget.value,
+									)
+								}
+							/>
+						</div>
 					),
 				},
 			],

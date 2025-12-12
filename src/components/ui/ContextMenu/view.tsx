@@ -32,7 +32,7 @@ export const ContextMenuView = (
 			<Show when={state.isVisible()}>
 				<Motion.div
 					class={
-						"border-secondary-05 bg-secondary text-secondary-90 pointer-events-auto fixed z-200 w-60 space-y-2 rounded-lg border px-2 py-2 shadow-[0_0_5px_1px_gray] select-none dark:shadow-[0_0_5px_1px_black]"
+						"border-secondary-10 bg-secondary text-secondary-90 pointer-events-auto fixed z-200 w-60 space-y-2 rounded-lg border px-2 py-2 shadow-[0_0_5px_1px_gray] select-none dark:shadow-[0_0_5px_1px_black]"
 					}
 					style={{
 						left: `${state.position().x}px`,
@@ -77,13 +77,15 @@ export const ContextMenuView = (
 					<div id="context-menu-tool" class="space-y-2">
 						<Show when={state.items()}>
 							<For each={state.items()}>
-								{(group: ContextMenuItem) => (
+								{(group: ContextMenuItem, index) => (
 									<>
 										<div class="flex items-center gap-1">
 											<h1 class="text-secondary-30 text-xs font-semibold uppercase">
 												{group.header}
 											</h1>
-											<hr class="border-secondary-10 flex-1" />
+											<Show when={index() !== 0}>
+												<hr class="border-secondary-05 flex-1" />
+											</Show>
 										</div>
 										<div>
 											<For each={group.items}>
@@ -103,7 +105,7 @@ export const ContextMenuView = (
 															class="button-cm active-cm"
 															onclick={() => {
 																item.onclick();
-																hollow.events.emit(
+																hollow.pevents.emit(
 																	"context-menu",
 																	false,
 																);
@@ -125,16 +127,6 @@ export const ContextMenuView = (
 													</Show>
 												)}
 											</For>
-											<ContextMenuSide
-												position={state.position}
-												children={[
-													{
-														label: "example",
-														onclick: () => {},
-													},
-												]}
-												label="test"
-											/>
 										</div>
 									</>
 								)}
@@ -145,7 +137,7 @@ export const ContextMenuView = (
 								{RealmManager.getSelf().getCurrent().name}
 								{" Realm"}
 							</h1>
-							<hr class="border-secondary-10 flex-1" />
+							<hr class="border-secondary-05 flex-1" />
 						</div>
 						<div class="">
 							<button
@@ -203,7 +195,7 @@ function ContextMenuSide({
 			<Presence>
 				<Show when={hovered()}>
 					<Motion.div
-						class="bg-secondary border-secondary-05 absolute h-fit w-70 rounded-lg border px-2 py-2 backdrop-blur-sm"
+						class="bg-secondary border-secondary-10 absolute mx-3 h-fit w-70 rounded-lg border p-2 backdrop-blur-sm"
 						onMouseOver={handleMouseOver}
 						classList={{
 							"right-[100%]": position().xflip,

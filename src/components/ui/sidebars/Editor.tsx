@@ -1,5 +1,5 @@
-import ColorPick from "@components/ColorPick";
-import NumberInput from "@components/NumberInput";
+import ColorPick from "@components/dynamic/ColorPick";
+import NumberInput from "@components/dynamic/NumberInput";
 import { TentTreeIcon } from "lucide-solid";
 import {
 	createMemo,
@@ -11,7 +11,7 @@ import {
 	type Setter,
 } from "solid-js";
 import { hollow } from "hollow";
-import Dropdown from "@components/Dropdown";
+import Dropdown from "@components/dynamic/Dropdown";
 import { CardType } from "@type/hollow";
 import { unwrap } from "solid-js/store";
 import { SettingsManager } from "@managers/SettingsManager";
@@ -105,13 +105,13 @@ export default function Editor() {
 						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 							<NumRow
 								label="Width"
-								value={() => cardData().width}
+								value={cardData().width}
 								step={step()}
 								setValue={(v) => updateRootProp("width", v)}
 							/>
 							<NumRow
 								label="Height"
-								value={() => cardData().height}
+								value={cardData().height}
 								step={step()}
 								setValue={(v) => updateRootProp("height", v)}
 							/>
@@ -121,13 +121,11 @@ export default function Editor() {
 						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 							<NumRow
 								label="Corner"
-								value={() =>
-									Number(
-										cardStyle()
-											["border-radius"].toString()
-											.split("px")[0],
-									)
-								}
+								value={Number(
+									cardStyle()
+										["border-radius"].toString()
+										.split("px")[0],
+								)}
 								setValue={(v) =>
 									updateStyleProp("border-radius", v + "px")
 								}
@@ -135,13 +133,11 @@ export default function Editor() {
 
 							<NumRow
 								label="Opacity"
-								value={() =>
-									Number(
-										(cardStyle()["--opacity"] ?? "100%")
-											.toString()
-											.split("%")[0],
-									)
-								}
+								value={Number(
+									(cardStyle()["--opacity"] ?? "100%")
+										.toString()
+										.split("%")[0],
+								)}
 								setValue={(v) =>
 									updateStyleProp("--opacity", `${v}%`)
 								}
@@ -153,24 +149,18 @@ export default function Editor() {
 								<h3>Border</h3>
 								<div class="flex w-[60%] items-center justify-end gap-1">
 									<ColorPick
-										color={() =>
-											cardStyle()["outline-color"]
-										}
+										color={cardStyle()["outline-color"]}
 										setColor={(v) =>
 											updateStyleProp("outline-color", v)
 										}
 									/>
 									<div class="w-70 max-w-[90%]">
 										<NumberInput
-											value={() =>
-												Number(
-													cardStyle()
-														[
-															"outline-width"
-														].toString()
-														.split("px")[0],
-												)
-											}
+											value={Number(
+												cardStyle()
+													["outline-width"].toString()
+													.split("px")[0],
+											)}
 											setValue={(v) =>
 												updateStyleProp(
 													"outline-width",
@@ -185,7 +175,7 @@ export default function Editor() {
 
 							<ToggleRow
 								label="Glass"
-								checked={() =>
+								checked={
 									cardStyle()["backdrop-filter"] !== "none"
 								}
 								onToggle={(on) =>
@@ -198,9 +188,7 @@ export default function Editor() {
 
 							<ToggleRow
 								label="Shadow"
-								checked={() =>
-									cardStyle()["box-shadow"] !== "none"
-								}
+								checked={cardStyle()["box-shadow"] !== "none"}
 								onToggle={(on) =>
 									updateStyleProp(
 										"box-shadow",
@@ -214,23 +202,21 @@ export default function Editor() {
 						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 							<NumRow
 								label="X"
-								value={() => cardData().x}
+								value={cardData().x}
 								setValue={(v) => updateRootProp("x", v)}
 								step={step()}
 								min={-10000}
 							/>
 							<NumRow
 								label="Y"
-								value={() => cardData().y}
+								value={cardData().y}
 								setValue={(v) => updateRootProp("y", v)}
 								step={step()}
 								min={-10000}
 							/>
 							<NumRow
 								label="Z"
-								value={() =>
-									Number(cardStyle()["z-index"] ?? 0)
-								}
+								value={Number(cardStyle()["z-index"] ?? 0)}
 								setValue={(v) => updateStyleProp("z-index", v)}
 							/>
 						</div>
@@ -252,7 +238,7 @@ export default function Editor() {
 
 function NumRow(props: {
 	label: string;
-	value: Accessor<number>;
+	value: number;
 	setValue: (v: number) => void;
 	step?: number;
 	max?: number;
@@ -277,9 +263,10 @@ function NumRow(props: {
 
 function ToggleRow(props: {
 	label: string;
-	checked: Accessor<boolean>;
+	checked: boolean;
 	onToggle: (on: boolean) => void;
 }) {
+	const id = crypto.randomUUID();
 	return (
 		<div class="flex items-center justify-between">
 			<h3>{props.label}</h3>
@@ -287,10 +274,11 @@ function ToggleRow(props: {
 				<input
 					class="toggle-input"
 					type="checkbox"
-					checked={props.checked()}
+					id={`${id}-toggle`}
+					checked={props.checked}
 					onclick={(e) => props.onToggle(e.currentTarget.checked)}
 				/>
-				<label class="toggle-label" />
+				<label class="toggle-label" for={`${id}-toggle`} />
 			</div>
 		</div>
 	);
@@ -320,11 +308,11 @@ function Header(props: {
 			<div class="flex-1 space-y-1">
 				<div class="flex gap-2">
 					<Dropdown
-						value={() => props.selected()?.tool ?? ""}
+						value={props.selected()?.tool ?? ""}
 						onSelect={(v) =>
 							props.setSelected({ tool: v, cardId: null })
 						}
-						options={() => [
+						options={[
 							{
 								items: hollow.toolManager
 									.getHand()
@@ -335,7 +323,7 @@ function Header(props: {
 					/>
 
 					<Dropdown
-						value={() =>
+						value={
 							cardList().find(
 								(c) => c.id === props.selected().cardId,
 							)?.name ?? ""
@@ -347,9 +335,7 @@ function Header(props: {
 								cardId: cardList().find((c) => c.name === n).id,
 							});
 						}}
-						options={() => [
-							{ items: cardList().map((i) => i.name) },
-						]}
+						options={[{ items: cardList().map((i) => i.name) }]}
 						placeholder="Card"
 					/>
 				</div>

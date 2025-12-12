@@ -1,4 +1,4 @@
-import ColorPick from "@components/ColorPick";
+import ColorPick from "@components/dynamic/ColorPick";
 import { formatDate, timeDifference } from "@managers/manipulation/strings";
 import { Realm } from "@type/Realm";
 import HollowIcon from "@assets/logo.svg";
@@ -26,7 +26,7 @@ import { useColor } from "@hooks/useColor";
 import Loading from "@components/Loading";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
-import Dropdown from "@components/Dropdown";
+import Dropdown from "@components/dynamic/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@components/MyIcon";
 
@@ -390,12 +390,11 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 							<div class="w-50">
 								<Dropdown
 									// TODO light/dark gruops
-									options={() => [
+									options={[
 										{
 											items: themes.map((i) => i.name),
 										},
 									]}
-									value={() => undefined}
 									onSelect={selectTheme}
 									placeholder="Select A Theme"
 								/>
@@ -406,7 +405,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								Primary Color
 							</label>
 							<ColorPick
-								color={primary}
+								color={primary()}
 								setColor={setPrimary}
 								borderColor={"var(--color-neutral-800)"}
 							/>
@@ -416,7 +415,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								Secondary Color
 							</label>
 							<ColorPick
-								color={secondary}
+								color={secondary()}
 								setColor={setSecondary}
 								borderColor={"var(--color-neutral-800)"}
 							/>
@@ -613,8 +612,8 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 								Title
 							</h2>
 							<Dropdown
-								value={() => character().title}
-								options={() => [
+								value={character().title}
+								options={[
 									{
 										items: ["Elder", "The Original Few"],
 									},

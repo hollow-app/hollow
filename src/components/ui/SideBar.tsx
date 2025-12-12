@@ -12,6 +12,7 @@ import { hollow } from "hollow";
 import { Layout, SideBarButton } from "@type/hollow";
 import { Dynamic } from "solid-js/web";
 import { ConfigsType } from "solid-kitx";
+import { CharacterManager } from "@managers/CharacterManager";
 
 type SideBarProps = {
 	layout: Layout;

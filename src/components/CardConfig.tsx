@@ -2,7 +2,7 @@ import { CardType } from "@type/hollow";
 import { HandType } from "@type/HandType";
 import { Grid2X2PlusIcon, Grid2x2XIcon, StarIcon } from "lucide-solid";
 import { createSignal, Setter, Show } from "solid-js";
-import EmojiPick from "./EmojiPick";
+import EmojiPick from "./dynamic/EmojiPick";
 import { timeDifference } from "@managers/manipulation/strings";
 import { hollow } from "hollow";
 import ToolIcon from "./ToolIcon";

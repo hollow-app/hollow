@@ -1,14 +1,6 @@
-import ColorPick from "@components/ColorPick";
-import Dropdown from "@components/Dropdown";
-import DynamicOption from "@components/DynamicOption";
-import EmojiPick from "@components/EmojiPick";
-import ImportFile from "@components/ImportFile";
-import NumberInput from "@components/NumberInput";
-import Slider from "@components/Slider";
-import WordInput from "@components/WordInput";
+import DynamicOption from "@components/dynamic/DynamicOption";
 import { ToolOption, ToolOptions } from "@type/hollow";
 import { hollow } from "hollow";
-import { options } from "marked";
 import { createMemo, For } from "solid-js";
 
 type ToolSettingsProps = {

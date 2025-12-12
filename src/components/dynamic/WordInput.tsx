@@ -1,18 +1,14 @@
 import { CornerDownLeftIcon, XIcon } from "lucide-solid";
 import { createSignal, For } from "solid-js";
 
-type TagInputProps = {
-	words: () => string[];
+type Props = {
+	words: string[];
 	setWords: (ls: string[]) => void;
 	placeholder?: string;
 };
-export default function WordInput({
-	words,
-	setWords,
-	placeholder,
-}: TagInputProps) {
+export default function WordInput(props: Props) {
 	let inpt!: HTMLInputElement;
-	const [keywords, setKeywords] = createSignal(words() ?? []);
+	const [keywords, setKeywords] = createSignal(props.words ?? []);
 	return (
 		<div
 			class="border-secondary-10 group bg-secondary-05 relative flex max-h-full w-full flex-wrap gap-1 overflow-hidden overflow-y-visible rounded border-1 p-3 text-[1.2em] text-gray-900 dark:text-gray-50"
@@ -31,7 +27,7 @@ export default function WordInput({
 								setKeywords([
 									...keywords().filter((i) => i !== tag),
 								]);
-								setWords(keywords());
+								props.setWords(keywords());
 							}}
 						/>
 					</span>
@@ -42,7 +38,7 @@ export default function WordInput({
 				style={{
 					"line-height": 1,
 				}}
-				placeholder={placeholder ?? "..."}
+				placeholder={props.placeholder ?? "..."}
 				class="h-fit w-fit text-sm"
 				onkeydown={(e) => {
 					if (
@@ -55,7 +51,7 @@ export default function WordInput({
 							...keywords(),
 							e.currentTarget.value.trim(),
 						]);
-						setWords(keywords());
+						props.setWords(keywords());
 						e.currentTarget.value = "";
 					} else if (
 						e.key === "Backspace" &&
@@ -63,7 +59,7 @@ export default function WordInput({
 						keywords().length > 0
 					) {
 						setKeywords([...keywords().slice(0, -1)]);
-						setWords(keywords());
+						props.setWords(keywords());
 					}
 				}}
 			/>

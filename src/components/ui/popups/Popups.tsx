@@ -6,6 +6,7 @@ import { ContextMenu } from "../ContextMenu";
 import { Vault } from "./Vault";
 import ToolSettings from "./ToolSettings";
 import { ConfirmType, FormType } from "@type/hollow";
+import { MyIconFun } from "@components/MyIcon";
 
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
 const Confirm = lazy(() => import("@components/ui/popups/Confirm"));

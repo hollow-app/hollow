@@ -1,12 +1,13 @@
-import ColorPick from "@components/ColorPick";
-import Dropdown from "@components/Dropdown";
-import EmojiPick from "@components/EmojiPick";
-import ImportFile from "@components/ImportFile";
-import NumberInput from "@components/NumberInput";
-import Slider from "@components/Slider";
-import WordInput from "@components/WordInput";
+import ColorPick from "@components/dynamic/ColorPick";
+import Dropdown from "@components/dynamic/Dropdown";
+import EmojiPick from "@components/dynamic/EmojiPick";
+import ImportFile from "@components/dynamic/ImportFile";
+import NumberInput from "@components/dynamic/NumberInput";
+import Slider from "@components/dynamic/Slider";
+import WordInput from "@components/dynamic/WordInput";
 import { ToolOption } from "@type/hollow";
 import { Accessor, Match, Switch } from "solid-js";
+import Segmented from "./Segmented";
 
 type OptionType<T extends ToolOption["type"]> = Extract<
 	ToolOption,
@@ -61,6 +62,11 @@ export default function DynamicOption(props: {
 					option={props.option as OptionType<"keywords">}
 				/>
 			</Match>
+			<Match when={props.option.type === "segmented"}>
+				<SegmentedOption
+					option={props.option as OptionType<"segmented">}
+				/>
+			</Match>
 		</Switch>
 	);
 }
@@ -87,7 +93,7 @@ const LongTextOption = (props: { option: OptionType<"longtext"> }) => (
 
 const NumberOption = (props: { option: OptionType<"number"> }) => (
 	<NumberInput
-		value={() => props.option.value}
+		value={props.option.value}
 		setValue={props.option.onAction}
 		min={props.option.min}
 		max={props.option.max}
@@ -125,10 +131,7 @@ const ButtonOption = (props: { option: OptionType<"button"> }) => (
 );
 
 const ColorOption = (props: { option: OptionType<"color"> }) => (
-	<ColorPick
-		color={() => props.option.value}
-		setColor={props.option.onAction}
-	/>
+	<ColorPick color={props.option.value} setColor={props.option.onAction} />
 );
 
 const EmojiOption = (props: { option: OptionType<"emoji"> }) => (
@@ -147,9 +150,9 @@ const EmojiOption = (props: { option: OptionType<"emoji"> }) => (
 
 const DropdownOption = (props: { option: OptionType<"dropdown"> }) => (
 	<Dropdown
-		value={() => props.option.value}
+		value={props.option.value}
 		placeholder={props.option.placeholder}
-		options={() => props.option.options}
+		options={props.option.options}
 		onSelect={props.option.onAction}
 	/>
 );
@@ -169,8 +172,18 @@ const RangeOption = (props: { option: OptionType<"range"> }) => (
 
 const KeywordsOption = (props: { option: OptionType<"keywords"> }) => (
 	<WordInput
-		words={() => props.option.value}
+		words={props.option.value}
 		setWords={props.option.onAction}
 		placeholder={props.option.placeholder}
 	/>
 );
+
+const SegmentedOption = (props: { option: OptionType<"segmented"> }) => {
+	return (
+		<Segmented
+			value={props.option.value}
+			options={props.option.options}
+			setValue={props.option.onAction}
+		/>
+	);
+};

@@ -6,6 +6,13 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+	font-family: 'Inter';
+	src: url('../assets/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+	font-weight: 100 900;
+	font-style: normal;
+}
+
 @theme {
 
 	/* primary */
@@ -53,21 +60,10 @@
 	/* breakpoints  */
 	--breakpoint-xxs: 15rem;
 	/* fonts */
-	/* animations */
-	--animate-reveal-title: reveal-title 3s ease-in-out;
 
-	@keyframes reveal-title {
-		from {
-			transform: translateX(0%);
-		}
-
-		to {
-			transform: translateX(-50%);
-		}
-	}
 }
 
-@source inline("animate-ping");
-@source inline("animate-spin");
-@source inline("animate-pulse");
-@source inline("animate-bounce");
+/* @source inline("animate-ping"); */
+/* @source inline("animate-spin"); */
+/* @source inline("animate-pulse"); */
+/* @source inline("animate-bounce"); */

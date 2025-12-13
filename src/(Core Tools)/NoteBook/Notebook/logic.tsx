@@ -58,7 +58,7 @@ export const NotebookLogic = (
 		if (state.note().newNote) {
 			if (!isDuplicateTitle) {
 				NotebookManager.getSelf().setNote(
-					props.card.data.extra.name,
+					props.card.data.name,
 					state.note().title,
 					NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				);
@@ -89,7 +89,7 @@ export const NotebookLogic = (
 			}
 
 			await NotebookManager.getSelf().setNote(
-				props.card.data.extra.name,
+				props.card.data.name,
 				state.book.last,
 				NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				state.note().title,
@@ -118,7 +118,7 @@ export const NotebookLogic = (
 					attributes: { ...prev.attributes, banner: url },
 				}));
 				await NotebookManager.getSelf().setNote(
-					props.card.data.extra.name,
+					props.card.data.name,
 					state.note().title,
 					NotebookManager.getSelf().rebuildMarkdown(state.note()),
 				);
@@ -135,12 +135,12 @@ export const NotebookLogic = (
 			last: null,
 			notes: prev.notes.filter((i) => i.title !== title),
 		}));
-		NotebookManager.getSelf().deleteNote(props.card.data.extra.name, title);
+		NotebookManager.getSelf().deleteNote(props.card.data.name, title);
 	};
 	//
 	const onContextMenu = () => {
 		const cmItems: ContextMenuItem = {
-			id: `notebook-${props.card.data.extra.name}`,
+			id: `notebook-${props.card.data.name}`,
 			header: "Note",
 			items: [
 				{
@@ -166,7 +166,7 @@ export const NotebookLogic = (
 	const showSettings = () => {
 		const settings: ToolOptions = {
 			tool: "NoteBook",
-			card: props.card.data.extra.name,
+			card: props.card.data.name,
 			save: updateBook,
 			options: [
 				{

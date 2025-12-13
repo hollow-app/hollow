@@ -8,8 +8,6 @@ import {
 	IStore,
 	StoreType,
 	ToolEventReturns,
-	AppEvents,
-	AppEventReturns,
 	ToolApi,
 	AppApi,
 } from "@type/hollow";
@@ -27,6 +25,7 @@ import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import { CardFileManager } from "./CardFileManager";
 import { reconcile } from "solid-js/store";
+import { GridStack } from "gridstack";
 
 type ToolMethods = {
 	name: string;
@@ -87,14 +86,14 @@ export class ToolManager {
 						...c,
 						data: {
 							...c.data,
-							extra: { ...c.data.extra, tool: name },
+							tool: name,
 						},
 					})),
 				)
 				.sort(
 					(p, n) =>
-						new Date(p.data.extra.CreatedDate).getTime() -
-						new Date(n.data.extra.CreatedDate).getTime(),
+						new Date(p.data.CreatedDate).getTime() -
+						new Date(n.data.CreatedDate).getTime(),
 				),
 		);
 
@@ -264,17 +263,17 @@ export class ToolManager {
 		});
 
 		const group = hollow.cards();
-		const cards = group.filter((i) => i.data.extra.tool === name);
+		const cards = group.filter((i) => i.data.tool === name);
 		if (cards) {
 			cards.forEach((card) =>
-				this.deleteCard(card.data.extra.name, name, false),
+				this.deleteCard(card.data.name, name, false),
 			);
 			let root: HandType[] = this.getHand();
 			root = root.filter((i) => i.name !== name);
 			this.store.set("__root__", root);
 			this.toolMap.delete(name);
 			hollow.setCards(
-				reconcile(group.filter((c) => c.data.extra.name !== name)),
+				reconcile(group.filter((c) => c.data.name !== name)),
 			);
 			await RustManager.getSelf().remove_dir(
 				await join(
@@ -320,7 +319,7 @@ export class ToolManager {
 						...rect,
 						data: {
 							...card.data,
-							extra: { ...card.data.extra, ...updates },
+							...updates,
 						},
 					}
 				: card,
@@ -328,13 +327,17 @@ export class ToolManager {
 
 		this.store.set("__root__", root);
 	}
-	updateCard(toolName: string, newCard: CardType) {
+	updateCards(cardsToUpdate: { toolName: string; cards: CardType[] }[]) {
 		const root = this.getHand();
-		const tool = root.find((i) => i.name === toolName);
-		if (!tool) return;
-		tool.cards = tool.cards.map((card) =>
-			card.id === newCard.id ? newCard : card,
-		);
+
+		cardsToUpdate.forEach(({ toolName, cards: newCards }) => {
+			const tool = root.find((t) => t.name === toolName);
+			if (!tool) return;
+			tool.cards = tool.cards.map((c) => {
+				const updatedCard = newCards.find((nc) => nc.id === c.id);
+				return updatedCard ? updatedCard : c;
+			});
+		});
 		this.store.set("__root__", root);
 	}
 
@@ -370,11 +373,10 @@ export class ToolManager {
 	): Promise<void> {
 		const card = this.getCard(toolName, cardId);
 		const toolInstance = this.toolMap.get(toolName);
-		if (card.data.extra.isPlaced) {
+		if (card.data.isPlaced) {
 			toolInstance?.onUnload(cardId);
 		}
 		await toolInstance?.onDelete(this.getCard(toolName, cardId));
-
 		const hand: HandType[] = this.getHand();
 		const tool = hand.find((i) => i.name === toolName);
 		tool.cards = tool.cards.filter((i) => i.id !== cardId);
@@ -391,7 +393,7 @@ export class ToolManager {
 						RealmManager.getSelf().getCurrent().location,
 						"main",
 						toolName,
-						card.data.extra.name,
+						card.data.name,
 					],
 				),
 			));
@@ -401,7 +403,7 @@ export class ToolManager {
 	async addCard(name: string, toolName: string, emoji: string) {
 		const root: HandType[] = this.getHand();
 		const tool = root.find((i) => i.name === toolName);
-		if (tool.cards.some((i) => i.data.extra.name === name)) {
+		if (tool.cards.some((i) => i.data.name === name)) {
 			hollow.events.emit("alert", {
 				type: "error",
 				message: "A card with that name already exists",
@@ -411,27 +413,24 @@ export class ToolManager {
 		const id = "node-" + crypto.randomUUID();
 		const newCard: CardType = {
 			id,
-			width: 300,
-			height: 300,
-			x: 10,
-			y: 10,
+			w: 3,
+			h: 3,
+			// x: 10,
+			// y: 10,
 			style: {
-				"border-radius": "10",
+				"border-radius": "10px",
 				"--opacity": "100%",
 				"outline-color": "#3d3d3d",
-				"outline-width": "2",
+				"outline-width": "2px",
 				background:
 					"color-mix(in oklab, var(--color-secondary) var(--opacity), transparent)",
 			},
 			data: {
-				component: "default",
-				extra: {
-					name,
-					emoji: emoji,
-					isPlaced: false,
-					isFavored: false,
-					CreatedDate: new Date().toISOString(),
-				},
+				name,
+				emoji: emoji,
+				isPlaced: false,
+				isFavored: false,
+				CreatedDate: new Date().toISOString(),
 			},
 		};
 
@@ -440,7 +439,7 @@ export class ToolManager {
 
 		this.store.set("__root__", root);
 		const newNode: CardType = newCard;
-		newNode.data.extra.tool = toolName;
+		newNode.data.tool = toolName;
 		hollow.setCards(reconcile([...hollow.cards(), newNode]));
 		// TODO : this might not be needed if creating files makes the dir anyways
 		await RustManager.getSelf().create_dir(
@@ -448,7 +447,7 @@ export class ToolManager {
 				RealmManager.getSelf().getCurrent().location,
 				"main",
 				tool.name,
-				newCard.data.extra.name,
+				newCard.data.name,
 			),
 		);
 	}
@@ -457,15 +456,14 @@ export class ToolManager {
 	togglePlacement(id: string, toolName: string) {
 		const toolEvent = this.getToolEvents(toolName);
 		const card: CardType = hollow.cards().find((c) => c.id === id);
-		if (card.data.extra.isPlaced) {
+		if (card.data.isPlaced) {
 			const toolInstance = this.toolMap.get(toolName);
 			toolInstance?.onUnload(id);
 		}
-		this.setCard(toolName, id, { isPlaced: !card.data.extra.isPlaced });
+		this.setCard(toolName, id, { isPlaced: !card.data.isPlaced });
 		hollow.setCards(
 			(c) => c.id === id,
 			"data",
-			"extra",
 			"isPlaced",
 			(v) => !v,
 		);
@@ -477,13 +475,7 @@ export class ToolManager {
 
 	changeEmoji(emoji: string, cardId: string, toolName: string): void {
 		this.setCard(toolName, cardId, { emoji: emoji });
-		hollow.setCards(
-			(c) => c.id === cardId,
-			"data",
-			"extra",
-			"emoji",
-			emoji,
-		);
+		hollow.setCards((c) => c.id === cardId, "data", "emoji", emoji);
 		const metadata: ToolMetadata = {
 			cards: this.getHand().find((i) => i.name === toolName).cards,
 		};

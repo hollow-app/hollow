@@ -39,7 +39,7 @@ export const KanbanView = (
 						background: `color-mix(in oklab, var(--accent-color), transparent 80%)`,
 					}}
 				>
-					{state.meta().data.extra.emoji}
+					{state.meta().data.emoji}
 				</div>
 				<h1 class="text-lg font-medium">{state.kanban().name}</h1>
 				<ControlButtons
@@ -74,9 +74,7 @@ export const KanbanView = (
 											}}
 											accentColor={state.kanban().accent}
 											toolEvent={helper?.toolEvents}
-											cardName={
-												props.card.data.extra.name
-											}
+											cardName={props.card.data.name}
 											showForm={logic.showForm}
 											selectedGroup={state.selectedGroup}
 											setSelectedGroup={

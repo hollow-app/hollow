@@ -6,7 +6,6 @@ import { Accessor, createSignal } from "solid-js";
 import { hollow } from "hollow";
 import { Layout, SideBarButton } from "@type/hollow";
 import { Dynamic } from "solid-js/web";
-import { ConfigsType } from "solid-kitx";
 import MyIcon, { MyIconFun } from "@components/MyIcon";
 import {
 	ArchiveIcon,
@@ -15,11 +14,12 @@ import {
 	ToolCaseIcon,
 	VaultIcon,
 } from "lucide-solid";
+import { GridStackOptions } from "gridstack";
 
 type SideBarProps = {
 	layout: Layout;
 	setSettings: Setter<boolean>;
-	setCanvasConfigs: Setter<ConfigsType>;
+	setCanvasConfigs: Setter<GridStackOptions>;
 	isLiveEditor: Accessor<boolean>;
 };
 export default function SideBar({
@@ -52,10 +52,8 @@ export default function SideBar({
 			onClick: () =>
 				setCanvasConfigs((p) => ({
 					...p,
-					disableNodeDrag: !p.disableNodeDrag,
-					disableEdgeDrag: !p.disableEdgeDrag,
-					disableVerticalPan: !p.disableVerticalPan,
-					disableHorizontalPan: !p.disableHorizontalPan,
+					disableDrag: !p.disableDrag,
+					disableResize: !p.disableResize,
 				})),
 			selectedCondition: isLiveEditor,
 			tooltip: "Edit cards directly in the canvas",

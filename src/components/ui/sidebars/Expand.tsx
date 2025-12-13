@@ -45,9 +45,9 @@ export default function Expand() {
 	// 		.filter((card) => {
 	// 			const f = filter();
 	//
-	// 			if (f.favourite && !card.data.extra.isFavored) return false;
-	// 			if (!f.placed && card.data.extra.isPlaced) return false;
-	// 			if (!f.unplaced && !card.data.extra.isPlaced) return false;
+	// 			if (f.favourite && !card.data.isFavored) return false;
+	// 			if (!f.placed && card.data.isPlaced) return false;
+	// 			if (!f.unplaced && !card.data.isPlaced) return false;
 	//
 	// 			return true;
 	// 		}),
@@ -190,7 +190,7 @@ export default function Expand() {
 							{(c: CardType) => (
 								<CardConfig
 									myCard={c}
-									icon={icons()[c.data.extra.tool]}
+									icon={icons()[c.data.tool]}
 								/>
 							)}
 						</For>

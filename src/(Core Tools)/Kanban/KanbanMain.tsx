@@ -15,7 +15,7 @@ export class KanbanMain implements IPlugin {
 	async onCreate(card: CardType): Promise<boolean> {
 		KanbanManager.getSelf().saveColumn({
 			id: card.id,
-			name: card.data.extra.name,
+			name: card.data.name,
 			items: [],
 			max: 10,
 			accent: "#278ee9",

@@ -5,7 +5,7 @@ import { hollow } from "hollow";
 import { CardType } from "@type/hollow";
 
 export type StateType = {
-	vault: HTMLDivElement;
+	el: HTMLDivElement;
 	isLoaded: Accessor<boolean>;
 	setLoaded: Setter<boolean>;
 	isExpand: Accessor<boolean>;
@@ -16,7 +16,7 @@ export const createCardState = (
 	props: CardProps,
 	helper?: HelperType,
 ): StateType => {
-	let vault!: HTMLDivElement;
+	let el!: HTMLDivElement;
 	const [isLoaded, setLoaded] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
 	let pz: any = 0;
@@ -37,5 +37,14 @@ export const createCardState = (
 			{ defer: true },
 		),
 	);
-	return { vault, isLoaded, setLoaded, isExpand, setExpand };
+	createEffect(
+		on(
+			() => [props.node.w, props.node.x, props.node.h, props.node.y],
+			() => {
+				props.grid.update(el, props.node);
+			},
+			{ defer: true },
+		),
+	);
+	return { el, isLoaded, setLoaded, isExpand, setExpand };
 };

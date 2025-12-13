@@ -6,9 +6,6 @@ import DEFAULT from "@assets/configs/settings.json?raw";
 import { createSignal, Signal } from "solid-js";
 
 type SettingsConfig = {
-	"grid-size": number;
-	"grid-type": "dot" | "dash";
-	"static-grid-lines": boolean;
 	"background-image": string | null;
 	"background-opacity": number;
 	"code-theme": string;
@@ -23,7 +20,6 @@ type SettingsKey = keyof SettingsConfig;
 export class SettingsManager {
 	private static self: SettingsManager;
 	private store: Storage;
-	public gridSize: Signal<number>;
 
 	async start() {
 		const path = await join(
@@ -39,7 +35,6 @@ export class SettingsManager {
 				defaults: JSON.parse(DEFAULT),
 			},
 		});
-		this.gridSize = createSignal(this.store.get("grid-size"));
 	}
 
 	static getSelf() {

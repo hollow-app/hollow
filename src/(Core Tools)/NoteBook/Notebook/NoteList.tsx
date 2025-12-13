@@ -42,10 +42,7 @@ export default function NoteList(props: NoteListProps) {
 			message: `Deleting ${total} Note${total > 1 && "s"}...`,
 		});
 		for (const i of selectedGroup()) {
-			await NotebookManager.getSelf().deleteNote(
-				props.card.data.extra.name,
-				i,
-			);
+			await NotebookManager.getSelf().deleteNote(props.card.data.name, i);
 		}
 		onDone();
 	};

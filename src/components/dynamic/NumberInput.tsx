@@ -10,9 +10,11 @@ type NumberInputProps = {
 };
 export default function NumberInput(props: NumberInputProps) {
 	const [myValue, setMyValue] = createSignal(props.value);
+	const max = props.max ?? 1000;
+	const min = props.min ?? 0;
 	const minus = () => {
 		const n = parseFloat((myValue() - (props.step ?? 1)).toFixed(10));
-		if (n >= props.min) {
+		if (n >= min) {
 			setMyValue(n);
 			props.direct && props.setValue(n);
 		}
@@ -20,7 +22,7 @@ export default function NumberInput(props: NumberInputProps) {
 
 	const plus = () => {
 		const n = parseFloat((myValue() + (props.step ?? 1)).toFixed(10));
-		if (n <= props.max) {
+		if (n <= max) {
 			setMyValue(n);
 			props.direct && props.setValue(n);
 		}

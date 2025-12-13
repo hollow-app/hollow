@@ -36,19 +36,14 @@ export default function Item(props: ItemProps) {
 	const handleContextMenu = () => {
 		const metadata: ToolMetadata = props.toolEvent.getData("metadata");
 		const columns = metadata.cards
-			.filter(
-				(i) =>
-					i.data.extra.name !== props.cardName &&
-					i.data.extra.isPlaced,
-			)
+			.filter((i) => i.data.name !== props.cardName && i.data.isPlaced)
 			.map((i) => {
 				const cmItem: ContextMenuItemButton = {
-					label: `${i.data.extra.emoji} ${i.data.extra.name}`,
+					label: `${i.data.emoji} ${i.data.name}`,
 					onclick: () => {
-						props.toolEvent.emit(
-							`${i.data.extra.name}-receive-task`,
-							[props.item],
-						);
+						props.toolEvent.emit(`${i.data.name}-receive-task`, [
+							props.item,
+						]);
 						props.removeItem(props.item.id);
 					},
 				};

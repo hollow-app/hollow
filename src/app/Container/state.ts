@@ -5,16 +5,15 @@ import { createLayout } from "@utils/layout";
 import { hollow } from "hollow";
 import { Accessor, createMemo, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
-import { ConfigsType } from "solid-kitx";
 import { hotkeysManager } from "@managers/HotkeysManager";
+import { GridStackOptions } from "gridstack";
 
-type AltConfigsType = Omit<ConfigsType, "gridSize">;
 export type StateType = {
 	controller: Layout;
 	isSettings: Accessor<boolean>;
 	setSettings: Setter<boolean>;
-	canvasConfigs: Accessor<AltConfigsType>;
-	setCanvasConfigs: Setter<AltConfigsType>;
+	canvasConfigs: Accessor<GridStackOptions>;
+	setCanvasConfigs: Setter<GridStackOptions>;
 	isLiveEditor: Accessor<boolean>;
 };
 export const createContainerState = (
@@ -23,17 +22,13 @@ export const createContainerState = (
 ): StateType => {
 	const controller = createLayout();
 	const [isSettings, setSettings] = createSignal(false);
-	const [canvasConfigs, setCanvasConfigs] = createSignal<AltConfigsType>({
-		disableZoom: true,
-		disableEdgeDrag: true,
-		disableNodeDrag: true,
-		disableAnchorConnectionCreation: true,
-		disableNodeAnchors: true,
-		disableHorizontalPan: true,
-		disableVerticalPan: true,
-		filterNodes: (n: CardType) => n.data.extra.isPlaced,
+	const [canvasConfigs, setCanvasConfigs] = createSignal<GridStackOptions>({
+		disableResize: true,
+		disableDrag: true,
+		float: true,
+		margin: 10,
 	});
-	const isLiveEditor = createMemo(() => !canvasConfigs().disableNodeDrag);
+	const isLiveEditor = createMemo(() => !canvasConfigs().disableDrag);
 
 	const ShowEditor = () => {
 		controller.selectPanel("right", "editor");

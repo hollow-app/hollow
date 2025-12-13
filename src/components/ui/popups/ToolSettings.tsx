@@ -11,7 +11,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 		hollow.toolManager
 			.getHand()
 			.find((i) => i.name === pluginSettings.tool.toLowerCase())
-			.cards.find((i) => i.data.extra.name == pluginSettings.card),
+			.cards.find((i) => i.data.name == pluginSettings.card),
 	);
 
 	const onSave = () => {
@@ -31,7 +31,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 			<div class="up-pop pointer-events-auto flex h-fit max-h-[70%] w-[60%] flex-col overflow-hidden p-5">
 				<div class="flex h-fit gap-10 pb-5">
 					<span class="bg-secondary-05 flex h-30 w-30 items-center justify-center rounded-lg p-3 text-center text-6xl">
-						{card().data.extra.emoji}
+						{card().data.emoji}
 					</span>
 					<div class="flex-1 rounded-lg">
 						<h1 class="text-4xl font-bold text-gray-950 dark:text-gray-50">

@@ -7,11 +7,11 @@ import { CardView } from "./view";
 import { CardHelper } from "./helper";
 import type { HelperType } from "./helper";
 import { CardType } from "@type/hollow";
-import { Kit } from "solid-kitx";
+import { GridStack } from "gridstack";
 
 export type CardProps = {
 	node: CardType;
-	kit: Kit;
+	grid: GridStack;
 };
 
 export const Card = createModule<StateType, LogicType, CardProps, HelperType>({

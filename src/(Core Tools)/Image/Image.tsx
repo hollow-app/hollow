@@ -93,7 +93,7 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 	const setSettingsVisible = () => {
 		const settings: ToolOptions = {
 			tool: "Image",
-			card: card.data.extra.name,
+			card: card.data.name,
 			save: updateImage,
 			options: [
 				// TODO

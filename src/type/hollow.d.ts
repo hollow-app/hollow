@@ -510,32 +510,29 @@ export type FormOption = {
 export type CardType = {
 	/** Unique identifier */
 	id: string;
-	x: number;
-	y: number;
-	width: number;
-	height: number;
+	x?: number;
+	y?: number;
+	w: number;
+	h: number;
 	class?: string;
 	style?: JSX.CSSProperties;
 	data: {
-		component: string;
-		extra: {
-			/** Name of the card. */
-			name: string;
+		/** Name of the card. */
+		name: string;
 
-			/** Emoji associated with the card. */
-			emoji: string;
+		/** Emoji associated with the card. */
+		emoji: string;
 
-			/** Whether the card is placed. */
-			isPlaced: boolean;
+		/** Whether the card is placed. */
+		isPlaced: boolean;
 
-			/** Whether the card is marked as favored. */
-			isFavored: boolean;
+		/** Whether the card is marked as favored. */
+		isFavored: boolean;
 
-			/** Date when the card was created (ISO string). */
-			CreatedDate: string;
+		/** Date when the card was created (ISO string). */
+		CreatedDate: string;
 
-			[key: string]: any;
-		};
+		[key: string]: any;
 	};
 };
 

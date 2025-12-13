@@ -8,7 +8,6 @@ import Sidepanel from "./Sidepanel";
 import Navbar from "@components/ui/sidebars/Navbar";
 import Canvas from "@components/ui/Canvas";
 import { Show } from "solid-js";
-import { ConfigsType } from "solid-kitx";
 const Settings = lazy(async () => import("@components/ui/Settings"));
 
 export const ContainerView = (
@@ -36,9 +35,7 @@ export const ContainerView = (
 					<Navbar />
 					<div class="flex min-h-0 w-full flex-1 pb-2">
 						<Canvas
-							canvasConfigs={
-								state.canvasConfigs as Accessor<ConfigsType>
-							}
+							canvasConfigs={state.canvasConfigs as Accessor<any>}
 							setCanvasConfigs={state.setCanvasConfigs}
 							isLiveEditor={state.isLiveEditor}
 						/>

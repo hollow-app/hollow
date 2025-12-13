@@ -91,7 +91,7 @@ export const KanbanLogic = (
 	const showSettings = () => {
 		const settings: ToolOptions = {
 			tool: "Kanban",
-			card: props.card.data.extra.name,
+			card: props.card.data.name,
 			save: () => {
 				updateKanban();
 			},
@@ -182,7 +182,7 @@ export const KanbanLogic = (
 				const metadata: ToolMetadata =
 					helper?.toolEvents.getData("metadata");
 				metadata.cards.some(
-					(i) => i.data.extra.name !== props.card.data.extra.name,
+					(i) => i.data.name !== props.card.data.name,
 				) &&
 					menuItems.push({
 						icon: SendIcon,
@@ -190,15 +190,14 @@ export const KanbanLogic = (
 						children: metadata.cards
 							.filter(
 								(i) =>
-									i.data.extra.name !==
-										props.card.data.extra.name &&
-									i.data.extra.isPlaced,
+									i.data.name !== props.card.data.name &&
+									i.data.isPlaced,
 							)
 							.map((i) => ({
-								label: `${i.data.extra.emoji} ${i.data.extra.name}`,
+								label: `${i.data.emoji} ${i.data.name}`,
 								onclick: () => {
 									helper?.toolEvents.emit(
-										`${i.data.extra.name}-receive-task`,
+										`${i.data.name}-receive-task`,
 										state
 											.kanban()
 											.items.filter((i) =>
@@ -301,9 +300,7 @@ export const KanbanLogic = (
 	};
 	//
 	const updateMeta = (m: ToolMetadata) => {
-		const t = m.cards.find(
-			(i) => i.data.extra.name === props.card.data.extra.name,
-		);
+		const t = m.cards.find((i) => i.data.name === props.card.data.name);
 		if (t) {
 			state.setMeta(t);
 		}
@@ -311,7 +308,7 @@ export const KanbanLogic = (
 	onMount(() => {
 		helper?.toolEvents.on(`${props.card.id}-settings`, showSettings);
 		helper?.toolEvents.on(
-			`${props.card.data.extra.name}-receive-task`,
+			`${props.card.data.name}-receive-task`,
 			handleReceiveTask,
 		);
 		helper?.toolEvents.on("metadata", updateMeta);
@@ -319,7 +316,7 @@ export const KanbanLogic = (
 	onCleanup(() => {
 		helper?.toolEvents.off(`${props.card.id}-settings`, showSettings);
 		helper?.toolEvents.off(
-			`${props.card.data.extra.name}-receive-task`,
+			`${props.card.data.name}-receive-task`,
 			handleReceiveTask,
 		);
 		helper?.toolEvents.off("metadata", updateMeta);

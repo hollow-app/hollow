@@ -28,7 +28,7 @@ export const createKanbanState = (
 	const [selectedGroup, setSelectedGroup] = createSignal([]);
 	const [meta, setMeta] = createSignal<CardType>(
 		(helper?.toolEvents.getData("metadata") as ToolMetadata).cards.find(
-			(i) => i.data.extra.name === props.card.data.extra.name,
+			(i) => i.data.name === props.card.data.name,
 		),
 	);
 

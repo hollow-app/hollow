@@ -17,33 +17,25 @@ export default function CardConfig({
 	icon: string;
 	// setHand: Setter<HandType[]>;
 }) {
-	const [isPlaced, setPlaced] = createSignal(myCard.data.extra.isPlaced);
-	const [isFav, setFav] = createSignal(myCard.data.extra.isFavored);
+	const [isPlaced, setPlaced] = createSignal(myCard.data.isPlaced);
+	const [isFav, setFav] = createSignal(myCard.data.isFavored);
 
 	const handlePlacement = () => {
-		hollow.toolManager.togglePlacement(myCard.id, myCard.data.extra.tool);
+		hollow.toolManager.togglePlacement(myCard.id, myCard.data.tool);
 		setPlaced(!isPlaced());
 	};
 	const handleDelete = async () => {
-		await hollow.toolManager.deleteCard(
-			myCard.id,
-			myCard.data.extra.tool,
-			true,
-		);
+		await hollow.toolManager.deleteCard(myCard.id, myCard.data.tool, true);
 		// setHand([...hollow.toolManager.getHand()]);
 	};
 	const handleFav = async () => {
-		hollow.toolManager.setCard(myCard.data.extra.tool, myCard.id, {
+		hollow.toolManager.setCard(myCard.data.tool, myCard.id, {
 			isFavored: !isFav(),
 		});
 		setFav(!isFav());
 	};
 	const onEmojiChanged = (newEmoji: string) => {
-		hollow.toolManager.changeEmoji(
-			newEmoji,
-			myCard.id,
-			myCard.data.extra.tool,
-		);
+		hollow.toolManager.changeEmoji(newEmoji, myCard.id, myCard.data.tool);
 		// TODO
 		hollow.events.off("emoji-picker-changed", onEmojiChanged);
 	};
@@ -56,12 +48,10 @@ export default function CardConfig({
 						<div class="w-fit">
 							<div class="text-secondary-25 flex w-fit items-center gap-1 p-1">
 								<ToolIcon
-									toolName={icon ?? myCard.data.extra.tool}
+									toolName={icon ?? myCard.data.tool}
 									class="size-4"
 								/>
-								<span class="text-xs">
-									{myCard.data.extra.tool}
-								</span>
+								<span class="text-xs">{myCard.data.tool}</span>
 							</div>
 							<hr
 								class="h-px w-full shrink-0 border-0"
@@ -74,12 +64,12 @@ export default function CardConfig({
 						<div class="mt-1 flex items-center gap-2">
 							<div class="bg-secondary-10 hover:border-secondary-15 size-7 cursor-pointer rounded border border-transparent p-1 text-center text-sm">
 								<EmojiPick
-									emo={myCard.data.extra.emoji}
+									emo={myCard.data.emoji}
 									emoChanged={onEmojiChanged}
 								/>
 							</div>
 							<span class="text-neutral-800 dark:text-neutral-200">
-								{myCard.data.extra.name}
+								{myCard.data.name}
 							</span>
 						</div>
 					</div>
@@ -94,8 +84,8 @@ export default function CardConfig({
 					</div>
 				</div>
 				<div class="text-xs text-neutral-500">
-					<p title={myCard.data.extra.CreatedDate}>
-						Created: {timeDifference(myCard.data.extra.CreatedDate)}
+					<p title={myCard.data.CreatedDate}>
+						Created: {timeDifference(myCard.data.CreatedDate)}
 					</p>
 				</div>
 				<div class="ml-auto flex w-fit gap-2">

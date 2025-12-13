@@ -17,7 +17,6 @@ import { CodeThemeManager } from "./CodeThemeManager";
 import { SettingsManager } from "./SettingsManager";
 import { MarkdownManager } from "./MarkdownManager";
 import { Storage } from "./Storage";
-import { initAnalytics } from "@utils/analytics";
 import { DeepLinkManager } from "./DeepLinkManager";
 
 export class HollowManager {
@@ -50,6 +49,21 @@ export class HollowManager {
 			error,
 		} as const;
 		type ConsoleMethod = keyof typeof logMap;
+		const safeStringify = (obj: unknown) => {
+			const seen = new WeakSet();
+			return JSON.stringify(
+				obj,
+				(key, value) => {
+					if (typeof value === "object" && value !== null) {
+						if (seen.has(value)) return "[Circular]";
+						seen.add(value);
+					}
+					return value;
+				},
+				2,
+			);
+		};
+
 		for (const method of Object.keys(logMap) as ConsoleMethod[]) {
 			const original = console[method].bind(console);
 			const forward = logMap[method];
@@ -57,9 +71,7 @@ export class HollowManager {
 				original(...args);
 				const message = args
 					.map((a) =>
-						typeof a === "object"
-							? JSON.stringify(a, null, 2)
-							: String(a),
+						typeof a === "object" ? safeStringify(a) : String(a),
 					)
 					.join(" ");
 				void forward(message);

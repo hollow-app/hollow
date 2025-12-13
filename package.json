@@ -30,6 +30,7 @@
 		"emojibase-data": "^16.0.2",
 		"front-matter": "^4.0.2",
 		"github-slugger": "^2.0.0",
+		"gridstack": "^12.3.3",
 		"highlight.js": "^11.11.1",
 		"katex": "^0.16.22",
 		"lucide-solid": "^0.525.0",

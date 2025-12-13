@@ -22,7 +22,6 @@ interface SelectedCard {
 }
 
 export default function Editor() {
-	const step = createMemo(() => SettingsManager.getSelf().gridSize[0]());
 	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>(
 		hollow.pevents.getData("editor"),
 	);
@@ -60,8 +59,10 @@ export default function Editor() {
 	const onSave = () => {
 		const id = selectedCard().cardId;
 		const card = hollow.cards().find((i) => i.id === id);
-		delete card.data.extra.tool;
-		hollow.toolManager.updateCard(selectedCard().tool, card);
+		delete card.data.tool;
+		hollow.toolManager.updateCards([
+			{ toolName: selectedCard().tool, cards: [card] },
+		]);
 		hollow.pevents.emit("editor", null);
 	};
 
@@ -105,15 +106,17 @@ export default function Editor() {
 						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 							<NumRow
 								label="Width"
-								value={cardData().width}
-								step={step()}
-								setValue={(v) => updateRootProp("width", v)}
+								value={cardData().w}
+								step={1}
+								min={1}
+								setValue={(v) => updateRootProp("w", v)}
 							/>
 							<NumRow
 								label="Height"
-								value={cardData().height}
-								step={step()}
-								setValue={(v) => updateRootProp("height", v)}
+								value={cardData().h}
+								step={1}
+								min={1}
+								setValue={(v) => updateRootProp("h", v)}
 							/>
 						</div>
 
@@ -149,21 +152,21 @@ export default function Editor() {
 								<h3>Border</h3>
 								<div class="flex w-[60%] items-center justify-end gap-1">
 									<ColorPick
-										color={cardStyle()["outline-color"]}
+										color={cardStyle()["border-color"]}
 										setColor={(v) =>
-											updateStyleProp("outline-color", v)
+											updateStyleProp("border-color", v)
 										}
 									/>
 									<div class="w-70 max-w-[90%]">
 										<NumberInput
 											value={Number(
 												cardStyle()
-													["outline-width"].toString()
+													["border-width"].toString()
 													.split("px")[0],
 											)}
 											setValue={(v) =>
 												updateStyleProp(
-													"outline-width",
+													"border-width",
 													v + "px",
 												)
 											}
@@ -204,14 +207,12 @@ export default function Editor() {
 								label="X"
 								value={cardData().x}
 								setValue={(v) => updateRootProp("x", v)}
-								step={step()}
 								min={-10000}
 							/>
 							<NumRow
 								label="Y"
 								value={cardData().y}
 								setValue={(v) => updateRootProp("y", v)}
-								step={step()}
 								min={-10000}
 							/>
 							<NumRow
@@ -298,8 +299,8 @@ function Header(props: {
 			.find((t) => t.name === toolName);
 		return (
 			tool?.cards
-				.filter((c) => c.data.extra.isPlaced)
-				.map((c) => ({ name: c.data.extra.name, id: c.id })) ?? []
+				.filter((c) => c.data.isPlaced)
+				.map((c) => ({ name: c.data.name, id: c.id })) ?? []
 		);
 	});
 

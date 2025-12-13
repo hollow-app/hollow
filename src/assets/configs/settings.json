@@ -1,7 +1,4 @@
 {
-	"grid-size": 50,
-	"grid-type": "dash",
-	"static-grid-lines": false,
 	"background-image": null,
 	"background-opacity": 50,
 	"code-theme": "default",

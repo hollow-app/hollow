@@ -1,10 +1,10 @@
 import { CanvasProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
-import { GridStackNode } from "gridstack";
+import { GridStack, GridStackNode } from "gridstack";
 import { CardType } from "@type/hollow";
 import { hollow } from "hollow";
-import { createEffect, on } from "solid-js";
+import { createEffect, on, onMount } from "solid-js";
 
 export type LogicType = {};
 
@@ -45,6 +45,7 @@ export const CanvasLogic = (
 			toolName,
 			cards,
 		}));
+
 		hollow.toolManager.updateCards(targets);
 	};
 	createEffect(
@@ -69,6 +70,8 @@ export const CanvasLogic = (
 			{ defer: true },
 		),
 	);
+	onMount(() => {
+		state.grid = GridStack.init(props.canvasConfigs(), state.gridEl);
+	});
 	return {};
 };
-

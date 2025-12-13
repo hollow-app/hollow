@@ -61,14 +61,13 @@ export const CardLogic = (
 			.getToolEvents(tool)
 			.toggle(`${props.node.id}-expand`);
 	};
-	// createEffect(() => {
-	// 	if (!props.grid) return;
-	// 	if (props.node.data.isPlaced) {
-	// 		props.grid.makeWidget(state.el);
-	// 	}
-	// });
+	createEffect(() => {
+		if (!props.grid && !state.el) return;
+		if (props.node.data.isPlaced) {
+			props.grid.makeWidget(state.el);
+		}
+	});
 	onMount(async () => {
-		props.grid.makeWidget(state.el);
 		state.setLoaded(await hollow.toolManager.loadCard(props.node, tool));
 		hollow.toolManager
 			.getToolEvents(tool)

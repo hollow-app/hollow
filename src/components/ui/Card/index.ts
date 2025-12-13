@@ -8,10 +8,12 @@ import { CardHelper } from "./helper";
 import type { HelperType } from "./helper";
 import { CardType } from "@type/hollow";
 import { GridStack } from "gridstack";
+import { Accessor } from "solid-js";
 
 export type CardProps = {
 	node: CardType;
 	grid: GridStack;
+	isLiveEditor: Accessor<boolean>;
 };
 
 export const Card = createModule<StateType, LogicType, CardProps, HelperType>({

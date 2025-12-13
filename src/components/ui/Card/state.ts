@@ -41,6 +41,7 @@ export const createCardState = (
 		on(
 			() => [props.node.w, props.node.x, props.node.h, props.node.y],
 			() => {
+				if (props.isLiveEditor()) return;
 				props.grid.update(el, props.node);
 			},
 			{ defer: true },

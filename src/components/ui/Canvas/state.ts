@@ -14,9 +14,5 @@ export const createCanvasState = (
 ): StateType => {
 	let gridEl!: HTMLDivElement;
 	let grid: GridStack;
-	onMount(() => {
-		grid = GridStack.init(props.canvasConfigs(), gridEl);
-	});
 	return { grid, gridEl };
 };
-

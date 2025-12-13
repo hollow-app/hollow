@@ -18,6 +18,7 @@ import { SettingsManager } from "./SettingsManager";
 import { MarkdownManager } from "./MarkdownManager";
 import { Storage } from "./Storage";
 import { DeepLinkManager } from "./DeepLinkManager";
+import useGrid from "@hooks/useGrid";
 
 export class HollowManager {
 	private static self: HollowManager;
@@ -110,14 +111,7 @@ export class HollowManager {
 		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });
-		setStyle([
-			{
-				name: "--static-grid-lines",
-				value: SettingsManager.getSelf().getConfig("static-grid-lines")
-					? "var(--secondary-color-15)"
-					: "transparent",
-			},
-		]);
+		useGrid();
 		useBackground({});
 		useTags();
 		//

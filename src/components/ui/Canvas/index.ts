@@ -8,11 +8,13 @@ import { CanvasHelper } from "./helper";
 import type { HelperType } from "./helper";
 import { Accessor } from "solid-js";
 import { GridStackOptions } from "gridstack";
+import { Layout } from "@type/hollow";
 
 export type CanvasProps = {
 	canvasConfigs: Accessor<GridStackOptions>;
 	setCanvasConfigs: Accessor<GridStackOptions>;
 	isLiveEditor: Accessor<boolean>;
+	layout: Layout;
 };
 
 const Canvas = createModule<StateType, LogicType, CanvasProps, HelperType>({

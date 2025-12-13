@@ -32,23 +32,23 @@ export default function SideBar({
 
 	const top: SideBarButton[] = [
 		{
-			Icon: MyIconFun({ name: "home-outline" }),
+			Icon: MyIconFun({ name: "home-2-fill" }),
 			onClick: () => layout.selectPanel("left", "expand"),
 			selectedCondition: () => layout.isPanelVisible("left", "expand"),
 		},
 		{
-			Icon: MyIconFun({ name: "designtools-outline" }),
+			Icon: MyIconFun({ name: "designtools-fill" }),
 			onClick: () => layout.selectPanel("right", "editor"),
 			selectedCondition: () => layout.isPanelVisible("right", "editor"),
 		},
 		{
-			Icon: MyIconFun({ name: "strongbox-outline" }),
+			Icon: MyIconFun({ name: "strongbox-fill" }),
 			onClick: () => hollow.events.toggle("show-vault"),
 		},
 	];
 	const bottom: SideBarButton[] = [
 		{
-			Icon: MyIconFun({ name: "pen-outline" }),
+			Icon: MyIconFun({ name: "pen-tool-fill" }),
 			onClick: () =>
 				setCanvasConfigs((p) => ({
 					...p,
@@ -59,13 +59,13 @@ export default function SideBar({
 			tooltip: "Edit cards directly in the canvas",
 		},
 		{
-			Icon: MyIconFun({ name: "bell-outline" }),
+			Icon: MyIconFun({ name: "bell-fill" }),
 			onClick: () => layout.selectPanel("right", "notifications"),
 			selectedCondition: () =>
 				layout.isPanelVisible("right", "notifications"),
 		},
 		{
-			Icon: MyIconFun({ name: "gear-outline" }),
+			Icon: MyIconFun({ name: "gear-fill" }),
 			onClick: () => setSettings((prev) => !prev),
 		},
 	];
@@ -73,7 +73,7 @@ export default function SideBar({
 		hollow.events.on("notify-status", setAlert);
 	});
 	return (
-		<div class="bg-secondary-10/0 mr-2 flex w-fit flex-col gap-4 rounded-xl py-4">
+		<div class="border-secondary-10 mr-2 flex w-fit flex-col gap-4 border-r py-4 pr-4 pl-2">
 			<button onclick={() => layout.selectPanel("left", "character")}>
 				<Hollow class="orbit mx-auto size-9" />
 			</button>
@@ -95,6 +95,7 @@ const ControlButton = (btn: SideBarButton) => {
 	return (
 		<button
 			class="button-control"
+			style={{ "--size": "calc(var(--spacing) * 8)" }}
 			classList={{
 				"tool-tip": !!btn.tooltip,
 				selected: btn.selectedCondition && btn.selectedCondition(),
@@ -106,7 +107,7 @@ const ControlButton = (btn: SideBarButton) => {
 					{btn.tooltip}
 				</span>
 			</Show>
-			<Dynamic component={btn.Icon} {...{ class: "m-auto size-5" }} />
+			<Dynamic component={btn.Icon} {...{ class: "m-auto size-4.5" }} />
 		</button>
 	);
 };

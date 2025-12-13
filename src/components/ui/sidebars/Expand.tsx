@@ -120,9 +120,9 @@ export default function Expand() {
 	};
 
 	return (
-		<div class="size-full">
-			<div class="border-secondary-10 flex h-full flex-col gap-3 border-l py-5">
-				<div class="flex items-center gap-3 px-5">
+		<div class="my-2 size-full rounded-xl">
+			<div class="flex h-full flex-col gap-3 px-3 py-5">
+				<div class="flex items-center gap-3">
 					<div class="relative flex-1">
 						<input
 							class="input peer ml-auto h-fit max-w-full transition-all duration-200"
@@ -185,7 +185,7 @@ export default function Expand() {
 								"linear-gradient(to right, transparent , var(--color-secondary-10) 20%, transparent)",
 						}}
 					/>
-					<div class="flex h-[calc(100%-2px)] flex-col gap-1 overflow-hidden overflow-y-auto px-5">
+					<div class="flex h-[calc(100%-2px)] flex-col gap-1 overflow-hidden overflow-y-auto">
 						<For each={hollow.cards()}>
 							{(c: CardType) => (
 								<CardConfig

@@ -187,7 +187,6 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 					<Show
 						when={image().objectFit === "cover" && showControls()}
 					>
-						<div class="pointer-events-none absolute inset-0 bg-black/10 transition-opacity duration-200" />
 						<button
 							class="absolute top-2 right-2 rounded-full bg-black/50 p-2 text-white transition-all duration-200 hover:bg-black/70"
 							onMouseDown={(e) => handleDragStart(e, "up")}

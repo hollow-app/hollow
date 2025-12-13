@@ -9,17 +9,18 @@ type SidepanelProps = {
 	type: PanelType;
 	controller: Layout;
 	width: string;
+	padding: string;
 };
 
-export default function Sidepanel({ type, controller, width }: SidepanelProps) {
-	const layout = createMemo(() => controller.get[type]);
+export default function Sidepanel(props: SidepanelProps) {
+	const layout = createMemo(() => props.controller.get[props.type]);
 
 	createEffect(
 		on(
 			() => layout().visible,
 			(v) => {
-				const value = v ? width : "0px";
-				setStyle([{ name: `--layout-${type}`, value }]);
+				const value = v ? props.width : "0px";
+				setStyle([{ name: `--layout-${props.type}`, value }]);
 			},
 			{ defer: true },
 		),
@@ -34,24 +35,32 @@ export default function Sidepanel({ type, controller, width }: SidepanelProps) {
 							initial={{
 								opacity: 0,
 								width: "0px",
+								padding: 0,
 							}}
 							animate={{
 								opacity: 1,
-								width,
+								width: props.width,
+								padding: props.padding,
 							}}
 							exit={{
 								opacity: 0,
 								width: "0px",
+								padding: 0,
 							}}
 							transition={{ duration: 0.5 }}
-							class="bg-secondary flex h-full shrink-0 flex-col overflow-hidden overflow-y-scroll"
+							class="bg-secondary flex h-full shrink-0 flex-col overflow-hidden"
 						>
 							<Dynamic
-								component={controller.panels[type][panel]}
+								component={
+									props.controller.panels[props.type][panel]
+								}
 								{...{
 									hide: () =>
-										controller.selectPanel(type, panel),
-									type: type,
+										props.controller.selectPanel(
+											props.type,
+											panel,
+										),
+									type: props.type,
 								}}
 							/>
 						</Motion.div>

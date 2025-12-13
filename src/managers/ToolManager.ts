@@ -25,7 +25,6 @@ import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import { CardFileManager } from "./CardFileManager";
 import { reconcile } from "solid-js/store";
-import { GridStack } from "gridstack";
 
 type ToolMethods = {
 	name: string;
@@ -423,7 +422,7 @@ export class ToolManager {
 				"outline-color": "#3d3d3d",
 				"outline-width": "2px",
 				background:
-					"color-mix(in oklab, var(--color-secondary) var(--opacity), transparent)",
+					"color-mix(in oklab, var(--color-secondary-05) var(--opacity), transparent)",
 			},
 			data: {
 				name,

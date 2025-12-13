@@ -2,8 +2,6 @@ import { CardProps } from ".";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
-import { onMount } from "solid-js";
-import { unwrap } from "solid-js/store";
 
 export const CardView = (
 	state: StateType,
@@ -21,7 +19,10 @@ export const CardView = (
 			gs-w={props.node.w}
 			gs-h={props.node.h}
 		>
-			<div class="box-border h-full w-full p-2">
+			<div
+				class="box-border h-full w-full"
+				style={{ padding: "calc(var(--grid-gap) * 1px)" }}
+			>
 				<div
 					class={"h-full w-full border-solid"}
 					style={{

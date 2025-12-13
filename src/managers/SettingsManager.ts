@@ -3,9 +3,9 @@ import { RealmManager } from "./RealmManager";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import DEFAULT from "@assets/configs/settings.json?raw";
-import { createSignal, Signal } from "solid-js";
 
-type SettingsConfig = {
+export type SettingsConfig = {
+	"grid-gap": number;
 	"background-image": string | null;
 	"background-opacity": number;
 	"code-theme": string;
@@ -57,11 +57,8 @@ export class SettingsManager {
 	setConfig<K extends SettingsKey>(key: K, value: SettingsConfig[K]) {
 		this.store.set(key, value);
 	}
+
 	setConfigs<K extends SettingsKey>(configs: Pick<SettingsConfig, K>) {
-		for (const key in configs) {
-			if (Object.prototype.hasOwnProperty.call(configs, key)) {
-				this.store.set(key as K, configs[key as K]);
-			}
-		}
+		this.store.setMany(configs);
 	}
 }

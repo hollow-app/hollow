@@ -17,7 +17,13 @@ export const CanvasView = (
 	helper?: HelperType,
 ) => {
 	return (
-		<div class="bg-secondary/30 border-secondary-10 relative h-full w-full overflow-hidden rounded-xl border">
+		<div
+			class="bg-secondary/30 relative h-full w-full overflow-hidden rounded-xl border"
+			classList={{
+				"border-secondary-10": state.isAnySidePanelVisible(),
+				"border-transparent": !state.isAnySidePanelVisible(),
+			}}
+		>
 			{/* <div */}
 			{/* 	class="absolute top-0 left-0 h-full w-full object-cover" */}
 			{/* 	style={{ */}

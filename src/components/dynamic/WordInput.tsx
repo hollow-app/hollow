@@ -42,7 +42,7 @@ export default function WordInput(props: Props) {
 				class="h-fit w-fit text-sm"
 				onkeydown={(e) => {
 					if (
-						e.key === "Enter" &&
+						(e.key === "Enter" || e.key === ",") &&
 						e.currentTarget.value !== "" &&
 						!keywords().includes(e.currentTarget.value)
 					) {

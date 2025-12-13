@@ -1,11 +1,14 @@
 import { GridStack } from "gridstack";
 import { CanvasProps } from ".";
 import type { HelperType } from "./helper";
-import { onMount } from "solid-js";
+import { Accessor, createMemo, onMount } from "solid-js";
+import { hollow } from "hollow";
+import { Layout } from "@type/hollow";
 
 export type StateType = {
 	gridEl: HTMLDivElement;
 	grid: GridStack;
+	isAnySidePanelVisible: Accessor<boolean>;
 };
 
 export const createCanvasState = (
@@ -14,5 +17,9 @@ export const createCanvasState = (
 ): StateType => {
 	let gridEl!: HTMLDivElement;
 	let grid: GridStack;
-	return { grid, gridEl };
+	const isAnySidePanelVisible = createMemo(() => {
+		const store = props.layout.get;
+		return store.left.visible || store.right.visible;
+	});
+	return { grid, gridEl, isAnySidePanelVisible };
 };

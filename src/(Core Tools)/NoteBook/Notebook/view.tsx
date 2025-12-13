@@ -23,7 +23,7 @@ export const NotebookView = (
 			classList={{ "text-[1.2em]": state.isExpand() }}
 		>
 			{/* Header */}
-			<div class="bg-secondary-05 hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded px-2 @xs:flex @7xl:h-13 @7xl:px-4">
+			<div class="bg-secondary-10 hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded px-2 @xs:flex @7xl:h-13 @7xl:px-4">
 				<h1 class="text-sm font-medium @7xl:text-lg">
 					{state.book.name}{" "}
 					<span class="text-secondary-40">Book</span>
@@ -95,19 +95,27 @@ export const NotebookView = (
 						oncontextmenu={logic.onContextMenu}
 					>
 						<div
-							class="border-secondary-05 relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 transition-all group-hover:opacity-100 @7xl:h-35"
-							style={{
-								"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${state.note().attributes?.banner})`,
-								"background-size": "cover",
-								"background-position": "center",
-								"background-repeat": "no-repeat",
+							class="relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 group-hover:opacity-100 @7xl:h-35"
+							style={
+								!state.editMode() && {
+									"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${state.note().attributes?.banner})`,
+									"background-size": "cover",
+									"background-position": "center",
+									"background-repeat": "no-repeat",
+								}
+							}
+							classList={{
+								"border-secondary-10": !state.editMode(),
+								"border-transparent": state.editMode(),
 							}}
 						>
 							<div
 								class="flex h-full w-full flex-col gap-2 p-2"
-								classList={{
-									"bg-secondary": state.editMode(),
-								}}
+								classList={
+									{
+										// "bg-secondary-05": state.editMode(),
+									}
+								}
 								style={{
 									"line-height": "0",
 								}}
@@ -123,7 +131,7 @@ export const NotebookView = (
 									}
 									placeholder={"Note Title"}
 									classList={{
-										"bg-secondary-05 border-1 px-2 py-1":
+										"bg-secondary-10 border-1 px-2 py-1":
 											state.editMode(),
 									}}
 									disabled={!state.editMode()}

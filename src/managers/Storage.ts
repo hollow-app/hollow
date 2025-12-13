@@ -11,8 +11,6 @@ export class Storage {
 
 	static async create({ path, options }: StoreType) {
 		const store = await load(path, options);
-		// store.reload();
-		// path.endsWith("main.json") && console.log(store.get("__root__"));
 		const instance = new Storage(store);
 		await instance.init();
 		return instance;
@@ -38,6 +36,12 @@ export class Storage {
 		this.store
 			.set(key, value)
 			.catch((e) => console.error("Failed to persist key", key, e));
+	}
+	setMany(values: Record<string, any>): void {
+		for (const [key, value] of Object.entries(values)) {
+			this.data[key] = value;
+			this.store.set(key, value);
+		}
 	}
 
 	remove(key: string): void {

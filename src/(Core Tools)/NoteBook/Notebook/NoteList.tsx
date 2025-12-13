@@ -159,7 +159,7 @@ function NotePreview({
 	};
 	return (
 		<div
-			class="group bg-secondary-05 border-primary relative mx-auto flex h-fit w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
+			class="group bg-secondary-10 border-primary relative mx-auto flex h-fit w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
 			onclick={(e) =>
 				e.ctrlKey ? onSelect() : changeSelected(note.title)
 			}

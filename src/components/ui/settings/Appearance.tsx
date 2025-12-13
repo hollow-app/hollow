@@ -7,6 +7,7 @@ import {
 	createResource,
 	createSignal,
 	For,
+	onCleanup,
 	Show,
 	Suspense,
 } from "solid-js";
@@ -23,13 +24,15 @@ import { SettingsManager } from "@managers/SettingsManager";
 import Dropdown from "@components/dynamic/Dropdown";
 import { CircleFadingPlusIcon } from "lucide-solid";
 import Tag from "@components/Tag";
+import setStyle from "@hooks/setStyle";
+import useGrid from "@hooks/useGrid";
 
 export default function Appearance() {
 	const settingsManager = SettingsManager.getSelf();
 	return (
 		<div class="h-full p-10">
-			{/* <CanvasSettings /> */}
-			{/* <hr class="bg-secondary-10 mx-auto my-4 h-px border-0" /> */}
+			<CanvasSettings />
+			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<ColorSettings />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<BackgroundSettings settingsManager={settingsManager} />
@@ -44,68 +47,47 @@ type CommonSettings = {
 	settingsManager: SettingsManager;
 };
 
-// function CanvasSettings() {
-// 	const [grid, setGrid] = SettingsManager.getSelf().gridSize;
-//
-// 	onCleanup(() => {
-// 		SettingsManager.getSelf().setConfig("grid-size", grid());
-// 	});
-// 	return (
-// 		<>
-// 			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-// 				Canvas
-// 			</h1>
-//
-// 			<div class="w-full pb-4">
-// 				<div class="flex flex-col gap-5 p-5">
-// 					<div class="flex justify-between">
-// 						<div>
-// 							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-// 								Grid Size
-// 							</h2>
-// 							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-// 								Grid size of the canvas
-// 							</p>
-// 						</div>
-// 						<div class="w-50">
-// 							<NumberInput value={grid()} setValue={setGrid} />
-// 						</div>
-// 					</div>
-// 					<div class="flex justify-between">
-// 						<div>
-// 							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-// 								Grid Type
-// 							</h2>
-// 							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-// 								Grid's Background type of the canvas
-// 							</p>
-// 						</div>
-// 						<div class="w-50">
-// 							<Segmented
-// 								value={SettingsManager.getSelf().getConfig(
-// 									"grid-type",
-// 								)}
-// 								options={[
-// 									{
-// 										key: "dot",
-// 										title: "Dot",
-// 									},
-// 									{ title: "Dash", key: "dash" },
-// 								]}
-// 								setValue={(v: string) =>
-// 									SettingsManager.getSelf().setConfig(
-// 										"grid-type",
-// 										v as "dash" | "dot",
-// 									)
-// 								}
-// 							/>
-// 						</div>
-// 					</div>
-// 				</div>
-// 			</div>
-// 		</>
-// 	);
-// }
+function CanvasSettings() {
+	let gapBetweenCards = SettingsManager.getSelf().getConfig("grid-gap");
+	const setGapBetweenCards = (v: number) => {
+		gapBetweenCards = v;
+	};
+
+	onCleanup(() => {
+		SettingsManager.getSelf().setConfig("grid-gap", gapBetweenCards);
+		useGrid([{ name: "--grid-gap", value: gapBetweenCards }]);
+	});
+	return (
+		<>
+			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
+				Canvas
+			</h1>
+
+			<div class="w-full pb-4">
+				<div class="flex flex-col gap-5 p-5">
+					<div class="flex justify-between">
+						<div>
+							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
+								Grid Gap
+							</h2>
+							<p class="text-sm text-neutral-600 dark:text-neutral-400">
+								Change the gap between cards
+							</p>
+						</div>
+						<div class="w-50">
+							<NumberInput
+								value={gapBetweenCards}
+								setValue={setGapBetweenCards}
+								direct
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+}
+
 function ColorSettings() {
 	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
 	const primaryColor = createMemo(

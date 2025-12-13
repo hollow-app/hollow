@@ -16,10 +16,10 @@ type ItemDisplayProps = {
 export default function ItemDisplay(props: ItemDisplayProps) {
 	return (
 		<div
-			class={`group bg-secondary relative box-border h-fit w-full rounded-xl border text-black shadow-md transition-colors dark:text-white ${props.containerClass}`}
+			class={`group bg-secondary-05 relative box-border h-fit w-full rounded-xl border text-black shadow-md transition-colors dark:text-white ${props.containerClass}`}
 			style={{
 				"line-height": "normal",
-				"border-color": "var(--color-secondary-15)",
+				"border-color": "var(--color-secondary-20)",
 				...props.containerStyle,
 			}}
 		>

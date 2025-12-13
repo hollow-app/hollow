@@ -324,7 +324,7 @@ a {
 	-webkit-appearance: none;
 	background: var(--primary-color);
 	border-radius: 8px;
-	border: 4px solid #eaeaea;
+	border: 4px solid var(--color-primary-50);
 	/* box-shadow: inset 0 0 0 4px #eaeaea; */
 	width: 16px;
 	height: 16px;
@@ -424,8 +424,10 @@ a {
 	--c: var(--tc-50);
 	--bg: var(--color-secondary-20);
 	--border-radius: var(--radius-lg);
-	height: calc(var(--spacing) * 9);
-	width: calc(var(--spacing) * 9);
+	--h: calc(var(--spacing) * 9);
+	--w: calc(var(--spacing) * 9);
+	height: var(--size, var(--h));
+	width: var(--size, var(--w));
 	border-radius: var(--border-radius);
 	color: var(--color-secondary-60);
 	transition: all 0.2s ease-in-out;
@@ -751,4 +753,10 @@ a.no-underline-alt {
 	opacity: 0.5;
 	cursor: not-allowed;
 	pointer-events: none;
+}
+
+
+.ui-resizable-handle {
+	background-color: var(--color-secondary-10);
+	border-radius: 100%;
 }

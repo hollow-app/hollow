@@ -80,8 +80,8 @@ export default function Editor() {
 	});
 
 	return (
-		<div class="size-full">
-			<div class="px-5 py-3">
+		<div class="flex size-full flex-col overflow-hidden rounded-xl p-5">
+			<div class="">
 				<Header
 					selected={selectedCard}
 					selectCard={selectCard}
@@ -101,135 +101,152 @@ export default function Editor() {
 				}
 			>
 				<>
-					<div class="max-h-full overflow-y-scroll pr-3 pl-[calc(var(--spacing)*3+8px)] text-gray-950 dark:text-gray-50">
-						<h1 class="mt-5 text-2xl font-bold">Size</h1>
-						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
-							<NumRow
-								label="Width"
-								value={cardData().w}
-								step={1}
-								min={1}
-								setValue={(v) => updateRootProp("w", v)}
-							/>
-							<NumRow
-								label="Height"
-								value={cardData().h}
-								step={1}
-								min={1}
-								setValue={(v) => updateRootProp("h", v)}
-							/>
-						</div>
-
-						<h1 class="mt-4 text-2xl font-bold">Appearance</h1>
-						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
-							<NumRow
-								label="Corner"
-								value={Number(
-									cardStyle()
-										["border-radius"].toString()
-										.split("px")[0],
-								)}
-								setValue={(v) =>
-									updateStyleProp("border-radius", v + "px")
-								}
-							/>
-
-							<NumRow
-								label="Opacity"
-								value={Number(
-									(cardStyle()["--opacity"] ?? "100%")
-										.toString()
-										.split("%")[0],
-								)}
-								setValue={(v) =>
-									updateStyleProp("--opacity", `${v}%`)
-								}
-								step={5}
-								max={100}
-							/>
-
-							<div class="flex items-center justify-between">
-								<h3>Border</h3>
-								<div class="flex w-[60%] items-center justify-end gap-1">
-									<ColorPick
-										color={cardStyle()["border-color"]}
-										setColor={(v) =>
-											updateStyleProp("border-color", v)
-										}
-									/>
-									<div class="w-70 max-w-[90%]">
-										<NumberInput
-											value={Number(
-												cardStyle()
-													["border-width"].toString()
-													.split("px")[0],
-											)}
-											setValue={(v) =>
-												updateStyleProp(
-													"border-width",
-													v + "px",
-												)
-											}
-											direct
-										/>
-									</div>
-								</div>
+					<div class="flex-1 overflow-y-scroll pr-3 pl-[calc(var(--spacing)*3+8px)] text-gray-950 dark:text-gray-50">
+						<div class="h-fit">
+							<h1 class="mt-5 text-2xl font-bold">Size</h1>
+							<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
+								<NumRow
+									label="Width"
+									value={cardData().w}
+									step={1}
+									min={1}
+									setValue={(v) => updateRootProp("w", v)}
+								/>
+								<NumRow
+									label="Height"
+									value={cardData().h}
+									step={1}
+									min={1}
+									setValue={(v) => updateRootProp("h", v)}
+								/>
 							</div>
 
-							<ToggleRow
-								label="Glass"
-								checked={
-									cardStyle()["backdrop-filter"] !== "none"
-								}
-								onToggle={(on) =>
-									updateStyleProp(
-										"backdrop-filter",
-										on ? "blur(var(--blur-sm))" : "none",
-									)
-								}
-							/>
+							<h1 class="mt-4 text-2xl font-bold">Appearance</h1>
+							<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
+								<NumRow
+									label="Corner"
+									value={Number(
+										cardStyle()
+											["border-radius"].toString()
+											.split("px")[0],
+									)}
+									setValue={(v) =>
+										updateStyleProp(
+											"border-radius",
+											v + "px",
+										)
+									}
+								/>
 
-							<ToggleRow
-								label="Shadow"
-								checked={cardStyle()["box-shadow"] !== "none"}
-								onToggle={(on) =>
-									updateStyleProp(
-										"box-shadow",
-										on ? "var(--shadow-sm)" : "none",
-									)
-								}
-							/>
+								<NumRow
+									label="Opacity"
+									value={Number(
+										(cardStyle()["--opacity"] ?? "100%")
+											.toString()
+											.split("%")[0],
+									)}
+									setValue={(v) =>
+										updateStyleProp("--opacity", `${v}%`)
+									}
+									step={5}
+									max={100}
+								/>
+
+								<div class="flex items-center justify-between">
+									<h3>Border</h3>
+									<div class="flex w-[60%] items-center justify-end gap-1">
+										<ColorPick
+											color={cardStyle()["border-color"]}
+											setColor={(v) =>
+												updateStyleProp(
+													"border-color",
+													v,
+												)
+											}
+										/>
+										<div class="w-70 max-w-[90%]">
+											<NumberInput
+												value={Number(
+													cardStyle()
+														[
+															"border-width"
+														].toString()
+														.split("px")[0],
+												)}
+												setValue={(v) =>
+													updateStyleProp(
+														"border-width",
+														v + "px",
+													)
+												}
+												direct
+											/>
+										</div>
+									</div>
+								</div>
+
+								<ToggleRow
+									label="Glass"
+									checked={
+										cardStyle()["backdrop-filter"] !==
+										"none"
+									}
+									onToggle={(on) =>
+										updateStyleProp(
+											"backdrop-filter",
+											on
+												? "blur(var(--blur-sm))"
+												: "none",
+										)
+									}
+								/>
+
+								<ToggleRow
+									label="Shadow"
+									checked={
+										cardStyle()["box-shadow"] !== "none"
+									}
+									onToggle={(on) =>
+										updateStyleProp(
+											"box-shadow",
+											on ? "var(--shadow-sm)" : "none",
+										)
+									}
+								/>
+							</div>
+
+							<h1 class="mt-4 text-2xl font-bold">Position</h1>
+							<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
+								<NumRow
+									label="X"
+									value={cardData().x}
+									setValue={(v) => updateRootProp("x", v)}
+									min={-10000}
+								/>
+								<NumRow
+									label="Y"
+									value={cardData().y}
+									setValue={(v) => updateRootProp("y", v)}
+									min={-10000}
+								/>
+								<NumRow
+									label="Z"
+									value={Number(cardStyle()["z-index"] ?? 0)}
+									setValue={(v) =>
+										updateStyleProp("z-index", v)
+									}
+								/>
+							</div>
 						</div>
 
-						<h1 class="mt-4 text-2xl font-bold">Position</h1>
-						<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
-							<NumRow
-								label="X"
-								value={cardData().x}
-								setValue={(v) => updateRootProp("x", v)}
-								min={-10000}
-							/>
-							<NumRow
-								label="Y"
-								value={cardData().y}
-								setValue={(v) => updateRootProp("y", v)}
-								min={-10000}
-							/>
-							<NumRow
-								label="Z"
-								value={Number(cardStyle()["z-index"] ?? 0)}
-								setValue={(v) => updateStyleProp("z-index", v)}
-							/>
+						<div class="mt-2 flex h-fit min-h-20 w-full gap-4 pr-3 pl-[calc(var(--spacing)*3+8px)]">
+							<button class="button-primary" onclick={onSave}>
+								Save
+							</button>
+							<button class="button-secondary" onclick={onCancel}>
+								Cancel
+							</button>
 						</div>
-					</div>
-
-					<div class="mt-2 flex h-fit min-h-20 w-full gap-4 pr-3 pl-[calc(var(--spacing)*3+8px)]">
-						<button class="button-primary" onclick={onSave}>
-							Save
-						</button>
-						<button class="button-secondary" onclick={onCancel}>
-							Cancel
-						</button>
 					</div>
 				</>
 			</Show>

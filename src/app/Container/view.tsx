@@ -26,15 +26,15 @@ export const ContainerView = (
 					setCanvasConfigs={state.setCanvasConfigs}
 					isLiveEditor={state.isLiveEditor}
 				/>
-				<Sidepanel
-					type="left"
-					width="calc(var(--spacing) * 104)"
-					controller={state.controller}
-					padding="0 calc(var(--spacing) * 2) 0 0"
-				/>
 				<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
 					<Navbar />
 					<div class="flex min-h-0 w-full flex-1 pb-2">
+						<Sidepanel
+							type="left"
+							width="calc(var(--spacing) * 104)"
+							controller={state.controller}
+							padding="0 calc(var(--spacing) * 2) 0 0"
+						/>
 						<Canvas
 							canvasConfigs={state.canvasConfigs as Accessor<any>}
 							setCanvasConfigs={state.setCanvasConfigs}

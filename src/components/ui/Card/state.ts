@@ -6,6 +6,7 @@ import { CardType } from "@type/hollow";
 
 export type StateType = {
 	el: HTMLDivElement;
+	setEl: (el: HTMLDivElement) => void;
 	isLoaded: Accessor<boolean>;
 	setLoaded: Setter<boolean>;
 	isExpand: Accessor<boolean>;
@@ -47,5 +48,17 @@ export const createCardState = (
 			{ defer: true },
 		),
 	);
-	return { el, isLoaded, setLoaded, isExpand, setExpand };
+	// createEffect(() => {
+	// 	console.log(x, "--", props.node.w);
+	// });
+	return {
+		el,
+		isLoaded,
+		setLoaded,
+		isExpand,
+		setExpand,
+		setEl: (elm) => {
+			el = elm;
+		},
+	};
 };

@@ -17,8 +17,6 @@ import General from "./settings/General";
 import { lazy } from "solid-js";
 import Account from "./settings/Account";
 import { RealmManager } from "@managers/RealmManager";
-import { hollow } from "hollow";
-import { Realm } from "@type/Realm";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
 const Modifier = lazy(() => import("./settings/Modifier"));
@@ -27,7 +25,7 @@ const Developers = lazy(() => import("./settings/Developers"));
 const Appearance = lazy(() => import("./settings/Appearance"));
 const About = lazy(() => import("./settings/About"));
 
-type SettingsProps = { setSettings: Setter<boolean> };
+type SettingsProps = { setSettings: Setter<boolean>; selected?: number };
 export default function Settings({ setSettings }: SettingsProps) {
 	const [selected, setSelected] = createSignal(0);
 

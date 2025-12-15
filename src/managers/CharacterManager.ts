@@ -10,9 +10,12 @@ export class CharacterManager {
 	public async start() {
 		const item = localStorage.getItem("character");
 		this.characterStore = createStore(JSON.parse(item ?? DEFAULT));
-		hollow.events.on("character-add-achievement", this.addAchievement);
-		hollow.events.on("character-add-title", this.addTitle);
-		hollow.events.on("character-add-xp", this.addXp);
+		hollow.events.on(
+			"character-add-achievement",
+			this.addAchievement.bind(this),
+		);
+		hollow.events.on("character-add-title", this.addTitle.bind(this));
+		hollow.events.on("character-add-xp", this.addXp.bind(this));
 	}
 	static getSelf() {
 		if (!this.self) {

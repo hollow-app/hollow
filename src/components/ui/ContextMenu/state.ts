@@ -11,7 +11,8 @@ interface PositionType {
 	yflip: boolean;
 }
 export type StateType = {
-	contextMenu: HTMLDivElement;
+	el: () => HTMLDivElement;
+	setEl: (elm: HTMLDivElement) => void;
 	items: Accessor<ContextMenuItem[]>;
 	setItems: Setter<ContextMenuItem[]>;
 	position: Accessor<PositionType>;
@@ -24,7 +25,7 @@ export const createContextMenuState = (
 	props: ContextMenuProps,
 	helper?: HelperType,
 ): StateType => {
-	let contextMenu!: HTMLDivElement;
+	let el!: HTMLDivElement;
 	const [items, setItems] = createSignal<ContextMenuItem[]>([]);
 	const [position, setPosition] = createSignal({
 		x: 300,
@@ -34,7 +35,10 @@ export const createContextMenuState = (
 	});
 	const [isVisible, setVisible] = createSignal(false);
 	return {
-		contextMenu,
+		el: () => el,
+		setEl: (elm) => {
+			el = elm;
+		},
 		items,
 		setItems,
 		position,

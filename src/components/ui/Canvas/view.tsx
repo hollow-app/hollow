@@ -3,12 +3,9 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import "gridstack/dist/gridstack.css";
-import { createEffect, For, on, onMount } from "solid-js";
+import { For } from "solid-js";
 import { hollow } from "hollow";
-import { Car } from "lucide-solid";
 import { Card } from "../Card";
-import { onCleanup } from "solid-js";
-import { GridStack } from "gridstack";
 
 export const CanvasView = (
 	state: StateType,
@@ -43,7 +40,7 @@ export const CanvasView = (
 							"calc(100vh - calc(var(--spacing) * 4) - 2px)",
 					}}
 				>
-					<div class="grid-stack" ref={state.gridEl}>
+					<div class="grid-stack" ref={state.setGridEl}>
 						<For
 							each={hollow.cards().filter((i) => i.data.isPlaced)}
 						>

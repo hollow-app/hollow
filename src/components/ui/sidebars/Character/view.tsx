@@ -19,227 +19,208 @@ export const CharacterView = (
 	helper?: HelperType,
 ) => {
 	return (
-		<div class="size-full">
-			<div class="h-full py-2">
-				<div class="border-secondary-10 bg-secondary h-full w-102 overflow-hidden rounded-xl border">
-					<div class="group relative h-32 w-full">
-						<Show when={state.character()?.banner}>
-							<img
-								src={
-									state.character().banner ||
-									"/placeholder.svg"
-								}
-								alt="Character banner"
-								class="h-full w-full object-cover"
-							/>
-						</Show>
-						<button
-							class="bg-secondary-05/60 hover:bg-secondary-05 absolute top-2 right-2 flex items-center rounded p-1 text-xs opacity-0 transition-opacity group-hover:opacity-100"
-							onclick={() => logic.import_image("banner")}
-						>
-							<ImageUpIcon class="size-5 pr-1" /> Import
-						</button>
-					</div>
+		<div class="h-full w-102 overflow-hidden">
+			<div class="group border-secondary-05 relative h-32 w-full overflow-hidden rounded-xl border">
+				<Show when={state.character()?.banner}>
+					<img
+						src={state.character().banner}
+						alt="Character banner"
+						class="h-full w-full object-cover"
+					/>
+				</Show>
+				<button
+					class="bg-secondary-05/60 hover:bg-secondary-05 absolute top-2 right-2 flex items-center rounded p-1 text-xs opacity-0 transition-opacity group-hover:opacity-100"
+					onclick={() => logic.import_image("banner")}
+				>
+					<ImageUpIcon class="size-5 pr-1" /> Import
+				</button>
+			</div>
 
-					{/* Avatar Section */}
-					<div class="pointer-events-none relative px-6 pb-6">
-						<div class="pointer-events-none -mt-12 flex justify-start">
-							<div class="pointer-events-auto relative">
-								<div class="group border-secondary-20 bg-secondary-05 relative h-20 w-20 overflow-hidden rounded-2xl border-3 object-cover shadow-lg">
-									<Show when={state.character()?.avatar}>
-										<img
-											src={
-												state.character().avatar ||
-												"/placeholder.svg"
-											}
-											alt={state.character().username}
-										/>
-									</Show>
+			{/* Avatar Section */}
+			<div class="pointer-events-none relative px-6 pb-6">
+				<div class="pointer-events-none -mt-12 flex justify-start">
+					<div class="pointer-events-auto relative">
+						<div class="group border-secondary-20 bg-secondary-05 relative h-20 w-20 overflow-hidden rounded-2xl border-3 object-cover shadow-lg">
+							<Show when={state.character()?.avatar}>
+								<img
+									src={
+										state.character().avatar ||
+										"/placeholder.svg"
+									}
+									alt={state.character().username}
+								/>
+							</Show>
 
-									<button
-										class="bg-secondary-05/50 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-										onclick={() =>
-											logic.import_image("avatar")
-										}
-									>
-										<ImageUpIcon class="mx-auto p-1" />
-									</button>
-								</div>
-								<Show when={state.character()?.level}>
-									<div class="bg-secondary-90 text-secondary border-secondary absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-lg border-2 text-xs font-bold shadow-sm">
-										{state.character().level}
-									</div>
-								</Show>
-							</div>
+							<button
+								class="bg-secondary-05/50 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
+								onclick={() => logic.import_image("avatar")}
+							>
+								<ImageUpIcon class="mx-auto p-1" />
+							</button>
 						</div>
-
-						{/* Character Info */}
-						<div class="pointer-events-auto mt-4 space-y-4 text-left">
-							<div class="space-y-1">
-								<h2 class="text-2xl font-bold tracking-tight">
-									{state.character()?.username}
-								</h2>
-								<Show when={state.character()?.title}>
-									<div class="bg-secondary-10 border-secondary-25 w-fit rounded border-0 px-1 text-xs tracking-wide">
-										{state.character().title}
-									</div>
-								</Show>
+						<Show when={state.character()?.level}>
+							<div class="bg-secondary-90 text-secondary border-secondary absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-lg border-2 text-xs font-bold shadow-sm">
+								{state.character().level}
 							</div>
-							<div class="text-sm text-gray-400">
-								<span class="text-secondary-50">Realm:</span>{" "}
-								<span class="text-secondary-95 pl-2">
-									{RealmManager.getSelf().getCurrent().name}
+						</Show>
+					</div>
+				</div>
+
+				{/* Character Info */}
+				<div class="pointer-events-auto mt-4 space-y-4 text-left">
+					<div class="space-y-1">
+						<h2 class="text-2xl font-bold tracking-tight">
+							{state.character()?.username}
+						</h2>
+						<Show when={state.character()?.title}>
+							<div class="bg-secondary-10 border-secondary-25 w-fit rounded border-0 px-1 text-xs tracking-wide">
+								{state.character().title}
+							</div>
+						</Show>
+					</div>
+					<div class="text-sm text-gray-400">
+						<span class="text-secondary-50">Realm:</span>{" "}
+						<span class="text-secondary-95 pl-2">
+							{RealmManager.getSelf().getCurrent().name}
+						</span>
+					</div>
+					{/* XP Progress */}
+					<Show when={state.character()?.xp !== undefined}>
+						<div class="space-y-2">
+							<div class="flex justify-between text-sm">
+								<span class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
+									Experience
+								</span>
+								<span class="font-medium text-neutral-500">
+									{state.character().xp} XP
 								</span>
 							</div>
-							{/* XP Progress */}
-							<Show when={state.character()?.xp !== undefined}>
-								<div class="space-y-2">
-									<div class="flex justify-between text-sm">
-										<span class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
-											Experience
-										</span>
-										<span class="font-medium text-neutral-500">
-											{state.character().xp} XP
-										</span>
-									</div>
-									<div class="bg-secondary-10 h-1.5 overflow-hidden rounded-full">
-										<hr
-											class="from-primary-30 to-primary h-full border-0 bg-linear-to-r"
-											style={{
-												width: `${state.character().xp / state.character().level}%`,
+							<div class="bg-secondary-10 h-1.5 overflow-hidden rounded-full">
+								<hr
+									class="from-primary-30 to-primary h-full border-0 bg-linear-to-r"
+									style={{
+										width: `${state.character().xp / state.character().level}%`,
+									}}
+								/>
+							</div>
+						</div>
+					</Show>
+					{/* Bio */}
+					<p class="text-sm leading-relaxed text-neutral-500">
+						{state.character()?.bio}
+					</p>
+					{/* Mrta */}
+					<Show when={state.character()?.meta.length > 0}>
+						<div class="space-y-3">
+							<h3 class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
+								Meta
+							</h3>
+
+							<Show
+								when={state
+									.character()
+									.meta.some(
+										(i) => typeof i.value === "number",
+									)}
+							>
+								<For
+									each={state
+										.character()
+										.meta.filter(
+											(i) => typeof i.value === "number",
+										)}
+								>
+									{(m) => (
+										<ProgressBar
+											{...{
+												...m,
+												value: () => m.value,
+												setCharacter:
+													state.setCharacter,
 											}}
 										/>
-									</div>
-								</div>
+									)}
+								</For>
 							</Show>
-							{/* Bio */}
-							<p class="text-sm leading-relaxed text-neutral-500">
-								{state.character()?.bio}
-							</p>
-							{/* Mrta */}
-							<Show when={state.character()?.meta.length > 0}>
-								<div class="space-y-3">
-									<h3 class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
-										Meta
-									</h3>
-
-									<Show
-										when={state
+							<div class="flex flex-wrap gap-2">
+								<Show
+									when={state
+										.character()
+										.meta.some(
+											(i) => typeof i.value === "string",
+										)}
+								>
+									<For
+										each={state
 											.character()
-											.meta.some(
+											.meta.filter(
 												(i) =>
-													typeof i.value === "number",
+													typeof i.value === "string",
 											)}
 									>
-										<For
-											each={state
-												.character()
-												.meta.filter(
-													(i) =>
-														typeof i.value ===
-														"number",
-												)}
-										>
-											{(m) => (
-												<ProgressBar
-													{...{
-														...m,
-														value: () => m.value,
-														setCharacter:
-															state.setCharacter,
-													}}
-												/>
-											)}
-										</For>
-									</Show>
-									<div class="flex flex-wrap gap-2">
-										<Show
-											when={state
-												.character()
-												.meta.some(
-													(i) =>
-														typeof i.value ===
-														"string",
-												)}
-										>
-											<For
-												each={state
-													.character()
-													.meta.filter(
-														(i) =>
-															typeof i.value ===
-															"string",
-													)}
-											>
-												{(m) => {
-													return (
-														<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1">
-															<Show when={m.icon}>
-																<FetchedIcon
-																	class={
-																		"size-4"
-																	}
-																	url={m.icon}
-																/>
-															</Show>
-															<Show
-																when={m.label}
-															>
-																<span class="text-secondary-40 text-sm font-medium uppercase">
-																	{m.label}
-																</span>
-															</Show>
-															<span class="text-xs">
-																{m.value}
-															</span>
-														</div>
-													);
-												}}
-											</For>
-										</Show>
-									</div>
-								</div>
-							</Show>
-							{/* Achievements */}
-							<Show
-								when={
-									state.character()?.achievements &&
-									state.character()?.achievements.length > 0
-								}
-							>
-								<div class="space-y-3">
-									<h3 class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
-										Achievements
-									</h3>
-									<div class="flex flex-wrap gap-2">
-										<For
-											each={state
-												.character()
-												.achievements.slice(0, 10)}
-										>
-											{(achievement) => (
-												<div class="bg-secondary-10 rounded-md px-2 py-1 text-xs">
-													{achievement}
+										{(m) => {
+											return (
+												<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1">
+													<Show when={m.icon}>
+														<FetchedIcon
+															class={"size-4"}
+															url={m.icon}
+														/>
+													</Show>
+													<Show when={m.label}>
+														<span class="text-secondary-40 text-sm font-medium uppercase">
+															{m.label}
+														</span>
+													</Show>
+													<span class="text-xs">
+														{m.value}
+													</span>
 												</div>
-											)}
-										</For>
-										<Show
-											when={
-												state.character().achievements
-													.length > 10
-											}
-										>
-											<div class="bg-secondary-10 rounded-md px-2 py-1 text-xs">
-												+
-												{state.character().achievements
-													.length - 10}
-											</div>
-										</Show>
-									</div>
-								</div>
-							</Show>
+											);
+										}}
+									</For>
+								</Show>
+							</div>
 						</div>
-					</div>
+					</Show>
+					{/* Achievements */}
+					<Show
+						when={
+							state.character()?.achievements &&
+							state.character()?.achievements.length > 0
+						}
+					>
+						<div class="space-y-3">
+							<h3 class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
+								Achievements
+							</h3>
+							<div class="flex flex-wrap gap-2">
+								<For
+									each={state
+										.character()
+										.achievements.slice(0, 10)}
+								>
+									{(achievement) => (
+										<div class="bg-secondary-10 rounded-md px-2 py-1 text-xs">
+											{achievement}
+										</div>
+									)}
+								</For>
+								<Show
+									when={
+										state.character().achievements.length >
+										10
+									}
+								>
+									<div class="bg-secondary-10 rounded-md px-2 py-1 text-xs">
+										+
+										{state.character().achievements.length -
+											10}
+									</div>
+								</Show>
+							</div>
+						</div>
+					</Show>
 				</div>
 			</div>
 		</div>

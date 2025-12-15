@@ -4,6 +4,8 @@ import { PlusIcon, SearchIcon } from "lucide-solid";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
 import { hollow } from "hollow";
 import FilterButton from "@components/FilterButton";
+import Segmented from "@components/dynamic/Segmented";
+import Form from "../popups/Form";
 
 type FilterType = {
 	tools: string[];
@@ -14,9 +16,9 @@ type FilterType = {
 
 export default function Expand() {
 	// TODO 11
-	const hand = createMemo(() => hollow.toolManager.getHand());
+	const hand = hollow.toolManager.getHand();
 	const icons = createMemo(() =>
-		hand().reduce((a, i) => {
+		hand.reduce((a, i) => {
 			a[i.name] = i.icon;
 			return a;
 		}),
@@ -27,31 +29,30 @@ export default function Expand() {
 		placed: true,
 		unplaced: true,
 	});
-	// const cards = createMemo(() =>
-	// 	hand()
-	// 		.filter(
-	// 			(i) =>
-	// 				filter().tools.length === 0 ||
-	// 				filter().tools.includes(i.name),
-	// 		)
-	// 		.flatMap((i) =>
-	// 			i.cards.map((card) => ({
-	// 				...card,
-	// 				icon: i.icon,
-	// 				tool: i.name,
-	// 				title: i.title,
-	// 			})),
-	// 		)
-	// 		.filter((card) => {
-	// 			const f = filter();
-	//
-	// 			if (f.favourite && !card.data.isFavored) return false;
-	// 			if (!f.placed && card.data.isPlaced) return false;
-	// 			if (!f.unplaced && !card.data.isPlaced) return false;
-	//
-	// 			return true;
-	// 		}),
-	// );
+	const cards = createMemo(() =>
+		hand
+			.filter(
+				(i) =>
+					filter().tools.length === 0 ||
+					filter().tools.includes(i.name),
+			)
+			.flatMap((i) =>
+				i.cards.map((card) => ({
+					...card,
+					icon: i.icon,
+					tool: i.name,
+				})),
+			)
+			.filter((card) => {
+				const f = filter();
+
+				if (f.favourite && !card.data.isFavored) return false;
+				if (!f.placed && card.data.isPlaced) return false;
+				if (!f.unplaced && !card.data.isPlaced) return false;
+
+				return true;
+			}),
+	);
 
 	const addNewCard = () => {
 		const onSave = (data: any) => {
@@ -76,7 +77,7 @@ export default function Expand() {
 					// TODO multi select in dropdown yet one for FORM
 					options: [
 						{
-							items: hand().map((i) => i.name),
+							items: hand.map((i) => i.name),
 						},
 					],
 				},
@@ -105,23 +106,16 @@ export default function Expand() {
 
 		hollow.events.emit("form", form);
 	};
-	const selectTool = (name: string) => {
+	const selectTool = (tools: string[]) => {
 		setFilter((prev) => ({
 			...prev,
-			tools: (() => {
-				const index = prev.tools.indexOf(name);
-				if (index !== -1) {
-					return [...prev.tools.filter((_, i) => i !== index)];
-				} else {
-					return [...prev.tools, name];
-				}
-			})(),
+			tools,
 		}));
 	};
 
 	return (
 		<div class="my-2 size-full rounded-xl">
-			<div class="flex h-full flex-col gap-3 px-3 py-5">
+			<div class="flex h-full flex-col gap-3 px-3 py-3">
 				<div class="flex items-center gap-3">
 					<div class="relative flex-1">
 						<input
@@ -143,6 +137,7 @@ export default function Expand() {
 					<FilterButton
 						options={() => [
 							{
+								title: "status",
 								isCheckBox: true,
 								items: [
 									{
@@ -167,6 +162,15 @@ export default function Expand() {
 									setFilter((prev) => ({ ...prev, ...tmp }));
 								},
 							},
+							{
+								title: "Tool",
+								isCheckBox: true,
+								items: hand.map((i) => ({
+									label: i.name,
+									checked: filter().tools.includes(i.name),
+								})),
+								onSelect: selectTool,
+							},
 						]}
 					/>
 					<button
@@ -186,7 +190,7 @@ export default function Expand() {
 						}}
 					/>
 					<div class="flex h-[calc(100%-2px)] flex-col gap-1 overflow-hidden overflow-y-auto">
-						<For each={hollow.cards()}>
+						<For each={cards()}>
 							{(c: CardType) => (
 								<CardConfig
 									myCard={c}

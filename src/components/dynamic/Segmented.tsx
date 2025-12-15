@@ -56,7 +56,7 @@ export default function Segmented(props: Props) {
 				class="relative flex w-full items-center justify-around gap-5 p-1.5"
 			>
 				<div
-					class="bg-secondary absolute h-full rounded-lg shadow transition-all"
+					class="bg-secondary dark:bg-primary-10 dark:text-primary-95 absolute h-full rounded-lg shadow transition-all"
 					style={position()}
 				/>
 				<For each={props.options}>

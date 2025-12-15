@@ -69,28 +69,22 @@ export const ContextMenuLogic = (
 
 		state.setVisible(true);
 		requestAnimationFrame(() => {
-			state.contextMenu.focus();
-			const flipx = x > window.innerWidth - state.contextMenu.scrollWidth;
-			const flipy =
-				y > window.innerHeight - state.contextMenu.scrollHeight;
+			state.el().focus();
+			const flipx = x > window.innerWidth - state.el().scrollWidth;
+			const flipy = y > window.innerHeight - state.el().scrollHeight;
 			state.setPosition({
-				x: flipx ? x - state.contextMenu.scrollWidth : x,
-				y: flipy ? y - state.contextMenu.scrollHeight : y,
+				x: flipx ? x - state.el().scrollWidth : x,
+				y: flipy ? y - state.el().scrollHeight : y,
 				// this condition is for the extra panels, has nothing to do with x and y above
-				xflip:
-					x > window.innerWidth - state.contextMenu.scrollWidth * 2,
-				yflip:
-					y > window.innerHeight - state.contextMenu.scrollHeight * 2,
+				xflip: x > window.innerWidth - state.el().scrollWidth * 2,
+				yflip: y > window.innerHeight - state.el().scrollHeight * 2,
 			});
 		});
 		document.body.addEventListener("mousedown", onFocusOut);
 	};
 
 	const onFocusOut = (e: MouseEvent) => {
-		if (
-			state.contextMenu &&
-			!state.contextMenu.contains(e.target as Node)
-		) {
+		if (state.el() && !state.el().contains(e.target as Node)) {
 			state.setVisible(false);
 			document.body.removeEventListener("mousedown", onFocusOut);
 		}

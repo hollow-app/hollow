@@ -85,7 +85,7 @@ export default function NoteList(props: NoteListProps) {
 
 	return (
 		<div
-			class="bg-secondary flex h-full w-full flex-col justify-center gap-2 px-0"
+			class="flex h-full w-full flex-col justify-center gap-2 px-0"
 			classList={{
 				// "border-l border-secondary-10 pl-2 py-5": props.isExpand,
 				"pt-2 pb-5": !props.isExpand,

@@ -28,7 +28,10 @@ export const NotebookView = (
 					{state.book.name}{" "}
 					<span class="text-secondary-40">Book</span>
 				</h1>
-				<div class="flex items-center gap-2">
+				<div
+					class="flex items-center gap-2"
+					style={{ "--size": "calc(var(--spacing) * 7)" }}
+				>
 					<Show when={state.note() || state.editMode()}>
 						<button
 							class="button-control"
@@ -47,26 +50,48 @@ export const NotebookView = (
 								fallback={
 									<MyIcon
 										name="files/file-pen"
-										class="size-5"
+										class="size-4"
 									/>
 								}
 							>
 								<MyIcon
 									name="files/file-check"
-									class="size-5"
+									class="size-4"
 								/>
 							</Show>
 						</button>
 					</Show>
 					<button
 						class="button-control"
-						onclick={logic.onNewNote}
+						onclick={() => {
+							state.note()?.newNote
+								? (() => {
+										state.setEditMode(false);
+										state.setNote(
+											state.book.last
+												? state.book.notes.find(
+														(i) =>
+															i.title ===
+															state.book.last,
+													)
+												: null,
+										);
+									})()
+								: logic.onNewNote();
+						}}
 						style={{
 							"--p": 1,
 							"--border-radius": "var(--radius-sm)",
 						}}
 					>
-						<MyIcon name="files/file-plus" class="size-5" />
+						<Show
+							when={!state.note()?.newNote}
+							fallback={
+								<MyIcon name="files/file-x" class="size-4" />
+							}
+						>
+							<MyIcon name="files/file-plus" class="size-4" />
+						</Show>
 					</button>
 					<button
 						class="button-control"
@@ -79,10 +104,10 @@ export const NotebookView = (
 						<Show
 							when={state.showList()}
 							fallback={
-								<MyIcon name="folder-close" class="size-5" />
+								<MyIcon name="folder-close" class="size-4" />
 							}
 						>
-							<MyIcon name="folder-open" class="size-5" />
+							<MyIcon name="folder-open" class="size-4" />
 						</Show>
 					</button>
 				</div>
@@ -98,7 +123,7 @@ export const NotebookView = (
 							class="relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 group-hover:opacity-100 @7xl:h-35"
 							style={
 								!state.editMode() && {
-									"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${state.note().attributes?.banner})`,
+									"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${state.note()?.attributes?.banner})`,
 									"background-size": "cover",
 									"background-position": "center",
 									"background-repeat": "no-repeat",
@@ -122,7 +147,7 @@ export const NotebookView = (
 							>
 								<input
 									class="focus:border-secondary-10 w-full max-w-full overflow-hidden rounded border-transparent text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-gray-900 dark:text-gray-50"
-									value={state.note().title}
+									value={state.note()?.title ?? ""}
 									onchange={(e) =>
 										state.setNote((prev) => ({
 											...prev,
@@ -142,11 +167,10 @@ export const NotebookView = (
 										fallback={
 											<WordInput
 												words={
-													state
-														.note()
-														.attributes?.tags.split(
-															",",
-														) ?? []
+													(
+														state.note()?.attributes
+															?.tags ?? ""
+													).split(",") ?? []
 												}
 												setWords={(tgs) =>
 													state.setNote((prev) => ({
@@ -192,7 +216,7 @@ export const NotebookView = (
 							<div class="mx-auto flex w-full px-5 @4xl:w-[70%] @7xl:w-[50%]">
 								<MarkdownEditor
 									editMode={state.editMode}
-									value={() => state.note().body}
+									value={() => state.note()?.body ?? ""}
 									setValue={(v) => {
 										state.setNote((prev) => ({
 											...prev,
@@ -200,7 +224,7 @@ export const NotebookView = (
 										}));
 									}}
 									uniqueNote={() =>
-										`${state.book.name.toLowerCase()}-${state.note().title.toLowerCase()}`
+										`${state.book.name.toLowerCase()}-${state.note()?.title.toLowerCase() ?? ""}`
 									}
 								/>
 							</div>

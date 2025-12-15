@@ -38,7 +38,7 @@ export const ContextMenuView = (
 						left: `${state.position().x}px`,
 						top: `${state.position().y}px`,
 					}}
-					ref={state.contextMenu}
+					ref={state.setEl}
 					onMouseDown={(e) => e.stopPropagation()}
 					initial={{ opacity: 0, y: -25 }}
 					animate={{ opacity: 1, y: 0 }}

@@ -2,6 +2,7 @@ import { CardProps } from ".";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
+import { createEffect, on } from "solid-js";
 
 export const CardView = (
 	state: StateType,
@@ -11,7 +12,7 @@ export const CardView = (
 ) => {
 	return (
 		<div
-			ref={state.el}
+			ref={state.setEl}
 			class="grid-stack-item"
 			gs-id={props.node.id}
 			gs-x={props.node.x}
@@ -29,10 +30,8 @@ export const CardView = (
 						position: state.isExpand() ? "absolute" : "static",
 						...(state.isExpand()
 							? {
-									// top:
-									// 	-(props.kit.viewport().y + props.node.y) + "px",
-									// left:
-									// 	-(props.kit.viewport().x + props.node.x) + "px",
+									top: 0,
+									left: 0,
 									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 20) - 2px)",
 									height: "calc(100vh - calc(var(--spacing) * 4) - 2px)",
 								}

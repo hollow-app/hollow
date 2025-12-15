@@ -82,6 +82,7 @@ const HollowIcons = {
 		import("@assets/icons/files/file-description.svg"),
 	"files/file-pen": () => import("@assets/icons/files/file-pen.svg"),
 	"files/file-plus": () => import("@assets/icons/files/file-plus.svg"),
+	"files/file-x": () => import("@assets/icons/files/file-x.svg"),
 	// Tools subdirectory
 	"tools/embed": () => import("@assets/icons/tools/embed.svg"),
 	"tools/image": () => import("@assets/icons/tools/image.svg"),

@@ -421,7 +421,7 @@ a {
 
 
 .button-control {
-	--c: var(--tc-50);
+	--c: var(--color-secondary-95);
 	--bg: var(--color-secondary-20);
 	--border-radius: var(--radius-lg);
 	--h: calc(var(--spacing) * 9);
@@ -429,14 +429,18 @@ a {
 	height: var(--size, var(--h));
 	width: var(--size, var(--w));
 	border-radius: var(--border-radius);
-	color: var(--color-secondary-60);
+	color: color-mix(in oklab,
+			var(--c) 50%,
+			transparent);
 	transition: all 0.2s ease-in-out;
 
 	&:hover {
 		background-color: color-mix(in oklab,
 				var(--bg) 50%,
 				transparent);
-		color: var(--color-secondary-95);
+		color: color-mix(in oklab,
+				var(--c) 100%,
+				transparent);
 	}
 
 	&:active {
@@ -462,6 +466,10 @@ a {
 .button-control.red {
 	--c: var(--color-red-500);
 	--bg: var(--color-red-900);
+
+	&:hover {
+		color: var(--color-red-500);
+	}
 }
 
 

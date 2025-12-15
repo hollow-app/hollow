@@ -7,6 +7,7 @@ import { Layout } from "@type/hollow";
 
 export type StateType = {
 	gridEl: HTMLDivElement;
+	setGridEl: (el: HTMLDivElement) => void;
 	grid: GridStack;
 	isAnySidePanelVisible: Accessor<boolean>;
 };
@@ -21,5 +22,12 @@ export const createCanvasState = (
 		const store = props.layout.get;
 		return store.left.visible || store.right.visible;
 	});
-	return { grid, gridEl, isAnySidePanelVisible };
+	return {
+		grid,
+		gridEl,
+		isAnySidePanelVisible,
+		setGridEl: (el) => {
+			gridEl = el;
+		},
+	};
 };

@@ -2,7 +2,6 @@ import { CardProps } from ".";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
-import { createEffect, on } from "solid-js";
 
 export const CardView = (
 	state: StateType,
@@ -27,13 +26,19 @@ export const CardView = (
 				<div
 					class={"h-full w-full border-solid"}
 					style={{
-						position: state.isExpand() ? "absolute" : "static",
+						position: state.isExpand() ? "fixed" : "static",
 						...(state.isExpand()
 							? {
-									top: 0,
-									left: 0,
-									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 20) - 2px)",
+									//left side 19;
+									//
+									top: "calc(var(--spacing) * 2 + 1px)",
+									left: "calc(var(--layout-left) + calc(var(--spacing) * 19) + 2px)",
+									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 21) - 3px)",
 									height: "calc(100vh - calc(var(--spacing) * 4) - 2px)",
+									background: "var(--color-secondary)",
+									"border-width": "0px",
+									"border-radius": "var(--radius-xl)",
+									"z-index": "502",
 								}
 							: props.node.style),
 					}}

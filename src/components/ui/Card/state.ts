@@ -3,6 +3,8 @@ import { CardProps } from ".";
 import type { HelperType } from "./helper";
 import { hollow } from "hollow";
 import { CardType } from "@type/hollow";
+import { isSea } from "node:sea";
+import { unwrap } from "solid-js/store";
 
 export type StateType = {
 	el: HTMLDivElement;
@@ -20,24 +22,7 @@ export const createCardState = (
 	let el!: HTMLDivElement;
 	const [isLoaded, setLoaded] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
-	let pz: any = 0;
-	createEffect(
-		on(
-			isExpand,
-			(v) => {
-				if (v) {
-					pz = props.node.style["z-index"] ?? 0;
-				}
-				hollow.setCards(
-					(c: CardType) => c.id === props.node.id,
-					"style",
-					"z-index",
-					v ? 999 : pz,
-				);
-			},
-			{ defer: true },
-		),
-	);
+
 	createEffect(
 		on(
 			() => [props.node.w, props.node.x, props.node.h, props.node.y],
@@ -48,9 +33,6 @@ export const createCardState = (
 			{ defer: true },
 		),
 	);
-	// createEffect(() => {
-	// 	console.log(x, "--", props.node.w);
-	// });
 	return {
 		el,
 		isLoaded,

@@ -60,7 +60,7 @@ export default function Popups() {
 	});
 
 	return (
-		<div class="pointer-events-none fixed top-0 left-0 z-1 flex h-full w-full items-center justify-center">
+		<div class="pointer-events-none fixed top-0 left-0 z-1000 flex h-full w-full items-center justify-center">
 			<div id="hollow-popup" />
 
 			<Show when={toolSettings()}>

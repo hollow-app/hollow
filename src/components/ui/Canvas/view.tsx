@@ -3,7 +3,7 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import "gridstack/dist/gridstack.css";
-import { For } from "solid-js";
+import { For, Show } from "solid-js";
 import { hollow } from "hollow";
 import { Card } from "../Card";
 
@@ -49,9 +49,13 @@ export const CanvasView = (
 									node={item}
 									grid={state.grid}
 									isLiveEditor={props.isLiveEditor}
+									setAnyExpaneded={state.setAnyExpanded}
 								/>
 							)}
 						</For>
+						<Show when={state.anyExpanded()}>
+							<div class="bg-secondary absolute z-501 h-full w-full" />
+						</Show>
 					</div>
 				</div>
 			</div>

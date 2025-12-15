@@ -72,6 +72,7 @@ export default function SideBar({
 	onMount(() => {
 		hollow.events.on("notify-status", setAlert);
 	});
+
 	return (
 		<div class="border-secondary-10 mr-2 flex w-fit flex-col gap-4 border-r py-4 pr-4 pl-2">
 			<button onclick={() => layout.selectPanel("left", "character")}>

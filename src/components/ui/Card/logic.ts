@@ -67,17 +67,21 @@ export const CardLogic = (
 			props.grid.makeWidget(state.el);
 		}
 	});
+	const toggleExpand = (v: boolean) => {
+		state.setExpand(v);
+		props.setAnyExpaneded(v);
+	};
 	onMount(async () => {
 		state.setLoaded(await hollow.toolManager.loadCard(props.node, tool));
 		hollow.toolManager
 			.getToolEvents(tool)
-			.on(`${props.node.id}-expand`, state.setExpand);
+			.on(`${props.node.id}-expand`, toggleExpand);
 	});
 	onCleanup(() => {
 		props.grid?.removeWidget(state.el, false);
 		hollow.toolManager
 			.getToolEvents(tool)
-			.off(`${props.node.id}-expand`, state.setExpand);
+			.off(`${props.node.id}-expand`, toggleExpand);
 	});
 	return { onContextMenu };
 };

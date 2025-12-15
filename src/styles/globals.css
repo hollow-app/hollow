@@ -605,6 +605,7 @@ a {
 	justify-content: center;
 	align-items: center;
 	animation: var(--animation);
+	z-index: 503;
 }
 
 

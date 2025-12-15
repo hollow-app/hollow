@@ -235,6 +235,8 @@ export default function Editor() {
 									setValue={(v) =>
 										updateStyleProp("z-index", v)
 									}
+									max={500}
+									min={0}
 								/>
 							</div>
 						</div>

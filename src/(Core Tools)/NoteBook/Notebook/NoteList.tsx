@@ -166,12 +166,6 @@ function NotePreview({
 			classList={{
 				"border-secondary-10 hover:border-secondary-10": !selected(),
 			}}
-			style={{
-				"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note.attributes.banner})`,
-				"background-size": "cover",
-				"background-position": "center",
-				"background-repeat": "no-repeat",
-			}}
 		>
 			<input
 				type="checkbox"
@@ -185,7 +179,15 @@ function NotePreview({
 				}}
 			/>
 
-			<div class="flex flex-col gap-1 p-2 px-3 text-xs text-neutral-500">
+			<div
+				class="border-secondary-05 flex flex-col gap-1 rounded-lg border-2 p-2 px-3 text-xs text-neutral-500"
+				style={{
+					"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note.attributes.banner})`,
+					"background-size": "cover",
+					"background-position": "center",
+					"background-repeat": "no-repeat",
+				}}
+			>
 				<h2 class="truncate text-lg font-medium text-neutral-800 dark:text-neutral-200">
 					{note.title}
 				</h2>

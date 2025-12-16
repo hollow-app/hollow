@@ -7,6 +7,7 @@ import { Accessor, createMemo, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
 import { hotkeysManager } from "@managers/HotkeysManager";
 import { GridStackOptions } from "gridstack";
+import { SettingsManager } from "@managers/SettingsManager";
 
 export type StateType = {
 	controller: Layout;
@@ -21,12 +22,15 @@ export const createContainerState = (
 	helper?: HelperType,
 ): StateType => {
 	const controller = createLayout();
+	const settingsManager = SettingsManager.getSelf();
 	const [isSettings, setSettings] = createSignal(false);
 	const [canvasConfigs, setCanvasConfigs] = createSignal<GridStackOptions>({
 		disableResize: true,
 		disableDrag: true,
 		float: true,
 		margin: 10,
+		column: settingsManager.getConfig("columns"),
+		row: settingsManager.getConfig("rows"),
 	});
 	const isLiveEditor = createMemo(() => !canvasConfigs().disableDrag);
 

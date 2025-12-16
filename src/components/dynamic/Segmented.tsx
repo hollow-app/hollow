@@ -65,7 +65,8 @@ export default function Segmented(props: Props) {
 							class="text-secondary-40 z-1 flex items-center gap-1 font-medium"
 							type="button"
 							classList={{
-								"text-secondary-95": isSelected(option.title),
+								"text-secondary-95 dark:text-primary-95":
+									isSelected(option.title),
 							}}
 							onclick={(e) => onSelect(option.key, e)}
 						>

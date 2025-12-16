@@ -72,7 +72,7 @@ export default function PopupWrapper({
 			style={{
 				transform: `translate(${position().x}px, ${position().y}px)`,
 			}}
-			classList={{ "z-50": isFocus() }}
+			classList={{ "z-750": isFocus() }}
 		>
 			<div
 				class="title-panel flex h-fit w-full cursor-grab items-center gap-2 rounded-t-lg select-none"

@@ -88,7 +88,7 @@ export default function Dropdown(props: DropdownProps) {
 				<Portal>
 					<ul
 						ref={listRef}
-						class="bg-secondary-05 border-secondary-10 fixed z-50 max-h-60 overflow-y-auto rounded-md border text-sm shadow-lg"
+						class="bg-secondary-05 border-secondary-10 fixed z-601 max-h-60 overflow-y-auto rounded-md border text-sm shadow-lg"
 						style={{
 							top: `${pos().top}px`,
 							left: `${pos().left}px`,

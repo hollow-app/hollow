@@ -9,7 +9,7 @@ import {
 	PaletteIcon,
 	PandaIcon,
 } from "lucide-solid";
-import { createSignal, Setter, Show, Suspense } from "solid-js";
+import { Accessor, createSignal, Setter, Show, Suspense } from "solid-js";
 import HollowIcon from "@assets/logo.svg";
 
 import { Motion, Presence } from "solid-motionone";
@@ -17,6 +17,7 @@ import General from "./settings/General";
 import { lazy } from "solid-js";
 import Account from "./settings/Account";
 import { RealmManager } from "@managers/RealmManager";
+import { GridStackOptions } from "gridstack";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
 const Modifier = lazy(() => import("./settings/Modifier"));
@@ -25,8 +26,13 @@ const Developers = lazy(() => import("./settings/Developers"));
 const Appearance = lazy(() => import("./settings/Appearance"));
 const About = lazy(() => import("./settings/About"));
 
-type SettingsProps = { setSettings: Setter<boolean>; selected?: number };
-export default function Settings({ setSettings }: SettingsProps) {
+type SettingsProps = {
+	setSettings: Setter<boolean>;
+	canvasConfigs: Accessor<GridStackOptions>;
+	setCanvasConfigs: Setter<GridStackOptions>;
+	selected?: number;
+};
+export default function Settings(props: SettingsProps) {
 	const [selected, setSelected] = createSignal(0);
 
 	return (
@@ -170,7 +176,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 						<button
 							class="button-secondary"
 							style={{ "--w": "100%" }}
-							onclick={() => setSettings(false)}
+							onclick={() => props.setSettings(false)}
 							tabIndex={-1}
 						>
 							Close
@@ -216,7 +222,7 @@ export default function Settings({ setSettings }: SettingsProps) {
 									class="h-full"
 								>
 									<Suspense>
-										<Appearance />
+										<Appearance {...props} />
 									</Suspense>
 								</Motion.div>
 							</Show>

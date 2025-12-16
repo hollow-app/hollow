@@ -101,6 +101,10 @@ export default class VaultManager {
 					uploadedAt: new Date(),
 				};
 			});
+			hollow.events.emit(
+				"character-add-achievement",
+				"🎨 Aesthetic Choice",
+			);
 			this.store.set("__root__", [
 				...(this.store.get("__root__") as VaultItem[]),
 				...asVaultItems,

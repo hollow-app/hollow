@@ -126,7 +126,6 @@ export default function Modifier() {
 							</div>
 							<div class="w-[50%]">
 								<Dropdown
-									value={undefined}
 									placeholder="Select Key"
 									options={[{ items: keys }]}
 									onSelect={(v) => {

@@ -7,7 +7,7 @@ import { isSea } from "node:sea";
 import { unwrap } from "solid-js/store";
 
 export type StateType = {
-	el: HTMLDivElement;
+	el: () => HTMLDivElement;
 	setEl: (el: HTMLDivElement) => void;
 	isLoaded: Accessor<boolean>;
 	setLoaded: Setter<boolean>;
@@ -34,7 +34,7 @@ export const createCardState = (
 		),
 	);
 	return {
-		el,
+		el: () => el,
 		isLoaded,
 		setLoaded,
 		isExpand,

@@ -24,14 +24,17 @@ import { SettingsManager } from "@managers/SettingsManager";
 import Dropdown from "@components/dynamic/Dropdown";
 import { CircleFadingPlusIcon } from "lucide-solid";
 import Tag from "@components/Tag";
-import setStyle from "@hooks/setStyle";
 import useGrid from "@hooks/useGrid";
+import { GridStackOptions } from "gridstack";
+import { Accessor } from "solid-js";
+import { Setter } from "solid-js";
 
-export default function Appearance() {
+type Props = CanvasProps;
+export default function Appearance(props: Props) {
 	const settingsManager = SettingsManager.getSelf();
 	return (
 		<div class="h-full p-10">
-			<CanvasSettings />
+			<CanvasSettings {...props} />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<ColorSettings />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
@@ -47,16 +50,34 @@ type CommonSettings = {
 	settingsManager: SettingsManager;
 };
 
-function CanvasSettings() {
-	let gapBetweenCards = SettingsManager.getSelf().getConfig("grid-gap");
+interface CanvasProps {
+	canvasConfigs: Accessor<GridStackOptions>;
+	setCanvasConfigs: Setter<GridStackOptions>;
+}
+function CanvasSettings(props: CanvasProps) {
+	let gridGap = SettingsManager.getSelf().getConfig("grid-gap");
 	const setGapBetweenCards = (v: number) => {
-		gapBetweenCards = v;
+		gridGap = v;
+		useGrid([{ name: "--grid-gap", value: v }]);
+	};
+	const columns = createMemo(() => props.canvasConfigs().column);
+	const rows = createMemo(() => props.canvasConfigs().row);
+
+	const setColumns = (v: number) => {
+		props.setCanvasConfigs((prev) => ({ ...prev, column: v }));
+	};
+	const setRows = (v: number) => {
+		props.setCanvasConfigs((prev) => ({ ...prev, row: v }));
 	};
 
 	onCleanup(() => {
-		SettingsManager.getSelf().setConfig("grid-gap", gapBetweenCards);
-		useGrid([{ name: "--grid-gap", value: gapBetweenCards }]);
+		SettingsManager.getSelf().setConfigs({
+			"grid-gap": gridGap,
+			columns: Number(columns()),
+			rows: Number(rows()),
+		});
 	});
+
 	return (
 		<>
 			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
@@ -68,6 +89,49 @@ function CanvasSettings() {
 					<div class="flex justify-between">
 						<div>
 							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
+								Columns
+							</h2>
+							<p class="text-sm text-neutral-600 dark:text-neutral-400">
+								Number of columns in the canvas.
+							</p>
+						</div>
+						<div class="w-50">
+							<NumberInput
+								value={
+									typeof columns() === "string"
+										? 12
+										: Number(columns())
+								}
+								setValue={setColumns}
+								direct
+							/>
+						</div>
+					</div>
+					<div class="flex justify-between">
+						<div>
+							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
+								Rows
+							</h2>
+							<p class="text-sm text-neutral-600 dark:text-neutral-400">
+								Number of rows in the canvas.
+							</p>
+						</div>
+						<div class="w-50">
+							<NumberInput
+								value={
+									typeof rows() === "string"
+										? 12
+										: Number(rows())
+								}
+								setValue={setRows}
+								direct
+							/>
+						</div>
+					</div>
+					<hr class="bg-secondary-10 h-px w-full border-0" />
+					<div class="flex justify-between">
+						<div>
+							<h2 class="text-lg font-semibold text-neutral-700 dark:text-neutral-300">
 								Grid Gap
 							</h2>
 							<p class="text-sm text-neutral-600 dark:text-neutral-400">
@@ -76,7 +140,7 @@ function CanvasSettings() {
 						</div>
 						<div class="w-50">
 							<NumberInput
-								value={gapBetweenCards}
+								value={gridGap}
 								setValue={setGapBetweenCards}
 								direct
 							/>

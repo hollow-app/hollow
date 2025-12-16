@@ -64,7 +64,7 @@ export const CardLogic = (
 	createEffect(() => {
 		if (!props.grid && !state.el) return;
 		if (props.node.data.isPlaced) {
-			props.grid.makeWidget(state.el);
+			props.grid.makeWidget(state.el());
 		}
 	});
 	const toggleExpand = (v: boolean) => {
@@ -78,7 +78,7 @@ export const CardLogic = (
 			.on(`${props.node.id}-expand`, toggleExpand);
 	});
 	onCleanup(() => {
-		props.grid?.removeWidget(state.el, false);
+		props.grid?.removeWidget(state.el(), false);
 		hollow.toolManager
 			.getToolEvents(tool)
 			.off(`${props.node.id}-expand`, toggleExpand);

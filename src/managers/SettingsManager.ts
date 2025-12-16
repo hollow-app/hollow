@@ -5,6 +5,8 @@ import { Storage } from "./Storage";
 import DEFAULT from "@assets/configs/settings.json?raw";
 
 export type SettingsConfig = {
+	columns: number;
+	rows: number;
 	"grid-gap": number;
 	"background-image": string | null;
 	"background-opacity": number;

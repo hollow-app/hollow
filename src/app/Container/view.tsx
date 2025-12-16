@@ -52,7 +52,11 @@ export const ContainerView = (
 			</div>
 			<Show when={state.isSettings()}>
 				<Suspense>
-					<Settings setSettings={state.setSettings} />
+					<Settings
+						setSettings={state.setSettings}
+						canvasConfigs={state.canvasConfigs}
+						setCanvasConfigs={state.setCanvasConfigs}
+					/>
 				</Suspense>
 			</Show>
 		</div>

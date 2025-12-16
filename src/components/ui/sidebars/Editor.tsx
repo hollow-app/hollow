@@ -187,10 +187,7 @@ export default function Editor() {
 
 								<ToggleRow
 									label="Glass"
-									checked={
-										cardStyle()["backdrop-filter"] !==
-										"none"
-									}
+									checked={!!cardStyle()["backdrop-filter"]}
 									onToggle={(on) =>
 										updateStyleProp(
 											"backdrop-filter",
@@ -203,9 +200,7 @@ export default function Editor() {
 
 								<ToggleRow
 									label="Shadow"
-									checked={
-										cardStyle()["box-shadow"] !== "none"
-									}
+									checked={!!cardStyle()["box-shadow"]}
 									onToggle={(on) =>
 										updateStyleProp(
 											"box-shadow",

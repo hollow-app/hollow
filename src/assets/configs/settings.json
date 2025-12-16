@@ -1,4 +1,6 @@
 {
+	"columns": "12",
+	"rows": "12",
 	"grid-gap": 8,
 	"background-image": null,
 	"background-opacity": 50,

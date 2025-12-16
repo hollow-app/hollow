@@ -49,7 +49,7 @@ export default function Slider({
 				onInput={handleRangeChange}
 				onMouseMove={handleRangeChange}
 				style={{
-					background: `linear-gradient(to right, var(--primary-color-05) 0%, var(--primary-color-05)  ${myValue()}%, var(--secondary-color-10)${myValue()}%, var(--secondary-color-10) 100%)`,
+					background: `linear-gradient(to right, var(--primary-color-05) 0%, var(--primary-color-05)  ${myValue()}%, var(--secondary-color-10) ${myValue()}%, var(--secondary-color-10) 100%)`,
 				}}
 			/>
 		</div>

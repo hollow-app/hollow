@@ -26,7 +26,7 @@ export default function InsightPop({ data, hide }: InsightPopProps) {
 	}
 
 	return (
-		<div class="bg-secondary-05 border-secondary-10 pointer-events-auto fixed right-4 bottom-4 flex max-h-[calc(100%-calc(var(--spacing)*8))] min-w-64 cursor-default flex-col gap-4 rounded-lg border p-3 text-sm shadow-lg select-none">
+		<div class="bg-secondary-05 border-secondary-10 pointer-events-auto fixed right-4 bottom-4 z-601 flex max-h-[calc(100%-calc(var(--spacing)*8))] min-w-64 cursor-default flex-col gap-4 rounded-lg border p-3 text-sm shadow-lg select-none">
 			{/* Header */}
 			<div class="flex items-center justify-between">
 				<div class="flex items-center gap-2">

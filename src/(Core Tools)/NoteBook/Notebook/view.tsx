@@ -121,32 +121,25 @@ export const NotebookView = (
 					>
 						<div
 							class="relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-xl border opacity-100 group-hover:opacity-100 @7xl:h-35"
-							style={
-								!state.editMode() && {
-									"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${state.note()?.attributes?.banner})`,
-									"background-size": "cover",
-									"background-position": "center",
-									"background-repeat": "no-repeat",
-								}
-							}
 							classList={{
 								"border-secondary-10": !state.editMode(),
 								"border-transparent": state.editMode(),
 							}}
 						>
 							<div
-								class="flex h-full w-full flex-col gap-2 p-2"
-								classList={
-									{
-										// "bg-secondary-05": state.editMode(),
-									}
-								}
+								class="border-secondary-05 flex h-full w-full flex-col gap-2 rounded-xl border-2 p-2"
 								style={{
+									...(!state.editMode() && {
+										"background-image": `linear-gradient(to right, var(--color-secondary-05), transparent), url(${state.note()?.attributes?.banner})`,
+										"background-size": "cover",
+										"background-position": "center",
+										"background-repeat": "no-repeat",
+									}),
 									"line-height": "0",
 								}}
 							>
 								<input
-									class="focus:border-secondary-10 w-full max-w-full overflow-hidden rounded border-transparent text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-gray-900 dark:text-gray-50"
+									class="focus:border-secondary-10 w-full max-w-full overflow-hidden rounded border-transparent text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-neutral-900 dark:text-neutral-50"
 									value={state.note()?.title ?? ""}
 									onchange={(e) =>
 										state.setNote((prev) => ({

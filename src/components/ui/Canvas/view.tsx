@@ -3,6 +3,12 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import "gridstack/dist/gridstack.css";
+import { Options, PartialOptions } from "overlayscrollbars";
+import {
+	OverlayScrollbarsComponent,
+	OverlayScrollbarsComponentRef,
+} from "overlayscrollbars-solid";
+import "overlayscrollbars/overlayscrollbars.css";
 import { For, Show } from "solid-js";
 import { hollow } from "hollow";
 import { Card } from "../Card";
@@ -31,34 +37,49 @@ export const CanvasView = (
 			{/* 		"background-repeat": "no-repeat", */}
 			{/* 	}} */}
 			{/* /> */}
-			<div class="overflow-auto">
+			{/* <div class="" */}
+			{/**/}
+			{/* > */}
+			<OverlayScrollbarsComponent
+				element="div"
+				class={"relative h-full w-full bg-transparent"}
+				options={{
+					overflow: { x: "scroll", y: "scroll" },
+					scrollbars: {
+						visibility: "auto",
+						autoHide: "leave",
+						autoHideDelay: 800,
+						theme: "os-theme-native",
+					},
+				}}
+				defer
+			>
 				<div
+					class="grid-stack"
+					ref={state.setGridEl}
 					style={{
 						"min-width":
-							"calc(100vw - calc(var(--spacing) * 20) - 2px)",
+							"calc(100vw - calc(var(--spacing) * 21) - 3px)",
 						"min-height":
 							"calc(100vh - calc(var(--spacing) * 4) - 2px)",
 					}}
 				>
-					<div class="grid-stack" ref={state.setGridEl}>
-						<For
-							each={hollow.cards().filter((i) => i.data.isPlaced)}
-						>
-							{(item) => (
-								<Card
-									node={item}
-									grid={state.grid}
-									isLiveEditor={props.isLiveEditor}
-									setAnyExpaneded={state.setAnyExpanded}
-								/>
-							)}
-						</For>
-						<Show when={state.anyExpanded()}>
-							<div class="bg-secondary absolute z-501 h-full w-full" />
-						</Show>
-					</div>
+					<For each={hollow.cards().filter((i) => i.data.isPlaced)}>
+						{(item) => (
+							<Card
+								node={item}
+								grid={state.grid}
+								isLiveEditor={props.isLiveEditor}
+								setAnyExpaneded={state.setAnyExpanded}
+							/>
+						)}
+					</For>
+					<Show when={state.anyExpanded()}>
+						<div class="bg-secondary absolute z-501 h-full w-full" />
+					</Show>
 				</div>
-			</div>
+			</OverlayScrollbarsComponent>
+			{/* </div> */}
 		</div>
 	);
 };

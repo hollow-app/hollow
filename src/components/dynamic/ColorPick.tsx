@@ -17,7 +17,7 @@ export default function ColorPick(props: ColorPickProps) {
 		});
 	};
 	const saveNewColor = (c: string) => {
-		if (c !== props.color) {
+		if (c !== myColor()) {
 			setMyColor(c);
 			props.setColor(c);
 		}

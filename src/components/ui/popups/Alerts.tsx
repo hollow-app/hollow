@@ -57,7 +57,7 @@ export default function Alerts() {
 	});
 	return (
 		<Show when={alerts().length > 0}>
-			<div class="pointer-events-none fixed top-4 right-4 z-10 box-border flex h-full w-fit flex-col items-end gap-2">
+			<div class="pointer-events-none fixed top-4 right-4 z-700 box-border flex h-full w-fit flex-col items-end gap-2">
 				<For each={alerts()}>
 					{(alert) => {
 						const Icon = alert.type && alertTypes[alert.type];

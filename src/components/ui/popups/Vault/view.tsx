@@ -86,7 +86,7 @@ export const VaultView = (
 								>
 									<img
 										src={img.url}
-										class="border-secondary-10 bg-secondary-05/50 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain"
+										class="border-secondary-10 bg-secondary-05 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain"
 									/>
 									<span class="w-full truncate text-sm font-medium text-ellipsis text-neutral-600 dark:text-neutral-400">
 										{img.name}

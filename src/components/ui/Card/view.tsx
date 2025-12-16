@@ -21,6 +21,9 @@ export const CardView = (
 		>
 			<div
 				class="box-border h-full w-full"
+				classList={{
+					"cursor-move pointer-events-none": props.isLiveEditor(),
+				}}
 				style={{ padding: "calc(var(--grid-gap) * 1px)" }}
 			>
 				<div

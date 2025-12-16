@@ -27,6 +27,10 @@ export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 					attributes: { placeholder: "<iframe ..." },
 					value: embed().src,
 					onAction: (s: string) => {
+						hollow.events.emit(
+							"character-add-achievement",
+							"🌐 Portal Opened",
+						);
 						setEmbed((prev: EmbedData) => ({
 							...prev,
 							src: s,

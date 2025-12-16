@@ -18,6 +18,7 @@ import { ItemType } from "../types/ItemType";
 import ItemDisplay from "../components/ItemDisplay";
 import Floater from "@utils/Floater";
 import { ColumnType } from "../types/ColumnType";
+import { hollow } from "hollow";
 
 export const KanbanView = (
 	state: StateType,
@@ -120,12 +121,16 @@ type ControlButtonsProps = {
 function ControlButtons(props: ControlButtonsProps) {
 	let parent!: HTMLDivElement;
 	const onNewItem = () => {
-		props.showForm((data) =>
+		props.showForm((data) => {
+			hollow.events.emit(
+				"character-add-achievement",
+				"🧩 Task Initiator",
+			);
 			props.addItem({
 				...data,
 				dates: { createdAt: new Date().toISOString() },
-			}),
-		);
+			});
+		});
 	};
 
 	return (

@@ -139,11 +139,16 @@ export type AppEvents = {
 	"network-state": boolean;
 	alert: AlertType;
 	store: (props: StoreType) => Promise<IStore>;
-	// "add-layout": (props: {
-	// 	type: PanelType;
-	// 	id: string;
-	// 	onClose: () => void;
-	// }) => Promise<{ close: () => void }>;
+	"add-layout": (props: {
+		type: "left" | "right";
+		id: string;
+		mount: (el: HTMLDivElement) => { unmount: () => void };
+		icon: any;
+		tooltip?: string;
+	}) => {
+		isOpen: () => boolean;
+		close: () => void;
+	};
 } & {
 	[key: string]: any;
 };
@@ -597,38 +602,3 @@ export type CardFs = {
 	remove(path: string): Promise<void>;
 	rename(path: string, newPath: string): Promise<void>;
 };
-
-export type PanelType = "left" | "right";
-
-export type PanelMap = Record<string, Component>;
-
-export interface SideLayout {
-	visible: boolean;
-	current?: string;
-	panels: string[];
-}
-
-export interface SideBarButton {
-	Icon: Component;
-	onClick: () => void;
-	tooltip?: string;
-	selectedCondition?: () => boolean;
-}
-interface SideBar {
-	top: SideBarButton[];
-	bottom: SideBarButton[];
-}
-export interface LayoutSignal {
-	left: SideLayout;
-	right: SideLayout;
-}
-
-export interface Layout {
-	get: LayoutSignal;
-	addPanel: (type: PanelType, name: string, component: Component) => void;
-	removePanel: (type: PanelType, name: string) => void;
-	selectPanel: (type: PanelType, name: string) => void;
-	togglePanel: (type: PanelType) => void;
-	isPanelVisible: (type: PanelType, name: string) => boolean;
-	panels: Record<PanelType, PanelMap>;
-}

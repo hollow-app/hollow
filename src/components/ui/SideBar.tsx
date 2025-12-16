@@ -4,17 +4,17 @@ import { NotifyManager } from "@managers/NotifyManager";
 import { Component, createMemo, For, onMount, Setter, Show } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import { hollow } from "hollow";
-import { Layout, SideBarButton } from "@type/hollow";
 import { Dynamic } from "solid-js/web";
 import MyIcon, { MyIconFun } from "@components/MyIcon";
-import {
-	ArchiveIcon,
-	LayoutGridIcon,
-	PencilRulerIcon,
-	ToolCaseIcon,
-	VaultIcon,
-} from "lucide-solid";
 import { GridStackOptions } from "gridstack";
+import { Layout } from "@utils/layout";
+
+interface SideBarButton {
+	Icon: Component;
+	onClick: () => void;
+	tooltip?: string;
+	selectedCondition?: () => boolean;
+}
 
 type SideBarProps = {
 	layout: Layout;
@@ -74,18 +74,44 @@ export default function SideBar({
 	});
 
 	return (
-		<div class="border-secondary-10 mr-2 flex w-fit flex-col gap-4 border-r py-4 pr-4 pl-2">
+		<div class="border-secondary-10 mr-2 box-content flex w-13 shrink-0 flex-col gap-4 border-r py-4 pr-2">
 			<button onclick={() => layout.selectPanel("left", "character")}>
-				<Hollow class="orbit mx-auto size-9" />
+				<Hollow class="orbit mx-auto size-8" />
 			</button>
-			{/* <hr class="border-secondary-10 bg-secondary mx-auto h-px w-10 border-t" /> */}
-			{/* t	 */}
-			<div class="mx-auto flex flex-1 flex-col gap-3">
+			<div class="mx-auto flex flex-col gap-3">
 				<For each={top}>{(btn) => <ControlButton {...btn} />}</For>
 			</div>
-
+			<Show when={layout.anyExtraPanels()}>
+				<div class="bg-secondary-05 mx-auto flex flex-col gap-3 rounded p-1">
+					<For
+						each={[
+							...layout.get.left.panels,
+							...layout.get.right.panels,
+						]}
+					>
+						{(id) => {
+							const btn = layout.panels.extra.find(
+								(i) => i.id === id,
+							);
+							if (!btn) return;
+							return (
+								<ControlButton
+									Icon={btn.icon}
+									tooltip={btn.tooltip}
+									selectedCondition={() =>
+										layout.isPanelVisible(btn.type, btn.id)
+									}
+									onClick={() =>
+										layout.selectPanel(btn.type, btn.id)
+									}
+								/>
+							);
+						}}
+					</For>
+				</div>
+			</Show>
 			{/* bottom */}
-			<div class="z-1 mx-auto flex flex-col gap-2">
+			<div class="z-1 mx-auto mt-auto flex flex-col gap-2">
 				<For each={bottom}>{(btn) => <ControlButton {...btn} />}</For>
 			</div>
 		</div>
@@ -94,21 +120,29 @@ export default function SideBar({
 
 const ControlButton = (btn: SideBarButton) => {
 	return (
-		<button
-			class="button-control"
-			style={{ "--size": "calc(var(--spacing) * 8)" }}
+		<div
 			classList={{
 				"tool-tip": !!btn.tooltip,
-				selected: btn.selectedCondition && btn.selectedCondition(),
 			}}
-			onclick={btn.onClick}
 		>
 			<Show when={btn.tooltip}>
 				<span data-side="right" class="tool-tip-content">
 					{btn.tooltip}
 				</span>
 			</Show>
-			<Dynamic component={btn.Icon} {...{ class: "m-auto size-4.5" }} />
-		</button>
+			<button
+				class="button-control"
+				style={{ "--size": "calc(var(--spacing) * 8)" }}
+				classList={{
+					selected: btn.selectedCondition && btn.selectedCondition(),
+				}}
+				onclick={btn.onClick}
+			>
+				<Dynamic
+					component={btn.Icon}
+					{...{ class: "m-auto size-4.5" }}
+				/>
+			</button>
+		</div>
 	);
 };

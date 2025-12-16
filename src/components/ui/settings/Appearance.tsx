@@ -60,21 +60,16 @@ function CanvasSettings(props: CanvasProps) {
 		gridGap = v;
 		useGrid([{ name: "--grid-gap", value: v }]);
 	};
-	const columns = createMemo(() => props.canvasConfigs().column);
-	const rows = createMemo(() => props.canvasConfigs().row);
+	const gridSize = createMemo(() => props.canvasConfigs().column);
 
-	const setColumns = (v: number) => {
+	const setGridSize = (v: number) => {
 		props.setCanvasConfigs((prev) => ({ ...prev, column: v }));
-	};
-	const setRows = (v: number) => {
-		props.setCanvasConfigs((prev) => ({ ...prev, row: v }));
 	};
 
 	onCleanup(() => {
 		SettingsManager.getSelf().setConfigs({
 			"grid-gap": gridGap,
-			columns: Number(columns()),
-			rows: Number(rows()),
+			"grid-size": Number(gridSize()),
 		});
 	});
 
@@ -83,52 +78,29 @@ function CanvasSettings(props: CanvasProps) {
 			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
 				Canvas
 			</h1>
-
 			<div class="w-full pb-4">
 				<div class="flex flex-col gap-5 p-5">
 					<div class="flex justify-between">
 						<div>
 							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Columns
+								Grid Size
 							</h2>
 							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Number of columns in the canvas.
+								Number of columns inside the canvas.
 							</p>
 						</div>
 						<div class="w-50">
 							<NumberInput
 								value={
-									typeof columns() === "string"
+									typeof gridSize() === "string"
 										? 12
-										: Number(columns())
+										: Number(gridSize())
 								}
-								setValue={setColumns}
+								setValue={setGridSize}
 								direct
 							/>
 						</div>
 					</div>
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Rows
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Number of rows in the canvas.
-							</p>
-						</div>
-						<div class="w-50">
-							<NumberInput
-								value={
-									typeof rows() === "string"
-										? 12
-										: Number(rows())
-								}
-								setValue={setRows}
-								direct
-							/>
-						</div>
-					</div>
-					<hr class="bg-secondary-10 h-px w-full border-0" />
 					<div class="flex justify-between">
 						<div>
 							<h2 class="text-lg font-semibold text-neutral-700 dark:text-neutral-300">

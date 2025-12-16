@@ -2,14 +2,19 @@ import { NotebookProps } from ".";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic.tsx";
 import type { HelperType } from "./helper";
-import { For, Show, Switch } from "solid-js";
+import { createSignal, For, on, Show, Switch } from "solid-js";
 import MarkdownEditor from "@components/MarkdownEditor";
 import WordInput from "@components/dynamic/WordInput.tsx";
 import Tag from "@components/Tag";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import { Match } from "solid-js";
-import MyIcon from "@components/MyIcon.tsx";
+import MyIcon, { MyIconFun } from "@components/MyIcon.tsx";
+import { createEffect } from "solid-js";
+import { hollow } from "hollow";
+import { Portal, render } from "solid-js/web";
+import { createRoot } from "solid-js";
+import { isExpired } from "@managers/manipulation/strings.ts";
 
 export const NotebookView = (
 	state: StateType,
@@ -17,6 +22,47 @@ export const NotebookView = (
 	props: NotebookProps,
 	helper?: HelperType,
 ) => {
+	const [controls, setControls] = createSignal<{
+		close: () => void;
+		isOpen: () => boolean;
+	}>(null);
+	createEffect(
+		on(
+			state.isExpand,
+			(v) => {
+				if (v) {
+					const id = crypto.randomUUID();
+					const some = hollow.events.getData("add-layout")({
+						id,
+						icon: MyIconFun({ name: "folder-open" }),
+						type: "left",
+						mount: (el: HTMLDivElement) => {
+							const unmount = createRoot((dispose) => {
+								render(
+									() => (
+										<NoteList
+											card={props.card}
+											book={state.book}
+											changeSelected={
+												logic.changeSelected
+											}
+										/>
+									),
+									el,
+								);
+								return dispose;
+							});
+							return { unmount };
+						},
+					});
+					setControls(some);
+				} else {
+					controls().close();
+				}
+			},
+			{ defer: true },
+		),
+	);
 	return (
 		<div
 			class="text-md @container relative box-border flex h-full w-full flex-col items-center p-3"
@@ -93,23 +139,28 @@ export const NotebookView = (
 							<MyIcon name="files/file-plus" class="size-4" />
 						</Show>
 					</button>
-					<button
-						class="button-control"
-						onclick={logic.onFolder}
-						style={{
-							"--p": 1,
-							"--border-radius": "var(--radius-sm)",
-						}}
-					>
-						<Show
-							when={state.showList()}
-							fallback={
-								<MyIcon name="folder-close" class="size-4" />
-							}
+					<Show when={!state.isExpand()}>
+						<button
+							class="button-control"
+							onclick={logic.onFolder}
+							style={{
+								"--p": 1,
+								"--border-radius": "var(--radius-sm)",
+							}}
 						>
-							<MyIcon name="folder-open" class="size-4" />
-						</Show>
-					</button>
+							<Show
+								when={state.showList()}
+								fallback={
+									<MyIcon
+										name="folder-close"
+										class="size-4"
+									/>
+								}
+							>
+								<MyIcon name="folder-open" class="size-4" />
+							</Show>
+						</button>
+					</Show>
 				</div>
 			</div>
 			{/* Body */}
@@ -160,10 +211,14 @@ export const NotebookView = (
 										fallback={
 											<WordInput
 												words={
-													(
-														state.note()?.attributes
-															?.tags ?? ""
-													).split(",") ?? []
+													state.note()?.attributes
+														?.tags
+														? state
+																.note()
+																?.attributes?.tags.split(
+																	",",
+																)
+														: []
 												}
 												setWords={(tgs) =>
 													state.setNote((prev) => ({
@@ -231,7 +286,7 @@ export const NotebookView = (
 					</div>
 				</Match>
 				{/* Notes List */}
-				<Match when={state.panel() === 1}>
+				<Match when={state.panel() === 1 && !state.isExpand()}>
 					<div class="h-full w-full">
 						<NoteList
 							card={props.card}

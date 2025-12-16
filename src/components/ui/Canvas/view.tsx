@@ -70,11 +70,11 @@ export const CanvasView = (
 								node={item}
 								grid={state.grid}
 								isLiveEditor={props.isLiveEditor}
-								setAnyExpaneded={state.setAnyExpanded}
+								setAnyExpaneded={props.setAnyExpanded}
 							/>
 						)}
 					</For>
-					<Show when={state.anyExpanded()}>
+					<Show when={props.anyExpanded()}>
 						<div class="bg-secondary absolute z-501 h-full w-full" />
 					</Show>
 				</div>

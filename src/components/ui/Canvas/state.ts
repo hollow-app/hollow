@@ -2,16 +2,12 @@ import { GridStack } from "gridstack";
 import { CanvasProps } from ".";
 import type { HelperType } from "./helper";
 import { Accessor, createMemo, createSignal, onMount, Setter } from "solid-js";
-import { hollow } from "hollow";
-import { Layout } from "@type/hollow";
 
 export type StateType = {
 	gridEl: HTMLDivElement;
 	setGridEl: (el: HTMLDivElement) => void;
 	grid: GridStack;
 	isAnySidePanelVisible: Accessor<boolean>;
-	anyExpanded: Accessor<boolean>;
-	setAnyExpanded: Setter<boolean>;
 };
 
 export const createCanvasState = (
@@ -20,7 +16,6 @@ export const createCanvasState = (
 ): StateType => {
 	let gridEl!: HTMLDivElement;
 	let grid: GridStack;
-	const [anyExpanded, setAnyExpanded] = createSignal(false);
 	const isAnySidePanelVisible = createMemo(() => {
 		const store = props.layout.get;
 		return store.left.visible || store.right.visible;
@@ -32,7 +27,5 @@ export const createCanvasState = (
 		setGridEl: (el) => {
 			gridEl = el;
 		},
-		anyExpanded,
-		setAnyExpanded,
 	};
 };

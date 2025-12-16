@@ -1,7 +1,7 @@
 import setStyle from "@hooks/setStyle";
-import { Layout, PanelType } from "@type/hollow";
-import { hollow } from "hollow";
-import { createEffect, createMemo, For, on, Show } from "solid-js";
+import { Layout, PanelType } from "@utils/layout";
+import { PanelWrapper } from "@utils/PanelWrapper";
+import { Accessor, createEffect, createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
 
@@ -10,6 +10,7 @@ type SidepanelProps = {
 	controller: Layout;
 	width: string;
 	padding: string;
+	disableAnimation: Accessor<boolean>;
 };
 
 export default function Sidepanel(props: SidepanelProps) {
@@ -47,22 +48,37 @@ export default function Sidepanel(props: SidepanelProps) {
 								width: "0px",
 								padding: 0,
 							}}
-							transition={{ duration: 0.5 }}
+							transition={{
+								duration: props.disableAnimation() ? 0 : 0.5,
+							}}
 							class="bg-secondary flex h-full shrink-0 flex-col overflow-hidden"
 						>
-							<Dynamic
-								component={
-									props.controller.panels[props.type][panel]
-								}
-								{...{
-									hide: () =>
-										props.controller.selectPanel(
-											props.type,
-											panel,
-										),
-									type: props.type,
+							<div
+								style={{
+									width: props.width,
+									height: "100%",
 								}}
-							/>
+							>
+								<Dynamic
+									component={
+										props.controller.panels[props.type][
+											panel
+										] ??
+										PanelWrapper({
+											id: panel,
+											layout: props.controller,
+										})
+									}
+									{...{
+										hide: () =>
+											props.controller.selectPanel(
+												props.type,
+												panel,
+											),
+										type: props.type,
+									}}
+								/>
+							</div>
 						</Motion.div>
 					</Show>
 				)}

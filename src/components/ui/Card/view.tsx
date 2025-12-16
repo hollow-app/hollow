@@ -32,8 +32,6 @@ export const CardView = (
 						position: state.isExpand() ? "fixed" : "static",
 						...(state.isExpand()
 							? {
-									//left side 19;
-									//
 									top: "calc(var(--spacing) * 2 + 1px)",
 									left: "calc(var(--layout-left) + calc(var(--spacing) * 19) + 2px)",
 									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 21) - 3px)",
@@ -42,6 +40,8 @@ export const CardView = (
 									"border-width": "0px",
 									"border-radius": "var(--radius-xl)",
 									"z-index": "502",
+									// transition:
+									// 	"width 0.5s ease-out, left 0.5s ease-out",
 								}
 							: props.node.style),
 					}}

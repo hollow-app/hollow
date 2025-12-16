@@ -1,17 +1,28 @@
-import { PanelType } from "@type/hollow";
-import { hollow } from "hollow";
-import { onMount } from "solid-js";
+import { onCleanup, onMount } from "solid-js";
 import styles from "./index.module.css";
+import { Layout } from "./layout";
 
 interface PanelWrapperProps {
-	type: PanelType;
+	id: string;
+	layout: Layout;
 }
+
 export function PanelWrapper(props: PanelWrapperProps) {
-	const obj = hollow.promises.get(`layout-${props.type}`);
-	onMount(() => {
-		if (obj) {
-			obj.resolve();
-		}
-	});
-	return <div class={`h-full w-full ${styles.parent}`} id={obj.id}></div>;
+	return () => {
+		let el: HTMLDivElement;
+		onMount(() => {
+			const obj = props.layout.panels.extra
+				.find((i) => i.id === props.id)
+				.mount(el);
+			onCleanup(() => {
+				obj.unmount();
+			});
+		});
+		return (
+			<div
+				ref={el}
+				class={`box-border h-full w-full pr-2 ${styles.parent}`}
+			></div>
+		);
+	};
 }

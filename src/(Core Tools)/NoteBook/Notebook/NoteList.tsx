@@ -159,7 +159,7 @@ function NotePreview({
 	};
 	return (
 		<div
-			class="group bg-secondary-10 border-primary relative mx-auto flex h-fit w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
+			class="group bg-secondary-10 border-primary relative mx-auto flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
 			onclick={(e) =>
 				e.ctrlKey ? onSelect() : changeSelected(note.title)
 			}
@@ -180,7 +180,7 @@ function NotePreview({
 			/>
 
 			<div
-				class="border-secondary-05 flex flex-col gap-1 rounded-lg border-2 p-2 px-3 text-xs text-neutral-500"
+				class="border-secondary-05 flex h-full flex-col gap-1 rounded-lg border-2 p-2 px-3 text-xs text-neutral-500"
 				style={{
 					"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note.attributes.banner})`,
 					"background-size": "cover",

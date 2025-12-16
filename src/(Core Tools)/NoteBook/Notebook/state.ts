@@ -1,4 +1,4 @@
-import { Accessor, createSignal, Setter } from "solid-js";
+import { Accessor, createEffect, createSignal, on, Setter } from "solid-js";
 import { NotebookProps } from ".";
 import type { HelperType } from "./helper";
 import { NotebookType } from "../NotebookType";
@@ -7,6 +7,9 @@ import { createMemo } from "solid-js";
 import { TagType } from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { hollow } from "hollow";
+import { MyIconFun } from "@components/MyIcon";
+import { render } from "solid-js/web";
+import { createRoot } from "solid-js";
 
 export type StateType = {
 	showList: Accessor<boolean>;
@@ -44,6 +47,7 @@ export const createNotebookState = (
 			return 0;
 		}
 	});
+
 	return {
 		showList,
 		setShowList,

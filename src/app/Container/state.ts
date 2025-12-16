@@ -1,7 +1,6 @@
-import { CardType, Layout } from "@type/hollow";
 import { ContainerProps } from ".";
 import type { HelperType } from "./helper";
-import { createLayout } from "@utils/layout";
+import { createLayout, Layout } from "@utils/layout";
 import { hollow } from "hollow";
 import { Accessor, createMemo, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
@@ -16,6 +15,8 @@ export type StateType = {
 	canvasConfigs: Accessor<GridStackOptions>;
 	setCanvasConfigs: Setter<GridStackOptions>;
 	isLiveEditor: Accessor<boolean>;
+	anyExpanded: Accessor<boolean>;
+	setAnyExpanded: Setter<boolean>;
 };
 export const createContainerState = (
 	props: ContainerProps,
@@ -23,14 +24,14 @@ export const createContainerState = (
 ): StateType => {
 	const controller = createLayout();
 	const settingsManager = SettingsManager.getSelf();
+	const [anyExpanded, setAnyExpanded] = createSignal(false);
 	const [isSettings, setSettings] = createSignal(false);
 	const [canvasConfigs, setCanvasConfigs] = createSignal<GridStackOptions>({
 		disableResize: true,
 		disableDrag: true,
 		float: true,
 		margin: 10,
-		column: settingsManager.getConfig("columns"),
-		row: settingsManager.getConfig("rows"),
+		column: settingsManager.getConfig("grid-size"),
 	});
 	const isLiveEditor = createMemo(() => !canvasConfigs().disableDrag);
 
@@ -52,5 +53,7 @@ export const createContainerState = (
 		canvasConfigs,
 		setCanvasConfigs,
 		isLiveEditor,
+		anyExpanded,
+		setAnyExpanded,
 	};
 };

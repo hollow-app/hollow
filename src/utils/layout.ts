@@ -1,35 +1,73 @@
-import { Layout, LayoutSignal, PanelMap, PanelType } from "@type/hollow";
 import { hollow } from "hollow";
-import { Component, lazy } from "solid-js";
+import { Accessor, batch, Component, createMemo, lazy } from "solid-js";
 import { createStore } from "solid-js/store";
-import { PanelWrapper } from "./PanelWrapper";
 //
 const Expand = lazy(() => import("@components/ui/sidebars/Expand"));
 const Character = lazy(() => import("@components/ui/sidebars/Character"));
 const Editor = lazy(() => import("@components/ui/sidebars/Editor"));
 const Notifications = lazy(async () => import("@components/ui/Notifications"));
 
+export type PanelType = "left" | "right";
+
+export type PanelMap = Record<string, Component>;
+
+export interface SideLayout {
+	visible: boolean;
+	current?: string;
+	panels: string[];
+}
+
+export interface LayoutSignal {
+	left: SideLayout;
+	right: SideLayout;
+}
+interface Panels {
+	left: PanelMap;
+	right: PanelMap;
+	extra: {
+		type: PanelType;
+		id: string;
+		icon: any;
+		mount: (el: HTMLDivElement) => { unmount: () => void };
+		tooltip?: string;
+	}[];
+}
+
+export interface Layout {
+	get: LayoutSignal;
+	addPanel: (type: PanelType, name: string, component: Component) => void;
+	removePanel: (type: PanelType, id: string) => void;
+	selectPanel: (type: PanelType, id: string) => void;
+	togglePanel: (type: PanelType) => void;
+	isPanelVisible: (type: PanelType, name: string) => boolean;
+	panels: Panels;
+	anyExtraPanels: Accessor<boolean>;
+}
+
 export function createLayout(): Layout {
 	const [layout, setLayout] = createStore<LayoutSignal>({
 		left: {
 			visible: false,
 			current: "expand",
-			panels: ["expand", "character", "wrapper"],
+			panels: ["expand", "character"],
 		},
 		right: {
 			visible: false,
 			current: "editor",
-			panels: ["editor", "notifications", "wrapper"],
+			panels: ["editor", "notifications"],
 		},
 	});
+	const anyExtraPanels = createMemo(() => {
+		return layout.left.panels.length > 2 || layout.right.panels.length > 2;
+	});
 
-	const panels: Record<PanelType, PanelMap> = {
-		left: { wrapper: PanelWrapper, expand: Expand, character: Character },
+	const panels: Panels = {
+		left: { expand: Expand, character: Character },
 		right: {
-			wrapper: PanelWrapper,
 			editor: Editor,
 			notifications: Notifications,
 		},
+		extra: [],
 	};
 
 	const addPanel = (type: PanelType, name: string, component: Component) => {
@@ -38,28 +76,32 @@ export function createLayout(): Layout {
 			list.includes(name) ? list : [...list, name],
 		);
 	};
-	const add_layout = async (props: {
+	const add_layout = (props: {
 		type: PanelType;
 		id: string;
-		onClose: () => void;
-	}): Promise<{ close: () => void }> => {
-		const key = `layout-${props.type}`;
-		const currentChild = hollow.promises.get(key);
-		if (currentChild) {
-			currentChild.close();
-			hollow.promises.delete(key);
-		}
+		icon: any;
+		mount: (el: HTMLDivElement) => { unmount: () => void };
+		tooltip?: string;
+	}): {
+		close: () => void;
+		isOpen: () => boolean;
+	} => {
+		if (layout[props.type].panels.includes(props.id)) return;
 		const close = () => {
-			props.onClose();
-			setLayout(props.type, "visible", false);
+			batch(() => {
+				setLayout(props.type, "panels", (p) =>
+					p.filter((i) => i !== props.id),
+				);
+				setLayout(props.type, "visible", false);
+			});
+			panels.extra = panels.extra.filter((i) => i.id !== props.id);
+			hollow.promises.delete(props.id);
 		};
-		const mounted = new Promise<void>((resolve) => {
-			hollow.promises.set(key, { resolve, id: props.id, close });
-		});
-		setLayout(props.type, { visible: true, current: "wrapper" });
-		await mounted;
+		panels.extra.push(props);
+		setLayout(props.type, "panels", (l) => [...l, props.id]);
 		return {
 			close,
+			isOpen: () => isPanelVisible(props.type, props.id),
 		};
 	};
 	hollow.events.emit("add-layout", add_layout);
@@ -76,7 +118,7 @@ export function createLayout(): Layout {
 	};
 
 	const selectPanel = (type: PanelType, name: string) => {
-		if (!layout[type].panels.includes(name)) return;
+		// if (!layout[type].panels.includes(name)) return;
 		if (layout[type].current === name && layout[type].visible) {
 			togglePanel(type);
 			return;
@@ -102,5 +144,6 @@ export function createLayout(): Layout {
 		togglePanel,
 		panels,
 		isPanelVisible,
+		anyExtraPanels,
 	};
 }

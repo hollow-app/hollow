@@ -1,14 +1,16 @@
 import { InsightType } from "@type/hollow";
 import ReceiptIcon from "@assets/icons/receipt.svg";
 import { Accessor, For, Show } from "solid-js";
+import MyIcon from "@components/MyIcon";
 
 type InsightPopProps = {
-	data: Accessor<InsightType>;
+	data: InsightType;
+	index: Accessor<number>;
 	hide: () => void;
 };
 export default function InsightPop({ data, hide }: InsightPopProps) {
 	function isEscapedItem(index: number): boolean {
-		const total = data().items.length;
+		const total = data.items.length;
 		const rows = 5;
 
 		const fullColumns = Math.floor(total / rows);
@@ -30,8 +32,8 @@ export default function InsightPop({ data, hide }: InsightPopProps) {
 			{/* Header */}
 			<div class="flex items-center justify-between">
 				<div class="flex items-center gap-2">
-					<ReceiptIcon class="size-4" />
-					<span class="text-xs font-semibold">{data().title}</span>
+					<MyIcon name="menu-board-outline" class="size-4" />
+					<span class="text-xs font-semibold">{data.title}</span>
 				</div>
 
 				{/* Close button */}
@@ -44,16 +46,16 @@ export default function InsightPop({ data, hide }: InsightPopProps) {
 			</div>
 
 			{/* Message */}
-			<Show when={data().message}>
+			<Show when={data.message}>
 				<p class="line-clamp-3 text-xs leading-snug opacity-80">
-					{data().message}
+					{data.message}
 				</p>
 			</Show>
 
 			{/* Short List */}
-			<Show when={data().items}>
+			<Show when={data.items}>
 				<ul class="grid grid-flow-col grid-rows-5 text-xs opacity-90">
-					<For each={data().items}>
+					<For each={data.items}>
 						{(i, index) => (
 							<li
 								class="border-secondary-15 flex w-61 border-dashed px-3 py-1.5"

@@ -30,26 +30,18 @@ export default function Expand() {
 		unplaced: true,
 	});
 	const cards = createMemo(() =>
-		hand
+		hollow
+			.cards()
 			.filter(
 				(i) =>
 					filter().tools.length === 0 ||
-					filter().tools.includes(i.name),
-			)
-			.flatMap((i) =>
-				i.cards.map((card) => ({
-					...card,
-					icon: i.icon,
-					tool: i.name,
-				})),
+					filter().tools.includes(i.data.tool),
 			)
 			.filter((card) => {
 				const f = filter();
-
 				if (f.favourite && !card.data.isFavored) return false;
 				if (!f.placed && card.data.isPlaced) return false;
 				if (!f.unplaced && !card.data.isPlaced) return false;
-
 				return true;
 			}),
 	);

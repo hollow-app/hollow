@@ -154,7 +154,7 @@ export const KanbanLogic = (
 		if (state.kanban().items.length > 0) {
 			const menuItems: ContextMenuItemButton[] = [
 				{
-					icon: MyIconFun({ name: "receipt" }),
+					icon: MyIconFun({ name: "menu-board-outline" }),
 					label: "Stats",
 					onclick: () =>
 						KanbanManager.getSelf().showInsight(state.kanban()),
@@ -214,7 +214,7 @@ export const KanbanLogic = (
 					});
 
 				menuItems.push({
-					icon: MyIconFun({ name: "trash" }),
+					icon: MyIconFun({ name: "trash-outline" }),
 					label: `Delete (${nSelected})`,
 					onclick: () => {
 						hollow.events.emit("confirm", {

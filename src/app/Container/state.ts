@@ -30,7 +30,6 @@ export const createContainerState = (
 		disableResize: true,
 		disableDrag: true,
 		float: true,
-		margin: 10,
 		column: settingsManager.getConfig("grid-size"),
 	});
 	const isLiveEditor = createMemo(() => !canvasConfigs().disableDrag);

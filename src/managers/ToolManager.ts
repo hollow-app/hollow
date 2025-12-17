@@ -430,6 +430,7 @@ export class ToolManager {
 				isPlaced: false,
 				isFavored: false,
 				CreatedDate: new Date().toISOString(),
+				tool: toolName,
 			},
 		};
 
@@ -437,9 +438,7 @@ export class ToolManager {
 		this.toolMap.get(toolName)?.onCreate(this.getCard(toolName, id));
 
 		this.store.set("__root__", root);
-		const newNode: CardType = newCard;
-		newNode.data.tool = toolName;
-		hollow.setCards(reconcile([...hollow.cards(), newNode]));
+		hollow.setCards(reconcile([...hollow.cards(), newCard]));
 		// TODO : this might not be needed if creating files makes the dir anyways
 		await RustManager.getSelf().create_dir(
 			await join(

@@ -27,17 +27,19 @@ export const CardView = (
 				style={{ padding: "calc(var(--grid-gap) * 1px)" }}
 			>
 				<div
-					class={"h-full w-full border-solid"}
+					class={"h-full w-full"}
 					style={{
 						position: state.isExpand() ? "fixed" : "static",
 						...(state.isExpand()
 							? {
 									top: "calc(var(--spacing) * 2 + 1px)",
-									left: "calc(var(--layout-left) + calc(var(--spacing) * 19) + 2px)",
-									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 21) - 3px)",
+									left: "calc(var(--layout-left) + calc(var(--spacing) * 17) + 1px)",
+									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 19) - 2px)",
 									height: "calc(100vh - calc(var(--spacing) * 4) - 2px)",
 									background: "var(--color-secondary)",
 									"border-width": "0px",
+									// "border-style": "solid",
+									// "border-color": "blue",
 									"border-radius": "var(--radius-xl)",
 									"z-index": "502",
 									// transition:

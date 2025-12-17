@@ -53,8 +53,10 @@ const HollowIcons = {
 	pen: () => import("@assets/icons/pen.svg"),
 	"pen-outline": () => import("@assets/icons/pen-outline.svg"),
 	"edit-pen": () => import("@assets/icons/edit-pen.svg"),
+	"edit-pen-outline": () => import("@assets/icons/edit-pen-outline.svg"),
 	scroll: () => import("@assets/icons/scroll.svg"),
 	trash: () => import("@assets/icons/trash.svg"),
+	"trash-outline": () => import("@assets/icons/trash-outline.svg"),
 	"user-gear": () => import("@assets/icons/user-gear.svg"),
 	"tool-case-outline": () => import("@assets/icons/tool-case-outline.svg"),
 	vault: () => import("@assets/icons/vault.svg"),
@@ -76,6 +78,7 @@ const HollowIcons = {
 	"designtools-outline": () =>
 		import("@assets/icons/designtools-outline.svg"),
 	"designtools-fill": () => import("@assets/icons/designtools-fill.svg"),
+	"menu-board-outline": () => import("@assets/icons/menu-board-outline.svg"),
 	// Files subdirectory
 	"files/file-check": () => import("@assets/icons/files/file-check.svg"),
 	"files/file-description": () =>

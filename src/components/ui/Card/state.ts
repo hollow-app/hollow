@@ -1,10 +1,6 @@
 import { Accessor, createEffect, createSignal, on, Setter } from "solid-js";
 import { CardProps } from ".";
 import type { HelperType } from "./helper";
-import { hollow } from "hollow";
-import { CardType } from "@type/hollow";
-import { isSea } from "node:sea";
-import { unwrap } from "solid-js/store";
 
 export type StateType = {
 	el: () => HTMLDivElement;

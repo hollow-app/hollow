@@ -21,7 +21,7 @@ export class EmbedMain implements IPlugin {
 	private toolEvents: ToolApi;
 	private store: IStore = null;
 
-	constructor(toolEvent: HollowEvent<ToolEvents>) {
+	constructor(_, toolEvent: HollowEvent<ToolEvents>) {
 		this.toolEvents = toolEvent;
 		this.store = toolEvent.getData("config");
 	}

@@ -51,7 +51,7 @@ export default function Item(props: ItemProps) {
 			});
 		const menuItems: any = [
 			{
-				icon: MyIconFun({ name: "edit-pen" }),
+				icon: MyIconFun({ name: "edit-pen-outline" }),
 				label: "Edit",
 				onclick: () => {
 					props.showForm((data) => {
@@ -60,7 +60,7 @@ export default function Item(props: ItemProps) {
 				},
 			},
 			{
-				icon: MyIconFun({ name: "trash" }),
+				icon: MyIconFun({ name: "trash-outline" }),
 				label: "Delete",
 				onclick: () => props.removeItem(props.item.id, true),
 			},

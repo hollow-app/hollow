@@ -84,7 +84,7 @@ const TextOption = (props: { option: OptionType<"text"> }) => (
 
 const LongTextOption = (props: { option: OptionType<"longtext"> }) => (
 	<textarea
-		class="input w-full resize-none"
+		class="input w-full"
 		{...props.option.attributes}
 		value={props.option.value}
 		onInput={(e) => props.option.onAction(e.currentTarget.value)}

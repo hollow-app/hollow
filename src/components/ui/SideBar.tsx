@@ -74,7 +74,7 @@ export default function SideBar({
 	});
 
 	return (
-		<div class="border-secondary-10 mr-2 box-content flex w-13 shrink-0 flex-col gap-4 border-r py-4 pr-2">
+		<div class="border-secondary-10 bg-secondary-05 my-2 mr-2 box-content flex w-13 shrink-0 flex-col gap-4 rounded-xl border-r-0 py-2">
 			<button onclick={() => layout.selectPanel("left", "character")}>
 				<Hollow class="orbit mx-auto size-8" />
 			</button>
@@ -82,7 +82,7 @@ export default function SideBar({
 				<For each={top}>{(btn) => <ControlButton {...btn} />}</For>
 			</div>
 			<Show when={layout.anyExtraPanels()}>
-				<div class="bg-secondary-05 mx-auto flex flex-col gap-3 rounded p-1">
+				<div class="bg-secondary-10 mx-auto flex flex-col gap-3 rounded p-1">
 					<For
 						each={[
 							...layout.get.left.panels,

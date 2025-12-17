@@ -50,11 +50,17 @@ export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 		toolEvents.off(`${card.id}-settings`, setSettingsVisible);
 	});
 	return (
-		<div class="h-full w-full">
+		<div
+			class="h-full w-full"
+			oncontextmenu={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+			}}
+		>
 			<Show
 				when={embed().src}
 				fallback={
-					<span class="text-secondary-30">
+					<span class="text-secondary-30 m-auto">
 						insert an iframe in this card's settings.
 					</span>
 				}

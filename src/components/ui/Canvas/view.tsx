@@ -3,15 +3,12 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import "gridstack/dist/gridstack.css";
-import { Options, PartialOptions } from "overlayscrollbars";
-import {
-	OverlayScrollbarsComponent,
-	OverlayScrollbarsComponentRef,
-} from "overlayscrollbars-solid";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
-import { For, Show } from "solid-js";
+import { For, onMount, Show } from "solid-js";
 import { hollow } from "hollow";
 import { Card } from "../Card";
+import { debounce } from "@utils/index";
 
 export const CanvasView = (
 	state: StateType,
@@ -23,8 +20,8 @@ export const CanvasView = (
 		<div
 			class="bg-secondary/30 relative h-full w-full overflow-hidden rounded-xl border"
 			classList={{
-				"border-secondary-10": state.isAnySidePanelVisible(),
-				"border-transparent": !state.isAnySidePanelVisible(),
+				"border-secondary-10": state.isAnySidePanelVisible().state,
+				"border-transparent": !state.isAnySidePanelVisible().state,
 			}}
 		>
 			{/* <div */}
@@ -59,7 +56,7 @@ export const CanvasView = (
 					ref={state.setGridEl}
 					style={{
 						"min-width":
-							"calc(100vw - calc(var(--spacing) * 21) - 3px)",
+							"calc(100vw - calc(var(--spacing) * 19) - 2px)",
 						"min-height":
 							"calc(100vh - calc(var(--spacing) * 4) - 2px)",
 					}}
@@ -71,6 +68,9 @@ export const CanvasView = (
 								grid={state.grid}
 								isLiveEditor={props.isLiveEditor}
 								setAnyExpaneded={props.setAnyExpanded}
+								isAnySidePanelVisible={
+									state.isAnySidePanelVisible
+								}
 							/>
 						)}
 					</For>

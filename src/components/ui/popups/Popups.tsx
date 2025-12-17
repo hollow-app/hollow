@@ -5,7 +5,7 @@ import { hollow } from "hollow";
 import { ContextMenu } from "../ContextMenu";
 import { Vault } from "./Vault";
 import ToolSettings from "./ToolSettings";
-import { ConfirmType, FormType } from "@type/hollow";
+import { ConfirmType, FormType, InsightType } from "@type/hollow";
 import { MyIconFun } from "@components/MyIcon";
 
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
@@ -20,7 +20,7 @@ export default function Popups() {
 	const [emoji, setEmoji] = createSignal(null);
 	const [color, setColor] = createSignal(null);
 	const [form, setForm] = createSignal<FormType[]>([]);
-	const [insight, setInsight] = createSignal(null);
+	const [insight, setInsight] = createSignal<InsightType[]>([]);
 	const [confirm, setConfirm] = createSignal<ConfirmType>(null);
 	const [toolSettings, setToolSettings] = createSignal(null);
 	const [vault, setVault] = createSignal(null);
@@ -52,7 +52,8 @@ export default function Popups() {
 						data && setForm((prev) => [...prev, data]);
 						break;
 					case "insight":
-						setInsight(data);
+						data && setInsight((prev) => [...prev, data]);
+						// setInsight(data);
 						break;
 				}
 			},
@@ -89,8 +90,20 @@ export default function Popups() {
 				<ColorPicker p={color()} />
 			</Show>
 
-			<Show when={insight()}>
-				<Insight data={insight} hide={() => setInsight(null)} />
+			<Show when={insight().length > 0}>
+				<For each={insight()}>
+					{(insight, index) => (
+						<Insight
+							data={insight}
+							index={index}
+							hide={() =>
+								setInsight((p) =>
+									p.filter((_, i) => i !== index()),
+								)
+							}
+						/>
+					)}
+				</For>
 			</Show>
 
 			<Show when={confirm()}>

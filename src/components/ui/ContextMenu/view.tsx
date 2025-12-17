@@ -3,22 +3,19 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import { Motion, Presence } from "solid-motionone";
-import { Accessor, JSX, Show, Suspense } from "solid-js";
+import { Accessor, JSX, Setter, Show, Suspense } from "solid-js";
 import { hollow } from "hollow";
 import {
 	ChevronRightIcon,
 	ClipboardPasteIcon,
 	CopyIcon,
-	RefreshCcwIcon,
 	ScissorsIcon,
 } from "lucide-solid";
 import { For } from "solid-js";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
-import { lazy } from "solid-js";
 import { RealmManager } from "@managers/RealmManager";
 import { RustManager } from "@managers/RustManager";
 import { createSignal } from "solid-js";
-import ToolIcon from "@components/ToolIcon";
 import MyIcon from "@components/MyIcon";
 
 export const ContextMenuView = (
@@ -214,7 +211,7 @@ function ContextMenuSide({
 									class="button-cm active-cm"
 									onclick={() => {
 										child.onclick();
-										hollow.events.emit(
+										hollow.pevents.emit(
 											"context-menu",
 											false,
 										);

@@ -7,8 +7,6 @@ import DEFAULT from "@assets/configs/settings.json?raw";
 export type SettingsConfig = {
 	"grid-size": number;
 	"grid-gap": number;
-	"background-image": string | null;
-	"background-opacity": number;
 	"code-theme": string;
 	"custom-tags": TagType[];
 	"enable-unverified-plugins": boolean;

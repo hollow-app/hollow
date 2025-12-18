@@ -6,7 +6,7 @@ import { ContextMenu } from "../ContextMenu";
 import { Vault } from "./Vault";
 import ToolSettings from "./ToolSettings";
 import { ConfirmType, FormType, InsightType } from "@type/hollow";
-import { MyIconFun } from "@components/MyIcon";
+import { FormatDateString, Options } from "vanilla-calendar-pro";
 
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
 const Confirm = lazy(() => import("@components/ui/popups/Confirm"));
@@ -14,9 +14,11 @@ const EmojiPicker = lazy(() => import("@components/ui/popups/EmojiPicker"));
 const Form = lazy(() => import("@components/ui/popups/Form"));
 const ToolPop = lazy(() => import("@components/ui/popups/ToolPop"));
 const Insight = lazy(() => import("@components/ui/popups/Insight"));
+const DatePicker = lazy(() => import("@components/ui/popups/DatePicker"));
 
 export default function Popups() {
 	const [tool, setTool] = createSignal(null);
+	const [calendar, setCalendar] = createSignal<Options>(null);
 	const [emoji, setEmoji] = createSignal(null);
 	const [color, setColor] = createSignal(null);
 	const [form, setForm] = createSignal<FormType[]>([]);
@@ -38,6 +40,9 @@ export default function Popups() {
 						break;
 					case "color-picker":
 						setColor(data);
+						break;
+					case "date-picker":
+						setCalendar(data);
 						break;
 					case "confirm":
 						setConfirm(data);
@@ -88,6 +93,12 @@ export default function Popups() {
 
 			<Show when={color()}>
 				<ColorPicker p={color()} />
+			</Show>
+			<Show when={calendar()}>
+				<DatePicker
+					options={calendar()}
+					hide={() => setCalendar(null)}
+				/>
 			</Show>
 
 			<Show when={insight().length > 0}>

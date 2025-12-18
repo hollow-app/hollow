@@ -7,7 +7,7 @@ export type StateType = {
 	gridEl: HTMLDivElement;
 	setGridEl: (el: HTMLDivElement) => void;
 	grid: GridStack;
-	isAnySidePanelVisible: Accessor<{ state: boolean; count: number }>;
+	isAnySidePanelVisible: Accessor<boolean>;
 };
 
 export const createCanvasState = (
@@ -18,8 +18,7 @@ export const createCanvasState = (
 	let grid: GridStack;
 	const isAnySidePanelVisible = createMemo(() => {
 		const store = props.layout.get;
-		const count = Number(store.left.visible) + Number(store.right.visible);
-		return { state: count > 0, count };
+		return store.left.visible || store.right.visible;
 	});
 	return {
 		grid,

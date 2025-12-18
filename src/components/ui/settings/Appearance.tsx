@@ -1,6 +1,5 @@
 import ColorPick from "@components/dynamic/ColorPick";
 import NumberInput from "@components/dynamic/NumberInput";
-import { useBackground } from "@hooks/useBackground";
 import { useColor } from "@hooks/useColor";
 import {
 	createMemo,
@@ -37,8 +36,6 @@ export default function Appearance(props: Props) {
 			<CanvasSettings {...props} />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<ColorSettings />
-			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
-			<BackgroundSettings settingsManager={settingsManager} />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<CodeThemeSettings settingsManager={settingsManager} />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
@@ -180,78 +177,6 @@ function ColorSettings() {
 							color={secondaryColor()}
 							setColor={setSecondaryColor}
 						/>
-					</div>
-				</div>
-			</div>
-		</>
-	);
-}
-
-function BackgroundSettings({ settingsManager }: CommonSettings) {
-	const backgroundImage = createMemo(() =>
-		settingsManager.getConfig("background-image"),
-	);
-	const backgroundOpacity = createMemo(() =>
-		settingsManager.getConfig("background-opacity"),
-	);
-	const [background, setBackground] = createSignal({
-		opacity: backgroundOpacity(),
-	});
-
-	const selectBg = () => {
-		hollow.events.emit("show-vault", { onSelect: setBackgroundImg });
-	};
-	const setBackgroundImg = (path: string) => {
-		settingsManager.setConfig("background-image", path);
-		useBackground({ path: `url(${path})` });
-	};
-	const setBackgroundOpacity = (opacity: number) => {
-		settingsManager.setConfig("background-opacity", opacity / 100);
-		useBackground({ opacity: `${opacity / 100}` });
-	};
-
-	return (
-		<>
-			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-				Background
-			</h1>
-			<div class="w-full pb-4">
-				<div class="flex flex-col gap-5 p-5">
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Background Image
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								The background image of the canvas.
-							</p>
-						</div>
-						<button class="button-secondary" onclick={selectBg}>
-							Select
-						</button>
-					</div>
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Opacity
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Adjust the opacity of the image along the
-								secondary color{" "}
-							</p>
-						</div>
-						<div class="flex gap-3">
-							<Slider
-								value={backgroundOpacity() * 100}
-								setValue={(v) => {
-									setBackground((prev) => ({
-										...prev,
-										opacity: v,
-									}));
-									setBackgroundOpacity(v);
-								}}
-							/>
-						</div>
 					</div>
 				</div>
 			</div>

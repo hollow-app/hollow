@@ -66,6 +66,7 @@ const HollowIcons = {
 	image: () => import("@assets/icons/image.svg"),
 	cards: () => import("@assets/icons/cards.svg"),
 	archive: () => import("@assets/icons/archive.svg"),
+	calendar: () => import("@assets/icons/calendar.svg"),
 	"home-outline": () => import("@assets/icons/home-outline.svg"),
 	"home-2-fill": () => import("@assets/icons/home-2-fill.svg"),
 	"pencil-alt": () => import("@assets/icons/pencil-alt.svg"),

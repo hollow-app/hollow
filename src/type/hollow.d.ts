@@ -128,6 +128,7 @@ export type AppEvents = {
 	confirm: ConfirmType;
 	"tool-settings": ToolOptions;
 	"color-picker": { color: string; setColor: (c: string) => void };
+	"date-picker": any;
 	"emoji-picker": { emoji: string; setEmoji: (c: string) => void };
 	"show-vault": { onSelect?: (url: string) => void };
 	"context-menu-extend": ContextMenuItem;

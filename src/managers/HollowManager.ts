@@ -7,7 +7,6 @@ import { ToolManager } from "./ToolManager";
 import { useColor } from "@hooks/useColor";
 import setStyle from "@hooks/setStyle";
 import { RealmManager } from "./RealmManager";
-import { useBackground } from "@hooks/useBackground";
 import useTags from "@hooks/useTags";
 import { NotifyManager } from "./NotifyManager";
 import { DataBaseRequest, IStore, StoreType } from "@type/hollow";
@@ -112,7 +111,6 @@ export class HollowManager {
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });
 		useGrid();
-		useBackground({});
 		useTags();
 		//
 		this.handleEvents();

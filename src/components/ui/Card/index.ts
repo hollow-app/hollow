@@ -15,7 +15,6 @@ export type CardProps = {
 	grid: GridStack;
 	isLiveEditor: Accessor<boolean>;
 	setAnyExpaneded: Setter<boolean>;
-	isAnySidePanelVisible: Accessor<{ state: boolean; count: number }>;
 };
 
 export const Card = createModule<StateType, LogicType, CardProps, HelperType>({

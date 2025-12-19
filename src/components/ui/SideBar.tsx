@@ -1,11 +1,9 @@
 import Hollow from "@assets/logo.svg";
-import BellIcon from "@assets/icons/strongbox-outline.svg";
 import { NotifyManager } from "@managers/NotifyManager";
-import { Component, createMemo, For, onMount, Setter, Show } from "solid-js";
+import { Component, For, onMount, Setter, Show } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import { hollow } from "hollow";
-import { Dynamic } from "solid-js/web";
-import MyIcon, { MyIconFun } from "@components/MyIcon";
+import { MyIconFun } from "@components/MyIcon";
 import { GridStackOptions } from "gridstack";
 import { Layout } from "@utils/layout";
 import { hotkeysManager } from "@managers/HotkeysManager";

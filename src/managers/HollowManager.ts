@@ -5,7 +5,6 @@ import VaultManager from "./VaultManager";
 import { RustManager } from "./RustManager";
 import { ToolManager } from "./ToolManager";
 import { useColor } from "@hooks/useColor";
-import setStyle from "@hooks/setStyle";
 import { RealmManager } from "./RealmManager";
 import useTags from "@hooks/useTags";
 import { NotifyManager } from "./NotifyManager";
@@ -99,10 +98,11 @@ export class HollowManager {
 		await RustManager.getSelf().start_realm({
 			location: RealmManager.getSelf().getCurrent().location,
 		});
-		const devData = this.handleDev();
 		//
-		hollow.toolManager = await ToolManager.create(devData.loadunsigned);
 		await SettingsManager.getSelf().start();
+		hollow.toolManager = await ToolManager.create(
+			SettingsManager.getSelf().getConfig("load-unsigned-plugins"),
+		);
 		await MarkdownManager.getSelf().start();
 		NotifyManager.init();
 		CodeThemeManager.init();
@@ -137,25 +137,5 @@ export class HollowManager {
 
 		// returns a function that returns Promise<IStore>
 		hollow.events.emit("store", requestStore);
-	}
-
-	private handleDev() {
-		const key = `${RealmManager.getSelf().currentRealmId}-dev`;
-		const savedData: string | undefined = localStorage.getItem(key);
-		let iniData = {
-			devtools: false,
-			loadunsigned: false,
-		};
-
-		if (savedData) {
-			const parsedData: { devtools: boolean; loadunsigned: boolean } =
-				JSON.parse(savedData);
-			// parsedData.devtools &&
-			//         RustManager.getSelf().devtools_status({ state: true });
-			iniData = parsedData;
-		} else {
-			localStorage.setItem(key, JSON.stringify(iniData));
-		}
-		return iniData;
 	}
 }

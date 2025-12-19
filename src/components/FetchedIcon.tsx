@@ -1,6 +1,4 @@
-import { Show } from "solid-js";
-// import DoubleArrowRightIcon from "@assets/icons/double-arrow-right.svg";
-import MyIcons from "./MyIcon";
+import { onMount, Show } from "solid-js";
 import { createResource, Suspense } from "solid-js";
 import MyIcon from "./MyIcon";
 

@@ -11,6 +11,11 @@ export class Storage {
 
 	static async create({ path, options }: StoreType) {
 		const store = await load(path, options);
+		try {
+			await store.reload({ ignoreDefaults: true });
+		} catch (e) {
+			console.warn("Store file did not exist yet, skipping reload");
+		}
 		const instance = new Storage(store);
 		await instance.init();
 		return instance;
@@ -21,6 +26,10 @@ export class Storage {
 		for (const [k, v] of entries) {
 			this.data[k] = v;
 		}
+	}
+
+	getOrigin() {
+		return this.store;
 	}
 
 	getData() {

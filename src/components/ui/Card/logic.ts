@@ -72,7 +72,11 @@ export const CardLogic = (
 		props.setAnyExpaneded(v);
 	};
 	onMount(async () => {
-		state.setLoaded(await hollow.toolManager.loadCard(props.node, tool));
+		const result = await hollow.toolManager.loadCard(props.node, tool);
+		state.setLoaded(result.status);
+		if (!result.status) {
+			console.error(result);
+		}
 		hollow.toolManager
 			.getToolEvents(tool)
 			.on(`${props.node.id}-expand`, toggleExpand);

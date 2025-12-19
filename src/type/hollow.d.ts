@@ -1,5 +1,13 @@
 import { MyIconsType } from "@components/MyIcon";
+import { Store } from "@tauri-apps/plugin-store";
 import { Component, JSX } from "solid-js";
+
+export interface PluginResult {
+	status: boolean;
+	message?: string;
+	error?: Error;
+	data?: unknown;
+}
 
 // Represents a plugin with lifecycle methods that interact with cards and the app.
 export interface IPlugin {
@@ -8,14 +16,14 @@ export interface IPlugin {
 	 * @param name - The name of the card being created.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onCreate(card: CardType): Promise<boolean>;
+	onCreate(card: CardType): Promise<PluginResult>;
 
 	/**
 	 * Called when a card is deleted.
 	 * @param name - The name of the card being deleted.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onDelete(card: CardType): Promise<boolean>;
+	onDelete(card: CardType): Promise<PluginResult>;
 
 	/**
 	 * Called when a card is loaded.
@@ -23,14 +31,14 @@ export interface IPlugin {
 	 * @param app - The HollowEvent instance for interacting with the app.
 	 * @returns A promise that resolves to a boolean indicating success.
 	 */
-	onLoad(card: CardType): Promise<boolean>;
+	onLoad(card: CardType): Promise<PluginResult>;
 
 	/**
 	 * Called when a card is unloaded.
 	 * @param id - The id of the card being unloaded.
 	 * Cleans up resources or state as necessary.
 	 */
-	onUnload(id: string): void;
+	onUnload(id: string): Promise<PluginResult>;
 }
 
 // Represents a card in the app, with properties and methods for interaction.
@@ -585,6 +593,8 @@ export type IStore = {
 	save: () => Promise<void>;
 
 	reload: () => Promise<void>;
+
+	getOrigin: () => Store;
 };
 
 export type CardFs = {

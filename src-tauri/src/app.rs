@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::{path::PathBuf, sync::Mutex};
 use tauri::{command, AppHandle, Manager, State};
 use tauri_plugin_log::log::{self};
 
@@ -17,7 +17,7 @@ pub fn start_realm(
 ) -> Result<(), String> {
     {
         let mut app_data = state.lock().unwrap();
-        app_data.realm_location = Some(location);
+        app_data.realm_location = Some(location.clone());
     }
 
     let dot_dir = get_full_path(".hollow", &state)?;
@@ -29,8 +29,8 @@ pub fn start_realm(
     }
     {
         let assets_scope = app.asset_protocol_scope();
-        let vault_dir = get_full_path("vault", &state)?;
-        let _ = assets_scope.allow_directory(vault_dir, true);
+        let full_path = PathBuf::from(&location);
+        let _ = assets_scope.allow_directory(full_path, true);
     }
 
     log::info!("Initialized realm data");

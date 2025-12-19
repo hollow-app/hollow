@@ -2,15 +2,18 @@ import { invoke } from "@tauri-apps/api/core";
 import { HandType } from "@type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
+	AppApi,
 	CardType,
 	HollowEvent,
 	IPlugin,
+	PluginResult,
 	ToolApi,
 	ToolEventReturns,
 	ToolEvents,
 } from "@type/hollow";
 import { exists, mkdir, remove } from "@tauri-apps/plugin-fs";
 import VaultManager from "./VaultManager";
+import { hollow } from "hollow";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
 
@@ -87,12 +90,11 @@ export class RustManager {
 	}
 
 	async get_unsigned_plugins(): Promise<HandType[]> {
-		const result: HandType[] = await invoke("get_unsigned_tools");
+		const result: HandType[] = await invoke("get_unsigned_plugins");
 		return [
 			...result.map((manifest) => ({
 				...manifest,
 				name: manifest.name.toLowerCase(),
-				cards: [],
 				signed: false,
 			})),
 		];
@@ -158,37 +160,37 @@ export class RustManager {
 	}
 
 	async load_plugin({
-		fullPath,
+		semiPath,
 		toolEvent,
 	}: {
-		fullPath: string;
+		semiPath: string;
 		toolEvent: ToolApi;
 	}): Promise<IPlugin | null> {
 		//
 		const indexJS: string = await invoke("read_file", {
-			path: fullPath,
+			path: semiPath,
 		});
 		if (indexJS !== "none") {
 			const pluginWrapper = new Function("exports", "module", indexJS);
 			const module = {
 				exports: {} as {
-					default: new (app: ToolApi) => IPlugin;
+					default: new (app: AppApi, toolEvent: ToolApi) => IPlugin;
 				},
 			};
 			pluginWrapper(module.exports, module);
 			const PluginClass = module.exports.default;
-			const instance: IPlugin = new PluginClass(toolEvent);
+			const instance: IPlugin = new PluginClass(hollow.events, toolEvent);
 			return {
-				onCreate: (card: CardType): Promise<boolean> => {
+				onCreate: (card: CardType): Promise<PluginResult> => {
 					return instance.onCreate(card);
 				},
-				onDelete: (card: CardType): Promise<boolean> => {
+				onDelete: (card: CardType): Promise<PluginResult> => {
 					return instance.onDelete(card);
 				},
-				onLoad: (card_info: CardType) => {
+				onLoad: (card_info: CardType): Promise<PluginResult> => {
 					return instance.onLoad(card_info);
 				},
-				onUnload: (id: string) => {
+				onUnload: (id: string): Promise<PluginResult> => {
 					return instance.onUnload(id);
 				},
 			};

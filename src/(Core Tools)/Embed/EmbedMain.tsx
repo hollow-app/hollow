@@ -3,6 +3,7 @@ import {
 	HollowEvent,
 	IPlugin,
 	IStore,
+	PluginResult,
 	ToolApi,
 	ToolEvents,
 } from "@type/hollow";
@@ -26,44 +27,85 @@ export class EmbedMain implements IPlugin {
 		this.store = toolEvent.getData("config");
 	}
 
-	async onCreate(card: CardType): Promise<boolean> {
-		this.store.set(card.id, { src: null });
-		return true;
-	}
-
-	async onDelete(card: CardType): Promise<boolean> {
-		this.store.remove(card.id);
-		return true;
-	}
-
-	async onLoad(card: CardType): Promise<boolean> {
-		const data: EmbedData = this.store.get(card.id);
-		const targetContainer = document.getElementById(card.id);
-		if (targetContainer && !this.roots.has(card.id)) {
-			const dispose = createRoot((dispose) => {
-				render(
-					() => (
-						<Embed
-							data={data}
-							store={this.store}
-							card={card}
-							toolEvents={this.toolEvents}
-						/>
-					),
-					targetContainer,
-				);
-				return dispose;
-			});
-			this.roots.set(card.id, dispose);
+	public async onCreate(card: CardType): Promise<PluginResult> {
+		try {
+			this.store.set(card.id, { src: null });
+			return { status: true };
+		} catch (error) {
+			return {
+				status: false,
+				message: "Failed to create embed data",
+				error: error instanceof Error ? error : undefined,
+			};
 		}
-		return true;
 	}
 
-	onUnload(id: string): void {
-		const dispose = this.roots.get(id);
-		if (dispose) {
-			dispose();
-			this.roots.delete(id);
+	public async onDelete(card: CardType): Promise<PluginResult> {
+		try {
+			this.store.remove(card.id);
+			return { status: true };
+		} catch (error) {
+			return {
+				status: false,
+				message: "Failed to delete embed data",
+				error: error instanceof Error ? error : undefined,
+			};
+		}
+	}
+
+	public async onLoad(card: CardType): Promise<PluginResult> {
+		try {
+			const data: EmbedData = this.store.get(card.id);
+			const targetContainer = document.getElementById(card.id);
+			if (!targetContainer) {
+				return {
+					status: false,
+					message: `DOM container not found for card id: ${card.id}`,
+				};
+			}
+
+			if (!this.roots.has(card.id)) {
+				const dispose = createRoot((dispose) => {
+					render(
+						() => (
+							<Embed
+								data={data}
+								store={this.store}
+								card={card}
+								toolEvents={this.toolEvents}
+							/>
+						),
+						targetContainer,
+					);
+					return dispose;
+				});
+				this.roots.set(card.id, dispose);
+			}
+
+			return { status: true };
+		} catch (error) {
+			return {
+				status: false,
+				message: "Failed to load embed UI",
+				error: error instanceof Error ? error : undefined,
+			};
+		}
+	}
+
+	public async onUnload(id: string): Promise<PluginResult> {
+		try {
+			const dispose = this.roots.get(id);
+			if (dispose) {
+				dispose();
+				this.roots.delete(id);
+			}
+			return { status: true };
+		} catch (error) {
+			return {
+				status: false,
+				message: "Failed to unload embed resources",
+				error: error instanceof Error ? error : undefined,
+			};
 		}
 	}
 }

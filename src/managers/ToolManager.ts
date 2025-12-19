@@ -10,6 +10,7 @@ import {
 	ToolEventReturns,
 	ToolApi,
 	AppApi,
+	PluginResult,
 } from "@type/hollow";
 import { ImageMain } from "@coretools/Image/ImageMain";
 import { NotebookMain } from "@coretools/NoteBook/NotebookMain";
@@ -25,13 +26,14 @@ import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import { CardFileManager } from "./CardFileManager";
 import { reconcile } from "solid-js/store";
+import { convertFileSrc } from "@tauri-apps/api/core";
 
 type ToolMethods = {
 	name: string;
-	onCreate(card: CardType): Promise<boolean>;
-	onDelete(card: CardType): Promise<boolean>;
-	onLoad(card: CardType): Promise<boolean>;
-	onUnload(name: string): void;
+	onCreate(card: CardType): Promise<PluginResult>;
+	onDelete(card: CardType): Promise<PluginResult>;
+	onLoad(card: CardType): Promise<PluginResult>;
+	onUnload(name: string): Promise<PluginResult>;
 	toolEvent: ToolApi;
 };
 
@@ -69,20 +71,35 @@ export class ToolManager {
 			},
 		});
 		let parsedData: HandType[] = this.getHand();
-
 		if (loadUnsigned) {
 			const unsignedTools: HandType[] =
 				await RustManager.getSelf().get_unsigned_plugins();
-			unsignedTools.forEach((tool) => {
+			let thereIsNewPlugins = false;
+			for (const tool of unsignedTools) {
 				const index = parsedData.findIndex(
 					(item) => item.name === tool.name,
 				);
 				if (index >= 0) {
-					parsedData[index] = { ...parsedData[index], ...tool };
+					parsedData[index] = {
+						...parsedData[index],
+						...tool,
+					};
 				} else {
-					parsedData.push(tool);
+					const iconPath = await join(
+						RealmManager.getSelf().getCurrent().location,
+						"plugins",
+						tool.name,
+						"icon.svg",
+					);
+					parsedData.push({
+						...tool,
+						cards: [],
+						icon: convertFileSrc(iconPath),
+					});
+					thereIsNewPlugins = true;
 				}
-			});
+			}
+			thereIsNewPlugins && this.store.set("__root__", parsedData);
 		} else {
 			parsedData = parsedData.filter((i) => i.signed);
 		}
@@ -148,11 +165,11 @@ export class ToolManager {
 
 	// loads external tools classes
 	async loadTool(tool: HandType): Promise<ToolMethods | null> {
-		const fullPath = await join(...["plugins", tool.name, "index.js"]);
+		const semiPath = await join(...["plugins", tool.name, "index.js"]);
 
 		const toolEvent = await this.createToolEvent(tool.name);
 		const toolClass = await RustManager.getSelf().load_plugin({
-			fullPath: fullPath,
+			semiPath: semiPath,
 			toolEvent,
 		});
 
@@ -186,7 +203,7 @@ export class ToolManager {
 		toolEvent.on(
 			"get-store",
 			({ cardName, store }: { cardName: string; store: StoreType }) =>
-				this.giveCardStore(toolName, cardName, store),
+				this.giveCardStore(toolName, cardName, store).bind(this),
 		);
 		return toolEvent;
 	}
@@ -293,9 +310,13 @@ export class ToolManager {
 			let root: HandType[] = this.getHand();
 			root = root.filter((i) => i.name !== name);
 			this.store.set("__root__", root);
+			const store = this.toolMap
+				.get(name)
+				.toolEvent.getData("config") as IStore;
+			store.getOrigin().close();
 			this.toolMap.delete(name);
 			hollow.setCards(
-				reconcile(group.filter((c) => c.data.name !== name)),
+				reconcile(group.filter((c) => c.data.tool !== name)),
 			);
 			await RustManager.getSelf().remove_dir(
 				await join(
@@ -380,7 +401,10 @@ export class ToolManager {
 	}
 
 	// IPLUGIN
-	async loadCard(cardInfo: CardType, toolName: string): Promise<boolean> {
+	async loadCard(
+		cardInfo: CardType,
+		toolName: string,
+	): Promise<PluginResult> {
 		const tool = this.toolMap.get(toolName);
 		return await tool.onLoad({
 			...this.getCard(toolName, cardInfo.id),
@@ -396,30 +420,39 @@ export class ToolManager {
 		const card = this.getCard(toolName, cardId);
 		const toolInstance = this.toolMap.get(toolName);
 		if (card.data.isPlaced) {
-			toolInstance?.onUnload(cardId);
+			const result = await toolInstance?.onUnload(cardId);
+			if (!result.status) {
+				console.error(result);
+			}
 		}
-		await toolInstance?.onDelete(this.getCard(toolName, cardId));
-		const hand: HandType[] = this.getHand();
-		const tool = hand.find((i) => i.name === toolName);
-		tool.cards = tool.cards.filter((i) => i.id !== cardId);
-		this.store.set("__root__", hand);
-
-		hollow.setCards(
-			reconcile(hollow.cards().filter((c) => c.id !== cardId)),
+		const result = await toolInstance?.onDelete(
+			this.getCard(toolName, cardId),
 		);
+		if (result.status) {
+			const hand: HandType[] = this.getHand();
+			const tool = hand.find((i) => i.name === toolName);
+			tool.cards = tool.cards.filter((i) => i.id !== cardId);
+			this.store.set("__root__", hand);
 
-		fs &&
-			(await RustManager.getSelf().remove_dir(
-				await join(
-					...[
-						RealmManager.getSelf().getCurrent().location,
-						"main",
-						toolName,
-						card.data.name,
-					],
-				),
-			));
-		this.updateToolMetadata(toolName, { cards: tool.cards });
+			hollow.setCards(
+				reconcile(hollow.cards().filter((c) => c.id !== cardId)),
+			);
+
+			fs &&
+				(await RustManager.getSelf().remove_dir(
+					await join(
+						...[
+							RealmManager.getSelf().getCurrent().location,
+							"main",
+							toolName,
+							card.data.name,
+						],
+					),
+				));
+			this.updateToolMetadata(toolName, { cards: tool.cards });
+		} else {
+			console.error(result);
+		}
 	}
 
 	async addCard(name: string, toolName: string, emoji: string) {
@@ -458,28 +491,37 @@ export class ToolManager {
 		};
 
 		tool.cards = [...tool.cards, newCard];
-		this.toolMap.get(toolName)?.onCreate(this.getCard(toolName, id));
+		const result = await this.toolMap
+			.get(toolName)
+			?.onCreate(this.getCard(toolName, id));
 
-		this.store.set("__root__", root);
-		hollow.setCards(reconcile([...hollow.cards(), newCard]));
-		// TODO : this might not be needed if creating files makes the dir anyways
-		await RustManager.getSelf().create_dir(
-			await join(
-				RealmManager.getSelf().getCurrent().location,
-				"main",
-				tool.name,
-				newCard.data.name,
-			),
-		);
+		if (result.status) {
+			this.store.set("__root__", root);
+			hollow.setCards(reconcile([...hollow.cards(), newCard]));
+			// TODO : this might not be needed if creating files makes the dir anyways
+			await RustManager.getSelf().create_dir(
+				await join(
+					RealmManager.getSelf().getCurrent().location,
+					"main",
+					tool.name,
+					newCard.data.name,
+				),
+			);
+		} else {
+			console.error(result);
+		}
 	}
 
 	// CARD MANIPULATION
-	togglePlacement(id: string, toolName: string) {
+	async togglePlacement(id: string, toolName: string) {
 		const toolEvent = this.getToolEvents(toolName);
 		const card: CardType = hollow.cards().find((c) => c.id === id);
 		if (card.data.isPlaced) {
 			const toolInstance = this.toolMap.get(toolName);
-			toolInstance?.onUnload(id);
+			const result = await toolInstance?.onUnload(id);
+			if (!result.status) {
+				console.error(result);
+			}
 		}
 		this.setCard(toolName, id, { isPlaced: !card.data.isPlaced });
 		hollow.setCards(

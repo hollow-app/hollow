@@ -1,13 +1,6 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import {
-	CardType,
-	DataBase,
-	HollowEvent,
-	IStore,
-	ToolApi,
-	ToolOption,
-} from "@type/hollow";
+import { CardType, IStore, ToolApi } from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
 import { ImageType } from "./ImageType";
 import { hollow } from "hollow";

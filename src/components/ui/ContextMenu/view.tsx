@@ -3,7 +3,7 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import { Motion, Presence } from "solid-motionone";
-import { Accessor, JSX, Setter, Show, Suspense } from "solid-js";
+import { Show, Component } from "solid-js";
 import { hollow } from "hollow";
 import {
 	ChevronRightIcon,
@@ -17,6 +17,42 @@ import { RealmManager } from "@managers/RealmManager";
 import { RustManager } from "@managers/RustManager";
 import { createSignal } from "solid-js";
 import MyIcon from "@components/MyIcon";
+import { DynamicIcon } from "@components/DynamicIcon";
+
+const MenuButton: Component<{
+	icon?: any;
+	label: string;
+	onclick: () => void;
+	class?: string;
+	iconClass?: string;
+}> = (props) => (
+	<button
+		class={props.class || "button-cm active-cm"}
+		onclick={() => {
+			props.onclick();
+			hollow.pevents.emit("context-menu", false);
+		}}
+	>
+		<Show when={props.icon}>
+			<DynamicIcon icon={props.icon} class={props.iconClass} />
+		</Show>
+		{props.label}
+	</button>
+);
+
+const SectionHeader: Component<{
+	title: string;
+	showDivider?: boolean;
+}> = (props) => (
+	<div class="flex items-center gap-1">
+		<h1 class="text-secondary-30 text-xs font-semibold uppercase">
+			{props.title}
+		</h1>
+		<Show when={props.showDivider}>
+			<hr class="border-secondary-10 flex-1 border-dashed" />
+		</Show>
+	</div>
+);
 
 export const ContextMenuView = (
 	state: StateType,
@@ -29,7 +65,7 @@ export const ContextMenuView = (
 			<Show when={state.isVisible()}>
 				<Motion.div
 					class={
-						"border-secondary-10 bg-secondary text-secondary-90 pointer-events-auto fixed z-1000 w-60 space-y-2 rounded-lg border px-2 py-2 shadow-[0_0_5px_1px_gray] select-none dark:shadow-[0_0_5px_1px_black]"
+						"bg-secondary text-secondary-90 pointer-events-auto fixed z-1000 w-60 space-y-2 rounded-lg p-1 shadow-[0_0_5px_1px_gray] select-none dark:shadow-[0_0_5px_1px_black]"
 					}
 					style={{
 						left: `${state.position().x}px`,
@@ -45,105 +81,95 @@ export const ContextMenuView = (
 						!state.isVisible() && state.setItems([])
 					}
 				>
-					<Show when={hollow.onCopy}>
-						<>
-							<Show when={hollow.onCut}>
+					<div class="border-secondary-15 rounded-lg border border-dashed p-2">
+						<Show when={hollow.onCopy}>
+							<>
+								<Show when={hollow.onCut}>
+									<MenuButton
+										icon={ScissorsIcon}
+										label="Cut"
+										onclick={hollow.onCut}
+										class="button-cm"
+									/>
+								</Show>
+								<MenuButton
+									icon={CopyIcon}
+									label="Copy"
+									onclick={hollow.onCopy}
+									class="button-cm"
+								/>
+							</>
+						</Show>
+						<Show when={hollow.onPaste}>
+							<MenuButton
+								icon={ClipboardPasteIcon}
+								label="Paste"
+								onclick={hollow.onPaste}
+								class="button-cm"
+							/>
+						</Show>
+						<div id="context-menu-tool" class="space-y-2">
+							<Show when={state.items()}>
+								<For each={state.items()}>
+									{(group: ContextMenuItem, index) => (
+										<>
+											<SectionHeader
+												title={group.header}
+												showDivider={index() !== 0}
+											/>
+											<div>
+												<For each={group.items}>
+													{(item) => (
+														<Show
+															when={
+																!item.children
+															}
+															fallback={
+																<ContextMenuSide
+																	{...item}
+																	position={
+																		state.position
+																	}
+																/>
+															}
+														>
+															<MenuButton
+																icon={item.icon}
+																label={
+																	item.label
+																}
+																onclick={
+																	item.onclick
+																}
+																iconClass="size-4.5"
+															/>
+														</Show>
+													)}
+												</For>
+											</div>
+										</>
+									)}
+								</For>
+							</Show>
+							<SectionHeader
+								title={`${RealmManager.getSelf().getCurrent().name} Realm`}
+								showDivider={true}
+							/>
+							<div class="">
 								<button
 									class="button-cm"
-									onclick={hollow.onCut}
+									onclick={() => {
+										RustManager.getSelf().reload();
+										hollow.pevents.emit(
+											"context-menu",
+											false,
+										);
+									}}
 								>
-									<ScissorsIcon class="h-4 w-4" />
-									Cut
+									<MyIcon name={"comet"} class="size-5" />
+									Reload
 								</button>
-							</Show>
-							<button class="button-cm" onclick={hollow.onCopy}>
-								<CopyIcon class="h-4 w-4" />
-								Copy
-							</button>
-						</>
-					</Show>
-					<Show when={hollow.onPaste}>
-						<button class="button-cm" onclick={hollow.onPaste}>
-							<ClipboardPasteIcon class="h-4 w-4" />
-							Paste
-						</button>
-					</Show>
-					{/* <Show when={hollow.onPaste || hollow.onCopy}> */}
-					{/* 	<hr class="hr-cm" /> */}
-					{/* </Show> */}
-					<div id="context-menu-tool" class="space-y-2">
-						<Show when={state.items()}>
-							<For each={state.items()}>
-								{(group: ContextMenuItem, index) => (
-									<>
-										<div class="flex items-center gap-1">
-											<h1 class="text-secondary-30 text-xs font-semibold uppercase">
-												{group.header}
-											</h1>
-											<Show when={index() !== 0}>
-												<hr class="border-secondary-05 flex-1" />
-											</Show>
-										</div>
-										<div>
-											<For each={group.items}>
-												{(item) => (
-													<Show
-														when={!item.children}
-														fallback={
-															<ContextMenuSide
-																{...item}
-																position={
-																	state.position
-																}
-															/>
-														}
-													>
-														<button
-															class="button-cm active-cm"
-															onclick={() => {
-																item.onclick();
-																hollow.pevents.emit(
-																	"context-menu",
-																	false,
-																);
-															}}
-														>
-															<Show
-																when={item.icon}
-															>
-																{(() => {
-																	const Icon =
-																		item.icon;
-																	return (
-																		<Icon class="h-4.5 w-4.5" />
-																	);
-																})()}
-															</Show>
-															{item.label}
-														</button>
-													</Show>
-												)}
-											</For>
-										</div>
-									</>
-								)}
-							</For>
-						</Show>
-						<div class="flex items-center gap-1">
-							<h1 class="text-secondary-30 text-xs font-semibold uppercase">
-								{RealmManager.getSelf().getCurrent().name}
-								{" Realm"}
-							</h1>
-							<hr class="border-secondary-05 flex-1" />
-						</div>
-						<div class="">
-							<button
-								class="button-cm"
-								onclick={() => RustManager.getSelf().reload()}
-							>
-								<MyIcon name={"comet"} class="size-5" />
-								Reload
-							</button>
+							</div>
 						</div>
 					</div>
 				</Motion.div>
@@ -178,12 +204,7 @@ function ContextMenuSide({
 	return (
 		<div class="relative" onMouseLeave={handleMouseLeave}>
 			<button class="button-cm" onMouseOver={handleMouseOver}>
-				<Show when={icon}>
-					{(() => {
-						const Icon = icon;
-						return <Icon class="h-4 w-4" />;
-					})()}
-				</Show>
+				<DynamicIcon class="size-4.5" icon={icon} />
 				{label}
 				{children && (
 					<ChevronRightIcon class="text-secondary-30 ml-auto" />
@@ -192,7 +213,7 @@ function ContextMenuSide({
 			<Presence>
 				<Show when={hovered()}>
 					<Motion.div
-						class="bg-secondary border-secondary-10 absolute mx-3 h-fit w-70 rounded-lg border p-2 backdrop-blur-sm"
+						class="bg-secondary absolute mx-3 h-fit w-70 rounded-lg p-1 backdrop-blur-sm"
 						onMouseOver={handleMouseOver}
 						classList={{
 							"right-[100%]": position().xflip,
@@ -205,33 +226,27 @@ function ContextMenuSide({
 						exit={{ opacity: 0, y: -25 }}
 						transition={{ duration: 0.3 }}
 					>
-						<For each={children}>
-							{(child) => (
-								<button
-									class="button-cm active-cm"
-									onclick={() => {
-										child.onclick();
-										hollow.pevents.emit(
-											"context-menu",
-											false,
-										);
-									}}
-								>
-									<Show when={child.icon}>
-										{(() => {
-											const Icon = child.icon;
-											return <Icon class="h-4 w-4" />;
-										})()}
-									</Show>
-									{child.label}
-								</button>
-							)}
-						</For>
-						{children.length === 0 && (
-							<p class="text-secondary-30 button-cm pointer-events-none">
-								Empty
-							</p>
-						)}
+						<div class="border-secondary-15 rounded-lg border border-dashed p-2">
+							<Show
+								when={children?.length > 0}
+								fallback={
+									<p class="text-secondary-30 button-cm pointer-events-none">
+										Empty
+									</p>
+								}
+							>
+								<For each={children}>
+									{(child) => (
+										<MenuButton
+											icon={child.icon}
+											label={child.label}
+											onclick={child.onclick}
+											iconClass="size-4.5"
+										/>
+									)}
+								</For>
+							</Show>
+						</div>
 					</Motion.div>
 				</Show>
 			</Presence>

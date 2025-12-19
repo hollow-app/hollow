@@ -8,6 +8,8 @@ import { Dynamic } from "solid-js/web";
 import MyIcon, { MyIconFun } from "@components/MyIcon";
 import { GridStackOptions } from "gridstack";
 import { Layout } from "@utils/layout";
+import { hotkeysManager } from "@managers/HotkeysManager";
+import { DynamicIcon } from "@components/DynamicIcon";
 
 interface SideBarButton {
 	Icon: Component;
@@ -30,6 +32,14 @@ export default function SideBar({
 }: SideBarProps) {
 	const [alert, setAlert] = createSignal(NotifyManager.getSelf().isAlert());
 
+	const toggleDnd = () => {
+		setCanvasConfigs((p) => ({
+			...p,
+			disableDrag: !p.disableDrag,
+			disableResize: !p.disableResize,
+		}));
+	};
+
 	const top: SideBarButton[] = [
 		{
 			Icon: MyIconFun({ name: "home-2-fill" }),
@@ -49,12 +59,7 @@ export default function SideBar({
 	const bottom: SideBarButton[] = [
 		{
 			Icon: MyIconFun({ name: "pen-tool-fill" }),
-			onClick: () =>
-				setCanvasConfigs((p) => ({
-					...p,
-					disableDrag: !p.disableDrag,
-					disableResize: !p.disableResize,
-				})),
+			onClick: toggleDnd,
 			selectedCondition: isLiveEditor,
 			tooltip: "Edit cards directly in the canvas",
 		},
@@ -71,6 +76,8 @@ export default function SideBar({
 	];
 	onMount(() => {
 		hollow.events.on("notify-status", setAlert);
+		hotkeysManager.getSelf().events["Toggle Drag and Drop Mode"] =
+			toggleDnd;
 	});
 
 	return (
@@ -138,10 +145,7 @@ const ControlButton = (btn: SideBarButton) => {
 				}}
 				onclick={btn.onClick}
 			>
-				<Dynamic
-					component={btn.Icon}
-					{...{ class: "m-auto size-4.5" }}
-				/>
+				<DynamicIcon icon={btn.Icon} class="m-auto size-4.5" />
 			</button>
 		</div>
 	);

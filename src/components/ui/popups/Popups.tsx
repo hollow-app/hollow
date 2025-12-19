@@ -7,6 +7,7 @@ import { Vault } from "./Vault";
 import ToolSettings from "./ToolSettings";
 import { ConfirmType, FormType, InsightType } from "@type/hollow";
 import { FormatDateString, Options } from "vanilla-calendar-pro";
+import MyIcon, { MyIconFun } from "@components/MyIcon";
 
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
 const Confirm = lazy(() => import("@components/ui/popups/Confirm"));
@@ -23,7 +24,7 @@ export default function Popups() {
 	const [color, setColor] = createSignal(null);
 	const [form, setForm] = createSignal<FormType[]>([]);
 	const [insight, setInsight] = createSignal<InsightType[]>([]);
-	const [confirm, setConfirm] = createSignal<ConfirmType>(null);
+	const [confirm, setConfirm] = createSignal<ConfirmType>();
 	const [toolSettings, setToolSettings] = createSignal(null);
 	const [vault, setVault] = createSignal(null);
 

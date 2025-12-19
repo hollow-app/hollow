@@ -2,9 +2,11 @@ import ColorPick from "@components/dynamic/ColorPick";
 import NumberInput from "@components/dynamic/NumberInput";
 import { TentTreeIcon } from "lucide-solid";
 import {
+	createEffect,
 	createMemo,
 	createSignal,
 	JSX,
+	on,
 	onMount,
 	Show,
 	type Accessor,
@@ -14,7 +16,7 @@ import { hollow } from "hollow";
 import Dropdown from "@components/dynamic/Dropdown";
 import { CardType } from "@type/hollow";
 import { unwrap } from "solid-js/store";
-import { SettingsManager } from "@managers/SettingsManager";
+import Segmented from "@components/dynamic/Segmented";
 
 interface SelectedCard {
 	tool: string;
@@ -25,13 +27,13 @@ export default function Editor() {
 	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>(
 		hollow.pevents.getData("editor"),
 	);
+	const [initialState, setInitialState] = createSignal(null);
 
 	const cardData = createMemo(() => {
 		if (!selectedCard()) return null;
 		const id = selectedCard().cardId;
 		return id ? hollow.cards().find((c) => c.id === id) : null;
 	});
-	let initialState: CardType | null = { ...unwrap(cardData()) };
 	const cardStyle = createMemo(() => cardData()?.style ?? {});
 
 	const updateRootProp = (key: keyof CardType, value: any) => {
@@ -52,13 +54,14 @@ export default function Editor() {
 		const data = hollow.cards().find((i) => i.id === payload.cardId);
 		if (!data) return;
 
-		initialState = { ...unwrap(data) };
+		// initialState = { ...unwrap(data) };
+		setInitialState(structuredClone(unwrap(data)));
 		setSelectedCard(payload);
 	};
 
 	const onSave = () => {
 		const id = selectedCard().cardId;
-		const card = hollow.cards().find((i) => i.id === id);
+		const card = unwrap(hollow.cards().find((i) => i.id === id));
 		delete card.data.tool;
 		hollow.toolManager.updateCards([
 			{ toolName: selectedCard().tool, cards: [card] },
@@ -67,16 +70,18 @@ export default function Editor() {
 	};
 
 	const onCancel = () => {
-		if (initialState) {
+		if (initialState()) {
 			hollow.setCards(
 				(c) => c.id === selectedCard().cardId,
-				initialState,
+				initialState(),
 			);
 		}
 		hollow.pevents.emit("editor", null);
 	};
 	onMount(() => {
-		!initialState && (initialState = unwrap(cardData()));
+		if (!initialState()) {
+			setInitialState(structuredClone(unwrap(cardData())));
+		}
 	});
 
 	return (

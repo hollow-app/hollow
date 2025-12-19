@@ -24,24 +24,5 @@ export const NotificationsLogic = (
 		state.setNotifications([]);
 		NotifyManager.getSelf().clearAll();
 	};
-	// const getIconFromType = (type: string): { icon: (props:LucideProps)=>Element; color: string } => {
-	// 	switch (type) {
-	// 		case "achievement":
-	// 			return { icon: TrophyIcon, color: "#FFD700" };
-	// 		case "reminder":
-	// 			return { icon: "Bell", color: "#5A67D8" };
-	// 		case "error":
-	// 			return { icon: "OctagonX", color: "#E53E3E" };
-	// 		case "warning":
-	// 			return {
-	// 				icon: "OctagonAlert",
-	// 				color: "#D69E2E",
-	// 			};
-	// 		case "update":
-	// 			return { icon: "Rocket", color: "#38A169" };
-	// 		default:
-	// 			return { icon: "Megaphone", color: "#718096" };
-	// 	}
-	// };
 	return { removeNoty, clearAll };
 };

@@ -5,20 +5,24 @@ import { createResource, Suspense } from "solid-js";
 import MyIcon from "./MyIcon";
 
 interface FetchedIconProps {
-	url: string;
+	url?: string;
+	svg?: string;
 	class?: string;
 	style?: Record<string, any>;
 }
 export default function FetchedIcon(props: FetchedIconProps) {
 	const [Icon] = createResource<Element>(async () => {
-		try {
-			new URL(props.url);
-		} catch {
-			throw new Error("unvalid link");
+		let data = props.svg;
+		if (!data) {
+			try {
+				new URL(props.url);
+			} catch {
+				throw new Error("unvalid link");
+			}
+			const fetched = await fetch(props.url);
+			data = await fetched.text();
+			if (!fetched.ok) throw new Error("Fetch failed");
 		}
-		const fetched = await fetch(props.url);
-		if (!fetched.ok) throw new Error("Fetch failed");
-		const data = await fetched.text();
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(data, "image/svg+xml");
 		const svg = doc.documentElement;

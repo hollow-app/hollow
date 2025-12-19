@@ -8,6 +8,7 @@ import {
 	SquareArrowOutUpRightIcon,
 	XIcon,
 } from "lucide-solid";
+import MyIcon from "@components/MyIcon";
 
 export const NotificationsView = (
 	state: StateType,
@@ -16,25 +17,31 @@ export const NotificationsView = (
 	helper?: HelperType,
 ) => {
 	return (
-		<div class="pointer-events-none h-full w-full py-10">
-			<div class="flex h-[calc(100vh-calc(var(--spacing)*24))] w-120 flex-col gap-3 px-3">
-				<div class="flex items-center justify-between">
-					<p class="text-secondary-40 px-3 text-sm tracking-wider">
-						Notifications
-					</p>
-					<Show when={state.notifications().length > 0}>
-						<div class="flex w-full p-2">
-							<button
-								onclick={logic.clearAll}
-								class="button-secondary ml-auto"
-							>
-								Clear All
-							</button>
-						</div>
-					</Show>
-				</div>
-				<hr class="border-secondary bg-secondary-10 h-[2px] w-full" />
-				<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
+		<div class="w-ful box-border flex h-full flex-col gap-3 px-3 py-5">
+			<div class="flex items-center justify-between">
+				<p class="text-secondary-40 px-3 text-sm tracking-wider">
+					Notifications
+				</p>
+				<Show when={state.notifications().length > 0}>
+					<button
+						onclick={logic.clearAll}
+						class="button-control"
+						title="Clear All"
+					>
+						<MyIcon name="broom-outline" class="ml-auto size-5" />
+					</button>
+				</Show>
+			</div>
+			<hr class="border-secondary bg-secondary-10 h-[2px] w-full" />
+			<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
+				<Show
+					when={state.notifications().length !== 0}
+					fallback={
+						<span class="text-secondary-50 m-auto text-center tracking-tighter">
+							You have no notifications
+						</span>
+					}
+				>
 					<For each={state.notifications()}>
 						{(noti) => {
 							{
@@ -111,12 +118,7 @@ export const NotificationsView = (
 							);
 						}}
 					</For>
-					<Show when={state.notifications().length === 0}>
-						<span class="text-secondary-50 m-auto text-center tracking-tighter">
-							You have no notifications
-						</span>
-					</Show>
-				</div>
+				</Show>
 			</div>
 		</div>
 	);

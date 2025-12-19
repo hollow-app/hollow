@@ -16,6 +16,7 @@ export interface PluginType {
 	verified: boolean;
 	verificationDate: string;
 	installed?: boolean;
+	action_state?: "install" | "update" | "uninstall";
 }
 export type PluginsProps = {};
 
@@ -40,4 +41,3 @@ const Plugins = createModule<StateType, LogicType, PluginsProps, HelperType>({
 });
 
 export default Plugins;
-

@@ -13,9 +13,16 @@ export const createNotificationsState = (
 	props: NotificationsProps,
 	helper?: HelperType,
 ): StateType => {
-	const [notifications, setNotifications] = createSignal(
-		NotifyManager.getSelf().getNotification(),
+	const [notifications, setNotifications] = createSignal<NotifyType[]>(
+		// NotifyManager.getSelf().getNotification(),
+		[
+			{
+				id: "example",
+				message: "Example content",
+				submitted_at: new Date().toISOString(),
+				title: "Title Of Some sort",
+			},
+		],
 	);
 	return { notifications, setNotifications };
 };
-

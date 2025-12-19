@@ -39,8 +39,7 @@ export class hotkeysManager {
 	}
 
 	private constructor() {
-		// const savedData = localStorage.getItem(this.key);
-		const savedData = null;
+		const savedData = localStorage.getItem(this.key);
 		let parsedData: HotKeysData;
 		if (savedData) {
 			parsedData = JSON.parse(savedData);

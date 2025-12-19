@@ -1,5 +1,4 @@
 import { NotebookProps } from ".";
-import TextareaAutosize from "solid-textarea-autosize";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
 import { NotebookManager } from "../NotebookManager";
@@ -152,7 +151,7 @@ export const NotebookLogic = (
 				...(state.note()
 					? [
 							{
-								icon: MyIconFun({ name: "trash" }),
+								icon: MyIconFun({ name: "trash-outline" }),
 								label: "Delete Note",
 								onclick: () => {
 									removeNote(state.note().title);
@@ -182,30 +181,13 @@ export const NotebookLogic = (
 						})),
 				},
 				{
-					type: "custom",
-					render: () => (
-						<div class="w-full">
-							<div class="w-full">
-								<h1 class="text-lg font-bold">Structure</h1>
-								<h3 class="text-secondary-40">
-									Template structure for new notes.
-								</h3>
-							</div>
-							<TextareaAutosize
-								class="input"
-								style={{
-									"--bg-color": "var(--color-secondary-10)",
-								}}
-								value={state.book.structure}
-								onChange={(e) =>
-									state.setBook(
-										"structure",
-										e.currentTarget.value,
-									)
-								}
-							/>
-						</div>
-					),
+					type: "longtext",
+					label: "Structure",
+					value: state.book.structure,
+					description: "Customize the structure of the new notes",
+					onAction: (v: string) => {
+						state.setBook("structure", v);
+					},
 				},
 			],
 		};

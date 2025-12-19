@@ -1,4 +1,10 @@
-import { Accessor, createResource, createSignal, onMount } from "solid-js";
+import {
+	Accessor,
+	createMemo,
+	createResource,
+	createSignal,
+	onMount,
+} from "solid-js";
 import { PluginsProps, PluginType } from ".";
 import type { HelperType } from "./helper";
 import { Setter } from "solid-js";
@@ -36,4 +42,3 @@ export const createPluginsState = (
 		plugins,
 	};
 };
-

@@ -71,10 +71,18 @@ export class ToolManager {
 		let parsedData: HandType[] = this.getHand();
 
 		if (loadUnsigned) {
-			const unsignedTools = (
-				await RustManager.getSelf().get_unsigned_plugins()
-			).filter((i) => !parsedData.find((j) => j.name === i.name));
-			parsedData.push(...unsignedTools);
+			const unsignedTools: HandType[] =
+				await RustManager.getSelf().get_unsigned_plugins();
+			unsignedTools.forEach((tool) => {
+				const index = parsedData.findIndex(
+					(item) => item.name === tool.name,
+				);
+				if (index >= 0) {
+					parsedData[index] = { ...parsedData[index], ...tool };
+				} else {
+					parsedData.push(tool);
+				}
+			});
 		} else {
 			parsedData = parsedData.filter((i) => i.signed);
 		}
@@ -223,10 +231,15 @@ export class ToolManager {
 	}
 
 	// PLUGINS
-	async installTool(name: string, repo: string): Promise<boolean> {
+	async installTool(
+		name: string,
+		repo: string,
+		isUpdate?: boolean,
+	): Promise<boolean> {
 		const request = await RustManager.getSelf().add_plugin({
 			name: name,
 			repo: repo,
+			isUpdate,
 		});
 		if (request.state) {
 			const manifest = JSON.parse(request.manifest);
@@ -241,7 +254,17 @@ export class ToolManager {
 			const loadRequest = await this.loadTool(newTool);
 			if (loadRequest) {
 				const root: HandType[] = this.getHand();
-				root.push(newTool);
+				if (isUpdate) {
+					const targetIndex = root.findIndex(
+						(i) => i.name === newTool.name,
+					);
+					root[targetIndex] = {
+						...newTool,
+						icon: root[targetIndex].icon,
+					};
+				} else {
+					root.push(newTool);
+				}
 				this.store.set("__root__", root);
 				this.toolMap.set(newTool.name, loadRequest);
 			}

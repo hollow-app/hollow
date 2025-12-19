@@ -6,8 +6,9 @@ import NumberInput from "@components/dynamic/NumberInput";
 import Slider from "@components/dynamic/Slider";
 import WordInput from "@components/dynamic/WordInput";
 import { ToolOption } from "@type/hollow";
-import { Accessor, Match, Switch } from "solid-js";
+import { Accessor, Match, onCleanup, onMount, Switch } from "solid-js";
 import Segmented from "./Segmented";
+import { options } from "marked";
 
 type OptionType<T extends ToolOption["type"]> = Extract<
 	ToolOption,
@@ -66,6 +67,9 @@ export default function DynamicOption(props: {
 				<SegmentedOption
 					option={props.option as OptionType<"segmented">}
 				/>
+			</Match>
+			<Match when={props.option.type === "custom"}>
+				<CustomOption option={props.option as OptionType<"custom">} />
 			</Match>
 		</Switch>
 	);
@@ -186,4 +190,15 @@ const SegmentedOption = (props: { option: OptionType<"segmented"> }) => {
 			setValue={props.option.onAction}
 		/>
 	);
+};
+
+const CustomOption = (props: { option: OptionType<"custom"> }) => {
+	let el: HTMLDivElement;
+	onMount(() => {
+		const obj = props.option.render(el, props.option);
+		onCleanup(() => {
+			obj.cleanup();
+		});
+	});
+	return <div class="size-full" ref={el} />;
 };

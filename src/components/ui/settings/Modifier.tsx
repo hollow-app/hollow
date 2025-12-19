@@ -4,6 +4,7 @@ import { SettingsManager } from "@managers/SettingsManager";
 import Dropdown from "@components/dynamic/Dropdown";
 import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
+import TextFormater from "@components/TextFormater";
 
 const keys = ["color-primary", "color-secondary"];
 
@@ -19,21 +20,6 @@ export default function Modifier() {
 		const newKey = e.currentTarget.value;
 		setKey(newKey);
 		selectKey();
-	};
-
-	const handleValueChange = (
-		e: KeyboardEvent & { currentTarget: HTMLTextAreaElement },
-	) => {
-		if (e.ctrlKey && e.key === "Enter") {
-			const textarea = e.currentTarget;
-			try {
-				const obj = JSON.parse(textarea.value);
-				textarea.value = JSON.stringify(obj, null, 2);
-				setError("");
-			} catch (err) {
-				setError("Invalid JSON:\n" + err.message);
-			}
-		}
 	};
 
 	const selectKey = () => {
@@ -151,21 +137,9 @@ export default function Modifier() {
 								</span>
 							</div>
 							<div class="relative flex-1">
-								<textarea
-									id="value"
+								<TextFormater
 									value={value()}
-									onKeyDown={handleValueChange}
-									onInput={(e) =>
-										setValue(e.currentTarget.value)
-									}
-									class="input h-full w-full resize-none font-mono text-sm text-neutral-900"
-									style={{
-										"--padding-y":
-											"calc(var(--spacing) * 2)",
-										"--padding-x":
-											"calc(var(--spacing) * 10) calc(var(--spacing) * 2)",
-									}}
-									placeholder="Enter JSON value"
+									setValue={setValue}
 								/>
 							</div>
 						</div>

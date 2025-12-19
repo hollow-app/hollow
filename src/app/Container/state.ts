@@ -39,6 +39,8 @@ export const createContainerState = (
 	};
 	onMount(() => {
 		hollow.pevents.on("editor", ShowEditor);
+		hotkeysManager.getSelf().events["Toggle Notifications"] = () =>
+			controller.selectPanel("right", "notifications");
 		hotkeysManager.getSelf().events["Toggle Expand"] = () =>
 			controller.selectPanel("left", "expand");
 		hotkeysManager.getSelf().events["Toggle Settings"] = () =>

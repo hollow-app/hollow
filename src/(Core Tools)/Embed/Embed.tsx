@@ -1,7 +1,17 @@
 import { CardType, IStore, ToolApi, ToolOptions } from "@type/hollow";
-import { createSignal, onCleanup, onMount, Show } from "solid-js";
+import {
+	createEffect,
+	createMemo,
+	createSignal,
+	on,
+	onCleanup,
+	onMount,
+	Show,
+} from "solid-js";
 import { EmbedData } from "./EmbedMain";
 import { hollow } from "hollow";
+import { em } from "polished";
+import { Accessor } from "solid-js";
 
 type EmbedProps = {
 	card: CardType;
@@ -11,6 +21,9 @@ type EmbedProps = {
 };
 export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 	const [embed, setEmbed] = createSignal(data);
+	const url = createMemo(() => {
+		return new URL(embed().src);
+	});
 
 	const setSettingsVisible = () => {
 		const ini: ToolOptions = {
@@ -24,7 +37,7 @@ export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 					type: "longtext",
 					label: "IFrame",
 					description: "embed an iframe",
-					attributes: { placeholder: "<iframe ..." },
+					attributes: { placeholder: "src..." },
 					value: embed().src,
 					onAction: (s: string) => {
 						hollow.events.emit(
@@ -50,13 +63,7 @@ export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 		toolEvents.off(`${card.id}-settings`, setSettingsVisible);
 	});
 	return (
-		<div
-			class="h-full w-full"
-			oncontextmenu={(e) => {
-				e.preventDefault();
-				e.stopPropagation();
-			}}
-		>
+		<div class="group relative size-full">
 			<Show
 				when={embed().src}
 				fallback={
@@ -65,8 +72,15 @@ export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 					</span>
 				}
 			>
-				<div innerHTML={embed().src} class="h-full w-full" />
+				<iframe src={embed().src} width={"100%"} height={"100%"} />
 			</Show>
+			{/* Panel */}
+			<div class="bg-secondary-05 border-secondary-10 absolute top-1 left-1 flex items-center gap-1 rounded border p-1 opacity-0 transition-all group-hover:opacity-100">
+				<img src={`${url().origin}/favicon.ico`} class="size-4" />
+				<p class="text-secondary-50 truncate text-xs">
+					{url().hostname}
+				</p>
+			</div>
 		</div>
 	);
 }

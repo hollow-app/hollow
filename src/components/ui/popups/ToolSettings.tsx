@@ -1,7 +1,7 @@
 import DynamicOption from "@components/dynamic/DynamicOption";
 import { ToolOption, ToolOptions } from "@type/hollow";
 import { hollow } from "hollow";
-import { createMemo, For } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 
 type ToolSettingsProps = {
 	pluginSettings: ToolOptions;
@@ -47,12 +47,12 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 					<For each={pluginSettings.options}>
 						{(option: ToolOption, index) => (
 							<>
-								{option.type !== "custom" ? (
-									<div class="flex w-full justify-between px-3">
-										<div class="w-full">
-											<h1 class="text-lg font-bold">
-												{option.label}
-											</h1>
+								<div class="flex w-full justify-between px-3">
+									<div class="w-full">
+										<h1 class="text-lg font-bold">
+											{option.label}
+										</h1>
+										<Show when={option.description}>
 											<h3 class="text-secondary-40">
 												<For
 													each={option.description.split(
@@ -89,21 +89,17 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 													}}
 												</For>
 											</h3>
-										</div>
+										</Show>
+									</div>
 
-										{/* Right side */}
-										<div class="flex h-fit w-full justify-end">
-											<DynamicOption
-												option={option}
-												index={index}
-											/>
-										</div>
+									{/* Right side */}
+									<div class="flex h-fit w-full justify-end">
+										<DynamicOption
+											option={option}
+											index={index}
+										/>
 									</div>
-								) : (
-									<div class="flex w-full shrink-0 justify-between px-3">
-										{option.render()}
-									</div>
-								)}
+								</div>
 							</>
 						)}
 					</For>

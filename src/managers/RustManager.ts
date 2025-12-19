@@ -23,6 +23,7 @@ type FetchProps = {
 type AddPluginProps = {
 	name: string;
 	repo: string;
+	isUpdate?: boolean;
 };
 
 type RemovePluginProps = {
@@ -112,7 +113,7 @@ export class RustManager {
 		}
 	}
 
-	async add_plugin({ name, repo }: AddPluginProps): Promise<any> {
+	async add_plugin({ name, repo, isUpdate }: AddPluginProps): Promise<any> {
 		const result = {
 			state: true,
 			manifest: "",
@@ -122,7 +123,9 @@ export class RustManager {
 			try {
 				const url = `https://raw.githubusercontent.com/${repo}/main/${file}`;
 				if (file === "icon.svg") {
-					result.icon = await VaultManager.getSelf().addUrlItem(url);
+					!isUpdate &&
+						(result.icon =
+							await VaultManager.getSelf().addUrlItem(url));
 					continue;
 				}
 				const response = await fetch(url, {

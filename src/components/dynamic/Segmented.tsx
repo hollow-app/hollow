@@ -1,3 +1,5 @@
+import { DynamicIcon } from "@components/DynamicIcon";
+import { options } from "marked";
 import { readableColor } from "polished";
 import { createSelector, createSignal, For, onMount, Show } from "solid-js";
 
@@ -41,7 +43,7 @@ export default function Segmented(props: Props) {
 		const child =
 			parent.children[
 				(props.value
-					? props.options.findIndex((i) => i.title === props.value)
+					? props.options.findIndex((i) => i.key === props.value)
 					: 0) + 1
 			];
 		setPosition({
@@ -62,16 +64,19 @@ export default function Segmented(props: Props) {
 				<For each={props.options}>
 					{(option) => (
 						<button
-							class="text-secondary-40 z-1 flex items-center gap-1 font-medium"
+							class="text-secondary-40 z-1 flex h-full w-full items-center justify-center gap-1 font-medium"
 							type="button"
 							classList={{
 								"text-secondary-95 dark:text-primary-95":
-									isSelected(option.title),
+									isSelected(option.key),
 							}}
 							onclick={(e) => onSelect(option.key, e)}
 						>
 							<Show when={option.icon}>
-								<option.icon class="size-5" />
+								<DynamicIcon
+									icon={option.icon}
+									class="size-5"
+								/>
 							</Show>
 							{option.title}
 						</button>

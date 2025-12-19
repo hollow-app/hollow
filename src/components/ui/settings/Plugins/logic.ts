@@ -14,9 +14,9 @@ export const PluginsLogic = (
 	helper?: HelperType,
 ): LogicType => {
 	const action = async () => {
-		const isInstalled = state.selectedPlugin().installed;
 		state.setSelectedPlugin((prev) => ({ ...prev, installed: null }));
-		if (isInstalled) {
+		const action_state = state.selectedPlugin().action_state;
+		if (action_state === "uninstall") {
 			const request = await hollow.toolManager.uninstallTool(
 				state.selectedPlugin().name,
 			);
@@ -26,14 +26,17 @@ export const PluginsLogic = (
 					installed: false,
 				}));
 		} else {
+			const isUpdate = action_state === "update";
 			const request = await hollow.toolManager.installTool(
 				state.selectedPlugin().name,
 				state.selectedPlugin().repo,
+				isUpdate,
 			);
 			request &&
 				state.setSelectedPlugin((prev) => ({
 					...prev,
 					installed: true,
+					action_state: "uninstall",
 				}));
 		}
 	};
@@ -45,7 +48,6 @@ export const PluginsLogic = (
 				title: "warning",
 				message:
 					"Installing unverified plugins may pose security risks.\nOnly install plugins that you trust and are sure are safe.",
-
 				onAccept: () => {
 					state.checkUnverified(true);
 				},
@@ -56,4 +58,3 @@ export const PluginsLogic = (
 	};
 	return { switchUnverified, action };
 };
-

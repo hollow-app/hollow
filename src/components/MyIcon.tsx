@@ -1,7 +1,8 @@
 import { JSX, lazy, Suspense } from "solid-js";
 
+export type MyIconsType = keyof typeof HollowIcons;
 interface Props {
-	name: keyof typeof HollowIcons;
+	name: MyIconsType;
 	class?: string;
 	style?: JSX.CSSProperties;
 }
@@ -80,6 +81,7 @@ const HollowIcons = {
 		import("@assets/icons/designtools-outline.svg"),
 	"designtools-fill": () => import("@assets/icons/designtools-fill.svg"),
 	"menu-board-outline": () => import("@assets/icons/menu-board-outline.svg"),
+	"broom-outline": () => import("@assets/icons/broom-outline.svg"),
 	// Files subdirectory
 	"files/file-check": () => import("@assets/icons/files/file-check.svg"),
 	"files/file-description": () =>

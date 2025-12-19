@@ -18,26 +18,27 @@ export default function ConfirmPop({ pack }: ConfirmPopProps) {
 		hotkeysManager.getSelf().events["Refuse Confirm Message"] = () =>
 			decision(false);
 	});
-	// todo off that evets ^^^
 	return (
-		<div class="bg-secondary-05 border-secondary-15 pointer-events-auto absolute z-90 h-fit w-fit max-w-[90%] rounded-xl border-1 p-10 text-gray-950 shadow-2xl shadow-neutral-800 md:max-w-[60%] dark:text-gray-200 dark:shadow-neutral-950">
-			<h1 class="mb-3 text-3xl font-bold capitalize">{pack.title}</h1>
-			<p class="w-full whitespace-pre-line text-neutral-500">
-				{pack.message}
-			</p>
-			<div class="mt-10 flex w-full justify-between gap-3">
-				<button
-					class="button-primary flex-1"
-					onclick={() => decision(true)}
-				>
-					{pack.accLabel ?? "Confirm"}
-				</button>
-				<button
-					class="button-secondary flex-1"
-					onclick={() => decision(false)}
-				>
-					{pack.refLabel ?? "Cancel"}
-				</button>
+		<div class="bg-secondary popup-shadow pointer-events-auto absolute z-90 h-fit w-fit max-w-[90%] rounded-xl p-1 text-gray-950 md:max-w-[60%] dark:text-gray-200">
+			<div class="border-secondary-10 rounded-xl border border-dashed p-9">
+				<h1 class="mb-3 text-3xl font-bold capitalize">{pack.title}</h1>
+				<p class="w-full whitespace-pre-line text-neutral-500">
+					{pack.message}
+				</p>
+				<div class="mt-10 flex w-full justify-between gap-3">
+					<button
+						class="button-primary flex-1"
+						onclick={() => decision(true)}
+					>
+						{pack.accLabel ?? "Confirm"}
+					</button>
+					<button
+						class="button-secondary flex-1"
+						onclick={() => decision(false)}
+					>
+						{pack.refLabel ?? "Cancel"}
+					</button>
+				</div>
 			</div>
 		</div>
 	);

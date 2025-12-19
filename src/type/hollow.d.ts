@@ -1,3 +1,4 @@
+import { MyIconsType } from "@components/MyIcon";
 import { Component, JSX } from "solid-js";
 
 // Represents a plugin with lifecycle methods that interact with cards and the app.
@@ -315,11 +316,6 @@ export type NotifyType = {
 	 * ISO timestamp of when the notification should expire.
 	 */
 	expires_at?: string;
-
-	/**
-	 * Category or type label.
-	 */
-	type: "achievement" | "reminder" | "error" | "warning" | "update";
 };
 
 export type AlertType =
@@ -374,6 +370,12 @@ export type TypedOptionMap = {
 	dropdown: {
 		options: { title?: string; items: string[] }[];
 		placeholder?: string;
+	};
+	custom: {
+		render: (
+			el: HTMLDivElement,
+			option: { value: any; onAction: (v?: any) => void },
+		) => { cleanup: () => void };
 	};
 	// ??
 	file: {};
@@ -437,19 +439,10 @@ export type ToolOptions = {
  * Tools can use predefined field types (from TypedOptionMap), or render
  * a completely custom element.
  */
-export type ToolOption =
-	| (ToolOptionBase &
-			{
-				[K in keyof TypedOptionMap]: BaseOption<K, TypedOptionMap[K]>;
-			}[keyof TypedOptionMap])
-	| {
-			type: "custom";
-
-			/**
-			 * Render function for fully custom settings components.
-			 */
-			render: () => JSX.Element;
-	  };
+export type ToolOption = ToolOptionBase &
+	{
+		[K in keyof TypedOptionMap]: BaseOption<K, TypedOptionMap[K]>;
+	}[keyof TypedOptionMap];
 
 /**
  * Represents a form submission request

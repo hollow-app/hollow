@@ -34,10 +34,15 @@ export default function PluginPreview(props: Props) {
 			}
 			const isInstalled = hollow.toolManager
 				.getHand()
-				.some((i) => i.name === props.plugin.name.toLowerCase());
+				.find((i) => i.name === props.plugin.name.toLowerCase());
 			props.setSelectedPlugin({
 				...props.plugin,
-				installed: isInstalled,
+				installed: !!isInstalled,
+				action_state: isInstalled
+					? props.plugin.version === isInstalled.version
+						? "uninstall"
+						: "update"
+					: "install",
 			});
 			props.setSelectedMD(await marked(await readme.text()));
 		} catch (error) {

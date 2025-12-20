@@ -51,7 +51,7 @@ export default function Sidepanel(props: SidepanelProps) {
 							transition={{
 								duration: props.disableAnimation() ? 0 : 0.5,
 							}}
-							class="bg-secondary flex h-full shrink-0 flex-col overflow-hidden"
+							class="flex h-full shrink-0 flex-col overflow-hidden"
 						>
 							<div
 								style={{

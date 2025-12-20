@@ -732,12 +732,12 @@ button[data-vc-week-day] {
 
 .vc-week-number,
 .vc-week-numbers__title {
-	color: var(--color-secondary-50);
+	color: var(--color-secondary-80);
 }
 
 @media (hover:hover) and (pointer:fine) {
 	.vc-week-number:hover {
-		color: var(--color-secondary-50);
+		color: var(--color-primary);
 	}
 }
 

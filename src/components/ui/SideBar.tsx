@@ -8,6 +8,7 @@ import { GridStackOptions } from "gridstack";
 import { Layout } from "@utils/layout";
 import { hotkeysManager } from "@managers/HotkeysManager";
 import { DynamicIcon } from "@components/DynamicIcon";
+import { FormatDateString } from "vanilla-calendar-pro";
 
 interface SideBarButton {
 	Icon: Component;

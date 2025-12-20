@@ -17,15 +17,17 @@ export const CanvasView = (
 ) => {
 	return (
 		<div
-			class="bg-secondary/30 relative h-full w-full overflow-hidden rounded-xl border"
+			class="canvas-parent border-secondary relative h-full w-full overflow-hidden outline"
 			classList={{
-				"border-secondary-10": state.isAnySidePanelVisible(),
-				"border-transparent": !state.isAnySidePanelVisible(),
+				"outline-secondary-10 border-5": state.isAnySidePanelVisible(),
+				"rounded-xl":
+					state.isAnySidePanelVisible() || props.anyExpanded(),
+				"outline-secondary": !state.isAnySidePanelVisible(),
 			}}
 		>
 			<OverlayScrollbarsComponent
 				element="div"
-				class={"relative h-full w-full bg-transparent"}
+				class={"h-full w-full"}
 				options={{
 					overflow: { x: "scroll", y: "scroll" },
 					scrollbars: {
@@ -41,10 +43,13 @@ export const CanvasView = (
 					class="grid-stack"
 					ref={state.setGridEl}
 					style={{
+						"--m": "calc(var(--grid-gap) * -1px)",
 						"min-width":
 							"calc(100vw - calc(var(--spacing) * 19) - 2px)",
 						"min-height":
 							"calc(100vh - calc(var(--spacing) * 4) - 2px)",
+						"margin-left": "var(--m)",
+						"margin-top": "var(--m)",
 					}}
 				>
 					<For each={hollow.cards().filter((i) => i.data.isPlaced)}>

@@ -475,8 +475,8 @@ export class ToolManager {
 			style: {
 				"border-radius": "10px",
 				"--opacity": "100%",
-				"outline-color": "#3d3d3d",
-				"outline-width": "2px",
+				"border-color": "#3d3d3d",
+				"border-width": "0px",
 				background:
 					"color-mix(in oklab, var(--color-secondary-05) var(--opacity), transparent)",
 			},

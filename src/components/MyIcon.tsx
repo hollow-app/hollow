@@ -7,7 +7,9 @@ interface Props {
 	style?: JSX.CSSProperties;
 }
 export default function MyIcon(props: Props) {
-	const IconComponent = lazy(HollowIcons[props.name]);
+	const IconComponent = lazy(
+		HollowIcons[props.name] ?? HollowIcons["double-arrow-right"],
+	);
 
 	return (
 		<Suspense>

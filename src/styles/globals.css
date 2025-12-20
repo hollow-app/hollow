@@ -1,4 +1,4 @@
-* {
+*:not(.canvas-parent) {
 	outline: none;
 }
 
@@ -442,9 +442,13 @@ a {
 	--border-radius: var(--radius-lg);
 	--h: calc(var(--spacing) * 9);
 	--w: calc(var(--spacing) * 9);
+	--px: 0;
+	--py: 0;
 	height: var(--size, var(--h));
 	width: var(--size, var(--w));
 	border-radius: var(--border-radius);
+	padding-inline: calc(var(--spacing) * var(--px));
+	padding-block: calc(var(--spacing) * var(--py));
 	color: color-mix(in oklab,
 			var(--c) 50%,
 			transparent);

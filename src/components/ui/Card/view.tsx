@@ -24,7 +24,11 @@ export const CardView = (
 				classList={{
 					"cursor-move pointer-events-none": props.isLiveEditor(),
 				}}
-				style={{ padding: "calc(var(--grid-gap) * 1px)" }}
+				style={{
+					"--p": "calc(var(--grid-gap) * 1px)",
+					"padding-left": "var(--p)",
+					"padding-top": "var(--p)",
+				}}
 			>
 				<div
 					class={"h-full w-full"}
@@ -32,10 +36,10 @@ export const CardView = (
 						position: state.isExpand() ? "fixed" : "static",
 						...(state.isExpand()
 							? {
-									top: "calc(var(--spacing) * 2 + 1px)",
-									left: "calc(var(--layout-left) + calc(var(--spacing) * 17) + 1px)",
-									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 19) - 2px)",
-									height: "calc(100vh - calc(var(--spacing) * 4) - 2px)",
+									top: "calc(var(--spacing) * 2)",
+									left: "calc(var(--layout-left) + calc(var(--spacing) * 17))",
+									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 19))",
+									height: "calc(100vh - calc(var(--spacing) * 4))",
 									background: "var(--color-secondary)",
 									"border-width": "0px",
 									// "border-style": "solid",

@@ -6,14 +6,14 @@ import "@styles/calendar.css";
 import { onCleanup, onMount } from "solid-js";
 
 interface Props {
-	options: Options;
+	cal: { options: Options; onSave: () => void };
 	hide: () => void;
 }
 export default function DatePicker(props: Props) {
 	let el!: HTMLDivElement;
 	let calendar: Calendar;
 	onMount(() => {
-		calendar = new Calendar(el, props.options);
+		calendar = new Calendar(el, props.cal.options);
 		calendar.init();
 	});
 	onCleanup(() => {
@@ -27,6 +27,27 @@ export default function DatePicker(props: Props) {
 		>
 			<div class="mx-3 mb-3">
 				<div ref={el}></div>
+				<div class="border-secondary-15 flex w-full justify-end gap-3 border-t border-dashed pt-5">
+					<button
+						onclick={() => {
+							props.cal.onSave();
+							props.hide();
+						}}
+						type="button"
+						class="button-primary"
+						style={{ "--w": "100%" }}
+					>
+						Save
+					</button>
+					<button
+						onclick={props.hide}
+						type="button"
+						class="button-secondary"
+						style={{ "--w": "100%" }}
+					>
+						Cancel
+					</button>
+				</div>
 			</div>
 		</PopupWrapper>
 	);

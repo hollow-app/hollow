@@ -19,7 +19,10 @@ const DatePicker = lazy(() => import("@components/ui/popups/DatePicker"));
 
 export default function Popups() {
 	const [tool, setTool] = createSignal(null);
-	const [calendar, setCalendar] = createSignal<Options>(null);
+	const [calendar, setCalendar] = createSignal<{
+		options: Options;
+		onSave: () => void;
+	}>(null);
 	const [emoji, setEmoji] = createSignal(null);
 	const [color, setColor] = createSignal(null);
 	const [form, setForm] = createSignal<FormType[]>([]);
@@ -96,10 +99,7 @@ export default function Popups() {
 				<ColorPicker p={color()} />
 			</Show>
 			<Show when={calendar()}>
-				<DatePicker
-					options={calendar()}
-					hide={() => setCalendar(null)}
-				/>
+				<DatePicker cal={calendar()} hide={() => setCalendar(null)} />
 			</Show>
 
 			<Show when={insight().length > 0}>

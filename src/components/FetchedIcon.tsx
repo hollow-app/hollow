@@ -1,6 +1,6 @@
-import { onMount, Show } from "solid-js";
+import { JSX, onMount, Show } from "solid-js";
 import { createResource, Suspense } from "solid-js";
-import MyIcon from "./MyIcon";
+import MyIcon, { MyIconFun, MyIconsType } from "./MyIcon";
 
 interface FetchedIconProps {
 	url?: string;
@@ -9,31 +9,47 @@ interface FetchedIconProps {
 	style?: Record<string, any>;
 }
 export default function FetchedIcon(props: FetchedIconProps) {
-	const [Icon] = createResource<Element>(async () => {
+	const [Icon] = createResource<JSX.Element | SVGSVGElement>(async () => {
 		let data = props.svg;
+
 		if (!data) {
-			try {
-				new URL(props.url);
-			} catch {
-				throw new Error("unvalid link");
+			if (!props.url) {
+				throw new Error("No SVG or URL provided");
 			}
+
+			new URL(props.url);
 			const fetched = await fetch(props.url);
-			data = await fetched.text();
 			if (!fetched.ok) throw new Error("Fetch failed");
+			data = await fetched.text();
 		}
+
+		const trimmed = data.trim();
+		if (!trimmed.startsWith("<")) {
+			return <MyIcon name={trimmed as MyIconsType} class={props.class} />;
+		}
+
 		const parser = new DOMParser();
-		const doc = parser.parseFromString(data, "image/svg+xml");
+		const doc = parser.parseFromString(trimmed, "image/svg+xml");
 		const svg = doc.documentElement;
-		svg.setAttribute("class", "fetched-icon " + (props.class ?? ""));
-		props.style &&
+
+		if (svg.tagName.toLowerCase() !== "svg") {
+			throw new Error("Invalid SVG markup");
+		}
+
+		svg.setAttribute("class", `fetched-icon ${props.class ?? ""}`);
+
+		if (props.style) {
 			svg.setAttribute(
 				"style",
 				Object.entries(props.style)
 					.map(([k, v]) => `${k}: ${v};`)
-					.join("\n"),
+					.join(" "),
 			);
+		}
+
 		svg.removeAttribute("width");
 		svg.removeAttribute("height");
+
 		return svg;
 	});
 

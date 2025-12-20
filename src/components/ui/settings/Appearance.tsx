@@ -52,20 +52,34 @@ interface CanvasProps {
 	setCanvasConfigs: Setter<GridStackOptions>;
 }
 function CanvasSettings(props: CanvasProps) {
-	let gridGap = SettingsManager.getSelf().getConfig("grid-gap");
+	const [gridGap, setGridGap] = createSignal(
+		SettingsManager.getSelf().getConfig("grid-gap"),
+	);
+	const [gridSize, setGridSize] = createSignal(props.canvasConfigs().column);
+	const cellHeight = createMemo(() => {
+		return (window.innerHeight - 16 + gridGap()) / (gridSize() as number);
+	});
 	const setGapBetweenCards = (v: number) => {
-		gridGap = v;
+		setGridGap(v);
 		useGrid([{ name: "--grid-gap", value: v }]);
+		props.setCanvasConfigs((prev) => ({
+			...prev,
+			cellHeight: cellHeight(),
+		}));
 	};
-	const gridSize = createMemo(() => props.canvasConfigs().column);
 
-	const setGridSize = (v: number) => {
-		props.setCanvasConfigs((prev) => ({ ...prev, column: v }));
+	const setGrid_size = (v: number) => {
+		setGridSize(v);
+		props.setCanvasConfigs((prev) => ({
+			...prev,
+			column: v,
+			cellHeight: cellHeight(),
+		}));
 	};
 
 	onCleanup(() => {
 		SettingsManager.getSelf().setConfigs({
-			"grid-gap": gridGap,
+			"grid-gap": gridGap(),
 			"grid-size": Number(gridSize()),
 		});
 	});
@@ -93,7 +107,7 @@ function CanvasSettings(props: CanvasProps) {
 										? 12
 										: Number(gridSize())
 								}
-								setValue={setGridSize}
+								setValue={setGrid_size}
 								direct
 							/>
 						</div>
@@ -109,7 +123,7 @@ function CanvasSettings(props: CanvasProps) {
 						</div>
 						<div class="w-50">
 							<NumberInput
-								value={gridGap}
+								value={gridGap()}
 								setValue={setGapBetweenCards}
 								direct
 							/>

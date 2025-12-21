@@ -17,12 +17,12 @@ type FilterType = {
 export default function Expand() {
 	// TODO 11
 	const hand = hollow.toolManager.getHand();
-	const icons = createMemo(() =>
-		hand.reduce((a, i) => {
-			a[i.name] = i.icon;
-			return a;
-		}),
-	);
+	// const icons = createMemo(() =>
+	// 	hand.reduce((a, i) => {
+	// 		a[i.name] = i.icon;
+	// 		return a;
+	// 	}),
+	// );
 	const [filter, setFilter] = createSignal<FilterType>({
 		tools: [],
 		favourite: false,
@@ -69,7 +69,7 @@ export default function Expand() {
 					// TODO multi select in dropdown yet one for FORM
 					options: [
 						{
-							items: hand.map((i) => i.name),
+							items: Object.keys(hand),
 						},
 					],
 				},
@@ -157,7 +157,7 @@ export default function Expand() {
 							{
 								title: "Tool",
 								isCheckBox: true,
-								items: hand.map((i) => ({
+								items: Object.entries(hand).map(([_, i]) => ({
 									label: i.name,
 									checked: filter().tools.includes(i.name),
 								})),
@@ -186,7 +186,7 @@ export default function Expand() {
 							{(c: CardType) => (
 								<CardConfig
 									myCard={c}
-									icon={icons()[c.data.tool]}
+									icon={hand[c.data.tool].icon}
 								/>
 							)}
 						</For>

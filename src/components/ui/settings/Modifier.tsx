@@ -56,7 +56,6 @@ export default function Modifier() {
 			const button = e.currentTarget;
 			button.classList.add("debounce");
 			// const parsed = JSON.parse(value());
-			console.log(value());
 			localStorage.setItem(key(), value());
 			hollow.events.emit("alert", {
 				title: "Saved",

@@ -3,7 +3,7 @@ import type { StateType } from "./state";
 import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import { Motion, Presence } from "solid-motionone";
-import { Show, SuspenseList, Switch } from "solid-js";
+import { Show, Switch } from "solid-js";
 import { For } from "solid-js";
 import {
 	ChevronLeftIcon,
@@ -137,7 +137,6 @@ export const PluginsView = (
 							>
 								Source Code
 							</a>
-
 							<button
 								class="button-primary"
 								onclick={logic.action}

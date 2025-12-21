@@ -1,48 +1,46 @@
 {
-	"__root__": [
-		{
-			"version": "1.0.0",
-			"name": "image",
+	"image": {
+		"version": "1.0.0",
+		"name": "image",
 
-			"description": "An image management tool for viewing, organizing, and editing pictures.",
-			"author": "Hollow Team",
-			"authorUrl": "https://github.com/hollow-app",
-			"icon": "Image",
-			"cards": [],
-			"signed": true
-		},
-		{
-			"version": "1.0.0",
-			"name": "notebook",
+		"description": "An image management tool for viewing, organizing, and editing pictures.",
+		"author": "Hollow Team",
+		"authorUrl": "https://github.com/hollow-app",
+		"icon": "Image",
+		"cards": [],
+		"signed": true
+	},
+	"notebook": {
+		"version": "1.0.0",
+		"name": "notebook",
 
-			"description": "A digital notebook for writing notes, organizing thoughts, and keeping track of ideas.",
-			"author": "Hollow Team",
-			"authorUrl": "https://github.com/hollow-app",
-			"icon": "NotebookTabs",
-			"cards": [],
-			"signed": true
-		},
-		{
-			"version": "1.0.0",
-			"name": "kanban",
+		"description": "A digital notebook for writing notes, organizing thoughts, and keeping track of ideas.",
+		"author": "Hollow Team",
+		"authorUrl": "https://github.com/hollow-app",
+		"icon": "NotebookTabs",
+		"cards": [],
+		"signed": true
+	},
+	"kanban": {
+		"version": "1.0.0",
+		"name": "kanban",
 
-			"description": "A kanban board for task management, allowing organization of tasks in different stages.",
-			"author": "Hollow Team",
-			"authorUrl": "https://github.com/hollow-app",
-			"icon": "Kanban",
-			"cards": [],
-			"signed": true
-		},
-		{
-			"version": "1.0.0",
-			"name": "embed",
+		"description": "A kanban board for task management, allowing organization of tasks in different stages.",
+		"author": "Hollow Team",
+		"authorUrl": "https://github.com/hollow-app",
+		"icon": "Kanban",
+		"cards": [],
+		"signed": true
+	},
+	"embed": {
+		"version": "1.0.0",
+		"name": "embed",
 
-			"description": "A tool for embedding external content, including websites, videos, and widgets.",
-			"author": "Hollow Team",
-			"authorUrl": "https://github.com/hollow-app",
-			"icon": "CodeXml",
-			"cards": [],
-			"signed": true
-		}
-	]
+		"description": "A tool for embedding external content, including websites, videos, and widgets.",
+		"author": "Hollow Team",
+		"authorUrl": "https://github.com/hollow-app",
+		"icon": "CodeXml",
+		"cards": [],
+		"signed": true
+	}
 }

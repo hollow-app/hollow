@@ -14,6 +14,7 @@ import {
 	createResource,
 	createSignal,
 	For,
+	onMount,
 	Setter,
 	Show,
 	Suspense,
@@ -29,6 +30,7 @@ import { hollow } from "hollow";
 import Dropdown from "@components/dynamic/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@components/MyIcon";
+import { DeepLinkManager } from "@managers/DeepLinkManager";
 
 type SelectorProps = {
 	onSelect: (id: string) => void;
@@ -518,22 +520,40 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 };
 
 function CreateCharacter(props: { onSuccess: () => void }) {
+	let el!: HTMLDivElement;
 	const [character, setCharacter] = createSignal<Character>(
 		CharacterManager.getSelf().getCharacter(),
 	);
-
-	const importAvatar = async () => {
-		hollow.events.emit("show-vault", {
-			onSelect: (p) => {
-				setCharacter((i) => ({ ...i, avatar: p }));
-			},
-		});
-	};
 
 	const save = () => {
 		CharacterManager.getSelf().setCharacter(character());
 		props.onSuccess();
 	};
+	const linkEmail = async (e: SubmitEvent) => {
+		e.preventDefault();
+		const button = e.submitter;
+		button.classList.add("debounce");
+		const formData = new FormData(e.target as HTMLFormElement);
+		const email = formData.get("email");
+	};
+	onMount(async () => {
+		await new Promise((r) => setTimeout(r, 2000));
+		DeepLinkManager.getSelf().buildClerk(el);
+		// const worker_url = import.meta.env.VITE_WORKER_URL;
+		// console.log("worker url:", worker_url);
+		// try {
+		// 	const response = await fetch(worker_url, {
+		// 		method: "POST",
+		// 		headers: {
+		// 			"Content-Type": "application/json",
+		// 		},
+		// 		body: JSON.stringify({ type: "dummy" }),
+		// 	});
+		// 	console.log(await response.text());
+		// } catch (e) {
+		// 	console.log(e);
+		// }
+	});
 
 	return (
 		<Motion.div
@@ -548,134 +568,135 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 				"--position": "relative",
 			}}
 		>
-			<div class="title-panel flex items-center gap-2">
-				<PandaIcon class="text-secondary-50 m-1 h-5 w-5" />
-				<h1 class="h1-title">Character Sheet</h1>
-			</div>
-			<div class="flex flex-col gap-3 p-3">
-				<div class="flex justify-between">
-					<p class="text-secondary-40 text-sm tracking-wider">
-						Wait. You there. Step forward. Who are you?
-					</p>
-					<span class="text-secondary-40 tool-tip text-sm tracking-wider">
-						<span class="tool-tip-content" data-side="right">
-							The Characters feature is currently experimental. It
-							doesn’t serve a specific purpose yet, but we wanted
-							to introduce it and explore its potential. If, over
-							time, it doesn’t provide value to most users, we may
-							decide to remove it.
-						</span>
-						[ i ]
-					</span>
+			<Show when={false} fallback={<div ref={el} class="" />}>
+				<div class="title-panel flex items-center gap-2">
+					<PandaIcon class="text-secondary-50 m-1 h-5 w-5" />
+					<h1 class="h1-title">Character Sheet</h1>
 				</div>
-				<hr class="border-secondary bg-secondary-10/50 h-[2px] w-full" />
-				<div class="flex gap-5">
-					<div
-						class="border-secondary-10 flex size-40 shrink-0 flex-col justify-between rounded border p-2"
-						style={{
-							"background-image": `url(${character().avatar})`,
-							"background-size": "cover",
-						}}
-					>
-						<Show when={!character().avatar}>
-							<span class="text-secondary-20 w-full pt-10 text-center text-sm tracking-widest">
-								AVATAR
+				<div class="flex flex-col gap-3 p-3">
+					<div class="flex justify-between">
+						<p class="text-secondary-40 text-sm tracking-wider">
+							Wait. You there. Step forward. Who are you?
+						</p>
+						<span class="text-secondary-40 tool-tip text-sm tracking-wider">
+							<span class="tool-tip-content" data-side="right">
+								The Characters feature is currently
+								experimental. It doesn’t serve a specific
+								purpose yet, but we wanted to introduce it and
+								explore its potential. If, over time, it doesn’t
+								provide value to most users, we may decide to
+								remove it.
 							</span>
-						</Show>
-						<button
-							class="button-secondary mt-auto"
-							onclick={importAvatar}
-							style={{ "--w": "100%" }}
-						>
-							import
-						</button>
+							[ i ]
+						</span>
 					</div>
-					<div class="flex h-40 w-full flex-col justify-around gap-2">
-						<div class="w-full">
-							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-								Name
-							</h2>
+					<hr class="border-secondary bg-secondary-10/50 h-[2px] w-full" />
+					<div class="flex gap-5">
+						<div class="flex w-full flex-col justify-around gap-2">
+							<div class="w-full">
+								<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
+									Name
+								</h2>
+								<input
+									class="input"
+									placeholder="All realms remember a name"
+									value={character().username}
+									onInput={(e) =>
+										setCharacter((prev) => ({
+											...prev,
+											username: e.currentTarget.value,
+										}))
+									}
+								/>
+							</div>
+							<div class="w-full">
+								<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
+									Title
+								</h2>
+								<Dropdown
+									value={character().title}
+									options={[
+										{
+											items: [
+												"Elder",
+												"The Original Few",
+											],
+										},
+									]}
+									onSelect={(s: string) =>
+										setCharacter((prev) => ({
+											...prev,
+											title: s,
+										}))
+									}
+								/>
+							</div>
+						</div>
+					</div>
+					<div>
+						<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
+							Description
+						</h2>
+						<textarea
+							class="input resize-none"
+							placeholder="Your tale begins here"
+							value={character().bio}
+							onInput={(e) =>
+								setCharacter((prev) => ({
+									...prev,
+									bio: e.currentTarget.value,
+								}))
+							}
+						/>
+					</div>
+					<form onSubmit={linkEmail}>
+						<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
+							Email
+						</h2>
+						<div class="flex items-center gap-2">
 							<input
 								class="input"
-								placeholder="All realms remember a name"
-								value={character().username}
-								onInput={(e) =>
-									setCharacter((prev) => ({
-										...prev,
-										username: e.currentTarget.value,
-									}))
-								}
+								name="email"
+								type="email"
+								placeholder="Email Address"
 							/>
+							<button type="submit" class="button-secondary">
+								Link
+							</button>
 						</div>
-						<div class="w-full">
-							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-								Title
-							</h2>
-							<Dropdown
-								value={character().title}
-								options={[
-									{
-										items: ["Elder", "The Original Few"],
-									},
-								]}
-								onSelect={(s: string) =>
-									setCharacter((prev) => ({
-										...prev,
-										title: s,
-									}))
-								}
-							/>
-						</div>
+					</form>
+					<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
+					<div class="flex w-full flex-wrap items-center gap-2">
+						<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
+							achievements :
+						</h2>
+						<For each={["🌀 First Step"]}>
+							{(ach) => (
+								<span class="bg-secondary-10 text-secondary-70 rounded px-2">
+									{ach}
+								</span>
+							)}
+						</For>
 					</div>
+					<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
 				</div>
-				<div>
-					<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-						Description
-					</h2>
-					<textarea
-						class="input resize-none"
-						placeholder="Your tale begins here"
-						value={character().bio}
-						onInput={(e) =>
-							setCharacter((prev) => ({
-								...prev,
-								bio: e.currentTarget.value,
-							}))
-						}
-					/>
+				<div class="mx-5 mb-5 flex gap-2">
+					<button
+						class="button-primary"
+						onclick={save}
+						style={{ "--w": "100%" }}
+					>
+						Save
+					</button>
+					<button
+						class="button-secondary"
+						onclick={() => props.onSuccess()}
+						style={{ "--w": "100%" }}
+					>
+						Skip
+					</button>
 				</div>
-
-				<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
-				<div class="flex w-full flex-wrap items-center gap-2">
-					<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-						achievements :
-					</h2>
-					<For each={["🌀 First Step"]}>
-						{(ach) => (
-							<span class="bg-secondary-10 text-secondary-70 rounded px-2">
-								{ach}
-							</span>
-						)}
-					</For>
-				</div>
-				<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
-			</div>
-			<div class="mx-5 mb-5 flex gap-2">
-				<button
-					class="button-primary"
-					onclick={save}
-					style={{ "--w": "100%" }}
-				>
-					Save
-				</button>
-				<button
-					class="button-secondary"
-					onclick={() => props.onSuccess()}
-					style={{ "--w": "100%" }}
-				>
-					Skip
-				</button>
-			</div>
+			</Show>
 		</Motion.div>
 	);
 }
@@ -689,7 +710,10 @@ export default function Selector({ onSelect }: SelectorProps) {
 	const [realms, setRealms] = createSignal<Realm[]>(
 		RealmManager.getSelf().getRealms(),
 	);
-	const [level, setLevel] = createSignal(realms().length === 0 ? 0 : 1);
+	const [level, setLevel] = createSignal(
+		// realms().length === 0 ? 0 : 1
+		3,
+	);
 	//
 	return (
 		<Suspense fallback={<Loading />}>

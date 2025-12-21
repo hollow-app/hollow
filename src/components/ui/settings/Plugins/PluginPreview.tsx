@@ -32,14 +32,20 @@ export default function PluginPreview(props: Props) {
 				props.plugin.verified =
 					props.plugin.verificationDate === repJson.updated_at;
 			}
-			const isInstalled = hollow.toolManager
-				.getHand()
-				.find((i) => i.name === props.plugin.name.toLowerCase());
+			const fetchedManifest = await (
+				await fetch(
+					`https://raw.githubusercontent.com/${props.plugin.repo}/main/manifest.json`,
+				)
+			).json();
+			const isInstalled =
+				hollow.toolManager.getHand()[props.plugin.name.toLowerCase()];
 			props.setSelectedPlugin({
 				...props.plugin,
+				...fetchedManifest,
+				icon: isInstalled?.icon,
 				installed: !!isInstalled,
 				action_state: isInstalled
-					? props.plugin.version === isInstalled.version
+					? fetchedManifest.version === isInstalled.version
 						? "uninstall"
 						: "update"
 					: "install",
@@ -54,7 +60,8 @@ export default function PluginPreview(props: Props) {
 
 	return (
 		<div
-			class="bg-secondary-10/40 border-secondary-15 hover:bg-secondary-10 relative m-2 cursor-pointer rounded border-1 p-5 transition-all active:scale-95"
+			class="bg-secondary-10/40 border-secondary-15 hover:bg-secondary-10 relative m-2 h-35 cursor-pointer rounded border-1 p-5 transition-all active:scale-95"
+			classList={{ "pointer-events-none": loading() }}
 			onclick={onClick}
 		>
 			<Show when={!loading()} fallback={<Loading />}>

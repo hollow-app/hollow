@@ -17,6 +17,7 @@ export interface PluginType {
 	verificationDate: string;
 	installed?: boolean;
 	action_state?: "install" | "update" | "uninstall";
+	icon?: string;
 }
 export type PluginsProps = {};
 

@@ -313,9 +313,7 @@ function Header(props: {
 		if (!props.selected()) return [];
 		const toolName = props.selected().tool;
 		if (!toolName) return [];
-		const tool = hollow.toolManager
-			.getHand()
-			.find((t) => t.name === toolName);
+		const tool = hollow.toolManager.getHand()[toolName];
 		return (
 			tool?.cards
 				.filter((c) => c.data.isPlaced)
@@ -334,9 +332,9 @@ function Header(props: {
 						}
 						options={[
 							{
-								items: hollow.toolManager
-									.getHand()
-									.map((t) => t.name),
+								items: Object.keys(
+									hollow.toolManager.getHand(),
+								),
 							},
 						]}
 						placeholder="Tool"

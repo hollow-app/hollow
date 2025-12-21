@@ -86,7 +86,7 @@ export class HollowManager {
 		}
 		await RealmManager.getSelf().start();
 		hotkeysManager.init();
-		await VaultManager.getSelf().start();
+		DeepLinkManager.init();
 		await CharacterManager.getSelf().start();
 		return true;
 	}
@@ -95,6 +95,7 @@ export class HollowManager {
 		if (!localStorage.platform) {
 			localStorage.platform = await RustManager.getSelf().get_platform();
 		}
+		await VaultManager.getSelf().start();
 		await RustManager.getSelf().start_realm({
 			location: RealmManager.getSelf().getCurrent().location,
 		});
@@ -106,7 +107,6 @@ export class HollowManager {
 		await MarkdownManager.getSelf().start();
 		NotifyManager.init();
 		CodeThemeManager.init();
-		await DeepLinkManager.start();
 		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });

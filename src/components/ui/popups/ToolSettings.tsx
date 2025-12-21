@@ -10,8 +10,9 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 	const card = createMemo(() =>
 		hollow.toolManager
 			.getHand()
-			.find((i) => i.name === pluginSettings.tool.toLowerCase())
-			.cards.find((i) => i.data.name == pluginSettings.card),
+			[
+				pluginSettings.tool.toLowerCase()
+			].cards.find((i) => i.data.name == pluginSettings.card),
 	);
 
 	const onSave = () => {

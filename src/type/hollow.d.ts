@@ -547,6 +547,7 @@ export type ConfirmType = {
 	title: string;
 	message: string;
 	onAccept: () => void;
+	onRefuse?: () => void;
 	accLabel?: string;
 	refLabel?: string;
 };
@@ -579,23 +580,62 @@ export type StoreType = {
 	};
 };
 
-export type IStore = {
-	getData: () => T;
+export interface IStore {
+	/**
+	 * Returns the in-memory data object.
+	 * Throws if the storage has been closed.
+	 */
+	getData(): Record<string, any>;
 
-	get: (key: string, defaultValue?: T) => T | undefined;
+	/**
+	 * Gets a value from the in-memory cache.
+	 * Throws if the storage has been closed.
+	 */
+	get<T>(key: string, defaultValue?: T): T | undefined;
 
-	set: (key: string, value: any) => void;
+	/**
+	 * Sets a value and persists it asynchronously.
+	 * Throws if the storage has been closed.
+	 */
+	set(key: string, value: any): void;
 
-	remove: (key: string) => void;
+	/**
+	 * Sets multiple values and persists them asynchronously.
+	 * Throws if the storage has been closed.
+	 */
+	setMany(values: Record<string, any>): void;
 
-	keys: () => string[];
+	/**
+	 * Removes a key from storage.
+	 * Throws if the storage has been closed.
+	 */
+	remove(key: string): void;
 
-	save: () => Promise<void>;
+	/**
+	 * Returns all keys in the in-memory cache.
+	 * Throws if the storage has been closed.
+	 */
+	keys(): string[];
 
-	reload: () => Promise<void>;
+	/**
+	 * Explicitly saves pending changes to disk.
+	 * Throws if the storage has been closed.
+	 */
+	save(): Promise<void>;
 
-	getOrigin: () => Store;
-};
+	/**
+	 * Reloads the store from disk and refreshes in-memory cache.
+	 * Throws if the storage has been closed.
+	 */
+	reload(): Promise<void>;
+
+	/**
+	 * Disposes the underlying store resource.
+	 * After calling this, the instance must not be used.
+	 * This method is idempotent.
+	 */
+	close(): Promise<void>;
+}
 
 export type CardFs = {
 	exists(path: string): Promise<boolean>;

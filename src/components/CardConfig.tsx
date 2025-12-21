@@ -25,7 +25,11 @@ export default function CardConfig({
 		setPlaced(!isPlaced());
 	};
 	const handleDelete = async () => {
-		await hollow.toolManager.deleteCard(myCard.id, myCard.data.tool, true);
+		await hollow.toolManager.deleteCard(
+			[myCard.id],
+			myCard.data.tool,
+			true,
+		);
 		// setHand([...hollow.toolManager.getHand()]);
 	};
 	const handleFav = async () => {

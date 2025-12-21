@@ -8,7 +8,11 @@ type ConfirmPopProps = {
 
 export default function ConfirmPop({ pack }: ConfirmPopProps) {
 	const decision = (d: boolean) => {
-		d && pack.onAccept();
+		if (d) {
+			pack.onAccept();
+		} else if (pack.onRefuse) {
+			pack.onRefuse();
+		}
 		hollow.events.emit("confirm", null);
 	};
 

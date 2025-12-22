@@ -15,7 +15,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 	const history = createMemo(() =>
 		JSON.parse(
 			localStorage.getItem("color-picker-history") ??
-				JSON.stringify(Array(5).fill("#fff")),
+			JSON.stringify(Array(5).fill("#fff")),
 		),
 	);
 	const onSave = () => {
@@ -113,7 +113,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 					<button
 						onclick={onSave}
 						type="button"
-						class="button-primary"
+						class="button primary"
 						style={{ "--w": "100%" }}
 					>
 						Save
@@ -121,7 +121,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 					<button
 						onclick={onCancel}
 						type="button"
-						class="button-secondary"
+						class="button secondary"
 						style={{ "--w": "100%" }}
 					>
 						Cancel

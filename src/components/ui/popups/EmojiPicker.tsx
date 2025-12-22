@@ -87,14 +87,14 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 				<div class="flex w-full justify-around gap-3">
 					<button
 						onclick={onSave}
-						class="button-primary"
+						class="button primary"
 						style={{ "--w": "100%" }}
 					>
 						Save
 					</button>
 					<button
 						onclick={onCancel}
-						class="button-secondary"
+						class="button secondary"
 						style={{ "--w": "100%" }}
 					>
 						Cancel

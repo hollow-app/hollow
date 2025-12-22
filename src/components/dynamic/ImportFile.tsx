@@ -36,7 +36,7 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 					</button>
 				</>
 			</Show>
-			<button class="button-secondary" type="button" onclick={onImport}>
+			<button class="button secondary" type="button" onclick={onImport}>
 				Upload
 			</button>
 		</div>

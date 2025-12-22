@@ -10,9 +10,9 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 	const card = createMemo(() =>
 		hollow.toolManager
 			.getHand()
-			[
-				pluginSettings.tool.toLowerCase()
-			].cards.find((i) => i.data.name == pluginSettings.card),
+		[
+			pluginSettings.tool.toLowerCase()
+		].cards.find((i) => i.data.name == pluginSettings.card),
 	);
 
 	const onSave = () => {
@@ -108,14 +108,14 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded p-5">
 					<button
 						type="button"
-						class="button-primary"
+						class="button primary"
 						onclick={onSave}
 					>
 						Save
 					</button>
 					<button
 						type="button"
-						class="button-secondary"
+						class="button secondary"
 						onclick={onCancel}
 					>
 						Cancel

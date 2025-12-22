@@ -335,7 +335,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 					</p>
 				</div>
 				<button
-					class="button-secondary"
+					class="button secondary"
 					style={{ "--padding-y": "calc(var(--spacing) * 3)" }}
 					onclick={() => onNewTag()}
 				>

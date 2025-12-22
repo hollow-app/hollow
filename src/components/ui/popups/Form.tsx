@@ -31,8 +31,8 @@ export default function Form({ form, setForm }: FormProps) {
 				if (i.optional) return false;
 				return i.dependsOn
 					? i.dependsOn.conditions.includes(
-							submission[i.dependsOn.key] && !submission[i.key],
-						)
+						submission[i.dependsOn.key] && !submission[i.key],
+					)
 					: !submission[i.key];
 			})
 		) {
@@ -124,10 +124,10 @@ export default function Form({ form, setForm }: FormProps) {
 					</For>
 				</div>
 				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded px-[3rem] py-5">
-					<button class="button-primary" type="submit">
+					<button class="button primary" type="submit">
 						{form.update ? "Update" : "Submit"}
 					</button>
-					<button class="button-secondary" onclick={onCancel}>
+					<button class="button secondary" onclick={onCancel}>
 						Cancel
 					</button>
 				</div>

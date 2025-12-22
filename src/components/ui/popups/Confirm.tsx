@@ -31,13 +31,13 @@ export default function ConfirmPop({ pack }: ConfirmPopProps) {
 				</p>
 				<div class="mt-10 flex w-full justify-between gap-3">
 					<button
-						class="button-primary flex-1"
+						class="button primary flex-1"
 						onclick={() => decision(true)}
 					>
 						{pack.accLabel ?? "Confirm"}
 					</button>
 					<button
-						class="button-secondary flex-1"
+						class="button secondary flex-1"
 						onclick={() => decision(false)}
 					>
 						{pack.refLabel ?? "Cancel"}

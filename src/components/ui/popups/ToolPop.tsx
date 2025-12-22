@@ -58,7 +58,7 @@ export default function ToolPop({
 				<div class="border-secondary-15 flex justify-center border-t border-dashed pt-3">
 					<button
 						onclick={handleClose}
-						class="button-secondary"
+						class="button secondary"
 						style={{ "--w": "100%" }}
 					>
 						Close

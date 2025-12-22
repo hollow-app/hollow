@@ -155,7 +155,7 @@ export default function Modifier() {
 			</div>
 
 			<div class="bg-secondary-05 mt-auto flex w-full justify-end gap-2 rounded-xl p-5">
-				<button onClick={handleSave} class="button-primary w-full">
+				<button onClick={handleSave} class="button primary w-full">
 					Save Changes
 				</button>
 			</div>

@@ -246,7 +246,7 @@ export default function Account() {
 							</h3>
 						</div>
 						<button
-							class="button-secondary h-fit"
+							class="button secondary h-fit"
 							onClick={addMeta}
 						>
 							Add
@@ -332,7 +332,7 @@ export default function Account() {
 				</div>
 				<div class="bg-secondary-05 absolute bottom-10 left-10 mt-auto flex w-[calc(100%-calc(var(--spacing)*20))] justify-end gap-2 rounded-xl p-5">
 					<button
-						class="button-secondary"
+						class="button secondary"
 						onclick={() =>
 							setCharacter(
 								CharacterManager.getSelf().getCharacter(),
@@ -341,7 +341,7 @@ export default function Account() {
 					>
 						Cancel Changes
 					</button>
-					<button class="button-primary" onclick={onSave}>
+					<button class="button primary" onclick={onSave}>
 						Save
 					</button>
 				</div>

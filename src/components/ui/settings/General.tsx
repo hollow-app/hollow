@@ -14,7 +14,7 @@ export default function General() {
 					</p>
 				</div>
 				<a
-					class="button-secondary flex"
+					class="button secondary flex"
 					style={{ "--h": "auto" }}
 					href={"buymeacoffee.com/ryusufe"}
 					target="_blank"
@@ -58,9 +58,9 @@ export default function General() {
 							localStorage.realmToggleOnStartup ?? "false",
 						)}
 						onchange={(e) =>
-							(localStorage.realmToggleOnStartup = JSON.stringify(
-								e.currentTarget.checked,
-							))
+						(localStorage.realmToggleOnStartup = JSON.stringify(
+							e.currentTarget.checked,
+						))
 						}
 					/>
 					<label

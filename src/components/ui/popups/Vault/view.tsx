@@ -111,7 +111,7 @@ export const VaultView = (
 										{state.selectedItem()?.name}
 									</h2>
 									<button
-										class="button-ctl"
+										class="hover:bg-secondary-10 flex h-8 w-8 items-center justify-center rounded-[0.4rem] bg-transparent p-[0.3rem] transition-colors"
 										onclick={() =>
 											state.setSelectedItem(null)
 										}
@@ -152,7 +152,7 @@ export const VaultView = (
 								<div class="mt-auto flex">
 									<Show when={props.onSelect}>
 										<button
-											class="button-primary"
+											class="button primary"
 											onclick={() =>
 												logic.onImageSelected(
 													state.selectedItem().url,
@@ -255,7 +255,7 @@ function AddUrl({ onAdd }: AddUrlProps) {
 						onInput={(e) => setUrl(e.currentTarget.value)}
 						placeholder="https://..."
 					/>
-					<button class="button-secondary" onclick={importImage}>
+					<button class="button secondary" onclick={importImage}>
 						+
 					</button>
 				</div>

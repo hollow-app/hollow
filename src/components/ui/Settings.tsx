@@ -174,7 +174,7 @@ export default function Settings(props: SettingsProps) {
 							</button>
 						</div>
 						<button
-							class="button-secondary"
+							class="button secondary"
 							style={{ "--w": "100%" }}
 							onclick={() => props.setSettings(false)}
 							tabIndex={-1}

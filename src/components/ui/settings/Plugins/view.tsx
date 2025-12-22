@@ -138,7 +138,7 @@ export const PluginsView = (
 								Source Code
 							</a>
 							<button
-								class="button-primary"
+								class="button primary"
 								onclick={logic.action}
 							>
 								{state.selectedPlugin().action_state}

@@ -132,7 +132,7 @@ export default function Editor() {
 									label="Corner"
 									value={Number(
 										cardStyle()
-											["border-radius"].toString()
+										["border-radius"].toString()
 											.split("px")[0],
 									)}
 									setValue={(v) =>
@@ -173,9 +173,9 @@ export default function Editor() {
 											<NumberInput
 												value={Number(
 													cardStyle()
-														[
-															"border-width"
-														].toString()
+													[
+														"border-width"
+													].toString()
 														.split("px")[0],
 												)}
 												setValue={(v) =>
@@ -242,10 +242,10 @@ export default function Editor() {
 						</div>
 
 						<div class="mt-2 flex h-fit min-h-20 w-full gap-4 pr-3 pl-[calc(var(--spacing)*3+8px)]">
-							<button class="button-primary" onclick={onSave}>
+							<button class="button primary" onclick={onSave}>
 								Save
 							</button>
-							<button class="button-secondary" onclick={onCancel}>
+							<button class="button secondary" onclick={onCancel}>
 								Cancel
 							</button>
 						</div>

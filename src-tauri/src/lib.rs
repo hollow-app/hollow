@@ -1,5 +1,5 @@
 use std::sync::Mutex;
-
+use tauri::plugin::Builder as PluginBuilder;
 use tauri_plugin_log::log::{self};
 
 mod app;
@@ -8,6 +8,8 @@ mod utils;
 mod vault;
 
 // use tauri::Manager;
+
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -19,12 +21,19 @@ pub fn run() {
         )
         .build();
 
+    let nav_plugin = PluginBuilder::<tauri::Wry, ()>::new("nav_blocker")
+        .on_navigation(|_window, url| {
+            url.scheme() == "tauri" || url.host_str() == Some("localhost")
+        })
+        .build();
+
     tauri::Builder::default()
         // static
         .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
             log::debug!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
         }))
         // relative
+        .plugin(nav_plugin)
         .manage(Mutex::new(app::AppData {
             realm_location: None,
         }))

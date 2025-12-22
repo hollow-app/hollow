@@ -8,16 +8,20 @@ import {
 	ArrowLeftIcon,
 	RocketIcon,
 	PandaIcon,
+	ExternalLinkIcon,
 } from "lucide-solid";
 import {
 	Accessor,
+	createMemo,
 	createResource,
 	createSignal,
 	For,
+	Match,
 	onMount,
 	Setter,
 	Show,
 	Suspense,
+	Switch,
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import WindowControl from "@components/WindowControl";
@@ -31,6 +35,7 @@ import Dropdown from "@components/dynamic/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@components/MyIcon";
 import { DeepLinkManager } from "@managers/DeepLinkManager";
+import { stat } from "fs";
 
 type SelectorProps = {
 	onSelect: (id: string) => void;
@@ -117,7 +122,7 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 				</h1>
 			</div>
 			<button
-				class="button-primary mt-7 ml-auto flex items-center gap-3 text-black"
+				class="button primary mt-7 ml-auto flex items-center gap-3 text-black"
 				onclick={props.onNext}
 			>
 				<RocketIcon class="hidden size-5" />
@@ -151,7 +156,7 @@ const RealmList = (props: {
 			<div class="title-panel flex items-center justify-between">
 				<h1 class="h1-title">Realms</h1>
 				<button
-					class="button-empty flex items-center gap-1 tracking-wide text-white"
+					class="button empty flex items-center gap-1 tracking-wide text-white"
 					style={{
 						"--bg-color":
 							"color-mix(in oklab, var(--color-neutral-800) 100% , black 30%)",
@@ -379,7 +384,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 								</Show>
 							</label>
 							<button
-								class="button-secondary"
+								class="button secondary"
 								onclick={selectLocation}
 							>
 								Select
@@ -424,7 +429,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 						</div>
 					</div>
 					<button
-						class="button-empty mt-auto ml-auto flex items-center gap-1 tracking-wide text-white"
+						class="button empty mt-auto ml-auto flex items-center gap-1 tracking-wide text-white"
 						style={{
 							"--bg-color": "var(--color-neutral-900)",
 							"--border-color": "var(--color-neutral-800)",
@@ -520,7 +525,6 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 };
 
 function CreateCharacter(props: { onSuccess: () => void }) {
-	let el!: HTMLDivElement;
 	const [character, setCharacter] = createSignal<Character>(
 		CharacterManager.getSelf().getCharacter(),
 	);
@@ -529,31 +533,6 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 		CharacterManager.getSelf().setCharacter(character());
 		props.onSuccess();
 	};
-	const linkEmail = async (e: SubmitEvent) => {
-		e.preventDefault();
-		const button = e.submitter;
-		button.classList.add("debounce");
-		const formData = new FormData(e.target as HTMLFormElement);
-		const email = formData.get("email");
-	};
-	onMount(async () => {
-		await new Promise((r) => setTimeout(r, 2000));
-		DeepLinkManager.getSelf().buildClerk(el);
-		// const worker_url = import.meta.env.VITE_WORKER_URL;
-		// console.log("worker url:", worker_url);
-		// try {
-		// 	const response = await fetch(worker_url, {
-		// 		method: "POST",
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 		},
-		// 		body: JSON.stringify({ type: "dummy" }),
-		// 	});
-		// 	console.log(await response.text());
-		// } catch (e) {
-		// 	console.log(e);
-		// }
-	});
 
 	return (
 		<Motion.div
@@ -561,14 +540,23 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.3 }}
-			class="up-pop flex w-121 flex-col"
-			style={{
-				"--bg-color": "var(--color-neutral-950)",
-				"--border-color": "var(--color-neutral-900)",
-				"--position": "relative",
-			}}
+			class="flex flex-col"
 		>
-			<Show when={false} fallback={<div ref={el} class="" />}>
+			<a
+				class="text-secondary-40 ml-auto flex items-center gap-1 text-xs hover:underline"
+				target="_blank"
+				href={import.meta.env.REGISTER_URL}
+			>
+				register <ExternalLinkIcon class="size-3" />
+			</a>
+			<div
+				class="up-pop w-121"
+				style={{
+					"--bg-color": "var(--color-neutral-950)",
+					"--border-color": "var(--color-neutral-900)",
+					"--position": "relative",
+				}}
+			>
 				<div class="title-panel flex items-center gap-2">
 					<PandaIcon class="text-secondary-50 m-1 h-5 w-5" />
 					<h1 class="h1-title">Character Sheet</h1>
@@ -649,22 +637,6 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 							}
 						/>
 					</div>
-					<form onSubmit={linkEmail}>
-						<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-							Email
-						</h2>
-						<div class="flex items-center gap-2">
-							<input
-								class="input"
-								name="email"
-								type="email"
-								placeholder="Email Address"
-							/>
-							<button type="submit" class="button-secondary">
-								Link
-							</button>
-						</div>
-					</form>
 					<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
 					<div class="flex w-full flex-wrap items-center gap-2">
 						<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
@@ -682,21 +654,21 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 				</div>
 				<div class="mx-5 mb-5 flex gap-2">
 					<button
-						class="button-primary"
+						class="button primary"
 						onclick={save}
 						style={{ "--w": "100%" }}
 					>
 						Save
 					</button>
 					<button
-						class="button-secondary"
+						class="button secondary"
 						onclick={() => props.onSuccess()}
 						style={{ "--w": "100%" }}
 					>
 						Skip
 					</button>
 				</div>
-			</Show>
+			</div>
 		</Motion.div>
 	);
 }

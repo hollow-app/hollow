@@ -34,7 +34,7 @@ export default function DatePicker(props: Props) {
 							props.hide();
 						}}
 						type="button"
-						class="button-primary"
+						class="button primary"
 						style={{ "--w": "100%" }}
 					>
 						Save
@@ -42,7 +42,7 @@ export default function DatePicker(props: Props) {
 					<button
 						onclick={props.hide}
 						type="button"
-						class="button-secondary"
+						class="button secondary"
 						style={{ "--w": "100%" }}
 					>
 						Cancel

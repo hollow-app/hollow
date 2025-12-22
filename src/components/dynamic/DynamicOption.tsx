@@ -128,7 +128,7 @@ const ButtonOption = (props: { option: OptionType<"button"> }) => (
 	<button
 		type="button"
 		onClick={props.option.onAction}
-		class="button-secondary"
+		class="button secondary"
 	>
 		{props.option.value}
 	</button>

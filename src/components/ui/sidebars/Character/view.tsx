@@ -331,14 +331,14 @@ function ProgressBar({
 				<Show when={isDragging()}>
 					<div class="absolute -top-8 right-0 flex gap-1">
 						<button
-							class="button-secondary"
+							class="button secondary"
 							style={{ "--padding-x": "var(--padding-y)" }}
 							onclick={onApply}
 						>
 							<Check class="size-4" />
 						</button>
 						<button
-							class="button-secondary"
+							class="button secondary"
 							style={{ "--padding-x": "var(--padding-y)" }}
 							onclick={onCancel}
 						>

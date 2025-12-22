@@ -62,7 +62,7 @@ export default function About() {
 							<a
 								href={link.link}
 								target="_blank"
-								class="button-secondary no-underline"
+								class="button secondary no-underline"
 							>
 								{link.label}
 							</a>

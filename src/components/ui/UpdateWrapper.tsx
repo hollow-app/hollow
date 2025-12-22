@@ -44,7 +44,7 @@ export function UpdateWrapper(props: Props) {
 
 				<Show when={Object.keys(values()).length > 0}>
 					<div class="absolute right-6 bottom-6 z-50">
-						<button class="button-primary px-6 py-3" onclick={save}>
+						<button class="button primary px-6 py-3" onclick={save}>
 							Save
 						</button>
 					</div>

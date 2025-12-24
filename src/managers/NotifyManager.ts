@@ -1,7 +1,7 @@
 import { NotifyType } from "@type/hollow";
 import { isExpired, weekOld } from "../utils/manipulation/strings";
 import { hollow } from "hollow";
-import { manager } from "@managers/index";
+import { Managers } from ".";
 
 type NotificationData = {
 	notifications: NotifyType[];
@@ -9,13 +9,15 @@ type NotificationData = {
 };
 
 export class NotifyManager {
+	private readonly managers: Managers;
 	private data: NotificationData = { alert: true, notifications: [] };
 
 	private get key(): string {
-		return `${manager.realm.currentRealmId}-notifications`;
+		return `${this.managers?.realm.currentRealmId}-notifications`;
 	}
 
-	public constructor() {
+	constructor(managers: Managers) {
+		this.managers = managers;
 		const savedData = localStorage.getItem(this.key);
 		if (savedData) {
 			this.data = JSON.parse(savedData);

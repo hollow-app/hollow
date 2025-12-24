@@ -17,10 +17,9 @@ export const CharacterLogic = (
 		hollow.events.emit("show-vault", {
 			onSelect: (image: string) => {
 				state.setCharacter((prev) => ({ ...prev, [key]: image }));
-				manager.character.setCharacter({ [key]: image });
+				manager.character.set = { [key]: image };
 			},
 		});
 	};
 	return { import_image };
 };
-

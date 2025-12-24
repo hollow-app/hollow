@@ -1,6 +1,6 @@
 import { HotKeyType } from "@type/HotKeyType";
 import { hollow } from "hollow";
-import { manager } from "@managers/index";
+import { Managers } from ".";
 type HotKeysData = {
 	configuration: {
 		enabled: boolean;
@@ -20,13 +20,15 @@ export type HotKeyName =
 	| "Refuse Confirm Message";
 
 export class hotkeysManager {
+	private readonly managers: Managers;
 	private hotkeys: HotKeyType[];
 	private key: string = "hotkeys";
 	private enabled: boolean = false;
 	private globalListener: ((e: KeyboardEvent) => void) | null = null;
 	public events: Partial<Record<HotKeyName, () => void>> = {};
 
-	public constructor() {
+	constructor(managers: Managers) {
+		this.managers = managers;
 		const savedData = localStorage.getItem(this.key);
 		let parsedData: HotKeysData;
 		if (savedData) {
@@ -176,7 +178,7 @@ export class hotkeysManager {
 	private executeHotkey(hotkey: HotKeyType) {
 		switch (hotkey.name) {
 			case "Reload App":
-				manager.rust.reload();
+				this.managers?.rust.reload();
 				break;
 			case "Toggle Placement":
 				break;
@@ -184,7 +186,7 @@ export class hotkeysManager {
 				hollow.events.toggle("show-vault");
 				break;
 			case "Go to Realm Selector":
-				manager.realm.toggleRealm();
+				this.managers?.realm.toggleRealm();
 				break;
 			default:
 				// the ones that are custom from the outside

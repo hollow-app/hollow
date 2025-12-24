@@ -7,10 +7,13 @@ import { DataBaseRequest, IStore, StoreType } from "@type/hollow";
 import { ToolDataBase } from "./ToolDataBase";
 import { Storage } from "./Storage";
 import useGrid from "@hooks/useGrid";
-import { manager } from "@managers/index";
+import { manager, Managers } from ".";
 
 export class HollowManager {
-	constructor() {
+	private readonly managers: Managers;
+
+	constructor(managers: Managers) {
+		this.managers = managers;
 		window.addEventListener("offline", () => {
 			hollow.events.emit("network-state", false);
 		});
@@ -60,28 +63,28 @@ export class HollowManager {
 	async preRealmSelection() {
 		if (!localStorage.realmToggleOnStartup) {
 			localStorage.realmToggleOnStartup = "false";
-			await manager.rust.first_launch();
+			await this.managers?.rust.first_launch();
 		}
-		await manager.realm.start();
-		await manager.deeplink.start();
-		await manager.character.start();
+		await this.managers?.realm.start();
+		await this.managers?.deeplink.start();
 		return true;
 	}
 
 	async postRealmSelection() {
 		if (!localStorage.platform) {
-			localStorage.platform = await manager.rust.get_platform();
+			localStorage.platform = await this.managers?.rust.get_platform();
 		}
-		await manager.vault.start();
-		await manager.rust.start_realm({
-			location: manager.realm.getCurrent().location,
+		await this.managers?.vault.start();
+		await this.managers?.rust.start_realm({
+			location: this.managers?.realm.getCurrent().location,
 		});
 		//
-		await manager.settings.start();
-		hollow.toolManager = await ToolManager.create(
-			manager.settings.getConfig("load-unsigned-plugins"),
+		await this.managers?.settings.start();
+		hollow.toolManager = new ToolManager(manager);
+		hollow.toolManager.start(
+			this.managers?.settings.getConfig("load-unsigned-plugins"),
 		);
-		await manager.markdown.start();
+		await this.managers?.markdown.start();
 		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });

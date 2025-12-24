@@ -18,13 +18,13 @@ import { KanbanMain } from "@coretools/Kanban/KanbanMain";
 import { EmbedMain } from "@coretools/Embed/EmbedMain";
 import { EventsManager } from "./EventsManager";
 import { ToolMetadata } from "@type/ToolMetadata";
-import { manager } from "@managers/index";
 import { hollow } from "hollow";
 import DEFAULT from "@assets/configs/main.json?raw";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import { reconcile } from "solid-js/store";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { Managers } from ".";
 
 type ToolMethods = {
 	name: string;
@@ -40,23 +40,28 @@ type ToolMap = Map<string, ToolMethods>;
 type CoreTool = (typeof hollow.coreTools)[number];
 
 export class ToolManager {
+	private readonly managers: Managers;
 	private store: Storage;
-	private toolMap: ToolMap;
+	private toolMap: ToolMap = new Map();
 
 	// INITIALIZATION
-	private constructor() {
-		this.toolMap = new Map();
+	constructor(managers: Managers) {
+		this.managers = managers;
 	}
 
-	static async create(loadUnsigned?: boolean): Promise<ToolManager> {
-		const instance = new ToolManager();
-		await instance.start(loadUnsigned);
-		return instance;
-	}
+	// static async create(loadUnsigned?: boolean): Promise<ToolManager> {
+	// 	const instance = new ToolManager();
+	// 	await instance.start(loadUnsigned);
+	// 	return instance;
+	// }
 
-	private async start(loadUnsigned?: boolean): Promise<void> {
+	async start(loadUnsigned?: boolean): Promise<void> {
 		const path = await join(
-			...[manager.realm.getCurrent().location, ".hollow", "main.json"],
+			...[
+				this.managers?.realm.getCurrent().location,
+				".hollow",
+				"main.json",
+			],
 		);
 		this.store = await Storage.create({
 			path,
@@ -67,7 +72,7 @@ export class ToolManager {
 		let parsedData = this.getHand();
 		if (loadUnsigned) {
 			const unsignedTools: HandType[] =
-				await manager.rust.get_unsigned_plugins();
+				await this.managers?.rust.get_unsigned_plugins();
 			const thereIsNewPlugins = {};
 			for (const tool of unsignedTools) {
 				const targetTool = parsedData[tool.name];
@@ -78,7 +83,7 @@ export class ToolManager {
 					};
 				} else {
 					const iconPath = await join(
-						manager.realm.getCurrent().location,
+						this.managers?.realm.getCurrent().location,
 						"plugins",
 						tool.name,
 						"icon.svg",
@@ -164,7 +169,7 @@ export class ToolManager {
 		const semiPath = await join(...["plugins", tool.name, "index.js"]);
 
 		const toolEvent = await this.createToolEvent(tool.name);
-		const toolClass = await manager.rust.load_plugin({
+		const toolClass = await this.managers?.rust.load_plugin({
 			semiPath: semiPath,
 			toolEvent,
 		});
@@ -188,7 +193,7 @@ export class ToolManager {
 		>;
 		const path = await join(
 			...[
-				manager.realm.getCurrent().location,
+				this.managers?.realm.getCurrent().location,
 				"main",
 				toolName,
 				"config.json",
@@ -212,7 +217,7 @@ export class ToolManager {
 		return async (): Promise<IStore> => {
 			const path = await join(
 				...[
-					manager.realm.getCurrent().location,
+					this.managers?.realm.getCurrent().location,
 					"main",
 					toolName,
 					cardName,
@@ -244,7 +249,7 @@ export class ToolManager {
 		repo: string,
 		isUpdate?: boolean,
 	): Promise<boolean> {
-		const request = await manager.rust.add_plugin({
+		const request = await this.managers?.rust.add_plugin({
 			name: name,
 			repo: repo,
 		});
@@ -275,7 +280,7 @@ export class ToolManager {
 				}
 			} else {
 				await new Promise((resolve) => setTimeout(resolve, 2000));
-				manager.rust.reload();
+				this.managers?.rust.reload();
 			}
 		}
 		return request.state;
@@ -283,7 +288,7 @@ export class ToolManager {
 
 	async uninstallTool(name: string): Promise<boolean> {
 		try {
-			const request = await manager.rust.remove_plugin({ name });
+			const request = await this.managers?.rust.remove_plugin({ name });
 
 			const group = hollow.cards();
 
@@ -306,11 +311,11 @@ export class ToolManager {
 			await store.close();
 			this.toolMap.delete(name);
 			const toolPath = await join(
-				manager.realm.getCurrent().location,
+				this.managers?.realm.getCurrent().location,
 				"main",
 				name,
 			);
-			await manager.rust.remove_dir(toolPath);
+			await this.managers?.rust.remove_dir(toolPath);
 			return request;
 		} catch (error) {
 			console.error("[uninstallTool] FAILED", {
@@ -373,7 +378,7 @@ export class ToolManager {
 	}
 
 	private getCardFs(toolName: string, cardName: string) {
-		const cfm = manager.cardfile;
+		const cfm = this.managers?.cardfile;
 		const cardFs: CardFs = {
 			exists: (path) => cfm.exists({ toolName, cardName, path }),
 			readFile: (path) => cfm.readFile({ toolName, cardName, path }),
@@ -427,10 +432,10 @@ export class ToolManager {
 
 		fs &&
 			cardIds.length === 1 &&
-			(await manager.rust.remove_dir(
+			(await this.managers?.rust.remove_dir(
 				await join(
 					...[
-						manager.realm.getCurrent().location,
+						this.managers?.realm.getCurrent().location,
 						"main",
 						toolName,
 						cards[0].data.name,
@@ -484,9 +489,9 @@ export class ToolManager {
 			this.store.set(toolName, tool);
 			hollow.setCards(reconcile([...hollow.cards(), newCard]));
 			// TODO : this might not be needed if creating files makes the dir anyways
-			await manager.rust.create_dir(
+			await this.managers?.rust.create_dir(
 				await join(
-					manager.realm.getCurrent().location,
+					this.managers?.realm.getCurrent().location,
 					"main",
 					tool.name,
 					newCard.data.name,

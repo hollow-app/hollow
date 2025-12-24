@@ -8,7 +8,7 @@ import {
 	readFile,
 	rename,
 } from "@tauri-apps/plugin-fs";
-import { manager } from "@managers/index";
+import { Managers } from ".";
 
 type PathProps = {
 	toolName: string;
@@ -17,12 +17,18 @@ type PathProps = {
 };
 
 export class CardFileManager {
-	private realmLocation = manager.realm.getCurrent().location;
+	private readonly managers: Managers;
+	constructor(managers: Managers) {
+		this.managers = managers;
+	}
+	private realmLocation() {
+		return this.managers?.realm.getCurrent().location;
+	}
 
 	private resolvePath({ toolName, cardName, path = "" }: PathProps): string {
-		if (!this.realmLocation) throw new Error("Realm path not set");
+		if (!this.realmLocation()) throw new Error("Realm path not set");
 
-		const basePath = `${this.realmLocation}/main/${toolName}/${cardName}`;
+		const basePath = `${this.realmLocation()}/main/${toolName}/${cardName}`;
 		const normalized = path
 			.replace(/\\/g, "/")
 			.replace(/\/+/g, "/")

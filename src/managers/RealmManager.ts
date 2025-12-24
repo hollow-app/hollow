@@ -1,16 +1,18 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
-import { manager } from "@managers/index";
 import { Storage } from "./Storage";
 import { appConfigDir, join } from "@tauri-apps/api/path";
 import { hollow } from "hollow";
+import { Managers } from ".";
 
 export class RealmManager {
+	private readonly managers: Managers;
 	public currentRealmId: string | null = null;
 	private setCurrentRealm: Setter<string> = null;
 	private store: Storage;
 
-	constructor() {
+	constructor(managers: Managers) {
+		this.managers = managers;
 		this.currentRealmId = localStorage.currentRealmId;
 	}
 
@@ -32,7 +34,7 @@ export class RealmManager {
 	public async enterRealm(realmId: string, reload?: boolean) {
 		this.currentRealmId = realmId;
 		localStorage.currentRealmId = realmId;
-		reload ? manager.rust.reload() : this.setCurrentRealm(realmId);
+		reload ? this.managers?.rust.reload() : this.setCurrentRealm(realmId);
 	}
 	public addRealm(nRealm: Realm) {
 		const realms = this.getRealms();

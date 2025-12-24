@@ -1,8 +1,8 @@
 import { TagType } from "@type/hollow";
-import { manager } from "@managers/index";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import DEFAULT from "@assets/configs/settings.json?raw";
+import { Managers } from ".";
 
 export type SettingsConfig = {
 	"grid-size": number;
@@ -17,12 +17,16 @@ export type SettingsConfig = {
 type SettingsKey = keyof SettingsConfig;
 
 export class SettingsManager {
+	private readonly managers: Managers;
 	private store: Storage;
 
+	constructor(managers: Managers) {
+		this.managers = managers;
+	}
 	async start() {
 		const path = await join(
 			...[
-				manager.realm.getCurrent().location,
+				this.managers?.realm.getCurrent().location,
 				".hollow",
 				"settings.json",
 			],

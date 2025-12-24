@@ -10,7 +10,7 @@ import { createSignal } from "solid-js";
 
 export default function Account() {
 	const [character, setCharacter] = createSignal<Character>(
-		manager.character.getCharacter(),
+		manager.character.get,
 	);
 
 	const addMeta = () => {
@@ -145,7 +145,7 @@ export default function Account() {
 	const onSave = (e: Event & { currentTarget: HTMLButtonElement }) => {
 		const button = e.currentTarget;
 		button.classList.add("debounce");
-		manager.character.setCharacter(character());
+		manager.character.set = character();
 		hollow.events.emit("alert", {
 			type: "success",
 			title: "Character",
@@ -333,11 +333,7 @@ export default function Account() {
 				<div class="bg-secondary-05 absolute bottom-10 left-10 mt-auto flex w-[calc(100%-calc(var(--spacing)*20))] justify-end gap-2 rounded-xl p-5">
 					<button
 						class="button secondary"
-						onclick={() =>
-							setCharacter(
-								manager.character.getCharacter(),
-							)
-						}
+						onclick={() => setCharacter(manager.character.get)}
 					>
 						Cancel Changes
 					</button>

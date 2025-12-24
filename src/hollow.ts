@@ -18,8 +18,6 @@ type hollowType = {
 	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
 	toolManager?: ToolManager;
-	markdownManager?: MarkdownManager;
-	hotkeysManager?: hotkeysManager;
 	cards: () => CardType[];
 	setCards: SetStoreFunction<CardType[]>;
 	// promises should accept future diff types

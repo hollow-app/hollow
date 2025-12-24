@@ -1,16 +1,24 @@
 import { VaultItem } from "@type/VaultItem";
-import { manager } from "@managers/index";
 import { Storage } from "./Storage";
 import { join } from "@tauri-apps/api/path";
 import { hollow } from "hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { Managers } from ".";
 
 export default class VaultManager {
+	private readonly managers: Managers;
 	private store: Storage;
 
+	constructor(managers: Managers) {
+		this.managers = managers;
+	}
 	public async start() {
 		const path = await join(
-			...[manager.realm.getCurrent().location, ".hollow", "vault.json"],
+			...[
+				this.managers?.realm.getCurrent().location,
+				".hollow",
+				"vault.json",
+			],
 		);
 		this.store = await Storage.create({
 			path,
@@ -37,7 +45,7 @@ export default class VaultManager {
 				title: "Loading",
 				message: "Downloading...",
 			});
-			const path = await manager.rust.vault_add_url({
+			const path = await this.managers?.rust.vault_add_url({
 				url: image,
 			});
 			const url = convertFileSrc(path);
@@ -69,9 +77,10 @@ export default class VaultManager {
 	}
 	public async addItems(images: string[]) {
 		if (images.length > 0) {
-			const addedImagesPaths: string[] = await manager.rust.vault_add({
-				paths: images,
-			});
+			const addedImagesPaths: string[] =
+				await this.managers?.rust.vault_add({
+					paths: images,
+				});
 			hollow.events.emit("alert", {
 				type: addedImagesPaths.length > 0 ? "success" : "warning",
 				title: "Vault",
@@ -102,7 +111,7 @@ export default class VaultManager {
 			const targetFiles = paths
 				.filter((i) => !i.startsWith("https"))
 				.map((i) => this.getNameFromPath(i));
-			void (await manager.rust.vault_remove({
+			void (await this.managers?.rust.vault_remove({
 				names: targetFiles,
 			}));
 		}

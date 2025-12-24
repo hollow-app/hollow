@@ -17,6 +17,7 @@ import {
 	createSignal,
 	For,
 	Match,
+	onCleanup,
 	onMount,
 	Setter,
 	Show,
@@ -523,14 +524,24 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 };
 
 function CreateCharacter(props: { onSuccess: () => void }) {
-	const clerk = manager.deeplink.get().clerk;
+	const clerk = manager.deeplink.get.clerk;
+	const [isSignedIn, setSignedIn] = createSignal(clerk.isSignedIn);
 	const [character, setCharacter] = createSignal<Character>(
-		manager.character.get(),
+		manager.character.get,
 	);
 	const save = () => {
-		manager.character.set(character());
-		props.onSuccess();
+		manager.character.set = character();
+		// props.onSuccess();
 	};
+	onMount(() => {
+		const unsub = manager.deeplink.subscribe(
+			(v) => setSignedIn(v),
+			"isSignedIn",
+		);
+		onCleanup(() => {
+			unsub();
+		});
+	});
 
 	return (
 		<Motion.div
@@ -541,7 +552,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 			class="flex flex-col"
 		>
 			<Show
-				when={clerk.isSignedIn}
+				when={isSignedIn()}
 				fallback={
 					<a
 						class="text-secondary-40 ml-auto flex items-center gap-1 text-xs hover:underline"
@@ -555,7 +566,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 					</a>
 				}
 			>
-				<div class="flex items-center justify-between">
+				<div class="mx-5 mb-1 flex items-center justify-between">
 					<span class="text-secondary-40 text-xs">
 						{clerk.user.username}
 					</span>
@@ -623,10 +634,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 									value={character().title}
 									options={[
 										{
-											items: [
-												"Elder",
-												"The Original Few",
-											],
+											items: character().titles,
 										},
 									]}
 									onSelect={(s: string) =>

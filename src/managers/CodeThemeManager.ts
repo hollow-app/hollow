@@ -1,6 +1,7 @@
-import { manager } from "@managers/index";
+import { Managers } from ".";
 
 export class CodeThemeManager {
+	private readonly managers: Managers;
 	private db!: IDBDatabase;
 	private readonly dbName = "codeThemeDB";
 	private readonly storeName = "themes";
@@ -8,11 +9,11 @@ export class CodeThemeManager {
 	private readonly styleId = "hljs-theme-style";
 
 	private get lastThemeKey(): string {
-		return `${manager.realm.currentRealmId}-last-theme`;
+		return `${this.managers?.realm.currentRealmId}-last-theme`;
 	}
 
-	constructor(defaultTheme = "default") {
-		this.init().then(() => this.applyLastUsedTheme(defaultTheme));
+	constructor(managers: Managers) {
+		this.managers = managers;
 	}
 
 	private async init() {

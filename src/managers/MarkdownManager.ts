@@ -1,18 +1,20 @@
 import { marked } from "marked";
 import GithubSlugger from "github-slugger";
 import { hollow } from "hollow";
-import { manager } from "@managers/index";
+import { Managers } from ".";
 
 export class MarkdownManager {
+	private readonly managers: Managers;
 	private slugger = new GithubSlugger();
 	private noteId: string;
 	private renderer!: InstanceType<typeof marked.Renderer>;
 
-	constructor() {
+	constructor(managers: Managers) {
+		this.managers = managers;
 		hollow.events.on(
 			"render-markdown",
 			({ id, text }: { id: string; text: string }) =>
-				manager.markdown.renderMarkdown(text, id),
+				this.managers?.markdown.renderMarkdown(text, id),
 		);
 	}
 
@@ -33,10 +35,11 @@ export class MarkdownManager {
 			const highlighted = hljs.highlight(text, {
 				language: validLang,
 			}).value;
-			return `<pre><code class="hljs ${lang}">${escaped
-				? highlighted.replace(/</g, "&lt;").replace(/>/g, "&gt;")
-				: highlighted
-				}</code></pre>`;
+			return `<pre><code class="hljs ${lang}">${
+				escaped
+					? highlighted.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+					: highlighted
+			}</code></pre>`;
 		};
 
 		this.renderer.link = ({ text, href }) => {

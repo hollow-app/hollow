@@ -20,7 +20,7 @@ export const createCharacterState = (
 		hollow.pevents.on("ui-set-character", (c) =>
 			setCharacter((prev) => ({ ...prev, ...c })),
 		);
-		setCharacter(manager.character.get());
+		setCharacter(manager.character.get);
 		const unsub = manager.character.subscribe((v) => {
 			setCharacter(v);
 		});

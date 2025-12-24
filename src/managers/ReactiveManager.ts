@@ -33,7 +33,7 @@ export class ReactiveManager<T extends object> {
 		}
 	}
 
-	set(newValue: Partial<T> | T) {
+	set set(newValue: Partial<T> | T) {
 		const updatedKeys: (keyof T)[] = [];
 		for (const k in newValue) {
 			const newVal = newValue[k as keyof T] as T[keyof T];
@@ -45,7 +45,7 @@ export class ReactiveManager<T extends object> {
 		this.emit(updatedKeys);
 	}
 
-	get(): T {
+	get get(): T {
 		return this.value;
 	}
 

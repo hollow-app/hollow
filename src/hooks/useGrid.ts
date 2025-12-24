@@ -1,4 +1,4 @@
-import { SettingsManager } from "@managers/SettingsManager";
+import { manager } from "./index";
 import { Property } from "@type/Property";
 import setStyle from "./setStyle";
 

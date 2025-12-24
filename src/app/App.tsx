@@ -1,5 +1,5 @@
 import Popups from "@components/ui/popups/Popups";
-import { RealmManager } from "@managers/RealmManager";
+import { manager } from "./index";
 import {
 	Suspense,
 	createMemo,
@@ -9,7 +9,6 @@ import {
 	onMount,
 } from "solid-js";
 import Loading from "@components/Loading";
-import { HollowManager } from "@managers/HollowManager";
 import Alerts from "@components/ui/popups/Alerts";
 
 const Selector = lazy(() => import("@app/Selector"));
@@ -25,7 +24,7 @@ export default function App() {
 	const Container = createMemo(() => {
 		const realm = selectedRealm();
 		const LazyContainer = lazy(async () => {
-			if (!realm) return new Promise(() => {});
+			if (!realm) return new Promise(() => { });
 			await HollowManager.getSelf().postRealmSelection();
 			return import("./Container");
 		});

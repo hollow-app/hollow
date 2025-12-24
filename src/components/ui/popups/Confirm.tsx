@@ -1,4 +1,4 @@
-import { hotkeysManager } from "@managers/HotkeysManager";
+import { manager } from "./index";
 import { ConfirmType } from "@type/hollow";
 import { hollow } from "hollow";
 import { onMount } from "solid-js";

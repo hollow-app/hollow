@@ -1,4 +1,4 @@
-import { RustManager } from "@managers/RustManager";
+import { manager } from "./index";
 import {
 	BoldIcon,
 	BoltIcon,

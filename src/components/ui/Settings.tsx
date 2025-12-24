@@ -16,7 +16,7 @@ import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
 import Account from "./settings/Account";
-import { RealmManager } from "@managers/RealmManager";
+import { manager } from "./index";
 import { GridStackOptions } from "gridstack";
 
 const Plugins = lazy(() => import("./settings/Plugins"));

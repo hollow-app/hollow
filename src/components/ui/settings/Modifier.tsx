@@ -1,8 +1,7 @@
 import { KeyIcon } from "lucide-solid";
 import { createMemo, createSignal, Show } from "solid-js";
-import { SettingsManager } from "@managers/SettingsManager";
+import { manager } from "./index";
 import Dropdown from "@components/dynamic/Dropdown";
-import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 import TextFormater from "@components/TextFormater";
 

@@ -1,4 +1,4 @@
-import { RustManager } from "@managers/RustManager";
+import { manager } from "./index";
 import { createResource, Suspense } from "solid-js";
 import { HeartHandshakeIcon } from "lucide-solid";
 

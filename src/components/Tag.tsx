@@ -1,4 +1,4 @@
-import { SettingsManager } from "@managers/SettingsManager";
+import { manager } from "./index";
 import { TagType } from "@type/hollow";
 import { hollow } from "hollow";
 import { createMemo, createSignal, onCleanup, onMount } from "solid-js";

@@ -1,7 +1,7 @@
 import { NotificationsProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
-import { NotifyManager } from "@managers/NotifyManager";
+import { manager } from "./index";
 import { IconNode, LucideIcon, LucideProps, TrophyIcon } from "lucide-solid";
 
 export type LogicType = {

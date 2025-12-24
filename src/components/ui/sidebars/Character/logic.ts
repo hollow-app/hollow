@@ -2,7 +2,7 @@ import { CharacterProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
 import { hollow } from "hollow";
-import { CharacterManager } from "@managers/CharacterManager";
+import { manager } from "./index";
 
 export type LogicType = {
 	import_image: (key: string) => Promise<void>;

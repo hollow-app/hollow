@@ -3,7 +3,7 @@ import { CharacterProps } from ".";
 import type { HelperType } from "./helper";
 import { Character } from "@type/Character";
 import { hollow } from "hollow";
-import { CharacterManager } from "@managers/CharacterManager";
+import { manager } from "./index";
 
 export type StateType = {
 	character: Accessor<Character>;

@@ -1,4 +1,4 @@
-import { NotifyManager } from "@managers/NotifyManager";
+import { manager } from "./index";
 import { NotificationsProps } from ".";
 import type { HelperType } from "./helper";
 import { Accessor, createSignal, Setter } from "solid-js";

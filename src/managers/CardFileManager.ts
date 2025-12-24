@@ -8,7 +8,7 @@ import {
 	readFile,
 	rename,
 } from "@tauri-apps/plugin-fs";
-import { RealmManager } from "./RealmManager";
+import { manager } from "./index";
 
 type PathProps = {
 	toolName: string;

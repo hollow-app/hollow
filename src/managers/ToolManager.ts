@@ -18,8 +18,7 @@ import { KanbanMain } from "@coretools/Kanban/KanbanMain";
 import { EmbedMain } from "@coretools/Embed/EmbedMain";
 import { EventsManager } from "./EventsManager";
 import { ToolMetadata } from "@type/ToolMetadata";
-import { RustManager } from "@managers/RustManager";
-import { RealmManager } from "./RealmManager";
+import { manager } from "./index";
 import { hollow } from "hollow";
 import DEFAULT from "@assets/configs/main.json?raw";
 import { join } from "@tauri-apps/api/path";
@@ -353,13 +352,13 @@ export class ToolManager {
 		tool.cards = tool.cards.map((card) =>
 			card.id === cardId
 				? {
-						...card,
-						...rect,
-						data: {
-							...card.data,
-							...updates,
-						},
-					}
+					...card,
+					...rect,
+					data: {
+						...card.data,
+						...updates,
+					},
+				}
 				: card,
 		);
 

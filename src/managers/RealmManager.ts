@@ -1,10 +1,9 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
-import { RustManager } from "./RustManager";
+import { manager } from "./index";
 import { Storage } from "./Storage";
 import { appConfigDir, join } from "@tauri-apps/api/path";
 import { hollow } from "hollow";
-import { manager } from "./index";
 
 export class RealmManager {
 	public currentRealmId: string | null = null;

@@ -1,4 +1,4 @@
-import { hotkeysManager } from "@managers/HotkeysManager";
+import { manager } from "./index";
 import { HotKeyType } from "@type/HotKeyType";
 import { FeatherIcon } from "lucide-solid";
 import { createSignal, For, Show, onMount, onCleanup } from "solid-js";
@@ -37,9 +37,9 @@ export default function HotKeys() {
 				...prev.map((i: HotKeyType) =>
 					i.name === t
 						? {
-								...i,
-								keys: [...currentKeys()],
-							}
+							...i,
+							keys: [...currentKeys()],
+						}
 						: i,
 				),
 			]);

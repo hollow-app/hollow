@@ -1,7 +1,5 @@
 import { createSignal } from "solid-js";
-import { RustManager } from "@managers/RustManager";
-import { RealmManager } from "@managers/RealmManager";
-import { SettingsManager } from "@managers/SettingsManager";
+import { manager } from "./index";
 import { hollow } from "hollow";
 import { BaseDirectory, open } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";

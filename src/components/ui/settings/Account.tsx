@@ -1,6 +1,6 @@
 import Dropdown from "@components/dynamic/Dropdown";
 import MyIcon from "@components/MyIcon";
-import { CharacterManager } from "@managers/CharacterManager";
+import { manager } from "./index";
 import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
 import { hollow } from "hollow";

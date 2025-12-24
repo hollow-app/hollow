@@ -4,9 +4,8 @@ import { createLayout, Layout } from "@utils/layout";
 import { hollow } from "hollow";
 import { Accessor, createMemo, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
-import { hotkeysManager } from "@managers/HotkeysManager";
+import { manager } from "./index";
 import { GridStackOptions } from "gridstack";
-import { SettingsManager } from "@managers/SettingsManager";
 
 export type StateType = {
 	controller: Layout;

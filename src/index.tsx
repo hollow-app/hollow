@@ -2,7 +2,7 @@
 import "@styles/index.css";
 import { render } from "solid-js/web";
 import App from "./app/App";
-import { HollowManager } from "@managers/HollowManager";
+import { manager } from "./index";
 
 // TODO async
 async function ascend() {

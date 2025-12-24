@@ -1,9 +1,8 @@
 import { TagType } from "@type/hollow";
-import { RealmManager } from "./RealmManager";
+import { manager } from "./index";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import DEFAULT from "@assets/configs/settings.json?raw";
-import { manager } from "./index";
 
 export type SettingsConfig = {
 	"grid-size": number;

@@ -1,7 +1,5 @@
-import { DeepLinkManager } from "@managers/DeepLinkManager";
-import { EventsManager } from "@managers/EventsManager";
-import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
+import { EventsManager } from "@managers/EventsManager";
 import { ToolManager } from "@managers/ToolManager";
 import { Character } from "@type/Character";
 import {
@@ -11,6 +9,7 @@ import {
 	HollowEvent,
 } from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
+import { hotkeysManager } from "@managers/HotkeysManager";
 type hollowType = {
 	onCopy?: () => void;
 	onCut?: () => void;

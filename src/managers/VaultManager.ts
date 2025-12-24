@@ -1,12 +1,10 @@
 import { VaultItem } from "@type/VaultItem";
-import { RustManager } from "./RustManager";
+import { manager } from "./index";
 import { Storage } from "./Storage";
 import { join } from "@tauri-apps/api/path";
-import { RealmManager } from "./RealmManager";
 import { hollow } from "hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { writeFile } from "@tauri-apps/plugin-fs";
-import { manager } from "./index";
 
 export default class VaultManager {
 	private store: Storage;

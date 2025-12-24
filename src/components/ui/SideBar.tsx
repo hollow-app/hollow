@@ -1,12 +1,11 @@
 import Hollow from "@assets/logo.svg";
-import { NotifyManager } from "@managers/NotifyManager";
+import { manager } from "./index";
 import { Component, For, onMount, Setter, Show } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import { hollow } from "hollow";
 import { MyIconFun } from "@components/MyIcon";
 import { GridStackOptions } from "gridstack";
 import { Layout } from "@utils/layout";
-import { hotkeysManager } from "@managers/HotkeysManager";
 import { DynamicIcon } from "@components/DynamicIcon";
 import { FormatDateString } from "vanilla-calendar-pro";
 

@@ -26,15 +26,13 @@ import {
 import { Motion, Presence } from "solid-motionone";
 import WindowControl from "@components/WindowControl";
 import { Character } from "@type/Character";
-import { CharacterManager } from "@managers/CharacterManager";
+import { manager } from "./index";
 import { useColor } from "@hooks/useColor";
 import Loading from "@components/Loading";
-import { RealmManager } from "@managers/RealmManager";
 import { hollow } from "hollow";
 import Dropdown from "@components/dynamic/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@components/MyIcon";
-import { DeepLinkManager } from "@managers/DeepLinkManager";
 import { stat } from "fs";
 
 type SelectorProps = {

@@ -13,8 +13,7 @@ import {
 } from "lucide-solid";
 import { For } from "solid-js";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
-import { RealmManager } from "@managers/RealmManager";
-import { RustManager } from "@managers/RustManager";
+import { manager } from "./index";
 import { createSignal } from "solid-js";
 import MyIcon from "@components/MyIcon";
 import { DynamicIcon } from "@components/DynamicIcon";

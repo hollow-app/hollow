@@ -1,14 +1,14 @@
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { HotKeyType } from "@type/HotKeyType";
 import { FeatherIcon } from "lucide-solid";
 import { createSignal, For, Show, onMount, onCleanup } from "solid-js";
 
 export default function HotKeys() {
 	const [conf, setConf] = createSignal({
-		enabled: hotkeysManager.getSelf().isEnabled(),
+		enabled: manager.hotkeys.isEnabled(),
 	});
 	const [groups, setGroups] = createSignal<HotKeyType[]>(
-		hotkeysManager.getSelf().getHotKeys(),
+		manager.hotkeys.getHotKeys(),
 	);
 	const [target, setTarget] = createSignal(null);
 	const [currentKeys, setCurrentKeys] = createSignal<string[]>([]);
@@ -16,7 +16,7 @@ export default function HotKeys() {
 	const handleEnabled = (e: Event & { currentTarget: HTMLInputElement }) => {
 		const state = e.currentTarget.checked;
 		setConf((prev) => ({ ...prev, enabled: state }));
-		hotkeysManager.getSelf().toggle(state);
+		manager.hotkeys.toggle(state);
 	};
 
 	const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,17 +37,17 @@ export default function HotKeys() {
 				...prev.map((i: HotKeyType) =>
 					i.name === t
 						? {
-							...i,
-							keys: [...currentKeys()],
-						}
+								...i,
+								keys: [...currentKeys()],
+							}
 						: i,
 				),
 			]);
 			setCurrentKeys([]);
 			setTarget(null);
-			hotkeysManager
-				.getSelf()
-				.setHotKey(groups().find((i) => i.name === target()));
+			manager.hotkeys.setHotKey(
+				groups().find((i) => i.name === target()),
+			);
 		}
 	};
 	const grouped = (

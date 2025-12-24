@@ -24,7 +24,7 @@ export default function ToolPop({
 					/>
 					<div class="flex flex-col items-center gap-1">
 						<h2 class="text-lg font-semibold text-gray-950 dark:text-gray-50">
-							{tool.title}
+							{tool.name}
 						</h2>
 						<span class="text-secondary-40 bg-secondary-15 rounded-full px-2 py-0.5 text-sm">
 							v{tool.version}

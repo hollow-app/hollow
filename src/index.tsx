@@ -2,11 +2,11 @@
 import "@styles/index.css";
 import { render } from "solid-js/web";
 import App from "./app/App";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 // TODO async
 async function ascend() {
-	await HollowManager.getSelf().preRealmSelection();
+	await manager.hollow.preRealmSelection();
 	//
 	const root = document.getElementById("root");
 	root.textContent = "";

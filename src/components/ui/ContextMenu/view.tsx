@@ -13,7 +13,7 @@ import {
 } from "lucide-solid";
 import { For } from "solid-js";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { createSignal } from "solid-js";
 import MyIcon from "@components/MyIcon";
 import { DynamicIcon } from "@components/DynamicIcon";
@@ -151,14 +151,14 @@ export const ContextMenuView = (
 								</For>
 							</Show>
 							<SectionHeader
-								title={`${RealmManager.getSelf().getCurrent().name} Realm`}
+								title={`${manager.realm.getCurrent().name} Realm`}
 								showDivider={true}
 							/>
 							<div class="">
 								<button
 									class="button-cm"
 									onclick={() => {
-										RustManager.getSelf().reload();
+										manager.rust.reload();
 										hollow.pevents.emit(
 											"context-menu",
 											false,

@@ -26,7 +26,7 @@ import {
 import { Motion, Presence } from "solid-motionone";
 import WindowControl from "@components/WindowControl";
 import { Character } from "@type/Character";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { useColor } from "@hooks/useColor";
 import Loading from "@components/Loading";
 import { hollow } from "hollow";
@@ -71,18 +71,18 @@ const useRealmManager = () => {
 				secondary: secondary(),
 			},
 		};
-		RealmManager.getSelf().addRealm(newRealm);
+		manager.realm.addRealm(newRealm);
 		return true;
 	};
 
 	const removeRealm = (id: string, setRealms: Setter<Realm[]>) => {
 		const handleDecision = () => {
-			RealmManager.getSelf().removeRealm(id);
+			manager.realm.removeRealm(id);
 			setRealms((prev) => prev.filter((r) => r.id !== id));
 		};
 		hollow.events.emit("confirm", {
 			title: "warning",
-			message: `Are you sure you want to remove ${RealmManager.getSelf().getRealmFromId(id)?.name} Realm?`,
+			message: `Are you sure you want to remove ${manager.realm.getRealmFromId(id)?.name} Realm?`,
 			onAccept: handleDecision,
 		});
 	};
@@ -523,12 +523,12 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 };
 
 function CreateCharacter(props: { onSuccess: () => void }) {
-	const clerk = DeepLinkManager.getSelf().getClerk();
+	const clerk = manager.deeplink.get().clerk;
 	const [character, setCharacter] = createSignal<Character>(
-		CharacterManager.getSelf().getCharacter(),
+		manager.character.get(),
 	);
 	const save = () => {
-		CharacterManager.getSelf().setCharacter(character());
+		manager.character.set(character());
 		props.onSuccess();
 	};
 
@@ -698,7 +698,7 @@ export default function Selector({ onSelect }: SelectorProps) {
 		return true;
 	});
 	const [realms, setRealms] = createSignal<Realm[]>(
-		RealmManager.getSelf().getRealms(),
+		manager.realm.getRealms(),
 	);
 	const [level, setLevel] = createSignal(
 		// realms().length === 0 ? 0 : 1

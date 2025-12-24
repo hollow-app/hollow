@@ -1,4 +1,4 @@
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 export class CodeThemeManager {
 	private db!: IDBDatabase;

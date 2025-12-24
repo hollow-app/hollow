@@ -1,9 +1,9 @@
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { createResource, Suspense } from "solid-js";
 import { HeartHandshakeIcon } from "lucide-solid";
 
 export default function General() {
-	const [version] = createResource(() => RustManager.getSelf().get_version());
+	const [version] = createResource(() => manager.rust.get_version());
 	return (
 		<div class="flex flex-col gap-5 p-10 text-neutral-950 dark:text-neutral-200">
 			<div class="flex justify-between">

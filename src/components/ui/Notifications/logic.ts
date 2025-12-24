@@ -1,7 +1,7 @@
 import { NotificationsProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { IconNode, LucideIcon, LucideProps, TrophyIcon } from "lucide-solid";
 
 export type LogicType = {
@@ -17,12 +17,12 @@ export const NotificationsLogic = (
 	// TODO if list is seen then no alert
 	const removeNoty = (id: string) => {
 		state.setNotifications((prev) => [...prev.filter((i) => i.id !== id)]);
-		NotifyManager.getSelf().removeNoty(id);
+		manager.notify.removeNoty(id);
 	};
 	const clearAll = () => {
 		props.hide();
 		state.setNotifications([]);
-		NotifyManager.getSelf().clearAll();
+		manager.notify.clearAll();
 	};
 	return { removeNoty, clearAll };
 };

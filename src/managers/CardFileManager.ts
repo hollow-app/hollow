@@ -8,7 +8,7 @@ import {
 	readFile,
 	rename,
 } from "@tauri-apps/plugin-fs";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 type PathProps = {
 	toolName: string;
@@ -17,7 +17,7 @@ type PathProps = {
 };
 
 export class CardFileManager {
-	private realmLocation = RealmManager.getSelf().getCurrent().location;
+	private realmLocation = manager.realm.getCurrent().location;
 
 	private resolvePath({ toolName, cardName, path = "" }: PathProps): string {
 		if (!this.realmLocation) throw new Error("Realm path not set");

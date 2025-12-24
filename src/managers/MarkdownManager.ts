@@ -1,7 +1,7 @@
 import { marked } from "marked";
 import GithubSlugger from "github-slugger";
 import { hollow } from "hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 export class MarkdownManager {
 	private slugger = new GithubSlugger();

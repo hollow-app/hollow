@@ -2,10 +2,10 @@ import { VaultProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
 import { open } from "@tauri-apps/plugin-dialog";
-import VaultManager from "@managers/VaultManager";
 import { hollow } from "hollow";
 import { ConfirmType, FormOption, FormType } from "@type/hollow";
 import { VaultItem } from "@type/VaultItem";
+import { manager } from "@managers/index";
 
 export type LogicType = {
 	importImages: () => void;
@@ -33,12 +33,12 @@ export const VaultLogic = (
 				},
 			],
 		});
-		await VaultManager.getSelf().addItems(images);
-		state.setImages(VaultManager.getSelf().getVault());
+		await manager.vault.addItems(images);
+		state.setImages(manager.vault.getVault());
 	};
 	const importImageFromLink = async (imageUrl: string) => {
-		await VaultManager.getSelf().addUrlItem(imageUrl);
-		state.setImages(VaultManager.getSelf().getVault());
+		await manager.vault.addUrlItem(imageUrl);
+		state.setImages(manager.vault.getVault());
 	};
 
 	const copyItem = () => {
@@ -49,7 +49,7 @@ export const VaultLogic = (
 		const { path, url } = state.selectedItem();
 		const save = async (data: any) => {
 			const { id, ...wantedData } = data;
-			await VaultManager.getSelf().editItem({ ...wantedData, path, url });
+			await manager.vault.editItem({ ...wantedData, path, url });
 			state.setImages((prev) =>
 				prev.map((i) => (i.url === url ? { ...i, ...wantedData } : i)),
 			);
@@ -66,7 +66,7 @@ export const VaultLogic = (
 				state.setImages((prev) => [
 					...prev.filter((i) => i.url !== state.selectedItem().url),
 				]);
-				VaultManager.getSelf().removeItems([state.selectedItem().path]);
+				manager.vault.removeItems([state.selectedItem().path]);
 				state.setSelectedItem(null);
 			},
 		};

@@ -1,5 +1,5 @@
 import Hollow from "@assets/logo.svg";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { Component, For, onMount, Setter, Show } from "solid-js";
 import { Accessor, createSignal } from "solid-js";
 import { hollow } from "hollow";
@@ -28,7 +28,7 @@ export default function SideBar({
 	setCanvasConfigs,
 	isLiveEditor,
 }: SideBarProps) {
-	const [alert, setAlert] = createSignal(NotifyManager.getSelf().isAlert());
+	const [alert, setAlert] = createSignal(manager.notify.isAlert());
 
 	const toggleDnd = () => {
 		setCanvasConfigs((p) => ({
@@ -74,7 +74,7 @@ export default function SideBar({
 	];
 	onMount(() => {
 		hollow.events.on("notify-status", setAlert);
-		hotkeysManager.getSelf().events["Toggle Drag and Drop Mode"] =
+		manager.hotkeys.events["Toggle Drag and Drop Mode"] =
 			toggleDnd;
 	});
 

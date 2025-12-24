@@ -1,4 +1,4 @@
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { TagType } from "@type/hollow";
 import { hollow } from "hollow";
 import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
@@ -9,7 +9,7 @@ type TagProps = {
 };
 export default function Tag(props: TagProps) {
 	const [tag, setTag] = createSignal(
-		SettingsManager.getSelf()
+		manager.settings
 			.getConfig("custom-tags")
 			.find((i) => i.name === props.tag) ?? {
 			name: props.tag,

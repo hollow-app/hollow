@@ -1,9 +1,9 @@
-import VaultManager from "@managers/VaultManager";
 import { VaultProps } from ".";
 import type { HelperType } from "./helper";
 import { Accessor, createMemo, createSignal, Setter } from "solid-js";
 import { VaultItem } from "@type/VaultItem";
 import { DropdownOption } from "@components/FilterButton";
+import { manager } from "@managers/index";
 
 interface FilterType {
 	search: string;
@@ -28,7 +28,7 @@ export const createVaultState = (
 	helper?: HelperType,
 ): StateType => {
 	const [images, setImages] = createSignal<VaultItem[]>([
-		...VaultManager.getSelf().getVault(),
+		...manager.vault.getVault(),
 	]);
 	const [start, setStart] = createSignal(0);
 	const [selectedItem, setSelectedItem] = createSignal<VaultItem | null>(

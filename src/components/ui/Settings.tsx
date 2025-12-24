@@ -16,7 +16,7 @@ import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
 import Account from "./settings/Account";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { GridStackOptions } from "gridstack";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
@@ -46,7 +46,7 @@ export default function Settings(props: SettingsProps) {
 								<div class="flex min-w-0 flex-1 flex-col">
 									<h1 class="my-auto text-xl font-bold text-neutral-950 dark:text-neutral-50">
 										{
-											RealmManager.getSelf().getCurrent()
+											manager.realm.getCurrent()
 												.name
 										}{" "}
 										Realm
@@ -54,7 +54,7 @@ export default function Settings(props: SettingsProps) {
 									<div class="flex flex-1">
 										<p class="text-secondary-50 max-w-[50%] overflow-hidden text-sm text-ellipsis whitespace-nowrap">
 											{
-												RealmManager.getSelf()
+												manager.realm
 													.currentRealmId
 											}
 										</p>
@@ -63,7 +63,7 @@ export default function Settings(props: SettingsProps) {
 								<button
 									class="button-control my-auto ml-auto shrink-0"
 									onclick={() =>
-										RealmManager.getSelf().toggleRealm()
+										manager.realm.toggleRealm()
 									}
 								>
 									<ArrowDownUpIcon class="m-auto" />

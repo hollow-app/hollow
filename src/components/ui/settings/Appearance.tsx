@@ -13,8 +13,7 @@ import {
 import { FormType } from "@type/hollow";
 import useTags from "@hooks/useTags";
 import { readableColor } from "polished";
-import Slider from "@components/dynamic/Slider";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { hollow } from "hollow";
 import Loading from "@components/Loading";
 import Dropdown from "@components/dynamic/Dropdown";
@@ -24,10 +23,11 @@ import useGrid from "@hooks/useGrid";
 import { GridStackOptions } from "gridstack";
 import { Accessor } from "solid-js";
 import { Setter } from "solid-js";
+import { SettingsManager } from "@managers/SettingsManager";
 
 type Props = CanvasProps;
 export default function Appearance(props: Props) {
-	const settingsManager = SettingsManager.getSelf();
+	const settingsManager = manager.settings;
 	return (
 		<div class="h-full p-10">
 			<CanvasSettings {...props} />
@@ -50,7 +50,7 @@ interface CanvasProps {
 }
 function CanvasSettings(props: CanvasProps) {
 	const [gridGap, setGridGap] = createSignal(
-		SettingsManager.getSelf().getConfig("grid-gap"),
+		manager.settings.getConfig("grid-gap"),
 	);
 	const [gridSize, setGridSize] = createSignal(props.canvasConfigs().column);
 	const cellHeight = createMemo(() => {
@@ -75,7 +75,7 @@ function CanvasSettings(props: CanvasProps) {
 	};
 
 	onCleanup(() => {
-		SettingsManager.getSelf().setConfigs({
+		manager.settings.setConfigs({
 			"grid-gap": gridGap(),
 			"grid-size": Number(gridSize()),
 		});
@@ -133,7 +133,7 @@ function CanvasSettings(props: CanvasProps) {
 }
 
 function ColorSettings() {
-	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
+	const realm = createMemo(() => manager.realm.currentRealmId);
 	const primaryColor = createMemo(
 		() =>
 			JSON.parse(localStorage.getItem(`${realm()}-color-primary`))
@@ -206,10 +206,7 @@ greet("Theme Tester");
 
 function CodeThemeSettings({ settingsManager }: CommonSettings) {
 	const [md] = createResource(exampleCode, () =>
-		MarkdownManager.getSelf().renderMarkdown(
-			exampleCode(),
-			"code-theme-example",
-		),
+		manager.markdown.renderMarkdown(exampleCode(), "code-theme-example"),
 	);
 	const [codeTheme, setCodeTheme] = createSignal(
 		settingsManager.getConfig("code-theme"),
@@ -218,7 +215,7 @@ function CodeThemeSettings({ settingsManager }: CommonSettings) {
 	const useCodeTheme = async (v: string) => {
 		settingsManager.setConfig("code-theme", v);
 		setCodeTheme(v);
-		await CodeThemeManager.getSelf().loadTheme(v);
+		await manager.codeTheme.loadTheme(v);
 	};
 
 	return (

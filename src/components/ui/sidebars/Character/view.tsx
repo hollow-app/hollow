@@ -4,12 +4,10 @@ import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import { createSignal, For, Setter, Show, Suspense } from "solid-js";
 import { Check, ImageUpIcon, XIcon } from "lucide-solid";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { Character } from "@type/Character";
 import { onCleanup } from "solid-js";
-import styles from "./index.module.css";
 import FetchedIcon from "@components/FetchedIcon";
-import { style } from "solid-js/web";
 
 export const CharacterView = (
 	state: StateType,
@@ -80,7 +78,7 @@ export const CharacterView = (
 					<div class="text-sm text-gray-400">
 						<span class="text-secondary-50">Realm:</span>{" "}
 						<span class="text-secondary-95 pl-2">
-							{RealmManager.getSelf().getCurrent().name}
+							{manager.realm.getCurrent().name}
 						</span>
 					</div>
 					{/* XP Progress */}
@@ -279,7 +277,7 @@ function ProgressBar({
 	};
 
 	const onApply = () => {
-		CharacterManager.getSelf().setMeta({ id, value: value() });
+		manager.character.setMeta({ id, value: value() });
 		setIsDragging(false);
 		setCharacter((prev) => ({
 			...prev,

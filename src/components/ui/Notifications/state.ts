@@ -1,4 +1,4 @@
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { NotificationsProps } from ".";
 import type { HelperType } from "./helper";
 import { Accessor, createSignal, Setter } from "solid-js";
@@ -14,7 +14,7 @@ export const createNotificationsState = (
 	helper?: HelperType,
 ): StateType => {
 	const [notifications, setNotifications] = createSignal<NotifyType[]>(
-		// NotifyManager.getSelf().getNotification(),
+		// manager.notify.getNotification(),
 		[
 			{
 				id: "example",

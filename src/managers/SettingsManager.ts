@@ -1,5 +1,5 @@
 import { TagType } from "@type/hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import DEFAULT from "@assets/configs/settings.json?raw";

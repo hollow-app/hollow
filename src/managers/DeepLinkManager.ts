@@ -1,13 +1,16 @@
 import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import { Clerk } from "@clerk/clerk-js";
+import { ReactiveManager } from "./ReactiveManager";
 
-type AuthListener = (token: string) => void;
-type ClerkListener = (clerk: Clerk) => void;
+interface DeepLinkState {
+	clerk: Clerk | null;
+	isSignedIn: boolean;
+}
 
-export class DeepLinkManager {
-	private clerk: Clerk | null = null;
-	private authListeners = new Set<AuthListener>();
-	private clerkListeners = new Set<ClerkListener>();
+export class DeepLinkManager extends ReactiveManager<DeepLinkState> {
+	constructor() {
+		super({ clerk: null, isSignedIn: false });
+	}
 
 	async start() {
 		onOpenUrl((urls) => {
@@ -16,7 +19,7 @@ export class DeepLinkManager {
 					const url = new URL(raw);
 					if (url.pathname === "/web/auth") {
 						const token = url.searchParams.get("token");
-						if (token) this.emitAuthToken(token);
+						this.signIn(token);
 					}
 				} catch (err) {
 					console.error("Bad deep link:", raw);
@@ -28,27 +31,36 @@ export class DeepLinkManager {
 	}
 
 	private async setupClerk() {
-		if (this.clerk) return;
+		if (this.get().clerk) return;
 
-		this.clerk = new Clerk(
+		const clerk = new Clerk(
 			import.meta.env.VITE_PUBLIC_CLERK_PUBLISHABLE_KEY,
 		);
-		await this.clerk.load({});
-		this.clerkListeners.forEach((l) => l(this.clerk!));
+		await clerk.load({});
+		this.set({ clerk });
+	}
+	private async signIn(token: string) {
+		try {
+			const clerk = this.get().clerk;
+			if (!clerk) return;
+			if (clerk.isSignedIn) return;
+			const signIn = await clerk.client.signIn.create({
+				strategy: "ticket",
+				ticket: token,
+			});
+			if (signIn.status === "complete") {
+				await clerk.setActive({
+					session: signIn.createdSessionId,
+				});
+			} else {
+				throw new Error("Ticket sign-in not complete");
+			}
+		} catch (e) {
+			console.error("Failed sign-in:", e);
+		}
 	}
 
-	onAuthToken(cb: AuthListener) {
-		this.authListeners.add(cb);
-		return () => this.authListeners.delete(cb);
-	}
-
-	onClerkReady(cb: ClerkListener) {
-		if (this.clerk) cb(this.clerk);
-		this.clerkListeners.add(cb);
-		return () => this.clerkListeners.delete(cb);
-	}
-
-	private emitAuthToken(token: string) {
-		this.authListeners.forEach((l) => l(token));
+	onClerkReady(cb: (clerk: Clerk | null) => void) {
+		return this.subscribe((clerk) => cb(clerk), "clerk");
 	}
 }

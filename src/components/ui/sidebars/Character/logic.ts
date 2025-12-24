@@ -2,7 +2,7 @@ import { CharacterProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
 import { hollow } from "hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 export type LogicType = {
 	import_image: (key: string) => Promise<void>;
@@ -17,7 +17,7 @@ export const CharacterLogic = (
 		hollow.events.emit("show-vault", {
 			onSelect: (image: string) => {
 				state.setCharacter((prev) => ({ ...prev, [key]: image }));
-				CharacterManager.getSelf().setCharacter({ [key]: image });
+				manager.character.setCharacter({ [key]: image });
 			},
 		});
 	};

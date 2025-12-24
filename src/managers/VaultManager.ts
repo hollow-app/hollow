@@ -1,21 +1,16 @@
 import { VaultItem } from "@type/VaultItem";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { Storage } from "./Storage";
 import { join } from "@tauri-apps/api/path";
 import { hollow } from "hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { writeFile } from "@tauri-apps/plugin-fs";
 
 export default class VaultManager {
 	private store: Storage;
 
 	public async start() {
 		const path = await join(
-			...[
-				manager.realm.getCurrent().location,
-				".hollow",
-				"vault.json",
-			],
+			...[manager.realm.getCurrent().location, ".hollow", "vault.json"],
 		);
 		this.store = await Storage.create({
 			path,
@@ -74,10 +69,9 @@ export default class VaultManager {
 	}
 	public async addItems(images: string[]) {
 		if (images.length > 0) {
-			const addedImagesPaths: string[] =
-				await manager.rust.vault_add({
-					paths: images,
-				});
+			const addedImagesPaths: string[] = await manager.rust.vault_add({
+				paths: images,
+			});
 			hollow.events.emit("alert", {
 				type: addedImagesPaths.length > 0 ? "success" : "warning",
 				title: "Vault",

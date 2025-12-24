@@ -13,7 +13,7 @@ import {
 } from "@type/hollow";
 import { exists, mkdir, remove } from "@tauri-apps/plugin-fs";
 import { hollow } from "hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
 

@@ -1,5 +1,5 @@
 import Popups from "@components/ui/popups/Popups";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import {
 	Suspense,
 	createMemo,
@@ -18,23 +18,23 @@ const selectRealmOnStartup = JSON.parse(
 );
 export default function App() {
 	const [selectedRealm, setSelectedRealm] = createSignal<string | null>(
-		selectRealmOnStartup ? null : RealmManager.getSelf().currentRealmId,
+		selectRealmOnStartup ? null : manager.realm.currentRealmId,
 	);
 
 	const Container = createMemo(() => {
 		const realm = selectedRealm();
 		const LazyContainer = lazy(async () => {
 			if (!realm) return new Promise(() => { });
-			await HollowManager.getSelf().postRealmSelection();
+			await manager.hollow.postRealmSelection();
 			return import("./Container");
 		});
 		return <LazyContainer />;
 	});
 	const onSelect = (id: string) => {
-		RealmManager.getSelf().enterRealm(id);
+		manager.realm.enterRealm(id);
 	};
 	onMount(() => {
-		RealmManager.getSelf().init(setSelectedRealm);
+		manager.realm.init(setSelectedRealm);
 	});
 
 	return (

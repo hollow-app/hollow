@@ -1,4 +1,4 @@
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { ConfirmType } from "@type/hollow";
 import { hollow } from "hollow";
 import { onMount } from "solid-js";
@@ -17,9 +17,9 @@ export default function ConfirmPop({ pack }: ConfirmPopProps) {
 	};
 
 	onMount(() => {
-		hotkeysManager.getSelf().events["Accept Confirm Message"] = () =>
+		manager.hotkeys.events["Accept Confirm Message"] = () =>
 			decision(true);
-		hotkeysManager.getSelf().events["Refuse Confirm Message"] = () =>
+		manager.hotkeys.events["Refuse Confirm Message"] = () =>
 			decision(false);
 	});
 	return (

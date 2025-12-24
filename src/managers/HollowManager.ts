@@ -7,7 +7,7 @@ import { DataBaseRequest, IStore, StoreType } from "@type/hollow";
 import { ToolDataBase } from "./ToolDataBase";
 import { Storage } from "./Storage";
 import useGrid from "@hooks/useGrid";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 export class HollowManager {
 	constructor() {

@@ -1,7 +1,7 @@
 import { NotifyType } from "@type/hollow";
 import { isExpired, weekOld } from "../utils/manipulation/strings";
 import { hollow } from "hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 type NotificationData = {
 	notifications: NotifyType[];

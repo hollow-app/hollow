@@ -1,6 +1,6 @@
 import Dropdown from "@components/dynamic/Dropdown";
 import MyIcon from "@components/MyIcon";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
 import { hollow } from "hollow";
@@ -10,7 +10,7 @@ import { createSignal } from "solid-js";
 
 export default function Account() {
 	const [character, setCharacter] = createSignal<Character>(
-		CharacterManager.getSelf().getCharacter(),
+		manager.character.getCharacter(),
 	);
 
 	const addMeta = () => {
@@ -145,7 +145,7 @@ export default function Account() {
 	const onSave = (e: Event & { currentTarget: HTMLButtonElement }) => {
 		const button = e.currentTarget;
 		button.classList.add("debounce");
-		CharacterManager.getSelf().setCharacter(character());
+		manager.character.setCharacter(character());
 		hollow.events.emit("alert", {
 			type: "success",
 			title: "Character",
@@ -335,7 +335,7 @@ export default function Account() {
 						class="button secondary"
 						onclick={() =>
 							setCharacter(
-								CharacterManager.getSelf().getCharacter(),
+								manager.character.getCharacter(),
 							)
 						}
 					>

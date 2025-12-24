@@ -4,7 +4,7 @@ import { createLayout, Layout } from "@utils/layout";
 import { hollow } from "hollow";
 import { Accessor, createMemo, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { GridStackOptions } from "gridstack";
 
 export type StateType = {
@@ -22,7 +22,7 @@ export const createContainerState = (
 	helper?: HelperType,
 ): StateType => {
 	const controller = createLayout();
-	const settingsManager = SettingsManager.getSelf();
+	const settingsManager = manager.settings;
 	const [anyExpanded, setAnyExpanded] = createSignal(false);
 	const [isSettings, setSettings] = createSignal(false);
 	const [canvasConfigs, setCanvasConfigs] = createSignal<GridStackOptions>({
@@ -41,13 +41,13 @@ export const createContainerState = (
 	};
 	onMount(() => {
 		hollow.pevents.on("editor", ShowEditor);
-		hotkeysManager.getSelf().events["Toggle Notifications"] = () =>
+		manager.hotkeys.events["Toggle Notifications"] = () =>
 			controller.selectPanel("right", "notifications");
-		hotkeysManager.getSelf().events["Toggle Expand"] = () =>
+		manager.hotkeys.events["Toggle Expand"] = () =>
 			controller.selectPanel("left", "expand");
-		hotkeysManager.getSelf().events["Toggle Settings"] = () =>
+		manager.hotkeys.events["Toggle Settings"] = () =>
 			setSettings((p) => !p);
-		hotkeysManager.getSelf().events["Toggle Editor"] = () => {
+		manager.hotkeys.events["Toggle Editor"] = () => {
 			controller.selectPanel("right", "editor");
 		};
 	});

@@ -47,7 +47,7 @@ export class NotebookManager {
 
 	async getNotebook(id: string, cardName: string): Promise<NotebookType> {
 		const entries = await this.getCardFs(cardName).readDir();
-		const notes = await Promise.all(
+		const notes: NoteType[] = await Promise.all(
 			entries
 				.filter((i) => i.isFile)
 				.map(async (i) => ({
@@ -55,7 +55,11 @@ export class NotebookManager {
 					title: i.name.split(".md")[0],
 				})),
 		);
-		return { ...this.store.get(id), notes };
+		const notebook: NotebookType = {
+			...this.store.get(id),
+			notes,
+		};
+		return notebook;
 	}
 
 	async setNote(

@@ -1,6 +1,6 @@
 import { KeyIcon } from "lucide-solid";
 import { createMemo, createSignal, Show } from "solid-js";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import Dropdown from "@components/dynamic/Dropdown";
 import { hollow } from "hollow";
 import TextFormater from "@components/TextFormater";
@@ -11,7 +11,7 @@ export default function Modifier() {
 	const [key, setKey] = createSignal("");
 	const [value, setValue] = createSignal("");
 	const [error, setError] = createSignal("");
-	const realm = createMemo(() => RealmManager.getSelf().currentRealmId);
+	const realm = createMemo(() => manager.realm.currentRealmId);
 
 	const handleKeyChange = (
 		e: Event & { currentTarget: HTMLInputElement },

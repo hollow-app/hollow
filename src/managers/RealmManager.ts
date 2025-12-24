@@ -1,6 +1,6 @@
 import { Realm } from "@type/Realm";
 import { Setter } from "solid-js";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { Storage } from "./Storage";
 import { appConfigDir, join } from "@tauri-apps/api/path";
 import { hollow } from "hollow";

@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import { hollow } from "hollow";
 import { BaseDirectory, open } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
@@ -14,8 +14,8 @@ export default function Developers() {
 	// Load from SettingsManager
 	(async () => {
 		const devtools =
-			SettingsManager.getSelf().getConfig("enable-dev-tools");
-		const loadunsigned = SettingsManager.getSelf().getConfig(
+			manager.settings.getConfig("enable-dev-tools");
+		const loadunsigned = manager.settings.getConfig(
 			"load-unsigned-plugins",
 		);
 		setOption({ devtools, loadunsigned });
@@ -23,7 +23,7 @@ export default function Developers() {
 
 	const changeDevtools = (e: Event & { currentTarget: HTMLInputElement }) => {
 		const state = e.currentTarget.checked;
-		// RustManager.getSelf().devtools_status({ state: state });
+		// manager.rust.devtools_status({ state: state });
 		setOption((prev) => ({ ...prev, devtools: state }));
 		update();
 	};
@@ -40,16 +40,16 @@ export default function Developers() {
 					loadunsigned: state,
 				}));
 				update();
-				RustManager.getSelf().reload();
+				manager.rust.reload();
 			},
 		});
 	};
 	const update = () => {
-		SettingsManager.getSelf().setConfig(
+		manager.settings.setConfig(
 			"enable-dev-tools",
 			options().devtools,
 		);
-		SettingsManager.getSelf().setConfig(
+		manager.settings.setConfig(
 			"load-unsigned-plugins",
 			options().loadunsigned,
 		);
@@ -101,7 +101,7 @@ export default function Developers() {
 									await open(
 										await join(
 											...[
-												RealmManager.getSelf().getCurrent()
+												manager.realm.getCurrent()
 													.location,
 												"plugins",
 											],

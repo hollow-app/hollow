@@ -2,8 +2,7 @@ import { PluginsProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
 import { hollow } from "hollow";
-import { resolve } from "path";
-import VaultManager from "@managers/VaultManager";
+import { manager } from "@managers/index";
 
 export type LogicType = {
 	switchUnverified: (e: Event) => void;
@@ -21,7 +20,7 @@ export const PluginsLogic = (
 		const name = plugin.name;
 		const icon = plugin.icon;
 		const actionState = plugin.action_state;
-		const vm = VaultManager.getSelf();
+		const vm = manager.vault;
 
 		const delay = () => new Promise((r) => setTimeout(r, 2000));
 		const removeIcon = async () => {

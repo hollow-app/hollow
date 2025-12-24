@@ -1,6 +1,6 @@
 import { HotKeyType } from "@type/HotKeyType";
 import { hollow } from "hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 type HotKeysData = {
 	configuration: {
 		enabled: boolean;

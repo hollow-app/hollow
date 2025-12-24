@@ -1,4 +1,4 @@
-import { manager } from "./index";
+import { manager } from "@managers/index";
 import {
 	BoldIcon,
 	BoltIcon,
@@ -69,7 +69,7 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 								"opacity-0": !isVisi(),
 							}}
 							onclick={() =>
-								RustManager.getSelf().minimize_window()
+								manager.rust.minimize_window()
 							}
 						>
 							<ChevronDownIcon class="size-6 p-1" />
@@ -80,7 +80,7 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 								"opacity-0": !isVisi(),
 							}}
 							onclick={() =>
-								RustManager.getSelf().maximize_window()
+								manager.rust.maximize_window()
 							}
 						>
 							<ChevronsLeftRightIcon class="size-6 p-1" />
@@ -90,7 +90,7 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 							classList={{
 								"opacity-0": !isVisi(),
 							}}
-							onclick={() => RustManager.getSelf().close_window()}
+							onclick={() => manager.rust.close_window()}
 						>
 							<XIcon class="size-6 p-1" />
 						</button>

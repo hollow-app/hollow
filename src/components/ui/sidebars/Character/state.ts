@@ -1,9 +1,9 @@
-import { Accessor, createSignal, onMount, Setter } from "solid-js";
+import { Accessor, createSignal, onCleanup, onMount, Setter } from "solid-js";
 import { CharacterProps } from ".";
 import type { HelperType } from "./helper";
 import { Character } from "@type/Character";
 import { hollow } from "hollow";
-import { manager } from "./index";
+import { manager } from "@managers/index";
 
 export type StateType = {
 	character: Accessor<Character>;
@@ -20,7 +20,13 @@ export const createCharacterState = (
 		hollow.pevents.on("ui-set-character", (c) =>
 			setCharacter((prev) => ({ ...prev, ...c })),
 		);
-		setCharacter(CharacterManager.getSelf().getCharacter());
+		setCharacter(manager.character.get());
+		const unsub = manager.character.subscribe((v) => {
+			setCharacter(v);
+		});
+		onCleanup(() => {
+			unsub();
+		});
 	});
 	return { character, setCharacter };
 };

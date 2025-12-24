@@ -5,7 +5,6 @@ import { createStore, SetStoreFunction, Store, unwrap } from "solid-js/store";
 
 export class CharacterManager {
 	private characterStore: [get: Character, set: SetStoreFunction<Character>];
-	private static self: CharacterManager;
 
 	public async start() {
 		const item = localStorage.getItem("character");
@@ -16,12 +15,6 @@ export class CharacterManager {
 		);
 		hollow.events.on("character-add-title", this.addTitle.bind(this));
 		hollow.events.on("character-add-xp", this.addXp.bind(this));
-	}
-	static getSelf() {
-		if (!this.self) {
-			this.self = new CharacterManager();
-		}
-		return this.self;
 	}
 
 	public getCharacter(): Character {

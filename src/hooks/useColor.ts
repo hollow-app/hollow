@@ -1,4 +1,4 @@
-import { ShadeIt } from "@managers/manipulation/colors";
+import { ShadeIt } from "@utils/manipulation/colors";
 import { Property } from "@type/Property";
 import { readableColor } from "polished";
 import setStyle from "./setStyle";

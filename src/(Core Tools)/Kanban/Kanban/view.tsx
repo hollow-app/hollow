@@ -16,7 +16,7 @@ import Sortable from "@components/Sortable";
 import { CirclePlusIcon, EllipsisVerticalIcon, Mouse } from "lucide-solid";
 import { ItemType } from "../types/ItemType";
 import ItemDisplay from "../components/ItemDisplay";
-import Floater from "@utils/Floater";
+import Floater from "@utils/kinda-junk/Floater";
 import { ColumnType } from "../types/ColumnType";
 import { hollow } from "hollow";
 

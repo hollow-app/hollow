@@ -1,6 +1,6 @@
 import setStyle from "@hooks/setStyle";
 import { Layout, PanelType } from "@utils/layout";
-import { PanelWrapper } from "@utils/PanelWrapper";
+import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
 import { Accessor, createEffect, createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";

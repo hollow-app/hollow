@@ -9,7 +9,7 @@ import {
 	ToolApi,
 } from "@type/hollow";
 import { ItemType } from "./types/ItemType";
-import { timeDifferenceMin } from "@managers/manipulation/strings";
+import { timeDifferenceMin } from "@utils/manipulation/strings";
 import { hollow } from "hollow";
 
 export class KanbanManager {

@@ -6,15 +6,15 @@ import { RealmManager } from "./RealmManager";
 import { hollow } from "hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { writeFile } from "@tauri-apps/plugin-fs";
+import { manager } from "./index";
 
 export default class VaultManager {
-	private static self: VaultManager;
 	private store: Storage;
 
 	public async start() {
 		const path = await join(
 			...[
-				RealmManager.getSelf().getCurrent().location,
+				manager.realm.getCurrent().location,
 				".hollow",
 				"vault.json",
 			],
@@ -25,13 +25,6 @@ export default class VaultManager {
 				defaults: { __root__: [] },
 			},
 		});
-	}
-
-	static getSelf() {
-		if (!this.self) {
-			this.self = new VaultManager();
-		}
-		return this.self;
 	}
 
 	public getVault(): VaultItem[] {
@@ -51,7 +44,7 @@ export default class VaultManager {
 				title: "Loading",
 				message: "Downloading...",
 			});
-			const path = await RustManager.getSelf().vault_add_url({
+			const path = await manager.rust.vault_add_url({
 				url: image,
 			});
 			const url = convertFileSrc(path);
@@ -84,7 +77,7 @@ export default class VaultManager {
 	public async addItems(images: string[]) {
 		if (images.length > 0) {
 			const addedImagesPaths: string[] =
-				await RustManager.getSelf().vault_add({
+				await manager.rust.vault_add({
 					paths: images,
 				});
 			hollow.events.emit("alert", {
@@ -117,7 +110,7 @@ export default class VaultManager {
 			const targetFiles = paths
 				.filter((i) => !i.startsWith("https"))
 				.map((i) => this.getNameFromPath(i));
-			void (await RustManager.getSelf().vault_remove({
+			void (await manager.rust.vault_remove({
 				names: targetFiles,
 			}));
 		}

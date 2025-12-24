@@ -1,7 +1,6 @@
 import { HotKeyType } from "@type/HotKeyType";
-import { RustManager } from "@managers/RustManager";
-import { RealmManager } from "./RealmManager";
 import { hollow } from "hollow";
+import { manager } from "./index";
 type HotKeysData = {
 	configuration: {
 		enabled: boolean;
@@ -26,19 +25,8 @@ export class hotkeysManager {
 	private enabled: boolean = false;
 	private globalListener: ((e: KeyboardEvent) => void) | null = null;
 	public events: Partial<Record<HotKeyName, () => void>> = {};
-	private static self: hotkeysManager;
 
-	static init() {
-		if (!this.self) {
-			this.self = new hotkeysManager();
-		}
-	}
-	static getSelf() {
-		this.init();
-		return this.self;
-	}
-
-	private constructor() {
+	public constructor() {
 		const savedData = localStorage.getItem(this.key);
 		let parsedData: HotKeysData;
 		if (savedData) {
@@ -188,7 +176,7 @@ export class hotkeysManager {
 	private executeHotkey(hotkey: HotKeyType) {
 		switch (hotkey.name) {
 			case "Reload App":
-				RustManager.getSelf().reload();
+				manager.rust.reload();
 				break;
 			case "Toggle Placement":
 				break;
@@ -196,7 +184,7 @@ export class hotkeysManager {
 				hollow.events.toggle("show-vault");
 				break;
 			case "Go to Realm Selector":
-				RealmManager.getSelf().toggleRealm();
+				manager.realm.toggleRealm();
 				break;
 			default:
 				// the ones that are custom from the outside

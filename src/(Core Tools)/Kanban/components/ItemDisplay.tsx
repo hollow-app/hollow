@@ -3,7 +3,7 @@ import Tag from "../../../components/Tag";
 import { Clock8Icon } from "lucide-solid";
 import { TagType } from "@type/hollow";
 import { ItemType } from "../types/ItemType";
-import { timeDifferenceMin } from "@managers/manipulation/strings";
+import { timeDifferenceMin } from "@utils/manipulation/strings";
 
 type ItemDisplayProps = {
 	item: ItemType;

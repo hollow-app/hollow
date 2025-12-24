@@ -1,5 +1,5 @@
 import ColorPickerIcon from "@assets/icons/color-picker.svg";
-import { isHexColor } from "@managers/manipulation/colors";
+import { isHexColor } from "@utils/manipulation/colors";
 import { PaintBucketIcon } from "lucide-solid";
 import { HexColorPicker } from "solid-colorful";
 import { createMemo, createSignal, For } from "solid-js";
@@ -15,7 +15,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 	const history = createMemo(() =>
 		JSON.parse(
 			localStorage.getItem("color-picker-history") ??
-			JSON.stringify(Array(5).fill("#fff")),
+				JSON.stringify(Array(5).fill("#fff")),
 		),
 	);
 	const onSave = () => {

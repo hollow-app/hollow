@@ -10,10 +10,10 @@ import {
 	keymap,
 } from "@codemirror/view";
 import { markdown } from "@codemirror/lang-markdown";
-import { markDownTheme } from "@managers/markdown/markdownTheme";
+import { markDownTheme } from "@utils/markdown/markdownTheme";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { syntaxHighlighting } from "@codemirror/language";
-import highlightStyle from "@managers/markdown/highlightStyle";
+import highlightStyle from "@utils/markdown/highlightStyle";
 import { Show } from "solid-js";
 import { MarkdownManager } from "@managers/MarkdownManager";
 

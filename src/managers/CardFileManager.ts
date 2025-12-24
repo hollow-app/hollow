@@ -17,15 +17,7 @@ type PathProps = {
 };
 
 export class CardFileManager {
-	private static self: CardFileManager;
 	private realmLocation = RealmManager.getSelf().getCurrent().location;
-
-	private constructor() {}
-
-	static getSelf(): CardFileManager {
-		if (!CardFileManager.self) CardFileManager.self = new CardFileManager();
-		return CardFileManager.self;
-	}
 
 	private resolvePath({ toolName, cardName, path = "" }: PathProps): string {
 		if (!this.realmLocation) throw new Error("Realm path not set");

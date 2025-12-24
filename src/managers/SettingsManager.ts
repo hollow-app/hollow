@@ -3,6 +3,7 @@ import { RealmManager } from "./RealmManager";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
 import DEFAULT from "@assets/configs/settings.json?raw";
+import { manager } from "./index";
 
 export type SettingsConfig = {
 	"grid-size": number;
@@ -17,13 +18,12 @@ export type SettingsConfig = {
 type SettingsKey = keyof SettingsConfig;
 
 export class SettingsManager {
-	private static self: SettingsManager;
 	private store: Storage;
 
 	async start() {
 		const path = await join(
 			...[
-				RealmManager.getSelf().getCurrent().location,
+				manager.realm.getCurrent().location,
 				".hollow",
 				"settings.json",
 			],
@@ -34,13 +34,6 @@ export class SettingsManager {
 				defaults: JSON.parse(DEFAULT),
 			},
 		});
-	}
-
-	static getSelf() {
-		if (!this.self) {
-			this.self = new SettingsManager();
-		}
-		return this.self;
 	}
 
 	getConfig<K extends SettingsKey>(key: K): SettingsConfig[K] {

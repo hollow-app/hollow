@@ -1,25 +1,17 @@
-import { RealmManager } from "./RealmManager";
+import { manager } from "./index";
 
 export class CodeThemeManager {
 	private db!: IDBDatabase;
 	private readonly dbName = "codeThemeDB";
 	private readonly storeName = "themes";
-	private readonly lastThemeKey = `${RealmManager.getSelf().currentRealmId}-last-theme`;
 	private readonly max = 10;
 	private readonly styleId = "hljs-theme-style";
-	private static self: CodeThemeManager;
 
-	static init() {
-		if (!this.self) {
-			this.self = new CodeThemeManager();
-		}
-	}
-	static getSelf() {
-		this.init();
-		return this.self;
+	private get lastThemeKey(): string {
+		return `${manager.realm.currentRealmId}-last-theme`;
 	}
 
-	private constructor(defaultTheme = "default") {
+	constructor(defaultTheme = "default") {
 		this.init().then(() => this.applyLastUsedTheme(defaultTheme));
 	}
 

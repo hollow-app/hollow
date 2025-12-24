@@ -1,5 +1,5 @@
 import ColorPick from "@components/dynamic/ColorPick";
-import { formatDate, timeDifference } from "@managers/manipulation/strings";
+import { formatDate, timeDifference } from "@utils/manipulation/strings";
 import { Realm } from "@type/Realm";
 import HollowIcon from "@assets/logo.svg";
 import {
@@ -525,10 +525,10 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 };
 
 function CreateCharacter(props: { onSuccess: () => void }) {
+	const clerk = DeepLinkManager.getSelf().getClerk();
 	const [character, setCharacter] = createSignal<Character>(
 		CharacterManager.getSelf().getCharacter(),
 	);
-
 	const save = () => {
 		CharacterManager.getSelf().setCharacter(character());
 		props.onSuccess();
@@ -542,13 +542,33 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 			transition={{ duration: 0.3 }}
 			class="flex flex-col"
 		>
-			<a
-				class="text-secondary-40 ml-auto flex items-center gap-1 text-xs hover:underline"
-				target="_blank"
-				href={import.meta.env.REGISTER_URL}
+			<Show
+				when={clerk.isSignedIn}
+				fallback={
+					<a
+						class="text-secondary-40 ml-auto flex items-center gap-1 text-xs hover:underline"
+						target="_blank"
+						href={
+							import.meta.env.VITE_REGISTER_URL +
+							"?handoff=desktop"
+						}
+					>
+						register <ExternalLinkIcon class="size-3" />
+					</a>
+				}
 			>
-				register <ExternalLinkIcon class="size-3" />
-			</a>
+				<div class="flex items-center justify-between">
+					<span class="text-secondary-40 text-xs">
+						{clerk.user.username}
+					</span>
+					<button
+						class="text-secondary-40 text-xs hover:underline"
+						onclick={() => clerk.signOut()}
+					>
+						signout
+					</button>
+				</div>
+			</Show>
 			<div
 				class="up-pop w-121"
 				style={{

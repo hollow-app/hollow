@@ -12,8 +12,8 @@ import {
 	ToolEvents,
 } from "@type/hollow";
 import { exists, mkdir, remove } from "@tauri-apps/plugin-fs";
-import VaultManager from "./VaultManager";
 import { hollow } from "hollow";
+import { manager } from "./index";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
 
@@ -45,21 +45,10 @@ type startProps = {
 };
 
 export class RustManager {
-	private static self: RustManager;
 	private appWindow = null;
 
-	private constructor() {
+	constructor() {
 		this.appWindow = getCurrentWindow();
-	}
-
-	static initiate() {
-		this.self = new RustManager();
-	}
-	static getSelf() {
-		if (!this.self) {
-			this.initiate();
-		}
-		return this.self;
 	}
 
 	async dbg(): Promise<any> {
@@ -124,7 +113,7 @@ export class RustManager {
 			try {
 				const url = `https://raw.githubusercontent.com/${repo}/main/${file}`;
 				if (file === "icon.svg") {
-					result.icon = await VaultManager.getSelf().addUrlItem(url);
+					result.icon = await manager.vault.addUrlItem(url);
 					continue;
 				}
 				const response = await fetch(url, {

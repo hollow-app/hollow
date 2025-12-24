@@ -1,3 +1,4 @@
+import { DeepLinkManager } from "@managers/DeepLinkManager";
 import { EventsManager } from "@managers/EventsManager";
 import { hotkeysManager } from "@managers/HotkeysManager";
 import { MarkdownManager } from "@managers/MarkdownManager";
@@ -8,7 +9,6 @@ import {
 	AppEvents,
 	CardType,
 	HollowEvent,
-	Layout,
 } from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
 type hollowType = {
@@ -40,7 +40,6 @@ export const hollow: hollowType = {
 		string,
 		{ resolve: () => void; id: string; close: () => void }
 	>(),
-	// toolmanager is assigned in init
 };
 
 type PrivateEvents = {

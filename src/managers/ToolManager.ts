@@ -24,10 +24,10 @@ import { hollow } from "hollow";
 import DEFAULT from "@assets/configs/main.json?raw";
 import { join } from "@tauri-apps/api/path";
 import { Storage } from "./Storage";
-import { CardFileManager } from "./CardFileManager";
 import { reconcile } from "solid-js/store";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import VaultManager from "./VaultManager";
+import { cardfile } from "./CardFileManager";
 
 type ToolMethods = {
 	name: string;
@@ -380,7 +380,7 @@ export class ToolManager {
 	}
 
 	private getCardFs(toolName: string, cardName: string) {
-		const cfm = CardFileManager.getSelf();
+		const cfm = cardfile;
 		const cardFs: CardFs = {
 			exists: (path) => cfm.exists({ toolName, cardName, path }),
 			readFile: (path) => cfm.readFile({ toolName, cardName, path }),

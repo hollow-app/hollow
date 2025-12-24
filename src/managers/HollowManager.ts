@@ -1,42 +1,20 @@
 import { warn, debug, trace, info, error } from "@tauri-apps/plugin-log";
 import { hollow } from "hollow";
-import { CharacterManager } from "./CharacterManager";
-import VaultManager from "./VaultManager";
-import { RustManager } from "./RustManager";
 import { ToolManager } from "./ToolManager";
 import { useColor } from "@hooks/useColor";
-import { RealmManager } from "./RealmManager";
 import useTags from "@hooks/useTags";
-import { NotifyManager } from "./NotifyManager";
 import { DataBaseRequest, IStore, StoreType } from "@type/hollow";
 import { ToolDataBase } from "./ToolDataBase";
-import { hotkeysManager } from "./HotkeysManager";
-import { CodeThemeManager } from "./CodeThemeManager";
-import { SettingsManager } from "./SettingsManager";
-import { MarkdownManager } from "./MarkdownManager";
 import { Storage } from "./Storage";
-import { DeepLinkManager } from "./DeepLinkManager";
 import useGrid from "@hooks/useGrid";
+import { manager } from "./index";
 
 export class HollowManager {
-	private static self: HollowManager;
-	private isOnline: boolean;
-	static getSelf() {
-		if (!this.self) {
-			this.self = new HollowManager();
-		}
-		return this.self;
-	}
-
-	private constructor() {
-		this.isOnline = navigator.onLine;
-		hollow.events.emit("network-state", this.isOnline);
+	constructor() {
 		window.addEventListener("offline", () => {
-			this.isOnline = false;
 			hollow.events.emit("network-state", false);
 		});
 		window.addEventListener("online", () => {
-			this.isOnline = true;
 			hollow.events.emit("network-state", true);
 		});
 		// logging
@@ -82,31 +60,28 @@ export class HollowManager {
 	async preRealmSelection() {
 		if (!localStorage.realmToggleOnStartup) {
 			localStorage.realmToggleOnStartup = "false";
-			await RustManager.getSelf().first_launch();
+			await manager.rust.first_launch();
 		}
-		await RealmManager.getSelf().start();
-		hotkeysManager.init();
-		DeepLinkManager.init();
-		await CharacterManager.getSelf().start();
+		await manager.realm.start();
+		await manager.deeplink.start();
+		await manager.character.start();
 		return true;
 	}
 
 	async postRealmSelection() {
 		if (!localStorage.platform) {
-			localStorage.platform = await RustManager.getSelf().get_platform();
+			localStorage.platform = await manager.rust.get_platform();
 		}
-		await VaultManager.getSelf().start();
-		await RustManager.getSelf().start_realm({
-			location: RealmManager.getSelf().getCurrent().location,
+		await manager.vault.start();
+		await manager.rust.start_realm({
+			location: manager.realm.getCurrent().location,
 		});
 		//
-		await SettingsManager.getSelf().start();
+		await manager.settings.start();
 		hollow.toolManager = await ToolManager.create(
-			SettingsManager.getSelf().getConfig("load-unsigned-plugins"),
+			manager.settings.getConfig("load-unsigned-plugins"),
 		);
-		await MarkdownManager.getSelf().start();
-		NotifyManager.init();
-		CodeThemeManager.init();
+		await manager.markdown.start();
 		//
 		useColor({ name: "primary" });
 		useColor({ name: "secondary" });

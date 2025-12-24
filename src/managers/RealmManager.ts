@@ -4,21 +4,15 @@ import { RustManager } from "./RustManager";
 import { Storage } from "./Storage";
 import { appConfigDir, join } from "@tauri-apps/api/path";
 import { hollow } from "hollow";
+import { manager } from "./index";
 
 export class RealmManager {
 	public currentRealmId: string | null = null;
 	private setCurrentRealm: Setter<string> = null;
-	private static self: RealmManager;
 	private store: Storage;
 
-	private constructor() {
+	constructor() {
 		this.currentRealmId = localStorage.currentRealmId;
-	}
-	static getSelf() {
-		if (!this.self) {
-			this.self = new RealmManager();
-		}
-		return this.self;
 	}
 
 	async start() {
@@ -39,7 +33,7 @@ export class RealmManager {
 	public async enterRealm(realmId: string, reload?: boolean) {
 		this.currentRealmId = realmId;
 		localStorage.currentRealmId = realmId;
-		reload ? RustManager.getSelf().reload() : this.setCurrentRealm(realmId);
+		reload ? manager.rust.reload() : this.setCurrentRealm(realmId);
 	}
 	public addRealm(nRealm: Realm) {
 		const realms = this.getRealms();

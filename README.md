@@ -11,7 +11,7 @@
 Hollow is a desktop app for designing and organizing your digital workspace with limitless styling, tools, and functionality for everyday tasks. 
 
 > [!IMPORTANT]
-> Version 0.0.4 is under development so the code might not function correct. or you might notice some unfinished work.
+> Version 0.0.4 is under testing will be released soon.
 
 
 ## Features

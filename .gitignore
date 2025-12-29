@@ -5,6 +5,7 @@ node_modules/
 
 npm-debug.log*
 *.log
+dist/
 
 src-tauri/target/
 src-tauri/.cargo/

@@ -1,1 +1,0 @@
-import{t as e,W as o}from"./index-CNe0vCeo.js";var l=e('<svg xmlns=http://www.w3.org/2000/svg fill=none stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 viewBox="0 0 24 24"><path stroke=none d="M0 0h24v24H0z"></path><path d="M13 7H7l4 5-4 5h6l4-5z">');const s=(r={})=>(()=>{var t=l();return o(t,r,!0,!0),t})();export{s as default};

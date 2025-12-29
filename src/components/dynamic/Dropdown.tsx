@@ -3,29 +3,26 @@ import {
 	createSignal,
 	For,
 	Show,
-	onMount,
-	onCleanup,
 	createEffect,
+	Accessor,
+	createUniqueId,
 } from "solid-js";
-import { Portal } from "solid-js/web";
 import { ChevronDownIcon } from "lucide-solid";
-import { useDropdownPosition } from "../../hooks/useDropdownPosition";
+import Floater from "@utils/kinda-junk/Floater";
 
 export type DropdownProps = {
 	value?: string;
 	options: { title?: string; items: string[] }[];
 	onSelect: (v: string) => void;
 	placeholder?: string;
+	visibleOnSelect?: boolean;
 };
 
 export default function Dropdown(props: DropdownProps) {
 	const [isOpen, setIsOpen] = createSignal(false);
 	const [innerValue, setInnerValue] = createSignal(props.value ?? "");
 	let dropdownRef: HTMLDivElement | undefined;
-	let listRef: HTMLUListElement | undefined;
-	let inputRef: HTMLInputElement | undefined;
 
-	// TODO
 	createEffect(
 		on(
 			() => props.value,
@@ -36,33 +33,15 @@ export default function Dropdown(props: DropdownProps) {
 		),
 	);
 
-	const { pos, updatePosition, handleClickOutside } = useDropdownPosition();
-	const outsideClick = () => {
-		handleClickOutside(dropdownRef, listRef, () => setIsOpen(false));
-	};
 	const toggleOpen = () => {
-		if (!isOpen()) {
-			updatePosition(inputRef);
-			window.addEventListener("pointerdown", outsideClick);
-		} else {
-			window.removeEventListener("pointerdown", outsideClick);
-		}
-		setIsOpen(!isOpen());
+		setIsOpen((p) => !p);
 	};
 
 	const selectItem = (item: string) => {
 		props.onSelect(item);
 		setInnerValue(item);
-		setIsOpen(false);
+		!props.visibleOnSelect && setIsOpen(false);
 	};
-
-	onMount(() => {
-		document.addEventListener("resize", () => updatePosition(inputRef));
-	});
-	onCleanup(() =>
-		document.removeEventListener("resize", () => updatePosition(inputRef)),
-	);
-
 	return (
 		<div ref={dropdownRef} class="drop-down relative h-fit">
 			<button
@@ -71,8 +50,7 @@ export default function Dropdown(props: DropdownProps) {
 				style={{ width: "var(--w)" }}
 			>
 				<input
-					ref={inputRef}
-					type="text"
+					type="text outline-none"
 					value={innerValue()}
 					placeholder={props.placeholder}
 					readonly
@@ -85,65 +63,66 @@ export default function Dropdown(props: DropdownProps) {
 			</button>
 
 			<Show when={isOpen()}>
-				<Portal>
-					<ul
-						ref={listRef}
-						class="bg-secondary-05 border-secondary-10 fixed z-601 max-h-60 overflow-y-auto rounded-md border text-sm shadow-lg"
+				<Floater hide={() => setIsOpen(false)} includedEl={dropdownRef}>
+					<div
+						class="bg-secondary-05 popup-shadow drop-down-list mt-2 rounded-md p-1 text-sm"
 						style={{
-							top: `${pos().top}px`,
-							left: `${pos().left}px`,
-							width: `${dropdownRef?.getBoundingClientRect().width ?? 200}px`,
+							width:
+								dropdownRef.getBoundingClientRect().width +
+								"px",
 						}}
 					>
-						<div class="p-1">
-							<For each={props.options}>
-								{(group) => (
-									<div>
-										<Show when={group.title}>
-											<div class="bg-secondary-05 sticky -top-px z-20 flex w-full items-center gap-1 pt-1">
-												<h1 class="py-1 pl-2 text-xs text-neutral-500 uppercase">
-													{group.title}
-												</h1>
-												<hr class="bg-secondary-15 h-px flex-1 border-0" />
-											</div>
-										</Show>
-										<div>
-											<Show
-												when={group.items.length > 0}
-												fallback={
-													<span class="w-full text-center text-xs text-neutral-500">
-														Nothing here.
-													</span>
-												}
-											>
-												<For each={group.items}>
-													{(item) => (
-														<li
-															class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full cursor-pointer justify-between rounded bg-transparent px-3 py-2 text-xs"
-															role="option"
-															classList={{
-																"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
-																	innerValue() ===
-																	item,
-															}}
-															onClick={() => {
-																selectItem(
-																	item,
-																);
-															}}
-														>
-															{item}
-														</li>
-													)}
-												</For>
+						<div class="border-secondary-15 scrollbar-hidden max-h-60 w-full overflow-y-auto rounded-md border border-dashed">
+							<div class="p-1">
+								<For each={props.options}>
+									{(group) => (
+										<div class="relative">
+											<Show when={group.title}>
+												<div class="bg-secondary-05 sticky top-0 z-20 flex w-full items-center gap-1 pt-1">
+													<h1 class="text-secondary-30 border-secondary-10 w-full border-b py-1 pl-3 text-start text-xs uppercase select-none">
+														{group.title}
+													</h1>
+												</div>
 											</Show>
+											<ul>
+												<Show
+													when={
+														group.items.length > 0
+													}
+													fallback={
+														<li class="w-full text-center text-xs text-neutral-500">
+															Nothing here.
+														</li>
+													}
+												>
+													<For each={group.items}>
+														{(item) => (
+															<li
+																class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full cursor-pointer justify-between rounded-md bg-transparent px-3 py-2 text-xs"
+																onClick={() =>
+																	selectItem(
+																		item,
+																	)
+																}
+																classList={{
+																	"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
+																		innerValue() ===
+																		item,
+																}}
+															>
+																{item}
+															</li>
+														)}
+													</For>
+												</Show>
+											</ul>
 										</div>
-									</div>
-								)}
-							</For>
+									)}
+								</For>
+							</div>
 						</div>
-					</ul>
-				</Portal>
+					</div>
+				</Floater>
 			</Show>
 		</div>
 	);

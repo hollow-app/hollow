@@ -87,7 +87,9 @@ export default function Popups() {
 
 			<Show when={form().length > 0}>
 				<For each={form()}>
-					{(form) => <Form form={form} setForm={setForm} />}
+					{(form, index) => (
+						<Form form={form} setForm={setForm} index={index} />
+					)}
 				</For>
 			</Show>
 

@@ -201,32 +201,7 @@ export class ToolManager {
 		);
 		const str = await Storage.create({ path, options: { defaults: {} } });
 		toolEvent.emit("config", str);
-		toolEvent.on(
-			"get-store",
-			({ cardName, store }: { cardName: string; store: StoreType }) =>
-				this.giveCardStore(toolName, cardName, store).bind(this),
-		);
 		return toolEvent;
-	}
-
-	private giveCardStore(
-		toolName: string,
-		cardName: string,
-		store: StoreType,
-	): () => Promise<IStore> {
-		return async (): Promise<IStore> => {
-			const path = await join(
-				...[
-					this.managers?.realm.getCurrent().location,
-					"main",
-					toolName,
-					cardName,
-					// TODO ../..
-					store.path,
-				],
-			);
-			return await Storage.create({ path, options: store.options });
-		};
 	}
 
 	// simple internal classes organizer
@@ -488,7 +463,6 @@ export class ToolManager {
 		if (result.status) {
 			this.store.set(toolName, tool);
 			hollow.setCards(reconcile([...hollow.cards(), newCard]));
-			// TODO : this might not be needed if creating files makes the dir anyways
 			await this.managers?.rust.create_dir(
 				await join(
 					this.managers?.realm.getCurrent().location,

@@ -1,4 +1,5 @@
 import { warn, debug, trace, info, error } from "@tauri-apps/plugin-log";
+import { check, Update } from "@tauri-apps/plugin-updater";
 import { hollow } from "hollow";
 import { ToolManager } from "./ToolManager";
 import { useColor } from "@hooks/useColor";
@@ -8,9 +9,11 @@ import { ToolDataBase } from "./ToolDataBase";
 import { Storage } from "./Storage";
 import useGrid from "@hooks/useGrid";
 import { manager, Managers } from ".";
+import { relaunch } from "@tauri-apps/plugin-process";
 
 export class HollowManager {
 	private readonly managers: Managers;
+	private downloading = false;
 
 	constructor(managers: Managers) {
 		this.managers = managers;
@@ -84,6 +87,7 @@ export class HollowManager {
 		hollow.toolManager.start(
 			this.managers?.settings.getConfig("load-unsigned-plugins"),
 		);
+		await this.managers?.codeTheme.init();
 		await this.managers?.markdown.start();
 		//
 		useColor({ name: "primary" });
@@ -92,6 +96,7 @@ export class HollowManager {
 		useTags();
 		//
 		this.handleEvents();
+		await this.checkUpdate();
 	}
 
 	private handleEvents() {
@@ -103,17 +108,120 @@ export class HollowManager {
 				stores = [{ name: "cards" }],
 				callback,
 			} = request;
-
 			const pluginDB = new ToolDataBase(pluginName, version, stores);
-
 			callback(pluginDB);
 		});
 
 		const requestStore = (props: StoreType): Promise<IStore> => {
 			return Storage.create(props);
 		};
-
 		// returns a function that returns Promise<IStore>
 		hollow.events.emit("store", requestStore);
+	}
+
+	async checkUpdate(manual?: boolean, debounce?: () => void) {
+		const noUpdates = () => {
+			if (manual) {
+				hollow.events.emit("alert", {
+					type: "info",
+					title: "Up to Date",
+					message:
+						"You are running the latest version. No updates are available at this time.",
+					duration: 25000,
+				});
+			}
+		};
+
+		if (this.downloading) {
+			if (manual) {
+				hollow.events.emit("alert", {
+					type: "info",
+					title: "Update Downloading",
+					message:
+						"An update is already being downloaded. Please wait until it finishes.",
+					duration: 15000,
+				});
+			}
+			debounce?.();
+			return;
+		}
+
+		try {
+			const update = await check();
+			if (update) {
+				console.log(
+					`found update ${update.version} from ${update.date} with notes ${update.body}`,
+				);
+				if (JSON.parse(localStorage.autoUpdate ?? "true")) {
+					await this.update(update);
+				} else if (manual) {
+					hollow.events.emit("alert", {
+						type: "success",
+						title: "Update Available",
+						message:
+							"A new version is ready to download with improvements and fixes.",
+						duration: 25000,
+						button: {
+							label: "Download Now",
+							callback: async () => {
+								await this.update(update);
+							},
+						},
+					});
+				}
+			} else {
+				noUpdates();
+			}
+		} catch (e) {
+			noUpdates();
+		} finally {
+			debounce?.();
+		}
+	}
+
+	private async update(update: Update) {
+		if (this.downloading) return;
+		this.downloading = true;
+
+		let downloaded = 0;
+		let contentLength = 0;
+
+		try {
+			await update.downloadAndInstall((event) => {
+				switch (event.event) {
+					case "Started":
+						contentLength = event.data.contentLength;
+						console.log(
+							`started downloading ${contentLength} bytes`,
+						);
+						break;
+
+					case "Progress":
+						downloaded += event.data.chunkLength;
+						console.log(
+							`downloaded ${downloaded} / ${contentLength}`,
+						);
+						break;
+
+					case "Finished":
+						console.log("download finished");
+						hollow.events.emit("alert", {
+							type: "success",
+							title: "Update Ready",
+							message:
+								"The latest update has been downloaded successfully and is ready to install.",
+							button: {
+								label: "Relaunch Now",
+								callback: async () => {
+									await relaunch();
+								},
+							},
+						});
+						break;
+				}
+			});
+		} finally {
+			this.downloading = false;
+		}
 	}
 }

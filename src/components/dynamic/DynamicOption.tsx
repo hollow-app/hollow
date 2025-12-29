@@ -8,7 +8,6 @@ import WordInput from "@components/dynamic/WordInput";
 import { ToolOption } from "@type/hollow";
 import { Accessor, Match, onCleanup, onMount, Switch } from "solid-js";
 import Segmented from "./Segmented";
-import { options } from "marked";
 
 type OptionType<T extends ToolOption["type"]> = Extract<
 	ToolOption,
@@ -77,7 +76,7 @@ export default function DynamicOption(props: {
 const TextOption = (props: { option: OptionType<"text"> }) => (
 	<input
 		type="text"
-		class="input"
+		class="input option-input"
 		{...props.option.attributes}
 		value={props.option.value}
 		onInput={(e) => {

@@ -2,7 +2,20 @@ import { manager } from "@managers/index";
 import { HotKeyType } from "@type/HotKeyType";
 import { FeatherIcon } from "lucide-solid";
 import { createSignal, For, Show, onMount, onCleanup } from "solid-js";
-
+const KEY_MAP: Record<string, string> = {
+	Control: "ctrl",
+	Alt: "alt",
+	Shift: "shift",
+	Meta: "meta",
+	ArrowLeft: "left",
+	ArrowRight: "right",
+	ArrowUp: "up",
+	ArrowDown: "down",
+	" ": "space",
+	Enter: "enter",
+	Escape: "esc",
+	Backspace: "backspace",
+};
 export default function HotKeys() {
 	const [conf, setConf] = createSignal({
 		enabled: manager.hotkeys.isEnabled(),
@@ -22,7 +35,7 @@ export default function HotKeys() {
 	const handleKeyDown = (e: KeyboardEvent) => {
 		if (target()) {
 			e.preventDefault();
-			const key = e.key.toLowerCase();
+			const key = KEY_MAP[e.key] ?? e.key.toLowerCase(); // normalize
 
 			if (!currentKeys().includes(key)) {
 				setCurrentKeys((prev) => [...prev, key]);
@@ -33,21 +46,25 @@ export default function HotKeys() {
 	const handleKeyUp = (e: KeyboardEvent) => {
 		if (target() && currentKeys().length > 0) {
 			const t = target();
-			setGroups((prev: HotKeyType[]) => [
-				...prev.map((i: HotKeyType) =>
-					i.name === t
-						? {
-								...i,
-								keys: [...currentKeys()],
-							}
-						: i,
-				),
-			]);
+			const targetHotkey = groups().find((i) => i.name === t);
+
+			if (targetHotkey) {
+				const updatedHotkey = {
+					...targetHotkey,
+					keys: [...currentKeys()],
+				};
+
+				manager.hotkeys.setHotKey(updatedHotkey);
+
+				setGroups((prev: HotKeyType[]) =>
+					prev.map((i: HotKeyType) =>
+						i.name === t ? updatedHotkey : i,
+					),
+				);
+			}
+
 			setCurrentKeys([]);
 			setTarget(null);
-			manager.hotkeys.setHotKey(
-				groups().find((i) => i.name === target()),
-			);
 		}
 	};
 	const grouped = (
@@ -137,15 +154,35 @@ export default function HotKeys() {
 													</div>
 													<div class="bg-secondary-10/70 flex h-fit w-70 items-center justify-between rounded py-1 pr-1 pl-3 text-sm">
 														<div class="flex gap-2">
-															<For
-																each={key.keys}
+															<Show
+																when={target() === key.name}
+																fallback={
+																	<For each={key.keys}>
+																		{(k) => (
+																			<span class="keyboard-button">
+																				{k}
+																			</span>
+																		)}
+																	</For>
+																}
 															>
-																{(key) => (
-																	<span class="keyboard-button">
-																		{key}
-																	</span>
-																)}
-															</For>
+																<Show
+																	when={currentKeys().length > 0}
+																	fallback={
+																		<span class="text-neutral-500 dark:text-neutral-400 italic">
+																			Press keys...
+																		</span>
+																	}
+																>
+																	<For each={currentKeys()}>
+																		{(k) => (
+																			<span class="keyboard-button">
+																				{k}
+																			</span>
+																		)}
+																	</For>
+																</Show>
+															</Show>
 														</div>
 														<button
 															class="button-control"

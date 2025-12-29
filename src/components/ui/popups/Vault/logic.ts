@@ -2,10 +2,12 @@ import { VaultProps } from ".";
 import type { StateType } from "./state";
 import type { HelperType } from "./helper";
 import { open } from "@tauri-apps/plugin-dialog";
+import { open as openFs } from "@tauri-apps/plugin-fs";
 import { hollow } from "hollow";
 import { ConfirmType, FormOption, FormType } from "@type/hollow";
 import { VaultItem } from "@type/VaultItem";
 import { manager } from "@managers/index";
+import { join } from "@tauri-apps/api/path";
 
 export type LogicType = {
 	importImages: () => void;
@@ -15,6 +17,7 @@ export type LogicType = {
 	removeItem: () => void;
 	onImageClick: (item: VaultItem) => void;
 	onImageSelected: (url: string) => void;
+	openVaultDirectory: () => Promise<void>;
 };
 
 export const VaultLogic = (
@@ -111,6 +114,12 @@ export const VaultLogic = (
 		hollow.events.toggle("show-vault");
 	};
 
+	const openVaultDirectory = async () => {
+		await openFs(
+			await join(...[manager.realm.getCurrent().location, "vault"]),
+		);
+	};
+
 	return {
 		onImageSelected,
 		copyItem,
@@ -119,5 +128,6 @@ export const VaultLogic = (
 		importImages,
 		onImageClick,
 		removeItem,
+		openVaultDirectory,
 	};
 };

@@ -1,3 +1,4 @@
+buildForLinux.sh
 .env
 
 node_modules/

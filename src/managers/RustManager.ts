@@ -197,7 +197,6 @@ export class RustManager {
 		return await invoke("vault_add_url", props);
 	}
 
-	// TODO is it needed?
 	async create_dir(path: string) {
 		const doesExist = await exists(path);
 		if (!doesExist) {

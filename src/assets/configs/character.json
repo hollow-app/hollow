@@ -1,5 +1,5 @@
 {
-	"username": "",
+	"name": "",
 	"bio": "",
 	"avatar": null,
 	"title": "Elder",
@@ -16,12 +16,5 @@
 			"value": 90,
 			"color": "#3BA936"
 		}
-	],
-	"discord": {
-		"access_token": null,
-		"token_type": null,
-		"expires_in": null,
-		"refresh_token": null,
-		"scope": null
-	}
+	]
 }

@@ -5,6 +5,7 @@ type ColorPickProps = {
 	color: string;
 	setColor: (c: string) => void;
 	borderColor?: string;
+	direct?: boolean;
 };
 
 export default function ColorPick(props: ColorPickProps) {
@@ -12,12 +13,13 @@ export default function ColorPick(props: ColorPickProps) {
 
 	const pick = () => {
 		hollow.events.emit("color-picker", {
-			color: myColor(),
+			color: props.direct ? props.color : myColor(),
 			setColor: saveNewColor,
 		});
 	};
+
 	const saveNewColor = (c: string) => {
-		if (c !== myColor()) {
+		if (c !== myColor() || props.direct) {
 			setMyColor(c);
 			props.setColor(c);
 		}
@@ -28,9 +30,9 @@ export default function ColorPick(props: ColorPickProps) {
 				class="h-8 w-8 shrink-0 rounded-[30%] border-4"
 				type="button"
 				style={{
-					background: myColor(),
+					background: props.direct ? props.color : myColor(),
 					"border-color":
-						props.borderColor ?? "var(--secondary-color-15)",
+						props.borderColor ?? "var(--secondary-color-10)",
 				}}
 				onClick={pick}
 			/>

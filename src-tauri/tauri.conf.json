@@ -29,7 +29,8 @@
 	},
 	"bundle": {
 		"active": true,
-		"targets": "deb",
+		"targets": "appimage",
+		"createUpdaterArtifacts": true,
 		"licenseFile": "wix\\license.rtf",
 		"linux": {
 			"appimage": {
@@ -70,6 +71,12 @@
 			"desktop": {
 				"schemes": ["hollow"]
 			}
+		},
+		"updater": {
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEMyM0E4REJEREQ2NUY1MkMKUldRczlXWGR2WTA2d2tyakNPbGN4SVM2aU1lNC9peExBWTZUVkpVSFVudGprMkE3VHZZMlpzNlcK",
+			"endpoints": [
+				"https://github.com/hollow-app/hollow/releases/latest/download/latest.json"
+			]
 		}
 	}
 }

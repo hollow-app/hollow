@@ -37,6 +37,7 @@
 	--color-primary-85: var(--primary-color-85);
 	--color-primary-90: var(--primary-color-90);
 	--color-primary-95: var(--primary-color-95);
+	--color-primary-foreground: color-contrast(var(--color-primary) vs white, black);
 	/* secondary */
 	--color-secondary: var(--secondary-color);
 	--color-secondary-05: var(--secondary-color-05);
@@ -58,6 +59,7 @@
 	--color-secondary-85: var(--secondary-color-85);
 	--color-secondary-90: var(--secondary-color-90);
 	--color-secondary-95: var(--secondary-color-95);
+	--color-secondary-foreground: color-contrast(var(--color-secondary) vs white, black);
 	/* breakpoints  */
 	--breakpoint-xxs: 15rem;
 	/* fonts */

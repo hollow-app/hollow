@@ -1,7 +1,7 @@
 import { createSignal, For, Show, onMount, onCleanup, JSX } from "solid-js";
-import { Portal } from "solid-js/web";
 import { ListFilterPlusIcon } from "lucide-solid";
-import { useDropdownPosition } from "../hooks/useDropdownPosition";
+import Floater from "@utils/kinda-junk/Floater";
+import MyIcon from "./MyIcon";
 
 type DropdownItem = {
 	label: string;
@@ -22,32 +22,11 @@ export type FilterButtonProps = {
 export default function FilterButton({ options }: FilterButtonProps) {
 	const [isOpen, setIsOpen] = createSignal(false);
 	let dropdownRef: HTMLDivElement | undefined;
-	let listRef: HTMLUListElement | undefined;
 
-	const { pos, updatePosition, handleClickOutside } = useDropdownPosition();
-
-	const outsideClick = () => {
-		handleClickOutside(dropdownRef, listRef, () => setIsOpen(false));
-	};
 	const toggleOpen = (e: MouseEvent) => {
 		e.stopPropagation();
-		if (!isOpen()) {
-			updatePosition(dropdownRef);
-			window.addEventListener("pointerdown", outsideClick);
-		} else {
-			window.removeEventListener("pointerdown", outsideClick);
-		}
 		setIsOpen(!isOpen());
 	};
-
-	onMount(() => {
-		document.addEventListener("resize", () => updatePosition(dropdownRef));
-	});
-	onCleanup(() =>
-		document.removeEventListener("resize", () =>
-			updatePosition(dropdownRef),
-		),
-	);
 
 	return (
 		<div ref={dropdownRef} class="group relative h-fit w-10">
@@ -65,38 +44,37 @@ export default function FilterButton({ options }: FilterButtonProps) {
 			</button>
 
 			<Show when={isOpen()}>
-				<Portal>
-					<ul
-						ref={listRef}
-						class="bg-secondary-05 border-secondary-10 fixed z-601 max-h-60 overflow-x-hidden overflow-y-auto rounded-md border text-sm shadow-lg"
-						style={{
-							top: `${pos().top}px`,
-							left: `${pos().left}px`,
-						}}
-					>
-						<div class="p-1">
-							<For each={options()}>
-								{(group) => (
-									<div>
-										<Show when={group.title}>
-											<div class="bg-secondary-05 sticky -top-px z-20 flex w-full items-center gap-1 pt-1">
-												<h1 class="py-1 pl-2 text-xs text-neutral-500 uppercase">
-													{group.title}
-												</h1>
-											</div>
-										</Show>
-										<ItemsList
-											items={() => group.items}
-											isCheckBox={group.isCheckBox}
-											onSelect={group.onSelect}
-											value={group.value}
-										/>
-									</div>
-								)}
-							</For>
+				<Floater hide={() => setIsOpen(false)} includedEl={dropdownRef}>
+					<ul class="bg-secondary-05 popup-shadow mt-2 max-h-60 min-w-20 rounded-md p-1 text-sm">
+						<div class="border-secondary-15 scrollbar-hidden max-h-60 w-full overflow-y-auto rounded-md border border-dashed">
+							<div class="p-1">
+								<For
+									each={options().filter(
+										(i) => i.items.length > 0,
+									)}
+								>
+									{(group) => (
+										<div>
+											<Show when={group.title}>
+												<div class="bg-secondary-05 sticky -top-px z-20 flex w-full items-center gap-1 pt-1">
+													<h1 class="py-1 pl-2 text-xs text-neutral-500 uppercase">
+														{group.title}
+													</h1>
+												</div>
+											</Show>
+											<ItemsList
+												items={() => group.items}
+												isCheckBox={group.isCheckBox}
+												onSelect={group.onSelect}
+												value={group.value}
+											/>
+										</div>
+									)}
+								</For>
+							</div>
 						</div>
 					</ul>
-				</Portal>
+				</Floater>
 			</Show>
 		</div>
 	);
@@ -151,13 +129,8 @@ export function ItemsList({
 					}}
 				>
 					{item.label}
-					<Show when={isCheckBox}>
-						<input
-							class="checkbox shrink-0"
-							type="checkbox"
-							style={{ "--margin": "0" }}
-							checked={selected().includes(item.label)}
-						/>
+					<Show when={isCheckBox && selected().includes(item.label)}>
+						<MyIcon name="check" class="size-4" />
 					</Show>
 				</li>
 			)}

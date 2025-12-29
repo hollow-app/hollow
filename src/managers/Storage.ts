@@ -15,7 +15,7 @@ export class Storage {
 		try {
 			await store.reload({ ignoreDefaults: true });
 		} catch (e) {
-			console.warn("Store file did not exist yet, skipping reload");
+			// console.warn("Store file did not exist yet, skipping reload");
 		}
 		const instance = new Storage(store);
 		await instance.init();

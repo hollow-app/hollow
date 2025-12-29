@@ -1,4 +1,3 @@
-import { MarkdownManager } from "@managers/MarkdownManager";
 import { EventsManager } from "@managers/EventsManager";
 import { ToolManager } from "@managers/ToolManager";
 import { Character } from "@type/Character";
@@ -9,7 +8,6 @@ import {
 	HollowEvent,
 } from "@type/hollow";
 import { createStore, SetStoreFunction } from "solid-js/store";
-import { hotkeysManager } from "@managers/HotkeysManager";
 type hollowType = {
 	onCopy?: () => void;
 	onCut?: () => void;
@@ -18,21 +16,18 @@ type hollowType = {
 	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
 	toolManager?: ToolManager;
-	cards: () => CardType[];
-	setCards: SetStoreFunction<CardType[]>;
+	cards?: () => CardType[];
+	setCards?: SetStoreFunction<CardType[]>;
 	// promises should accept future diff types
 	promises: Map<
 		string,
 		{ resolve: () => void; id: string; close: () => void }
 	>;
 };
-const [cards, setCards] = createStore([]);
 export const hollow: hollowType = {
 	coreTools: ["image", "notebook", "kanban", "embed"],
 	events: new EventsManager() as HollowEvent<AppEvents, AppEventReturns>,
 	pevents: new EventsManager() as HollowEvent<PrivateEvents>,
-	cards: () => cards,
-	setCards,
 	promises: new Map<
 		string,
 		{ resolve: () => void; id: string; close: () => void }

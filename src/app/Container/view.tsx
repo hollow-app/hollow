@@ -22,7 +22,6 @@ export const ContainerView = (
 				<SideBar
 					layout={state.controller}
 					setSettings={state.setSettings}
-					//@ts-ignore
 					setCanvasConfigs={state.setCanvasConfigs}
 					isLiveEditor={state.isLiveEditor}
 				/>

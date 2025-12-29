@@ -21,5 +21,6 @@ export const CharacterLogic = (
 			},
 		});
 	};
+
 	return { import_image };
 };

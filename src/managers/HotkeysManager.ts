@@ -1,4 +1,4 @@
-import { HotKeyType } from "@type/HotKeyType";
+import { HotKeyName, HotKeyType } from "@type/HotKeyType";
 import { hollow } from "hollow";
 import { Managers } from ".";
 type HotKeysData = {
@@ -7,17 +7,6 @@ type HotKeysData = {
 	};
 	hotkeys: HotKeyType[];
 };
-export type HotKeyName =
-	| "Go to Realm Selector"
-	| "Toggle Settings"
-	| "Toggle Drag and Drop Mode"
-	| "Reload App"
-	| "Toggle Notifications"
-	| "Toggle Expand"
-	| "Toggle Editor"
-	| "Toggle Vault"
-	| "Accept Confirm Message"
-	| "Refuse Confirm Message";
 
 export class hotkeysManager {
 	private readonly managers: Managers;
@@ -115,7 +104,7 @@ export class hotkeysManager {
 
 		if (/^\[1-9\]$/.test(key)) return true;
 
-		if (key.length === 1 && /^[a-zA-Z0-9]$/.test(key)) return true;
+		if (key.length === 1) return true;
 
 		return (
 			validModifiers.includes(key.toLowerCase()) ||
@@ -140,7 +129,7 @@ export class hotkeysManager {
 				const hotkeyKeys = hotkey.keys.map((k) => k.toLowerCase());
 				if (this.areKeysMatching(pressedKeys, hotkeyKeys)) {
 					e.preventDefault();
-					this.executeHotkey(hotkey);
+					this.executeHotkey(hotkey.name);
 					break;
 				}
 			}
@@ -157,7 +146,7 @@ export class hotkeysManager {
 		if (e.metaKey) keys.push("meta");
 
 		const key = e.key.toLowerCase();
-		if (!["control", "alt", "shift", "meta"].includes(key)) {
+		if (!["ctrl", "alt", "shift", "meta"].includes(key)) {
 			keys.push(key);
 		}
 
@@ -175,12 +164,10 @@ export class hotkeysManager {
 		});
 	}
 
-	private executeHotkey(hotkey: HotKeyType) {
-		switch (hotkey.name) {
+	executeHotkey(name: HotKeyName) {
+		switch (name) {
 			case "Reload App":
 				this.managers?.rust.reload();
-				break;
-			case "Toggle Placement":
 				break;
 			case "Toggle Vault":
 				hollow.events.toggle("show-vault");
@@ -189,9 +176,8 @@ export class hotkeysManager {
 				this.managers?.realm.toggleRealm();
 				break;
 			default:
-				// the ones that are custom from the outside
 				try {
-					this.events[hotkey.name]();
+					this.events[name]();
 				} catch (e) {
 					console.log(e);
 				}
@@ -217,7 +203,7 @@ const iniData: HotKeysData = {
 	hotkeys: [
 		{
 			name: "Go to Realm Selector",
-			keys: ["Alt", "Shift", "R"],
+			keys: ["alt", "shift", "r"],
 			description: "Open the realm selection menu",
 			type: "Navigation",
 			static: true,
@@ -225,55 +211,55 @@ const iniData: HotKeysData = {
 
 		{
 			name: "Toggle Drag and Drop Mode",
-			keys: ["Ctrl", "D"],
+			keys: ["ctrl", "d"],
 			description: "Switch between dnd and normal mode",
 			type: "Card Controls",
 		},
 		{
 			name: "Toggle Settings",
-			keys: ["Ctrl", ","],
+			keys: ["ctrl", ","],
 			description: "Open or close the settings",
 			type: "View Controls",
 		},
 		{
 			name: "Toggle Notifications",
-			keys: ["Ctrl", "N"],
+			keys: ["ctrl", "n"],
 			description: "Open or close the notifications",
 			type: "View Controls",
 		},
 		{
 			name: "Toggle Editor",
-			keys: ["Ctrl", "I"],
+			keys: ["ctrl", "i"],
 			description: "Toggle the editor on the right sidebar",
 			type: "View Controls",
 		},
 		{
 			name: "Toggle Expand",
-			keys: ["Ctrl", "E"],
+			keys: ["ctrl", "e"],
 			description: "Expand or collapse the left sidebar",
 			type: "View Controls",
 		},
 		{
 			name: "Toggle Vault",
-			keys: ["Ctrl", "K"],
+			keys: ["ctrl", "k"],
 			description: "Toggle the vault storage.",
 			type: "View Controls",
 		},
 		{
 			name: "Accept Confirm Message",
-			keys: ["Enter"],
+			keys: ["enter"],
 			description: "Confirm and accept the current warning dialog",
 			type: "System Controls",
 		},
 		{
 			name: "Refuse Confirm Message",
-			keys: ["Escape"],
+			keys: ["escape"],
 			description: "Dismiss and deny the current warning dialog",
 			type: "System Controls",
 		},
 		{
 			name: "Reload App",
-			keys: ["Ctrl", "R"],
+			keys: ["ctrl", "r"],
 			description: "Refresh and reload the application",
 			static: true,
 			type: "System Controls",

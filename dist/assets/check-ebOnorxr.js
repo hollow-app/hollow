@@ -1,0 +1,1 @@
+import{t,W as o}from"./index-CNe0vCeo.js";var l=t('<svg xmlns=http://www.w3.org/2000/svg fill=none stroke=currentColor stroke-linecap=round stroke-linejoin=round stroke-width=2 class="lucide lucide-check-icon lucide-check"viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5">');const s=(r={})=>(()=>{var e=l();return o(e,r,!0,!0),e})();export{s as default};

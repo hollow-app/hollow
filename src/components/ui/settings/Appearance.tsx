@@ -283,6 +283,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 					: [...tags(), newTag];
 			setTags(newTags);
 			settingsManager.setConfig("custom-tags", newTags);
+			hollow.events.emit("character-add-achievement", "🏷️ Classifier");
 			useTags(newTags);
 		}
 	};
@@ -301,6 +302,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 					attributes: {
 						placeholder: "tag label",
 					},
+					inline: true,
 				},
 				{
 					key: "background",
@@ -308,6 +310,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 					label: "Color",
 					value: data?.background,
 					type: "color",
+					inline: true,
 				},
 			],
 			submit: (new_data) =>
@@ -340,7 +343,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 				<For each={tags()}>
 					{(tag) => (
 						<button
-							class="flex transition-transform hover:rotate-12 active:scale-120"
+							class="flex transition-transform outline-none hover:rotate-12 active:scale-120"
 							onclick={() =>
 								onNewTag({
 									name: tag.name,

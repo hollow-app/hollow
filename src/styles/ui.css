@@ -12,18 +12,15 @@
 	border-radius: var(--border-radius);
 	padding-inline: calc(var(--spacing) * var(--px));
 	padding-block: calc(var(--spacing) * var(--py));
-	color: color-mix(in oklab,
-			var(--c) 50%,
-			transparent);
+	color: var(--c);
+	opacity: 0.5;
 	transition: all 0.2s ease-in-out;
 
 	&:hover {
 		background-color: color-mix(in oklab,
 				var(--bg) 50%,
 				transparent);
-		color: color-mix(in oklab,
-				var(--c) 100%,
-				transparent);
+		opacity: 1;
 	}
 
 	&:active {
@@ -62,6 +59,7 @@
 			transparent);
 	color: var(--color-primary);
 	border-color: var(--bg);
+	opacity: 1;
 }
 
 .button {
@@ -92,9 +90,9 @@
 }
 
 .button.primary {
-	color: color-mix(in oklab, var(--color-primary-20), var(--tc-950) 80%);
+	color: var(--color-primary-foreground);
 	border-color: var(--color-primary-10);
-	background-color: var(--color-primary-20);
+	background-color: var(--color-primary-50);
 
 	&:not(:disabled):hover {
 		background-color: var(--color-primary-15);
@@ -109,18 +107,18 @@
 .button.secondary {
 	--h: fit-content;
 	height: var(--h);
-	color: color-mix(in oklab, var(--color-secondary-20), var(--tc-50) 80%);
-	border-color: var(--color-secondary-15);
-	background-color: var(--color-secondary-10);
+	color: var(--color-secondary-foreground);
+	border-color: var(--color-secondary-10);
+	background-color: var(--color-secondary-05);
 
 	&:not(:disabled):hover {
-		background-color: var(--color-secondary-15);
-		border-color: var(--color-secondary-20);
+		background-color: var(--color-secondary-10);
+		border-color: var(--color-secondary-15);
 	}
 
 	&:not(:disabled):active {
-		background-color: var(--color-secondary-05);
-		border-color: var(--color-secondary-15);
+		background-color: var(--color-secondary);
+		border-color: var(--color-secondary-10);
 	}
 }
 
@@ -131,7 +129,7 @@
 	--hover-bg-color: var(--color-empty-05, rgba(0, 0, 0, 0.05));
 	--hover-border-color: var(--color-empty, gray);
 	--text-color: var(--color-empty-20, black);
-	color: color-contrast(var(--text-color) vs white, black);
+	color: var(--color-secondary-foreground);
 	border-color: var(--border-color);
 	background-color: var(--bg-color);
 
@@ -152,14 +150,15 @@
 	--border-w: 2px;
 	--bg-color: var(--color-secondary-10);
 	--border-color: var(--color-secondary-15);
+	--radius: var(--radius-lg);
 	--w: 100%;
 	width: var(--w);
 	border: 1px solid var(--bg-color);
 	background-color: color-mix(in oklab, var(--bg-color) 50%, transparent);
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);
-	border-radius: 0.35rem;
-	color: var(--tc-50);
+	border-radius: var(--radius);
+	color: var(--secondary-text);
 
 	&:focus {
 		/* background-color: var(--bg-color); */
@@ -171,7 +170,7 @@
 	}
 
 	&::placeholder {
-		color: var(--tc-700);
+		color: var(--color-secondary-30);
 	}
 }
 
@@ -185,15 +184,23 @@
 	transition: 0.3s all ease;
 	padding-inline: calc(var(--spacing) * 2.5);
 	margin-inline: auto;
-	color: var(--tc-400);
+	color: var(--color-neutral-600);
 
 	&:hover {
 		background: var(--secondary-color-10);
-		color: var(--tc-50);
+		color: var(--color-neutral-950);
 	}
 
 	&.active-cm:active {
 		transform: scale(95%);
+	}
+}
+
+.dark .button-cm {
+	color: var(--color-neutral-400);
+
+	&:hover {
+		color: var(--color-neutral-50);
 	}
 }
 

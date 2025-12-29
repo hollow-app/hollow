@@ -1,9 +1,22 @@
 import { manager } from "@managers/index";
 import { createResource, Suspense } from "solid-js";
-import { HeartHandshakeIcon } from "lucide-solid";
+import { HeartHandshakeIcon, RefreshCwIcon } from "lucide-solid";
+import { guide } from "@utils/help";
 
 export default function General() {
 	const [version] = createResource(() => manager.rust.get_version());
+	const checkUpdates = async (
+		e: Event & { currentTarget: HTMLButtonElement },
+	) => {
+		e.currentTarget.classList.add("debounce");
+		await manager.hollow.checkUpdate(true, () => {
+			e.currentTarget.classList.remove("debounce");
+		});
+	};
+	const startTour = () => {
+		manager.hotkeys.executeHotkey("Toggle Settings");
+		guide();
+	};
 	return (
 		<div class="flex flex-col gap-5 p-10 text-neutral-950 dark:text-neutral-200">
 			<div class="flex justify-between">
@@ -26,29 +39,55 @@ export default function General() {
 			<div class="flex items-center justify-between">
 				<div>
 					<h1 class="text-lg font-bold">Auto Update</h1>
-					<p class="text-secondary-60 text-sm">
-						Note: this feature is not supported yet.
+					<p class="text-sm text-neutral-600 dark:text-neutral-400">
+						Automatically downloads and installs new versions in the
+						background so you always stay up to date.
 					</p>
 				</div>
-				<div class="toggle-switch">
-					<input
-						class="toggle-input"
-						id="auto-update-toggle"
-						type="checkbox"
-						disabled
-					/>
-					<label
-						class="toggle-label"
-						for="auto-update-toggle"
-					></label>
+				<div class="flex items-center justify-center">
+					<button
+						class="button-control tool-tip"
+						onclick={checkUpdates}
+					>
+						<span class="tool-tip-content" data-side="left">
+							Check Update
+						</span>
+						<RefreshCwIcon />
+					</button>
+					<div class="toggle-switch">
+						<input
+							class="toggle-input"
+							id="auto-update-toggle"
+							type="checkbox"
+							disabled
+							checked={JSON.parse(
+								localStorage.autoUpdate ?? "true",
+							)}
+							onchange={(e) =>
+								(localStorage.autoUpdate = JSON.stringify(
+									e.currentTarget.checked,
+								))
+							}
+						/>
+						<label
+							class="toggle-label"
+							for="auto-update-toggle"
+						></label>
+					</div>
 				</div>
 			</div>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
 			<div class="flex items-center justify-between">
-				<h1 class="text-lg font-bold">
-					Select a Realm each time the app opens.
-				</h1>
+				<div>
+					<h1 class="text-lg font-bold">
+						Select a Realm each time the app opens.
+					</h1>
 
+					<p class="text-sm text-neutral-600 dark:text-neutral-400">
+						Prompts you to choose which realm to connect to every
+						time Hollow starts.
+					</p>
+				</div>
 				<div class="toggle-switch">
 					<input
 						class="toggle-input"
@@ -58,15 +97,30 @@ export default function General() {
 							localStorage.realmToggleOnStartup ?? "false",
 						)}
 						onchange={(e) =>
-						(localStorage.realmToggleOnStartup = JSON.stringify(
-							e.currentTarget.checked,
-						))
+							(localStorage.realmToggleOnStartup = JSON.stringify(
+								e.currentTarget.checked,
+							))
 						}
 					/>
 					<label
 						class="toggle-label"
 						for="choose-realm-toggle"
 					></label>
+				</div>
+			</div>
+			<hr class="bg-secondary-10 h-px w-full border-0" />
+			<div class="flex items-center justify-between">
+				<div>
+					<h1 class="text-lg font-bold">Start Tour</h1>
+
+					<p class="text-sm text-neutral-600 dark:text-neutral-400">
+						Learn how to navigate and use Hollow step by step.
+					</p>
+				</div>
+				<div>
+					<button class="button secondary" onclick={startTour}>
+						Start
+					</button>
 				</div>
 			</div>
 		</div>

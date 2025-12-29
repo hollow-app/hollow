@@ -15,7 +15,6 @@ import HollowIcon from "@assets/logo.svg";
 import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
-import Account from "./settings/Account";
 import { manager } from "@managers/index";
 import { GridStackOptions } from "gridstack";
 
@@ -25,6 +24,7 @@ const HotKeys = lazy(() => import("./settings/HotKeys"));
 const Developers = lazy(() => import("./settings/Developers"));
 const Appearance = lazy(() => import("./settings/Appearance"));
 const About = lazy(() => import("./settings/About"));
+const Account = lazy(() => import("./settings/Character"));
 
 type SettingsProps = {
 	setSettings: Setter<boolean>;
@@ -45,26 +45,17 @@ export default function Settings(props: SettingsProps) {
 								<HollowIcon class="fill-primary orbit my-auto mr-2 size-12 shrink-0 transition-transform duration-300" />
 								<div class="flex min-w-0 flex-1 flex-col">
 									<h1 class="my-auto text-xl font-bold text-neutral-950 dark:text-neutral-50">
-										{
-											manager.realm.getCurrent()
-												.name
-										}{" "}
-										Realm
+										{manager.realm.getCurrent().name} Realm
 									</h1>
 									<div class="flex flex-1">
 										<p class="text-secondary-50 max-w-[50%] overflow-hidden text-sm text-ellipsis whitespace-nowrap">
-											{
-												manager.realm
-													.currentRealmId
-											}
+											{manager.realm.currentRealmId}
 										</p>
 									</div>
 								</div>
 								<button
 									class="button-control my-auto ml-auto shrink-0"
-									onclick={() =>
-										manager.realm.toggleRealm()
-									}
+									onclick={() => manager.realm.toggleRealm()}
 								>
 									<ArrowDownUpIcon class="m-auto" />
 								</button>
@@ -157,7 +148,7 @@ export default function Settings(props: SettingsProps) {
 								}}
 							>
 								<PandaIcon />
-								Account
+								Character
 							</button>
 							<button
 								onClick={() => setSelected(7)}

@@ -1,44 +1,80 @@
-import { JSX } from "solid-js";
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { JSX, onMount, onCleanup, createSignal } from "solid-js";
 
 interface Props {
 	children: JSX.Element;
 	hide: () => void;
+	includedEl: HTMLElement;
+	class?: string;
+	style?: JSX.CSSProperties;
 }
+
 export default function Floater(props: Props) {
 	let el!: HTMLDivElement;
-	const [position, setPosition] = createSignal({ x: 0, y: 0 });
 
-	const onclickout = (event: MouseEvent) => {
-		if (!el.contains(event.target as Node)) {
+	const [position, setPosition] = createSignal<{ left: string; top: string }>(
+		{
+			left: "0px",
+			top: "0px",
+		},
+	);
+
+	const onPointerDown = (e: PointerEvent) => {
+		const target = e.target as Node;
+
+		if (!el.contains(target) && !props.includedEl.contains(target)) {
 			props.hide();
 		}
 	};
 
-	onMount(() => {
-		const { width, height, left, top } = el.getBoundingClientRect();
-		const appRect = document.documentElement.getBoundingClientRect();
-		const elWidth = width + left;
-		const elHeight = height + top;
+	const updatePosition = () => {
+		if (!el || !props.includedEl) return;
+
+		const anchor = props.includedEl.getBoundingClientRect();
+		const floating = el.getBoundingClientRect();
+
+		let x = anchor.left;
+		let y = anchor.bottom;
+
+		if (x + floating.width > window.innerWidth) {
+			x = window.innerWidth - floating.width;
+		}
+		if (x < 0) x = 0;
+
+		if (y + floating.height > window.innerHeight) {
+			y = anchor.top - floating.height;
+		}
+
+		if (y < 0) y = 0;
+
 		setPosition({
-			x: Math.round(
-				elWidth > appRect.width ? elWidth - appRect.width : 0,
-			),
-			y: Math.round(
-				elHeight > appRect.height ? elHeight - appRect.height : 0,
-			),
+			left: `${Math.round(x)}px`,
+			top: `${Math.round(y)}px`,
 		});
-		document.documentElement.addEventListener("click", onclickout);
+	};
+
+	onMount(() => {
+		updatePosition();
+
+		window.addEventListener("scroll", updatePosition, true);
+		window.addEventListener("resize", updatePosition);
+
+		document.addEventListener("pointerdown", onPointerDown, true);
 	});
+
 	onCleanup(() => {
-		document.documentElement.removeEventListener("click", onclickout);
+		window.removeEventListener("scroll", updatePosition, true);
+		window.removeEventListener("resize", updatePosition);
+		document.removeEventListener("pointerdown", onPointerDown, true);
 	});
+
 	return (
 		<div
 			ref={el}
-			class="absolute z-10 h-fit w-fit"
+			class={"fixed z-601 h-fit w-fit " + (props.class ?? "")}
 			style={{
-				transform: `translate(-${position().x}px, -${position().y}px)`,
+				left: position().left,
+				top: position().top,
+				...props.style,
 			}}
 		>
 			{props.children}

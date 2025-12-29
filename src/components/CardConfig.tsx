@@ -1,7 +1,7 @@
 import { CardType } from "@type/hollow";
 import { HandType } from "@type/HandType";
 import { Grid2X2PlusIcon, Grid2x2XIcon, StarIcon } from "lucide-solid";
-import { createSignal, Setter, Show } from "solid-js";
+import { Accessor, createSignal, Setter, Show } from "solid-js";
 import EmojiPick from "./dynamic/EmojiPick";
 import { timeDifference } from "@utils/manipulation/strings";
 import { hollow } from "hollow";
@@ -10,12 +10,12 @@ import MyIcon from "./MyIcon";
 
 export default function CardConfig({
 	myCard,
-	// setHand,
 	icon,
+	index,
 }: {
 	myCard: CardType;
 	icon: string;
-	// setHand: Setter<HandType[]>;
+	index: Accessor<number>;
 }) {
 	const [isPlaced, setPlaced] = createSignal(myCard.data.isPlaced);
 	const [isFav, setFav] = createSignal(myCard.data.isFavored);
@@ -30,7 +30,6 @@ export default function CardConfig({
 			myCard.data.tool,
 			true,
 		);
-		// setHand([...hollow.toolManager.getHand()]);
 	};
 	const handleFav = async () => {
 		hollow.toolManager.setCard(myCard.data.tool, myCard.id, {
@@ -40,13 +39,11 @@ export default function CardConfig({
 	};
 	const onEmojiChanged = (newEmoji: string) => {
 		hollow.toolManager.changeEmoji(newEmoji, myCard.id, myCard.data.tool);
-		// TODO
-		hollow.events.off("emoji-picker-changed", onEmojiChanged);
 	};
 
 	return (
 		<>
-			<div class="group flex w-[calc(calc(var(--spacing)*104)-40px)] shrink-0 justify-between px-1 py-3">
+			<div class="group card-config flex w-[calc(calc(var(--spacing)*104)-40px)] shrink-0 justify-between px-1 py-3">
 				<div class="min-w-0 space-y-2">
 					<div class="text-secondary-30 flex w-fit items-center gap-1">
 						<ToolIcon
@@ -78,7 +75,7 @@ export default function CardConfig({
 
 				<div class="flex h-full flex-col items-end gap-3">
 					<StarIcon
-						class="text-secondary-30 size-4 cursor-pointer transition-transform hover:rotate-12"
+						class="text-secondary-30 size-4 cursor-pointer rounded transition-transform hover:rotate-12"
 						onclick={handleFav}
 						classList={{
 							"text-yellow-500 fill-yellow-500": isFav(),
@@ -87,14 +84,14 @@ export default function CardConfig({
 
 					<div class="mt-auto flex gap-5">
 						<button
-							class="text-secondary-30 size-4 cursor-pointer transition-transform hover:rotate-12"
+							class="text-secondary-30 size-4 cursor-pointer rounded transition-transform hover:rotate-12"
 							onclick={handleDelete}
 						>
 							<MyIcon name="trash" class="size-4" />
 						</button>
 
 						<button
-							class="text-secondary-30 size-4 cursor-pointer transition-transform hover:rotate-12"
+							class="text-secondary-30 card-config-place size-4 cursor-pointer rounded transition-transform hover:rotate-12"
 							onclick={handlePlacement}
 						>
 							<Show

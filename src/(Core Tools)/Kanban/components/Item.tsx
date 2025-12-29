@@ -77,7 +77,6 @@ export default function Item(props: ItemProps) {
 			header: "Task",
 			items: menuItems,
 		};
-		//TODO card.app
 		hollow.events.emit("context-menu-extend", cm);
 	};
 

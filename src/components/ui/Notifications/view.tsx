@@ -44,64 +44,70 @@ export const NotificationsView = (
 				>
 					<For each={state.notifications()}>
 						{(noti) => {
-							{
-								/* const tp = logic.getIconFromType(noti.type); */
-							}
 							const [expand, setExpand] = createSignal(false);
+
 							return (
-								<div class="bg-secondary-05 border-secondary-15/60 pointer-events-auto h-fit w-full rounded-xl border p-2">
-									<div
-										class="flex items-center gap-4"
-										style={
-											{
-												//color: tp.color,
-											}
-										}
-									>
-										{/* <Suspense> */}
-										{/* 	<Icon */}
-										{/* 		class="bg-secondary-15/60 size-10 shrink-0 rounded-lg p-2.5" */}
-										{/* 		name={tp.icon} */}
-										{/* 	/> */}
-										{/* </Suspense> */}
-										<Show
-											when={noti.attachment}
-											fallback={
-												<h1 class="truncate font-bold">
-													{noti.title}
-												</h1>
-											}
-										>
-											<a
-												class="flex min-w-0 flex-1 items-center gap-2"
-												href={noti.attachment}
-												target="_blank"
+								<div class="border-secondary-15/60 bg-secondary-05 pointer-events-auto w-full rounded-xl border px-3 py-2.5 transition">
+									<Show when={noti.banner}>
+										<div class="border-secondary-15 bg-secondary-10 mb-2 overflow-hidden rounded-lg border">
+											<img
+												src={noti.banner}
+												class="h-24 w-full object-cover transition"
+												loading="lazy"
+											/>
+										</div>
+									</Show>
+
+									{/* Header */}
+									<div class="flex items-center gap-3">
+										<div class="min-w-0 flex-1">
+											<Show
+												when={noti.attachment}
+												fallback={
+													<h1 class="text-secondary-90 truncate text-sm font-semibold">
+														{noti.title}
+													</h1>
+												}
 											>
-												<h1 class="truncate font-bold">
-													{noti.title}
-												</h1>
-												<Show when={noti.attachment}>
-													<SquareArrowOutUpRightIcon class="size-4" />
-												</Show>
-											</a>
-										</Show>
-										<div class="ml-auto">
+												<a
+													href={noti.attachment}
+													target="_blank"
+													class="text-secondary-90 hover:text-secondary-100 flex min-w-0 items-center gap-2 text-sm font-semibold outline-none"
+												>
+													<span class="truncate">
+														{noti.title}
+													</span>
+													<SquareArrowOutUpRightIcon class="size-3.5 opacity-60" />
+												</a>
+											</Show>
+
+											{/* Small timestamp line (optional) */}
+											<p class="text-secondary-40 mt-0.5 text-[11px]">
+												{new Date(
+													noti.submitted_at,
+												).toLocaleDateString()}
+											</p>
+										</div>
+
+										{/* Controls */}
+										<div class="flex items-center gap-1">
 											<button
-												class="button-control"
+												class="text-secondary-40 hover:bg-secondary-10 hover:text-secondary-80 rounded-md p-1.5"
 												onclick={() =>
 													logic.removeNoty(noti.id)
 												}
 											>
-												<XIcon class="text-secondary-40" />
+												<XIcon class="size-4" />
 											</button>
+
 											<button
-												class="button-control"
+												class="text-secondary-40 hover:bg-secondary-10 hover:text-secondary-80 rounded-md p-1.5 transition"
 												onclick={() =>
-													setExpand((prev) => !prev)
+													setExpand((v) => !v)
 												}
 											>
 												<ChevronDownIcon
-													class="text-secondary-40"
+													class="size-4 transition-transform"
 													classList={{
 														"rotate-180": expand(),
 													}}
@@ -109,9 +115,13 @@ export const NotificationsView = (
 											</button>
 										</div>
 									</div>
+
+									{/* Body */}
 									<Show when={expand()}>
-										<div class="h-fit w-full px-1 pt-3 pb-1 text-neutral-400 dark:text-neutral-600">
-											<p>{noti.message}</p>
+										<div class="border-secondary-10 text-secondary-60 mt-2 border-t pt-2 text-sm">
+											<p class="leading-relaxed">
+												{noti.message}
+											</p>
 										</div>
 									</Show>
 								</div>

@@ -1,106 +1,71 @@
-import { NotifyType } from "@type/hollow";
+import { NotifyType } from "@type/NotifyType";
 import { isExpired, weekOld } from "../utils/manipulation/strings";
 import { hollow } from "hollow";
 import { Managers } from ".";
+import { ReactiveManager } from "./ReactiveManager";
 
 type NotificationData = {
 	notifications: NotifyType[];
 	alert: boolean;
 };
 
-export class NotifyManager {
-	private readonly managers: Managers;
-	private data: NotificationData = { alert: true, notifications: [] };
-
-	private get key(): string {
-		return `${this.managers?.realm.currentRealmId}-notifications`;
-	}
-
-	constructor(managers: Managers) {
-		this.managers = managers;
-		const savedData = localStorage.getItem(this.key);
-		if (savedData) {
-			this.data = JSON.parse(savedData);
-		} else {
-			this.update();
-		}
-		if (hollow.events.getData("network-state")) {
-			// this.checkRepo();
-		} else {
-			const waitToFetch = (state: boolean) => {
-				if (state) {
-					// this.checkRepo();
-					hollow.events.off("network-state", waitToFetch);
-				}
-			};
-			hollow.events.on("network-state", waitToFetch);
-		}
+export class NotifyManager extends ReactiveManager<NotificationData> {
+	constructor() {
+		const savedData = localStorage.getItem("notifications");
+		const data = savedData
+			? JSON.parse(savedData)
+			: { notifications: [], alert: false };
+		super(data);
+		this.checkRepo();
+		this.subscribe((v) => {
+			localStorage.setItem("notifications", JSON.stringify(v));
+		});
 	}
 
 	addNoty(noty: NotifyType) {
-		this.data.notifications.push(noty);
-		this.setAlert(true);
-		this.update();
+		this.set = {
+			notifications: [...this.get.notifications, noty],
+			alert: true,
+		};
 	}
 	removeNoty(id: string) {
-		this.data.notifications = this.data.notifications.filter(
+		const newNotifications = this.get.notifications.filter(
 			(i) => i.id !== id,
 		);
-		if (this.count() === 0) {
-			this.setAlert(false);
-		}
-		this.update();
+		this.set = {
+			notifications: newNotifications,
+			alert: newNotifications.length === 0 ? false : this.get.alert,
+		};
 	}
 	clearAll() {
-		this.data.notifications = [];
-		this.setAlert(false);
-		this.update();
+		this.set = {
+			notifications: [],
+			alert: false,
+		};
 	}
 
 	async checkRepo() {
 		try {
-			// TODO notifications.json is taking by the old version. 0.0.4 should be renamed to it.
 			const request = await fetch(
-				"https://raw.githubusercontent.com/hollow-app/hollow-registry/refs/heads/main/notify.json",
+				"https://raw.githubusercontent.com/hollow-app/hollow-registry/refs/heads/main/notifications.json",
 			);
 			const text = await request.text();
-			const parsed: (NotifyType & { platform: string })[] =
-				JSON.parse(text);
-			parsed.forEach((n) => {
-				if (
+			const parsed: NotifyType[] = JSON.parse(text);
+			const newItems = parsed.filter((n) => {
+				return (
 					(([localStorage.platform, "all"].includes(n.platform) &&
 						weekOld(n.submitted_at) &&
 						!isExpired(n.expires_at)) ||
-						n.id === "HX1-rS4v") &&
-					!this.data.notifications.some((i) => i.id === n.id)
-				) {
-					this.addNoty(n);
-				}
+						n.id === "welcome-001") &&
+					!this.get.notifications.some((i) => i.id === n.id)
+				);
 			});
+			this.set = {
+				notifications: [...this.get.notifications, ...newItems],
+				alert: newItems.length > 0 ? true : this.get.alert,
+			};
 		} catch (e) {
 			console.log("Error", e.message);
 		}
-	}
-
-	public count() {
-		return this.data.notifications.length;
-	}
-	public getNotification() {
-		return this.data.notifications;
-	}
-	public isAlert() {
-		return this.data.alert;
-	}
-	public setAlert(v: boolean) {
-		this.data.alert = v;
-		hollow.events.emit("notify-status", v);
-		this.update();
-	}
-
-	update() {
-		if (this.data.notifications.length > 20) {
-			this.data.notifications = this.data.notifications.slice(0, 21);
-		}
-		localStorage.setItem(this.key, JSON.stringify(this.data));
 	}
 }

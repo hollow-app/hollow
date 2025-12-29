@@ -9,8 +9,6 @@ mod vault;
 
 // use tauri::Manager;
 
-
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let prevent = tauri_plugin_prevent_default::Builder::new()
@@ -28,6 +26,8 @@ pub fn run() {
         .build();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         // static
         .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
             log::debug!("a new app instance was opened with {argv:?} and the deep link event was already triggered");

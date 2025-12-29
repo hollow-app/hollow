@@ -64,10 +64,10 @@ export default function Segmented(props: Props) {
 				<For each={props.options}>
 					{(option) => (
 						<button
-							class="text-secondary-40 z-1 flex h-full w-full items-center justify-center gap-1 font-medium"
+							class="text-secondary-40 z-1 flex h-full w-full items-center justify-center gap-1 font-medium outline-none"
 							type="button"
 							classList={{
-								"text-secondary-95 dark:text-primary-95":
+								"text-primary-foreground dark:text-secondary-foreground":
 									isSelected(option.key),
 							}}
 							onclick={(e) => onSelect(option.key, e)}

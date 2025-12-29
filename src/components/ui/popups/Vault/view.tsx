@@ -1,4 +1,3 @@
-import VaultIcon from "@assets/icons/vault.svg";
 import { VaultProps } from ".";
 import type { StateType } from "./state";
 import type { LogicType } from "./logic";
@@ -31,13 +30,20 @@ export const VaultView = (
 			<div class="lvl-1 flex flex-col gap-0 px-3 pb-3">
 				<div class="flex items-center pb-3">
 					<p class="text-secondary-40 px-3 text-sm tracking-wider">
-						Storage for images — and more to come | Total:{" "}
+						<button
+							onclick={logic.openVaultDirectory}
+							class="text-secondary-foreground underline outline-none"
+						>
+							Storage
+						</button>{" "}
+						for images, icons and more in the future | Total:{" "}
 						{state.images().length}.
 					</p>
 
 					<div class="relative z-1 ml-auto flex h-fit w-fit items-center justify-end gap-3 pr-3">
 						<AddUrl onAdd={logic.importImageFromLink} />
 						<button
+							id="vault-import-local-btn"
 							class="button-control tool-tip"
 							onClick={logic.importImages}
 						>
@@ -81,12 +87,12 @@ export const VaultView = (
 						>
 							{(img) => (
 								<button
-									class="group flex w-full flex-col"
+									class="group flex w-full flex-col outline-none"
 									onclick={() => logic.onImageClick(img)}
 								>
 									<img
 										src={img.url}
-										class="border-secondary-10 bg-secondary-05 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain"
+										class="border-secondary-10 bg-secondary-05 group-hover:border-secondary-10 relative flex w-full flex-1 cursor-pointer flex-col overflow-hidden rounded border object-contain outline-none"
 									/>
 									<span class="w-full truncate text-sm font-medium text-ellipsis text-neutral-600 dark:text-neutral-400">
 										{img.name}
@@ -238,6 +244,7 @@ function AddUrl({ onAdd }: AddUrlProps) {
 	return (
 		<div class="relative">
 			<button
+				id="vault-import-url-btn"
 				class="button-control tool-tip"
 				onclick={() => setOpen(!isOpen())}
 			>

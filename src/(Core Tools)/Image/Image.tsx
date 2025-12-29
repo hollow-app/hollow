@@ -89,7 +89,6 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 			card: card.data.name,
 			save: updateImage,
 			options: [
-				// TODO
 				{
 					label: "Image",
 					description: "Upload or provide image URL",

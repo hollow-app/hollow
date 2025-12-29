@@ -4,10 +4,14 @@ import type { LogicType } from "./logic";
 import type { HelperType } from "./helper";
 import { createSignal, For, Setter, Show, Suspense } from "solid-js";
 import { Check, ImageUpIcon, XIcon } from "lucide-solid";
-import { manager } from "@managers/index";
+import { RealmManager } from "@managers/RealmManager";
 import { Character } from "@type/Character";
+import { CharacterManager } from "@managers/CharacterManager";
 import { onCleanup } from "solid-js";
+import styles from "./index.module.css";
 import FetchedIcon from "@components/FetchedIcon";
+import { style } from "solid-js/web";
+import { manager } from "@managers/index";
 
 export const CharacterView = (
 	state: StateType,
@@ -44,7 +48,7 @@ export const CharacterView = (
 										state.character().avatar ||
 										"/placeholder.svg"
 									}
-									alt={state.character().username}
+									alt={state.character().name}
 								/>
 							</Show>
 
@@ -67,7 +71,7 @@ export const CharacterView = (
 				<div class="pointer-events-auto mt-4 space-y-4 text-left">
 					<div class="space-y-1">
 						<h2 class="text-2xl font-bold tracking-tight">
-							{state.character()?.username}
+							{state.character()?.name}
 						</h2>
 						<Show when={state.character()?.title}>
 							<div class="bg-secondary-10 border-secondary-25 w-fit rounded border-0 px-1 text-xs tracking-wide">

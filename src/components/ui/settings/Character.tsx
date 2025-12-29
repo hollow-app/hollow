@@ -4,7 +4,9 @@ import { manager } from "@managers/index";
 import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
 import { hollow } from "hollow";
-import { SquarePenIcon } from "lucide-solid";
+import { LogOutIcon, SquarePenIcon } from "lucide-solid";
+import { onCleanup } from "solid-js";
+import { onMount } from "solid-js";
 import { For, Show } from "solid-js";
 import { createSignal } from "solid-js";
 
@@ -159,13 +161,13 @@ export default function Account() {
 	return (
 		<div class="h-fit w-full p-10">
 			<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-				Account
+				Character
 			</h1>
 			<div class="flex w-full flex-col gap-5 p-5 pb-9">
 				<div class="flex justify-between">
 					<div>
 						<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-							Username
+							Name
 						</h2>
 						<p class="text-sm text-neutral-600 dark:text-neutral-400">
 							Your public name across your realm
@@ -175,11 +177,11 @@ export default function Account() {
 						<input
 							class="input"
 							placeholder="username"
-							value={character().username}
+							value={character().name}
 							onInput={(e) =>
 								setCharacter((prev) => ({
 									...prev,
-									username: e.currentTarget.value,
+									name: e.currentTarget.value,
 								}))
 							}
 						/>

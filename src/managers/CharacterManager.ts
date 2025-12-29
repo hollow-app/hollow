@@ -1,28 +1,14 @@
 import { Character } from "@type/Character";
 import { hollow } from "hollow";
 import { ReactiveManager } from "./ReactiveManager";
-import DEFAULT from "@assets/configs/account.json?raw";
-import { Managers } from ".";
+import DEFAULT from "@assets/configs/character.json?raw";
 
 export class CharacterManager extends ReactiveManager<Character> {
-	private readonly managers: Managers;
-	constructor(managers: Managers) {
-		const saved = localStorage.getItem("character");
-		const parsed = JSON.parse(saved ?? DEFAULT);
-		super(parsed);
-		this.managers = managers;
+	constructor() {
+		const saved = localStorage.getItem("character") ?? DEFAULT;
+		super(JSON.parse(saved));
 		this.subscribe((state) => {
 			localStorage.setItem("character", JSON.stringify(state));
-			const deeplink = this.managers?.deeplink;
-			console.log("deeplink", deeplink);
-			deeplink?.clerkServer({
-				type: "update-metadata",
-				extra: {
-					type: "public",
-					userId: deeplink?.get.clerk.user.id,
-					data: { character: state },
-				},
-			});
 		});
 		hollow.events.on(
 			"character-add-achievement",
@@ -31,6 +17,7 @@ export class CharacterManager extends ReactiveManager<Character> {
 		hollow.events.on("character-add-title", this.addTitle.bind(this));
 		hollow.events.on("character-add-xp", this.addXp.bind(this));
 	}
+
 	addTitle(title: string) {
 		const state = this.get;
 		if (!state.titles.includes(title)) {

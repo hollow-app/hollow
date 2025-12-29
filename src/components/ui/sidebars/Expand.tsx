@@ -15,14 +15,7 @@ type FilterType = {
 };
 
 export default function Expand() {
-	// TODO 11
 	const hand = hollow.toolManager.getHand();
-	// const icons = createMemo(() =>
-	// 	hand.reduce((a, i) => {
-	// 		a[i.name] = i.icon;
-	// 		return a;
-	// 	}),
-	// );
 	const [filter, setFilter] = createSignal<FilterType>({
 		tools: [],
 		favourite: false,
@@ -53,7 +46,6 @@ export default function Expand() {
 				data.tool.toLowerCase(),
 				data.emoji,
 			);
-			// setHand([...hollow.toolManager.getHand()]);
 		};
 		const form: FormType = {
 			id: crypto.randomUUID(),
@@ -66,7 +58,6 @@ export default function Expand() {
 					inline: true,
 					description: "The tool that will be inside this card",
 					placeholder: "Tool",
-					// TODO multi select in dropdown yet one for FORM
 					options: [
 						{
 							items: Object.keys(hand),
@@ -166,6 +157,7 @@ export default function Expand() {
 						]}
 					/>
 					<button
+						id="new-card-btn"
 						class="button-control border-secondary-10 border"
 						onclick={addNewCard}
 					>
@@ -183,10 +175,11 @@ export default function Expand() {
 					/>
 					<div class="flex h-[calc(100%-2px)] flex-col gap-1 overflow-hidden overflow-y-auto">
 						<For each={cards()}>
-							{(c: CardType) => (
+							{(c: CardType, index) => (
 								<CardConfig
 									myCard={c}
 									icon={hand[c.data.tool].icon}
+									index={index}
 								/>
 							)}
 						</For>

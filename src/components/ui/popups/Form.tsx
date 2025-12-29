@@ -10,8 +10,10 @@ import PopupWrapper from "../PopupWrapper";
 type FormProps = {
 	form: FormType;
 	setForm: Setter<FormType[]>;
+	index: Accessor<number>;
 };
-export default function Form({ form, setForm }: FormProps) {
+export default function Form({ form, setForm, index }: FormProps) {
+	const id = "form-" + index();
 	const [result, setResult] = createSignal({
 		...form.options.reduce((acc: Record<string, any>, obj) => {
 			acc[obj.key] = obj.value;
@@ -31,8 +33,8 @@ export default function Form({ form, setForm }: FormProps) {
 				if (i.optional) return false;
 				return i.dependsOn
 					? i.dependsOn.conditions.includes(
-						submission[i.dependsOn.key] && !submission[i.key],
-					)
+							submission[i.dependsOn.key] && !submission[i.key],
+						)
 					: !submission[i.key];
 			})
 		) {
@@ -46,6 +48,7 @@ export default function Form({ form, setForm }: FormProps) {
 	return (
 		<PopupWrapper title={`Form: ${form.title}`} Icon={ScrollIcon}>
 			<form
+				id={id}
 				class="flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 px-5 pb-5"
 				onsubmit={onSave}
 			>
@@ -124,7 +127,7 @@ export default function Form({ form, setForm }: FormProps) {
 					</For>
 				</div>
 				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded px-[3rem] py-5">
-					<button class="button primary" type="submit">
+					<button class="button primary form-submit" type="submit">
 						{form.update ? "Update" : "Submit"}
 					</button>
 					<button class="button secondary" onclick={onCancel}>

@@ -4,7 +4,6 @@ import { render } from "solid-js/web";
 import App from "./app/App";
 import { manager } from "@managers/index";
 
-// TODO async
 async function ascend() {
 	await manager.hollow.preRealmSelection();
 	//

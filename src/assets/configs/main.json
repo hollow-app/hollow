@@ -6,7 +6,7 @@
 		"description": "An image management tool for viewing, organizing, and editing pictures.",
 		"author": "Hollow Team",
 		"authorUrl": "https://github.com/hollow-app",
-		"icon": "Image",
+
 		"cards": [],
 		"signed": true
 	},
@@ -17,7 +17,7 @@
 		"description": "A digital notebook for writing notes, organizing thoughts, and keeping track of ideas.",
 		"author": "Hollow Team",
 		"authorUrl": "https://github.com/hollow-app",
-		"icon": "NotebookTabs",
+
 		"cards": [],
 		"signed": true
 	},
@@ -28,7 +28,7 @@
 		"description": "A kanban board for task management, allowing organization of tasks in different stages.",
 		"author": "Hollow Team",
 		"authorUrl": "https://github.com/hollow-app",
-		"icon": "Kanban",
+
 		"cards": [],
 		"signed": true
 	},
@@ -39,7 +39,7 @@
 		"description": "A tool for embedding external content, including websites, videos, and widgets.",
 		"author": "Hollow Team",
 		"authorUrl": "https://github.com/hollow-app",
-		"icon": "CodeXml",
+
 		"cards": [],
 		"signed": true
 	}

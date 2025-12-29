@@ -21,7 +21,7 @@ export default function EmojiPick(props: {
 		<button
 			onclick={handleEmoji}
 			class={
-				"content-center rounded-xl text-center text-gray-900 select-none dark:text-gray-50"
+				"option-emoji content-center rounded-xl text-center text-gray-900 outline-none select-none dark:text-gray-50"
 			}
 			type="button"
 		>

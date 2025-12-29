@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { manager } from "@managers/index";
 import { hollow } from "hollow";
 import { BaseDirectory, open } from "@tauri-apps/plugin-fs";
@@ -10,16 +10,6 @@ export default function Developers() {
 		devtools: boolean;
 		loadunsigned: boolean;
 	}>({ devtools: false, loadunsigned: false });
-
-	// Load from SettingsManager
-	(async () => {
-		const devtools =
-			manager.settings.getConfig("enable-dev-tools");
-		const loadunsigned = manager.settings.getConfig(
-			"load-unsigned-plugins",
-		);
-		setOption({ devtools, loadunsigned });
-	})();
 
 	const changeDevtools = (e: Event & { currentTarget: HTMLInputElement }) => {
 		const state = e.currentTarget.checked;
@@ -45,15 +35,18 @@ export default function Developers() {
 		});
 	};
 	const update = () => {
-		manager.settings.setConfig(
-			"enable-dev-tools",
-			options().devtools,
-		);
-		manager.settings.setConfig(
-			"load-unsigned-plugins",
-			options().loadunsigned,
-		);
+		manager.settings.setConfigs({
+			"enable-dev-tools": options().devtools,
+			"load-unsigned-plugins": options().loadunsigned,
+		});
 	};
+	onMount(async () => {
+		const devtools = manager.settings.getConfig("enable-dev-tools");
+		const loadunsigned = manager.settings.getConfig(
+			"load-unsigned-plugins",
+		);
+		setOption({ devtools, loadunsigned });
+	});
 	return (
 		<div class="h-fit w-full p-10">
 			<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">

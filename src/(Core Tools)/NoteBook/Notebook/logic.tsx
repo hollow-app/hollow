@@ -30,9 +30,7 @@ export const NotebookLogic = (
 	};
 
 	const onNewNote = () => {
-		// TODO
 		hollow.events.emit("character-add-achievement", "📚 Archivist");
-		// setBook(prev=>({...prev, last: "new-00-note" }));
 		const data: any = fm(state.book.structure);
 		const newNote: NoteType = {
 			...data,

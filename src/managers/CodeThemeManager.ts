@@ -16,7 +16,7 @@ export class CodeThemeManager {
 		this.managers = managers;
 	}
 
-	private async init() {
+	async init() {
 		this.db = await new Promise<IDBDatabase>((resolve, reject) => {
 			const req = indexedDB.open(this.dbName, 1);
 			req.onupgradeneeded = () =>

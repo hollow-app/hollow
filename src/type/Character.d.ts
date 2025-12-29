@@ -1,8 +1,8 @@
 export type Character = {
-	username: string;
+	name: string;
 	bio: string;
-	avatar?: string;
 	title?: string;
+	avatar?: string;
 	banner?: string;
 	level?: number;
 	xp?: number;

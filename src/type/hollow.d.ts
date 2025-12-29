@@ -144,7 +144,6 @@ export type AppEvents = {
 	database: DataBaseRequest;
 	"character-add-achievement": string;
 	"character-add-xp": number;
-	notify: NotifyType;
 	insight: InsightType;
 	"network-state": boolean;
 	alert: AlertType;
@@ -289,41 +288,6 @@ export type ContextMenuItemButton = {
 	 * A submenu of buttons that appears when this button is hovered over.
 	 */
 	children?: Omit<ContextMenuItemButton, "children">[];
-};
-
-/**
- * Represents a notification that can be displayed in Hollow.
- */
-export type NotifyType = {
-	/**
-	 * A unique identifier for the notification.
-	 */
-	id: string;
-
-	/**
-	 * Title of the notification.
-	 */
-	title: string;
-
-	/**
-	 * Main message content of the notification.
-	 */
-	message: string;
-
-	/**
-	 * Optional attachment URL or identifier.
-	 */
-	attachment?: string;
-
-	/**
-	 * ISO timestamp of when the notification was submitted.
-	 */
-	submitted_at: string;
-
-	/**
-	 * ISO timestamp of when the notification should expire.
-	 */
-	expires_at?: string;
 };
 
 export type AlertType =

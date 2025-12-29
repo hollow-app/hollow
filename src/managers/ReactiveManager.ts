@@ -1,8 +1,24 @@
 type KeyListener<T, K extends keyof T> = (value: T[K], key: K) => void;
 type GlobalListener<T> = (value: T) => void;
 
+type GlobalSubscribeOptions = {
+	key?: never;
+	now?: boolean;
+	once?: boolean;
+};
+
+type KeySubscribeOptions<K extends PropertyKey> = {
+	key: K;
+	now?: boolean;
+	once?: boolean;
+};
+
+type SubscribeOptions<T> =
+	| GlobalSubscribeOptions
+	| { [K in keyof T]: KeySubscribeOptions<K> }[keyof T];
+
 export class ReactiveManager<T extends object> {
-	private value: T;
+	protected value: T;
 	private keyListeners: Map<keyof T, Set<KeyListener<T, keyof T>>> =
 		new Map();
 	private globalListeners: Set<GlobalListener<T>> = new Set();
@@ -11,25 +27,59 @@ export class ReactiveManager<T extends object> {
 		this.value = initialValue;
 	}
 
-	subscribe(listener: GlobalListener<T>): () => void;
+	subscribe(
+		listener: GlobalListener<T>,
+		options?: GlobalSubscribeOptions,
+	): () => void;
 
 	subscribe<K extends keyof T>(
 		listener: KeyListener<T, K>,
-		key: K,
+		options: KeySubscribeOptions<K>,
 	): () => void;
 
-	subscribe(listener: any, key?: keyof T): () => void {
-		if (key === undefined) {
-			this.globalListeners.add(listener);
-			listener(this.value);
-			return () => this.globalListeners.delete(listener);
+	subscribe(
+		listener: GlobalListener<T> | KeyListener<T, any>,
+		options?: SubscribeOptions<T>,
+	): () => void {
+		const isOnce = !!options?.once;
+		const shouldRunNow = !isOnce && !!options?.now;
+
+		let unsubscribe: () => void = () => {};
+
+		if (!options || !("key" in options)) {
+			const originalFn = listener as GlobalListener<T>;
+
+			const wrappedFn: GlobalListener<T> = (val) => {
+				originalFn(val);
+				if (isOnce) unsubscribe();
+			};
+
+			this.globalListeners.add(wrappedFn);
+			if (shouldRunNow) wrappedFn(this.value);
+
+			unsubscribe = () => this.globalListeners.delete(wrappedFn);
+			return unsubscribe;
 		} else {
+			const { key } = options;
+			const originalFn = listener as KeyListener<T, typeof key>;
+
 			if (!this.keyListeners.has(key)) {
 				this.keyListeners.set(key, new Set());
 			}
-			this.keyListeners.get(key)!.add(listener);
-			listener(this.value[key], key);
-			return () => this.keyListeners.get(key)!.delete(listener);
+
+			const set = this.keyListeners.get(key)!;
+
+			const wrappedFn: KeyListener<T, typeof key> = (val, k) => {
+				originalFn(val, k);
+				if (isOnce) unsubscribe();
+			};
+
+			set.add(wrappedFn as KeyListener<T, keyof T>);
+			if (shouldRunNow) wrappedFn(this.value[key], key);
+
+			unsubscribe = () =>
+				set.delete(wrappedFn as KeyListener<T, keyof T>);
+			return unsubscribe;
 		}
 	}
 

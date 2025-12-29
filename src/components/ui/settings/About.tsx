@@ -13,7 +13,7 @@ const links: LinksType[] = [
 		description:
 			"Learn more about Hollow, explore features, and stay up to date.",
 		label: "Visit",
-		link: "https://hollow-space.vercel.app/",
+		link: "https://hollowapp.pages.dev/",
 	},
 	{
 		title: "Discord Server",
@@ -32,7 +32,7 @@ const links: LinksType[] = [
 		title: "Documentation",
 		description: "Learn how to build plugins, and make the most of Hollow.",
 		label: "Visit",
-		link: "https://hollow-space.vercel.app/documentation",
+		link: "https://hollowapp.pages.dev/documentation",
 	},
 	{
 		title: "BuyMeCoffee",
@@ -62,7 +62,7 @@ export default function About() {
 							<a
 								href={link.link}
 								target="_blank"
-								class="button secondary no-underline"
+								class="outline-none hover:text-neutral-500"
 							>
 								{link.label}
 							</a>

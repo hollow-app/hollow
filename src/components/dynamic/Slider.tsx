@@ -45,7 +45,7 @@ export default function Slider({
 				max={max}
 				value={myValue()}
 				onmouseup={() => setValue(myValue())}
-				class="slider-range rounded-xl"
+				class="slider-range rounded-xl outline-none"
 				onInput={handleRangeChange}
 				onMouseMove={handleRangeChange}
 				style={{

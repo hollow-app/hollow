@@ -85,7 +85,10 @@ export default function Editor() {
 	});
 
 	return (
-		<div class="flex size-full flex-col overflow-hidden rounded-xl p-5">
+		<div
+			id="editor-panel"
+			class="flex size-full flex-col overflow-hidden rounded-xl p-5"
+		>
 			<div class="">
 				<Header
 					selected={selectedCard}
@@ -132,7 +135,7 @@ export default function Editor() {
 									label="Corner"
 									value={Number(
 										cardStyle()
-										["border-radius"].toString()
+											["border-radius"].toString()
 											.split("px")[0],
 									)}
 									setValue={(v) =>
@@ -173,9 +176,9 @@ export default function Editor() {
 											<NumberInput
 												value={Number(
 													cardStyle()
-													[
-														"border-width"
-													].toString()
+														[
+															"border-width"
+														].toString()
 														.split("px")[0],
 												)}
 												setValue={(v) =>

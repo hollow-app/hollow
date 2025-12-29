@@ -64,7 +64,7 @@ export const ContextMenuView = (
 			<Show when={state.isVisible()}>
 				<Motion.div
 					class={
-						"bg-secondary text-secondary-90 pointer-events-auto fixed z-1000 w-60 space-y-2 rounded-lg p-1 shadow-[0_0_5px_1px_gray] select-none dark:shadow-[0_0_5px_1px_black]"
+						"bg-secondary context-menu text-secondary-90 popup-shadow pointer-events-auto fixed z-1000 w-60 space-y-2 rounded-lg p-1 select-none"
 					}
 					style={{
 						left: `${state.position().x}px`,

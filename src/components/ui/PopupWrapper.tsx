@@ -70,7 +70,8 @@ export default function PopupWrapper({
 			ref={winRef}
 			class="up-pop pointer-events-auto top-0 left-0 flex flex-col gap-3"
 			style={{
-				transform: `translate(${position().x}px, ${position().y}px)`,
+				left: `${position().x}px`,
+				top: `${position().y}px`,
 			}}
 			classList={{ "z-750": isFocus() }}
 		>

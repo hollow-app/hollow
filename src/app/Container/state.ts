@@ -50,6 +50,7 @@ export const createContainerState = (
 		manager.hotkeys.events["Toggle Editor"] = () => {
 			controller.selectPanel("right", "editor");
 		};
+		console.log("canvas configs:", canvasConfigs());
 	});
 	return {
 		controller,

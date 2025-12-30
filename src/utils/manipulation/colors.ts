@@ -2,7 +2,10 @@ import { readableColor, lighten, darken, getLuminance } from "polished";
 import { Property } from "@type/Property";
 
 export function ShadeIt(name: string, color: string) {
-	const isDark = readableColor(color) === "#fff";
+	const isDark =
+		name === "primary"
+			? localStorage.theme !== "dark"
+			: readableColor(color) === "#fff";
 
 	const result: Property[] = [
 		{

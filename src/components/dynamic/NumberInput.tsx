@@ -48,7 +48,7 @@ export default function NumberInput(props: NumberInputProps) {
 			tabindex={0}
 		>
 			<button
-				class="hover:bg-secondary-15 active:bg-secondary-20 text-secondary-70 absolute right-9 rounded-md border border-transparent p-1.5 text-center text-sm transition-all disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+				class="hover:bg-secondary-15 active:bg-secondary-20 text-secondary-70 absolute right-9 rounded-md border border-transparent p-1.5 text-center text-sm transition-all outline-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 				type="button"
 				onclick={minus}
 			>
@@ -68,7 +68,7 @@ export default function NumberInput(props: NumberInputProps) {
 				class="ease border-secondary-20 text-secondary-70 placeholder:text-secondary-40 group-hover:border-secondary-70 focus:border-primary w-full appearance-none rounded-md border-2 bg-transparent py-2 pr-20 pl-3 text-sm shadow-sm transition duration-300 focus:shadow focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 			/>
 			<button
-				class="hover:bg-secondary-15 active:bg-secondary-20 text-secondary-70 absolute right-1 rounded-md border border-transparent p-1.5 text-center text-sm transition-all disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+				class="hover:bg-secondary-15 active:bg-secondary-20 text-secondary-70 absolute right-1 rounded-md border border-transparent p-1.5 text-center text-sm transition-all outline-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 				type="button"
 				onclick={plus}
 			>

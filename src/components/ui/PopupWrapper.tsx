@@ -83,7 +83,7 @@ export default function PopupWrapper({
 				<h1 class="h1-title">{title}</h1>
 				<Show when={onClose}>
 					<button
-						class="bg-secondary-10 group ml-auto rounded-full"
+						class="bg-secondary-15 group ml-auto rounded-full"
 						onclick={onClose}
 					>
 						<XIcon class="text-secondary-50 size-4 p-0.5 opacity-0 group-hover:opacity-100" />

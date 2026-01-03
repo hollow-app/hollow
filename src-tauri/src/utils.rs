@@ -3,6 +3,19 @@ use std::{fs, path::PathBuf, sync::Mutex};
 use tauri::{command, AppHandle, Manager, State};
 use tauri_plugin_log::log::{self};
 
+pub fn validate_path(path: &str) -> Result<(), String> {
+    let p = std::path::Path::new(path);
+    if p.is_absolute() {
+        return Err("Path must be relative".to_string());
+    }
+    for component in p.components() {
+        if matches!(component, std::path::Component::ParentDir) {
+            return Err("Path traversal is not allowed".to_string());
+        }
+    }
+    Ok(())
+}
+
 pub fn get_full_path(path: &str, state: &State<'_, Mutex<AppData>>) -> Result<PathBuf, String> {
     let app_data = state.lock().unwrap();
     let base = app_data
@@ -13,6 +26,7 @@ pub fn get_full_path(path: &str, state: &State<'_, Mutex<AppData>>) -> Result<Pa
 }
 
 pub fn create_dir_internal(path: &str, state: &State<'_, Mutex<AppData>>) -> Result<(), String> {
+    validate_path(path)?;
     let full_path = get_full_path(path, state)?;
     if !full_path.exists() {
         fs::create_dir_all(&full_path).map_err(|e| e.to_string())?;
@@ -54,6 +68,7 @@ pub fn create_dir(paths: Vec<String>, state: State<'_, Mutex<AppData>>) -> Resul
 
 #[command]
 pub fn read_file(path: String, state: State<'_, Mutex<AppData>>) -> Result<String, String> {
+    validate_path(&path)?;
     let file_path = get_full_path(&path, &state)?;
     if !file_path.exists() {
         return Err("File does not exist".to_string());

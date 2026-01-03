@@ -13,6 +13,7 @@ type FormProps = {
 	index: Accessor<number>;
 };
 export default function Form({ form, setForm, index }: FormProps) {
+	const width = form.options.some((i) => i.inline) ? "700px" : "450px";
 	const id = "form-" + index();
 	const [result, setResult] = createSignal({
 		...form.options.reduce((acc: Record<string, any>, obj) => {
@@ -33,8 +34,8 @@ export default function Form({ form, setForm, index }: FormProps) {
 				if (i.optional) return false;
 				return i.dependsOn
 					? i.dependsOn.conditions.includes(
-							submission[i.dependsOn.key] && !submission[i.key],
-						)
+						submission[i.dependsOn.key] && !submission[i.key],
+					)
 					: !submission[i.key];
 			})
 		) {
@@ -46,15 +47,18 @@ export default function Form({ form, setForm, index }: FormProps) {
 		setForm((prev) => prev.filter((i) => i.id !== form.id));
 	};
 	return (
-		<PopupWrapper title={`Form: ${form.title}`} Icon={ScrollIcon}>
+		<PopupWrapper title={form.title} Icon={ScrollIcon} onClose={onCancel}>
 			<form
 				id={id}
-				class="flex max-h-[85vh] w-[85vw] max-w-[800px] flex-col gap-4 px-5 pb-5"
+				class="flex max-h-[85vh] max-w-[80vw] flex-col gap-4 px-5 pb-5"
+				style={{
+					width,
+				}}
 				onsubmit={onSave}
 			>
 				<Show when={form.description}>
 					<div class="border-secondary-15 flex items-start gap-5 border-b border-dashed pb-5">
-						<h3 class="bg-secondary-10 rounded px-2 text-sm font-medium tracking-wider text-neutral-500 uppercase">
+						<h3 class="text-secondary-50 text-sm">
 							{form.description}
 						</h3>
 					</div>
@@ -88,45 +92,33 @@ export default function Form({ form, setForm, index }: FormProps) {
 											option.row && !option.inline,
 									}}
 								>
-									<div class="mb-2 flex w-[50%] items-center gap-2">
-										<h2
-											class="flex gap-1 text-lg font-medium text-neutral-800 dark:text-neutral-200"
-											classList={{
-												"tool-tip":
-													!!option.description,
-											}}
-										>
+									<div class="mb-2 flex w-full flex-col gap-1.5">
+										<h2 class="flex items-center gap-2 text-sm font-medium leading-none select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
 											{option.label}
-											<Show when={option.description}>
-												<>
-													<span class="text-secondary-20 font-bold">
-														[ i ]
-													</span>
-													<span
-														class="tool-tip-content"
-														data-side="right"
-													>
-														{option.description}
-													</span>
-												</>
-											</Show>
 											<Show when={!option.optional}>
 												<span class="text-primary-10 text-sm">
 													*
 												</span>
 											</Show>
 										</h2>
+										<Show when={option.description}>
+											<p class="text-xs text-neutral-500">
+												{option.description}
+											</p>
+										</Show>
 									</div>
-									<DynamicOption
-										option={option as ToolOption}
-										index={index}
-									/>
+									<div class="shrink-0">
+										<DynamicOption
+											option={option as ToolOption}
+											index={index}
+										/>
+									</div>
 								</div>
 							);
 						}}
 					</For>
 				</div>
-				<div class="bg-secondary-05 mt-auto flex h-fit w-full justify-end gap-5 rounded px-[3rem] py-5">
+				<div class="mt-auto flex h-fit w-full justify-end gap-3 rounded">
 					<button class="button primary form-submit" type="submit">
 						{form.update ? "Update" : "Submit"}
 					</button>

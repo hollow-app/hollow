@@ -7,7 +7,7 @@ import {
 	Accessor,
 	createUniqueId,
 } from "solid-js";
-import { ChevronDownIcon } from "lucide-solid";
+import { ChevronDownIcon, ChevronsUpDownIcon } from "lucide-solid";
 import Floater from "@utils/kinda-junk/Floater";
 
 export type DropdownProps = {
@@ -43,45 +43,49 @@ export default function Dropdown(props: DropdownProps) {
 		!props.visibleOnSelect && setIsOpen(false);
 	};
 	return (
-		<div ref={dropdownRef} class="drop-down relative h-fit">
-			<button
-				type="button"
+		<div ref={dropdownRef} class="drop-down relative h-fit outline-none">
+			<div
 				onClick={toggleOpen}
+				class="outline-none"
 				style={{ width: "var(--w)" }}
 			>
 				<input
-					type="text outline-none"
+					type="text"
 					value={innerValue()}
 					placeholder={props.placeholder}
 					readonly
-					class="border-secondary-20 text-secondary-70 placeholder:text-secondary-40 bg-secondary-10/75 text-md relative w-full cursor-pointer rounded-md px-3 py-2 shadow-sm"
+					class="border-secondary-15 text-secondary-70 placeholder:text-secondary-40 text-md bg-secondary-05 relative w-full cursor-pointer rounded-md border px-2.5 py-1.5 shadow-sm outline-none"
 				/>
-				<ChevronDownIcon
-					class="text-secondary-20 absolute top-0 right-1 h-full transition duration-300"
+				<ChevronsUpDownIcon
+					class="text-secondary-40 absolute top-0 right-3 size-4 h-full transition duration-300"
 					classList={{ "text-primary": isOpen() }}
 				/>
-			</button>
+			</div>
 
 			<Show when={isOpen()}>
 				<Floater hide={() => setIsOpen(false)} includedEl={dropdownRef}>
 					<div
-						class="bg-secondary-05 popup-shadow drop-down-list mt-2 rounded-md p-1 text-sm"
+						class="bg-secondary-05 border-secondary-10 popup-shadow drop-down-list mt-2 rounded-md border text-sm"
 						style={{
 							width:
 								dropdownRef.getBoundingClientRect().width +
 								"px",
 						}}
 					>
-						<div class="border-secondary-15 scrollbar-hidden max-h-60 w-full overflow-y-auto rounded-md border border-dashed">
-							<div class="p-1">
+						<div class="scrollbar-hidden max-h-60 w-full overflow-y-auto">
+							<div class="p-1.5">
 								<For each={props.options}>
 									{(group) => (
 										<div class="relative">
 											<Show when={group.title}>
-												<div class="bg-secondary-05 sticky top-0 z-20 flex w-full items-center gap-1 pt-1">
-													<h1 class="text-secondary-30 border-secondary-10 w-full border-b py-1 pl-3 text-start text-xs uppercase select-none">
+												<div class="bg-secondary-05 sticky top-0 z-20 flex w-full items-center gap-1 px-3">
+													<h1 class="py-1 text-sm font-medium text-neutral-400 select-none dark:text-neutral-600">
 														{group.title}
 													</h1>
+													<hr class="border-secondary-10 w-full" />
+													<span class="text-secondary-30 text-xs">
+														{group.items.length}
+													</span>
 												</div>
 											</Show>
 											<ul>

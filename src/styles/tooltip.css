@@ -15,7 +15,7 @@
 	position: absolute;
 	max-width: 20rem;
 	background-color: var(--color-secondary-10);
-	color: var(--tc-300);
+	color: var(--color-secondary-80);
 	font-size: var(--font-size);
 	border-color: var(--color-secondary-15);
 	border-style: solid;

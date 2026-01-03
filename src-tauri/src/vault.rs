@@ -7,7 +7,7 @@ use tauri::{command, State};
 use tauri_plugin_log::log::{self};
 use uuid::Uuid;
 
-use crate::utils::get_full_path;
+use crate::utils::{get_full_path, validate_path};
 
 #[command]
 pub fn vault_add(
@@ -56,6 +56,7 @@ pub fn vault_remove(
     let mut had_errors = false;
 
     for name in names {
+        validate_path(&name)?;
         let file_path = vault_dir.join(&name);
 
         if file_path.exists() {

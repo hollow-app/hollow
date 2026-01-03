@@ -717,8 +717,8 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 }
 export default function Selector({ onSelect }: SelectorProps) {
 	const [ready] = createResource(async () => {
-		useColor({ name: "primary", color: "#FF0033", oneTime: true });
 		useColor({ name: "secondary", color: "#0b0b0b", oneTime: true });
+		useColor({ name: "primary", color: "#FF0033", oneTime: true });
 		return true;
 	});
 	const [realms, setRealms] = createSignal<Realm[]>(

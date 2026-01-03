@@ -49,7 +49,7 @@ export class NotebookManager {
 		const entries = await this.getCardFs(cardName).readDir();
 		const notes: NoteType[] = await Promise.all(
 			entries
-				.filter((i) => i.isFile)
+				.filter((i) => !i.isDir)
 				.map(async (i) => ({
 					...fm(await this.getNote(cardName, i.name)),
 					title: i.name.split(".md")[0],

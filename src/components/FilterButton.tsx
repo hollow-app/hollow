@@ -1,7 +1,6 @@
-import { createSignal, For, Show, onMount, onCleanup, JSX } from "solid-js";
-import { ListFilterPlusIcon } from "lucide-solid";
+import { createSignal, For, Show } from "solid-js";
+import { ListFilterPlusIcon, CheckIcon } from "lucide-solid";
 import Floater from "@utils/kinda-junk/Floater";
-import MyIcon from "./MyIcon";
 
 type DropdownItem = {
 	label: string;
@@ -29,51 +28,45 @@ export default function FilterButton({ options }: FilterButtonProps) {
 	};
 
 	return (
-		<div ref={dropdownRef} class="group relative h-fit w-10">
+		<div ref={dropdownRef} class="relative">
 			<button
-				class="hover:bg-secondary-10 relative flex items-center justify-center rounded-md p-2"
+				class="hover:bg-secondary-10 text-secondary-60 hover:text-secondary-foreground flex h-9 w-9 items-center justify-center rounded-md transition-colors"
 				onClick={toggleOpen}
+				classList={{
+					"bg-secondary-10 text-secondary-foreground": isOpen(),
+				}}
 			>
-				<ListFilterPlusIcon
-					class="size-5 transition duration-300"
-					classList={{
-						"text-secondary-50": !isOpen(),
-						"text-primary": isOpen(),
-					}}
-				/>
+				<ListFilterPlusIcon class="size-4" />
 			</button>
 
 			<Show when={isOpen()}>
 				<Floater hide={() => setIsOpen(false)} includedEl={dropdownRef}>
-					<ul class="bg-secondary-05 popup-shadow mt-2 max-h-60 min-w-20 rounded-md p-1 text-sm">
-						<div class="border-secondary-15 scrollbar-hidden max-h-60 w-full overflow-y-auto rounded-md border border-dashed">
-							<div class="p-1">
-								<For
-									each={options().filter(
-										(i) => i.items.length > 0,
-									)}
-								>
-									{(group) => (
-										<div>
-											<Show when={group.title}>
-												<div class="bg-secondary-05 sticky -top-px z-20 flex w-full items-center gap-1 pt-1">
-													<h1 class="py-1 pl-2 text-xs text-neutral-500 uppercase">
-														{group.title}
-													</h1>
-												</div>
-											</Show>
-											<ItemsList
-												items={() => group.items}
-												isCheckBox={group.isCheckBox}
-												onSelect={group.onSelect}
-												value={group.value}
-											/>
-										</div>
-									)}
-								</For>
-							</div>
+					<div class="bg-secondary-05 border-secondary-10 text-secondary-foreground animate-in fade-in zoom-in-95 mt-3 w-fit overflow-hidden rounded-md border shadow-md">
+						<div class="max-h-80 overflow-y-auto p-1">
+							<For
+								each={options().filter(
+									(i) => i.items.length > 0,
+								)}
+							>
+								{(group, i) => (
+									<div>
+										<Show when={group.title}>
+											<div class="px-2 py-1.5 text-xs font-semibold text-neutral-500">
+												{group.title}
+											</div>
+										</Show>
+										<ItemsList
+											items={() => group.items}
+											isCheckBox={group.isCheckBox}
+											onSelect={group.onSelect}
+											value={group.value}
+											hide={() => setIsOpen(false)}
+										/>
+									</div>
+								)}
+							</For>
 						</div>
-					</ul>
+					</div>
 				</Floater>
 			</Show>
 		</div>
@@ -105,35 +98,48 @@ export function ItemsList({
 
 	return (
 		<For each={items().sort((a, b) => a.label.localeCompare(b.label))}>
-			{(item) => (
-				<li
-					class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full min-w-30 cursor-pointer justify-between gap-5 rounded bg-transparent px-3 py-2 text-xs"
-					role="option"
-					classList={{
-						"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
-							!isCheckBox && value && value() === item.label,
-					}}
-					onClick={() => {
-						if (isCheckBox) {
-							const checked = !selected().includes(item.label);
-							setSelected((prev) =>
-								checked
-									? [...prev, item.label]
-									: prev.filter((i) => i !== item.label),
-							);
-							onSelect(selected());
-						} else {
-							onSelect(item.label);
-							hide?.();
-						}
-					}}
-				>
-					{item.label}
-					<Show when={isCheckBox && selected().includes(item.label)}>
-						<MyIcon name="check" class="size-4" />
-					</Show>
-				</li>
-			)}
+			{(item) => {
+				const isSelected = () => {
+					if (isCheckBox) return selected().includes(item.label);
+					if (value) {
+						const v = value();
+						return (
+							v === item.label ||
+							(Array.isArray(v) && v.includes(item.label))
+						);
+					}
+					return false;
+				};
+
+				return (
+					<div
+						class="hover:bg-secondary-10 hover:text-secondary-foreground relative flex cursor-pointer items-center rounded-sm py-1.5 pr-10 pl-2 text-sm transition-colors outline-none select-none"
+						onClick={() => {
+							if (isCheckBox) {
+								const checked = !selected().includes(
+									item.label,
+								);
+								setSelected((prev) =>
+									checked
+										? [...prev, item.label]
+										: prev.filter((i) => i !== item.label),
+								);
+								onSelect(selected());
+							} else {
+								onSelect(item.label);
+								hide?.();
+							}
+						}}
+					>
+						<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+							<Show when={isSelected()}>
+								<CheckIcon class="size-4" />
+							</Show>
+						</span>
+						<span class="pl-8">{item.label}</span>
+					</div>
+				);
+			}}
 		</For>
 	);
 }

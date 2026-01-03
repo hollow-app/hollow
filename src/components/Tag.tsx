@@ -31,12 +31,15 @@ export default function Tag(props: TagProps) {
 		hollow.events.off("tags", onUpdate);
 	});
 
+	// <span class="">
+	// 	{t}
+	// </span>
 	return (
 		<span
-			class="h-fit shrink-0 truncate rounded-sm px-[0.4em] py-[0.3em] select-none"
+			class="inline-flex h-fit shrink-0 items-center truncate rounded-md px-2 py-1 text-xs font-medium select-none"
 			style={{
-				background: `color-mix(in oklab, ${tag().background} 15%, transparent)`,
-				color: tag().background,
+				background: tag().background,
+				color: `color-contrast(${tag().background} vs white, black)`,
 				"line-height": 1,
 			}}
 			title={props.title}

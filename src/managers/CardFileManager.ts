@@ -1,13 +1,4 @@
-import {
-	readDir,
-	readTextFile,
-	remove,
-	exists,
-	mkdir,
-	writeTextFile,
-	readFile,
-	rename,
-} from "@tauri-apps/plugin-fs";
+import { invoke } from "@tauri-apps/api/core";
 import { Managers } from ".";
 
 type PathProps = {
@@ -17,72 +8,61 @@ type PathProps = {
 };
 
 export class CardFileManager {
-	private readonly managers: Managers;
-	constructor(managers: Managers) {
-		this.managers = managers;
-	}
-	private realmLocation() {
-		return this.managers?.realm.getCurrent().location;
-	}
-
-	private resolvePath({ toolName, cardName, path = "" }: PathProps): string {
-		if (!this.realmLocation()) throw new Error("Realm path not set");
-
-		const basePath = `${this.realmLocation()}/main/${toolName}/${cardName}`;
-		const normalized = path
-			.replace(/\\/g, "/")
-			.replace(/\/+/g, "/")
-			.replace(/(^\/|\/$)/g, "");
-
-		const full = `${basePath}/${normalized}`;
-		const resolved = full.split("/").reduce<string[]>((acc, part) => {
-			if (part === "..") acc.pop();
-			else if (part !== ".") acc.push(part);
-			return acc;
-		}, []);
-
-		const safePath = resolved.join("/");
-		if (!safePath.startsWith(basePath))
-			throw new Error(
-				"Access denied: Attempted to escape tool/card directory",
-			);
-
-		return safePath;
-	}
-
 	async mkdir(props: PathProps) {
-		const target = this.resolvePath(props);
-		await mkdir(target, { recursive: true });
+		await invoke("card_mkdir", {
+			toolName: props.toolName,
+			cardName: props.cardName,
+			path: props.path || "",
+		});
 	}
 
 	async readDir(props: PathProps) {
-		const target = this.resolvePath(props);
-		return await readDir(target);
+		return await invoke("card_read_dir", {
+			toolName: props.toolName,
+			cardName: props.cardName,
+			path: props.path || "",
+		});
 	}
 
 	async readFile(props: PathProps) {
-		const target = this.resolvePath(props);
-		return await readTextFile(target);
+		return await invoke("card_read_file", {
+			toolName: props.toolName,
+			cardName: props.cardName,
+			path: props.path || "",
+		});
 	}
 
 	async writeFile(props: PathProps & { contents: string }) {
-		const target = this.resolvePath(props);
-		await writeTextFile(target, props.contents);
+		await invoke("card_write_file", {
+			toolName: props.toolName,
+			cardName: props.cardName,
+			path: props.path || "",
+			contents: props.contents,
+		});
 	}
 
 	async rename(props: PathProps & { newPath: string }) {
-		const oldPath = this.resolvePath(props);
-		const newPath = this.resolvePath({ ...props, path: props.newPath });
-		await rename(oldPath, newPath);
+		await invoke("card_rename", {
+			toolName: props.toolName,
+			cardName: props.cardName,
+			path: props.path || "",
+			newPath: props.newPath,
+		});
 	}
 
 	async remove(props: PathProps) {
-		const target = this.resolvePath(props);
-		await remove(target, { recursive: true });
+		await invoke("card_remove", {
+			toolName: props.toolName,
+			cardName: props.cardName,
+			path: props.path || "",
+		});
 	}
 
 	async exists(props: PathProps) {
-		const target = this.resolvePath(props);
-		return await exists(target);
+		return await invoke("card_exists", {
+			toolName: props.toolName,
+			cardName: props.cardName,
+			path: props.path || "",
+		});
 	}
 }

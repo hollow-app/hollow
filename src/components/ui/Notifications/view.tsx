@@ -18,21 +18,25 @@ export const NotificationsView = (
 ) => {
 	return (
 		<div class="w-ful box-border flex h-full flex-col gap-3 px-3 py-5">
-			<div class="flex items-center justify-between">
-				<p class="text-secondary-40 px-3 text-sm tracking-wider">
-					Notifications
-				</p>
+			<div class="border-secondary-10 flex items-center justify-between border-b pb-4">
+				<div class="space-y-1">
+					<h2 class="text-lg font-semibold tracking-tight">
+						Notifications
+					</h2>
+					<p class="text-sm text-neutral-500">
+						View and manage your notifications.
+					</p>
+				</div>
 				<Show when={state.notifications().length > 0}>
 					<button
 						onclick={logic.clearAll}
 						class="button-control"
 						title="Clear All"
 					>
-						<MyIcon name="broom-outline" class="ml-auto size-5" />
+						<MyIcon name="broom-outline" class="size-5" />
 					</button>
 				</Show>
 			</div>
-			<hr class="border-secondary bg-secondary-10 h-[2px] w-full" />
 			<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">
 				<Show
 					when={state.notifications().length !== 0}

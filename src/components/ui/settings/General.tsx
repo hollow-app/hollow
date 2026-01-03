@@ -17,6 +17,7 @@ export default function General() {
 		manager.hotkeys.executeHotkey("Toggle Settings");
 		guide();
 	};
+	const login = () => {};
 	return (
 		<div class="flex flex-col gap-5 p-10 text-neutral-950 dark:text-neutral-200">
 			<div class="flex justify-between">
@@ -106,6 +107,19 @@ export default function General() {
 						class="toggle-label"
 						for="choose-realm-toggle"
 					></label>
+				</div>
+			</div>
+			<hr class="bg-secondary-10 h-px w-full border-0" />
+			<div class="flex items-center justify-between">
+				<div>
+					<h1 class="text-lg font-bold">Account</h1>
+
+					<p class="text-sm text-neutral-600 dark:text-neutral-400">
+						Sign-in to your hollow account.
+					</p>
+				</div>
+				<div>
+					<button class="button secondary">Sign-in</button>
 				</div>
 			</div>
 			<hr class="bg-secondary-10 h-px w-full border-0" />

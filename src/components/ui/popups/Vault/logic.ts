@@ -85,7 +85,6 @@ export const VaultLogic = (
 				type: "text",
 				value: target?.name ?? "",
 				attributes: { placeholder: "File Name" },
-				row: true,
 			},
 			{
 				key: "tags",
@@ -98,6 +97,7 @@ export const VaultLogic = (
 		const form: FormType = {
 			id: id ?? crypto.randomUUID(),
 			title: "Update Item",
+			description: "Modify metadata of this image for better scope.",
 			submit: save,
 			update: true,
 			options: options,

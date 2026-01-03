@@ -26,7 +26,7 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 	};
 	return (
 		<PopupWrapper Icon={EmojiIcon} title="Emoji Picker">
-			<div class="emoji-picker flex flex-col gap-3 px-5 pb-5">
+			<div class="emoji-picker flex flex-col gap-3">
 				<div class="flex w-full gap-2">
 					<div class="bg-secondary-10/70 flex items-center rounded">
 						<span class="flex size-12 shrink-0 items-center justify-center text-center text-2xl">
@@ -52,14 +52,14 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 				<Show
 					when={emojiData()}
 					fallback={
-						<div class="flex h-70 w-90 items-center justify-center">
+						<div class="flex h-80 w-100 items-center justify-center">
 							<div class="chaotic-orbit" />
 						</div>
 					}
 				>
 					{(data) => (
 						<div class="border-secondary-20 border-t border-b border-dashed">
-							<div class="flex h-70 w-90 flex-wrap justify-center gap-1 overflow-hidden overflow-y-scroll p-1">
+							<div class="flex h-80 w-100 flex-wrap justify-center gap-1 overflow-hidden overflow-y-scroll p-1">
 								<For
 									each={data()
 										.slice(26)

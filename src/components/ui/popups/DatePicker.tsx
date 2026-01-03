@@ -25,9 +25,9 @@ export default function DatePicker(props: Props) {
 			title="Date Picker"
 			onClose={props.hide}
 		>
-			<div class="mx-3 mb-3">
+			<div class="">
 				<div ref={el}></div>
-				<div class="border-secondary-15 flex w-full justify-end gap-3 border-t border-dashed pt-5">
+				<div class="border-secondary-15 flex w-full justify-end gap-3 border-t border-dashed pt-2">
 					<button
 						onclick={() => {
 							props.cal.onSave();

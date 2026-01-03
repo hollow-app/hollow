@@ -90,8 +90,8 @@ export class HollowManager {
 		await this.managers?.codeTheme.init();
 		await this.managers?.markdown.start();
 		//
-		useColor({ name: "primary" });
 		useColor({ name: "secondary" });
+		useColor({ name: "primary" });
 		useGrid();
 		useTags();
 		//

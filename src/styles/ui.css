@@ -145,12 +145,12 @@
 
 
 .input {
-	--padding-x: calc(var(--spacing) * 3);
-	--padding-y: calc(var(--spacing) * 2);
+	--padding-x: calc(var(--spacing) * 2.5);
+	--padding-y: calc(var(--spacing) * 1.5);
 	--border-w: 2px;
 	--bg-color: var(--color-secondary-10);
 	--border-color: var(--color-secondary-15);
-	--radius: var(--radius-lg);
+	--radius: var(--radius-md);
 	--w: 100%;
 	width: var(--w);
 	border: 1px solid var(--bg-color);

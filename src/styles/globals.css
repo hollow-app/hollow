@@ -200,16 +200,16 @@ a {
 
 
 .up-pop {
-	--bg-color: var(--color-secondary);
-	--border-color: var(--color-secondary-10);
+	--bg-color: color-mix(in oklab, var(--color-secondary-05), var(--color-secondary));
 	--border-w: 1px;
 	--shadow: #4d4d4d;
 	--position: absolute;
+	border: 1px solid var(--color-secondary-10);
 	position: var(--position);
 	background: var(--bg-color);
 	border-radius: var(--radius-lg);
-	border: var(--border-w) solid var(--border-color);
 	box-shadow: var(--shadow-2xl);
+	padding: calc(var(--spacing) * 2);
 	/* overflow: hidden; */
 	/* transition: 0.2s all ease-in-out; */
 	/* animation: animatetop 0.4s */
@@ -230,12 +230,18 @@ a {
 
 .up-pop .title-panel {
 	--padding-x: 1rem;
-	padding: 0.5rem var(--padding-x);
-	background-color: var(--color-secondary-05);
+	padding: 0.8rem var(--padding-x);
+	/* border: 1px solid var(--color-secondary-10); */
+	background-color: var(--color-secondary-10);
+	border-radius: var(--radius-md);
+
 
 	& .h1-title {
-		color: var(--color-neutral-600);
-		letter-spacing: var(--tracking-wide);
+		color: var(--color-secondary-foreground);
+		font-size: var(--text-lg);
+		line-height: 1;
+		font-weight: var(--font-weight-medium);
+
 	}
 }
 

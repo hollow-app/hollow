@@ -2,7 +2,7 @@ use serde_json::Value;
 use std::{fs, sync::Mutex};
 use tauri::{command, State};
 
-use crate::utils::get_full_path;
+use crate::utils::{get_full_path, validate_path};
 
 #[command]
 pub fn add_plugin(
@@ -10,6 +10,7 @@ pub fn add_plugin(
     content: String,
     state: State<'_, Mutex<crate::app::AppData>>,
 ) -> Result<bool, String> {
+    validate_path(&plugin_name)?;
     let plugin_file = get_full_path("plugins", &state)?
         .join(&plugin_name)
         .join("index.js");
@@ -54,6 +55,7 @@ pub fn remove_plugin(
     name: String,
     state: State<'_, Mutex<crate::app::AppData>>,
 ) -> Result<bool, String> {
+    validate_path(&name)?;
     let plugin_dir = get_full_path("plugins", &state)?.join(&name);
     if plugin_dir.exists() {
         fs::remove_dir_all(&plugin_dir)

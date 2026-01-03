@@ -292,6 +292,8 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 		const form: FormType = {
 			id: (update ? "update" : "new") + "-tag-form",
 			title: (update ? "Update" : "New") + " Tag",
+			description:
+				"Add a new tag by entering its name and selecting a color.",
 			update,
 			options: [
 				{
@@ -302,7 +304,6 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 					attributes: {
 						placeholder: "tag label",
 					},
-					inline: true,
 				},
 				{
 					key: "background",
@@ -310,7 +311,6 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 					label: "Color",
 					value: data?.background,
 					type: "color",
-					inline: true,
 				},
 			],
 			submit: (new_data) =>

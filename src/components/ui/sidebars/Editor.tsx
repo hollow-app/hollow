@@ -325,9 +325,15 @@ function Header(props: {
 	});
 
 	return (
-		<div class="border-secondary-10 flex h-fit w-full gap-2">
-			<div class="flex-1 space-y-1">
-				<div class="flex gap-2">
+		<div class="border-secondary-10 flex flex-col gap-4 border-b pb-4">
+			<div class="space-y-1">
+				<h2 class="text-lg font-semibold tracking-tight">Editor</h2>
+				<p class="text-sm text-neutral-500">
+					Manage your card properties and styles.
+				</p>
+			</div>
+			<div class="flex gap-2">
+				<div class="flex-1">
 					<Dropdown
 						value={props.selected()?.tool ?? ""}
 						onSelect={(v) =>
@@ -340,9 +346,11 @@ function Header(props: {
 								),
 							},
 						]}
-						placeholder="Tool"
+						placeholder="Select Tool"
 					/>
+				</div>
 
+				<div class="flex-1">
 					<Dropdown
 						value={
 							cardList().find(
@@ -357,7 +365,7 @@ function Header(props: {
 							});
 						}}
 						options={[{ items: cardList().map((i) => i.name) }]}
-						placeholder="Card"
+						placeholder="Select Card"
 					/>
 				</div>
 			</div>

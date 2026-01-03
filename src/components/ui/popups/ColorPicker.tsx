@@ -53,7 +53,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 	};
 	return (
 		<PopupWrapper Icon={ColorPickerIcon} title="Color Picker">
-			<div class="flex flex-col gap-3 px-5 pb-5">
+			<div class="flex flex-col gap-3">
 				<div class="flex h-fit w-100 items-center gap-2">
 					<div
 						class="border-secondary-10 relative size-12 shrink-0 rounded-xl border-[6px] transition-transform hover:scale-105"
@@ -79,7 +79,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 					</div>
 				</div>
 
-				<div class="relative h-[280px] w-full rounded-xl hover:cursor-pointer">
+				<div class="relative h-[280px] w-full rounded-xl px-2 hover:cursor-pointer">
 					<HexColorPicker color={myColor()} onChange={changeColor} />
 				</div>
 				<div class="mx-auto flex w-full justify-center gap-2 rounded-xl">
@@ -109,7 +109,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 					</For>
 				</div>
 
-				<div class="border-secondary-15 flex w-full justify-end gap-3 border-t border-dashed pt-5">
+				<div class="border-secondary-15 flex w-full justify-end gap-3 border-t border-dashed pt-2">
 					<button
 						onclick={onSave}
 						type="button"

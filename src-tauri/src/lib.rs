@@ -4,7 +4,9 @@ use tauri::plugin::Builder as PluginBuilder;
 use tauri_plugin_log::log::{self};
 
 mod app;
+mod auth;
 mod cards;
+mod deeplink;
 mod plugins;
 mod utils;
 mod vault;
@@ -45,17 +47,15 @@ pub fn run() {
         
         .plugin(tauri_plugin_deep_link::init())
         .setup(|app| {
-            #[cfg(any(windows, target_os = "linux"))]
-            {
-                use tauri_plugin_deep_link::DeepLinkExt;
-                app.deep_link().register_all()?;
-            }
             let salt_path = app
                 .path()
                 .app_local_data_dir()
                 .expect("could not resolve app local data path")
                 .join("stronghold_salt");
                 app.handle().plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
+            
+            deeplink::setup_deeplink_handler(app)?;
+            
             Ok(())
         })
         .plugin(tauri_plugin_tcp::init())
@@ -77,6 +77,8 @@ pub fn run() {
             vault::vault_add,
             vault::vault_remove,
             vault::vault_add_url,
+            // auth::get_user,
+            // auth::update_user_character,
             cards::card_read_dir,
             cards::card_read_file,
             cards::card_write_file,

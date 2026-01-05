@@ -111,8 +111,8 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 		transition={{ duration: 0.3 }}
 		class="relative flex h-full w-full items-center justify-center"
 	>
-		<div class="relative flex w-fit flex-col items-center select-none">
-			<div class="rotate-[10deg]">
+		<div class="relative flex w-fit flex-col items-center">
+			<div class="pointer-events-none rotate-[10deg] select-none">
 				<h1 class="mt-8 text-6xl font-black tracking-tight text-white">
 					Hello, adventurer!
 				</h1>
@@ -121,10 +121,7 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 					Let’s dive in!
 				</h1>
 			</div>
-			<button
-				class="button primary mt-7 ml-auto flex items-center gap-3"
-				onclick={props.onNext}
-			>
+			<button class="button primary mt-7 ml-auto" onclick={props.onNext}>
 				Start
 			</button>
 		</div>

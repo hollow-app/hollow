@@ -201,7 +201,6 @@ export const useNotebook = (props: NotebookProps): NotebookHook => {
 			header: "Note",
 			items: [
 				{
-					type: "top",
 					icon: MyIconFun({ name: "image" }),
 					label: "Change Banner",
 					onclick: changeBanner,

@@ -17,13 +17,13 @@ export interface CanvasProps {
 	setCanvasConfigs: Accessor<GridStackOptions>;
 	isLiveEditor: Accessor<boolean>;
 	layout: Layout;
-	anyExpanded: Accessor<boolean>;
-	setAnyExpanded: Setter<boolean>;
 }
 
 export interface CanvasState {
 	gridEl: Accessor<HTMLDivElement | undefined>;
 	setGridEl: (el: HTMLDivElement) => void;
+	canvasEl: Accessor<HTMLDivElement | undefined>;
+	setCanvasEl: (el: HTMLDivElement) => void;
 	grid: Accessor<GridStack | undefined>;
 }
 
@@ -33,6 +33,7 @@ export interface CanvasHook {
 
 export const useCanvas = (props: CanvasProps): CanvasHook => {
 	const [gridEl, setGridElSignal] = createSignal<HTMLDivElement>();
+	const [canvasEl, setCanvasEl] = createSignal<HTMLDivElement>();
 	const [grid, setGrid] = createSignal<GridStack>();
 
 	const onChange = (_: any, changed: GridStackNode[]) => {
@@ -110,6 +111,8 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 		state: {
 			gridEl,
 			setGridEl: setGridElSignal,
+			canvasEl,
+			setCanvasEl,
 			grid,
 		},
 	};

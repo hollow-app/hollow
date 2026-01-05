@@ -26,9 +26,6 @@ a:not(.outline-none),
 	background-color: #0a0a0a;
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
-	--layout-left: 0px;
-	--layout-right: 0px;
-	--layout-width: calc(var(--layout-right) + var(--layout-left));
 	--grid-gap: 8;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

@@ -10,7 +10,10 @@ export const Canvas: Component<CanvasProps> = (props) => {
 	const { state } = useCanvas(props);
 
 	return (
-		<div class="canvas-parent border-secondary relative h-full w-full overflow-hidden">
+		<div
+			ref={state.setCanvasEl}
+			class="canvas-parent relative h-full w-full overflow-hidden"
+		>
 			<OverlayScrollbarsComponent
 				element="div"
 				class={"h-full w-full"}
@@ -43,8 +46,8 @@ export const Canvas: Component<CanvasProps> = (props) => {
 							<Card
 								node={item}
 								grid={state.grid()!}
+								canvasEl={state.canvasEl}
 								isLiveEditor={props.isLiveEditor}
-								setAnyExpaneded={props.setAnyExpanded}
 							/>
 						)}
 					</For>

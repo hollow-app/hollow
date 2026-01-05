@@ -1,7 +1,7 @@
 import setStyle from "@hooks/setStyle";
 import { Layout, PanelType } from "@utils/layout";
 import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
-import { Accessor, createEffect, createMemo, For, on, Show } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
 
@@ -10,22 +10,10 @@ type SidepanelProps = {
 	controller: Layout;
 	width: string;
 	padding: string;
-	disableAnimation: Accessor<boolean>;
 };
 
 export default function Sidepanel(props: SidepanelProps) {
 	const layout = createMemo(() => props.controller.get[props.type]);
-
-	createEffect(
-		on(
-			() => layout().visible,
-			(v) => {
-				const value = v ? props.width : "0px";
-				setStyle([{ name: `--layout-${props.type}`, value }]);
-			},
-			{ defer: true },
-		),
-	);
 
 	return (
 		<Presence exitBeforeEnter>
@@ -49,14 +37,9 @@ export default function Sidepanel(props: SidepanelProps) {
 								padding: 0,
 							}}
 							transition={{
-								duration: props.disableAnimation() ? 0 : 0.5,
+								duration: 0.5,
 							}}
 							class="border-secondary-10 flex h-full shrink-0 flex-col overflow-hidden"
-							style={{
-								["border-" +
-								(props.type === "left" ? "right" : "left") +
-								"-width"]: "1px",
-							}}
 						>
 							<div
 								style={{

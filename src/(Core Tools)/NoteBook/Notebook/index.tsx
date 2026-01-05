@@ -68,20 +68,13 @@ const Notebook: Component<NotebookProps> = (props) => {
 
 	return (
 		<div
-			class="text-md @container relative box-border flex h-full w-full flex-col items-center"
+			class="text-md @container relative box-border flex h-full w-full flex-col items-center p-3"
 			classList={{
-				"text-[1.2em] p-0": state.isExpand(),
-				"p-3": !state.isExpand(),
+				"text-[1.2em]": state.isExpand(),
 			}}
 		>
 			{/* Header */}
-			<div
-				class="hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded-lg px-2 @xs:flex @7xl:h-13 @7xl:px-4"
-				classList={{
-					"bg-secondary-05": state.isExpand(),
-					"bg-secondary-10": !state.isExpand(),
-				}}
-			>
+			<div class="bg-secondary-10 hidden h-10 w-full shrink-0 items-center justify-between gap-4 rounded-lg px-2 @xs:flex @7xl:h-13 @7xl:px-4">
 				<h1 class="text-sm font-medium @7xl:text-lg">
 					{state.book.name}{" "}
 					<span class="text-secondary-40">Book</span>

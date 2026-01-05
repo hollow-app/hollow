@@ -27,18 +27,14 @@ export const Card: Component<CardProps> = (props) => {
 			>
 				<div
 					class={"h-full w-full"}
+					ref={state.setCardEl}
 					style={{
-						position: state.isExpand() ? "fixed" : "static",
+						position: state.isExpand() ? "absolute" : "static",
 						...props.node.style,
 						...(state.isExpand()
 							? {
-									top: "calc(var(--spacing) * 2)",
-									left: "calc(var(--layout-left) + calc(var(--spacing) * 17))",
-									width: "calc(100vw - var(--layout-width) - calc(var(--spacing) * 19))",
-									height: "calc(100vh - calc(var(--spacing) * 4))",
-									// background: "var(--color-secondary)",
-									"border-width": "0px",
-									"border-radius": "var(--radius-xl)",
+									// "border-width": "0px",
+									// "border-radius": "var(--radius-xl)",
 									"z-index": "502",
 								}
 							: {}),

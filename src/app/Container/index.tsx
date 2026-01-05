@@ -32,7 +32,6 @@ const Container: Component<ContainerProps> = (props) => {
 								width="calc(var(--spacing) * 104)"
 								controller={state.controller}
 								padding="0 calc(var(--spacing) * 2) 0 0"
-								disableAnimation={state.anyExpanded}
 							/>
 							<Canvas
 								canvasConfigs={
@@ -41,15 +40,12 @@ const Container: Component<ContainerProps> = (props) => {
 								setCanvasConfigs={state.setCanvasConfigs}
 								isLiveEditor={state.isLiveEditor}
 								layout={state.controller}
-								anyExpanded={state.anyExpanded}
-								setAnyExpanded={state.setAnyExpanded}
 							/>
 							<Sidepanel
 								type="right"
 								controller={state.controller}
 								width="calc(var(--spacing) * 104)"
 								padding="0 0 0 calc(var(--spacing) * 2)"
-								disableAnimation={state.anyExpanded}
 							/>
 						</div>
 					</div>

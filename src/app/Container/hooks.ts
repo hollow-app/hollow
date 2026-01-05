@@ -11,8 +11,6 @@ export interface ContainerState {
 	canvasConfigs: Accessor<GridStackOptions>;
 	setCanvasConfigs: Setter<GridStackOptions>;
 	isLiveEditor: Accessor<boolean>;
-	anyExpanded: Accessor<boolean>;
-	setAnyExpanded: Setter<boolean>;
 }
 
 export interface ContainerActions {}
@@ -25,7 +23,6 @@ export interface ContainerHook {
 export const useContainer = (): ContainerHook => {
 	const controller = createLayout();
 	const settingsManager = manager.settings;
-	const [anyExpanded, setAnyExpanded] = createSignal(false);
 	const [isSettings, setSettings] = createSignal(false);
 	const [canvasConfigs, setCanvasConfigs] = createSignal<GridStackOptions>({
 		disableResize: true,
@@ -65,8 +62,6 @@ export const useContainer = (): ContainerHook => {
 			canvasConfigs,
 			setCanvasConfigs,
 			isLiveEditor,
-			anyExpanded,
-			setAnyExpanded,
 		},
 		actions: {},
 	};

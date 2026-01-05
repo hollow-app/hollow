@@ -4,7 +4,7 @@ import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
 import { createMemo, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
-import { useHollow } from "../../Hollow";
+import { useHollow } from "../../HollowContext";
 
 type SidepanelProps = {
 	type: PanelType;

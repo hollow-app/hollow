@@ -14,7 +14,7 @@ import { ExpandIcon } from "lucide-solid";
 import { MyIconFun } from "@components/MyIcon";
 import { ContextMenuItem } from "@type/hollow";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
-import { useHollow } from "../../../Hollow";
+import { useHollow } from "../../../HollowContext";
 
 export interface CardProps {
 	node: CardType;

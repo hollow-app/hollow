@@ -4,7 +4,7 @@ import Navbar from "../../components/ui/sidebars/Navbar";
 import Canvas from "../../components/ui/Canvas";
 import Sidepanel from "./Sidepanel";
 import { useContainer } from "./hooks";
-import { HollowProvider } from "../../Hollow";
+import { HollowProvider } from "../../HollowContext";
 
 const Settings = lazy(async () => import("../../components/ui/Settings"));
 

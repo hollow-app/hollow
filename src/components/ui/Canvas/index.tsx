@@ -5,7 +5,6 @@ import "overlayscrollbars/overlayscrollbars.css";
 import { hollow } from "hollow";
 import { Card } from "../Card";
 import { useCanvas, CanvasProps } from "./hooks";
-import { useHollow } from "../../../Hollow";
 
 export const Canvas: Component<CanvasProps> = (props) => {
 	const { state } = useCanvas(props);

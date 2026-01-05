@@ -11,7 +11,7 @@ import { GridStack, GridStackOptions, GridStackNode } from "gridstack";
 import { Layout } from "@utils/layout";
 import { hollow } from "hollow";
 import { CardType } from "@type/hollow";
-import { useHollow } from "../../../Hollow";
+import { useHollow } from "../../../HollowContext";
 
 export interface CanvasProps {
 	canvasConfigs: Accessor<GridStackOptions>;

@@ -40,8 +40,12 @@ export default function FilterButton({ options }: FilterButtonProps) {
 			</button>
 
 			<Show when={isOpen()}>
-				<Floater hide={() => setIsOpen(false)} includedEl={dropdownRef}>
-					<div class="bg-secondary-05 border-secondary-10 text-secondary-foreground animate-in fade-in zoom-in-95 mt-3 w-fit overflow-hidden rounded-md border shadow-md">
+				<Floater 
+					hide={() => setIsOpen(false)} 
+					includedEl={dropdownRef!}
+					placement="bottom-end"
+				>
+					<div class="bg-secondary-05 border-secondary-10 text-secondary-foreground animate-in fade-in zoom-in-95 w-fit overflow-hidden rounded-md border shadow-md">
 						<div class="max-h-80 overflow-y-auto p-1">
 							<For
 								each={options().filter(

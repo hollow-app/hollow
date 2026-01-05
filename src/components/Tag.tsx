@@ -1,6 +1,4 @@
 import { formatCSSVarName } from "@hooks/useTags";
-import { useHollow } from "../Hollow";
-import { createMemo } from "solid-js";
 
 type TagProps = {
 	tag: string;
@@ -10,7 +8,7 @@ export default function Tag(props: TagProps) {
 	const color = `var(${formatCSSVarName(props.tag)}, var(--color-secondary-95))`;
 	return (
 		<span
-			class="inline-flex h-fit shrink-0 items-center truncate rounded-md px-2 py-1 text-xs font-medium select-none"
+			class="inline-flex h-fit shrink-0 items-center truncate rounded px-2 py-1 text-xs font-medium select-none"
 			style={{
 				"--bg": color,
 				color: `contrast-color(var(--bg))`,

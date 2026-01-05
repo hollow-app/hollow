@@ -4,6 +4,7 @@ import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
 import { createMemo, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
+import { useHollow } from "../../Hollow";
 
 type SidepanelProps = {
 	type: PanelType;
@@ -12,8 +13,11 @@ type SidepanelProps = {
 	padding: string;
 };
 
+// const side = ["left", "right"];
 export default function Sidepanel(props: SidepanelProps) {
 	const layout = createMemo(() => props.controller.get[props.type]);
+	// const opp = side[side.indexOf(props.type) ^ 1];
+	const { isFocus } = useHollow();
 
 	return (
 		<Presence exitBeforeEnter>
@@ -39,12 +43,15 @@ export default function Sidepanel(props: SidepanelProps) {
 							transition={{
 								duration: 0.5,
 							}}
-							class="border-secondary-10 flex h-full shrink-0 flex-col overflow-hidden"
+							class="border-secondary-10 flex h-full shrink-0 overflow-hidden"
+							classList={{
+								"flex-row-reverse": props.type === "right",
+							}}
 						>
 							<div
+								class="h-full"
 								style={{
-									width: props.width,
-									height: "100%",
+									"min-width": `calc(${props.width} - ${isFocus() ? "0px" : "1px"})`,
 								}}
 							>
 								<Dynamic
@@ -67,6 +74,15 @@ export default function Sidepanel(props: SidepanelProps) {
 									}}
 								/>
 							</div>
+							<Show when={!isFocus()}>
+								<hr
+									class="h-full w-px shrink-0 border-0"
+									style={{
+										background:
+											"linear-gradient(to bottom, transparent , var(--color-secondary-10) 20%, var(--color-secondary-10) 80%, transparent)",
+									}}
+								/>
+							</Show>
 						</Motion.div>
 					</Show>
 				)}

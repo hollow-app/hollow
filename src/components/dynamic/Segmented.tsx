@@ -58,17 +58,17 @@ export default function Segmented(props: Props) {
 				class="relative flex w-full items-center justify-around gap-5 p-1.5"
 			>
 				<div
-					class="bg-secondary dark:bg-primary-10 dark:text-primary-95 absolute h-full rounded-lg shadow transition-all"
+					class="bg-secondary absolute h-full rounded-lg shadow transition-all"
 					style={position()}
 				/>
 				<For each={props.options}>
 					{(option) => (
 						<button
-							class="text-secondary-40 z-1 flex h-full w-full items-center justify-center gap-1 font-medium outline-none"
+							class="z-1 flex h-full w-full items-center justify-center gap-1 font-medium outline-none"
 							type="button"
 							classList={{
-								"text-primary-foreground dark:text-secondary-foreground":
-									isSelected(option.key),
+								"text-primary ": isSelected(option.key),
+								"text-secondary-40 ": !isSelected(option.key),
 							}}
 							onclick={(e) => onSelect(option.key, e)}
 						>

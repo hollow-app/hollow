@@ -1,4 +1,12 @@
-import { Component, Show, For, createSignal } from "solid-js";
+import {
+	Component,
+	Show,
+	For,
+	createSignal,
+	onMount,
+	onCleanup,
+	createEffect,
+} from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import { hollow } from "hollow";
 import {
@@ -13,7 +21,13 @@ import { manager } from "@managers/index";
 import { DynamicIcon } from "@components/DynamicIcon";
 import MyIcon from "@components/MyIcon";
 import { useContextMenu, ContextMenuProps } from "./hooks";
-import { Accessor } from "solid-js";
+import {
+	computePosition,
+	autoUpdate,
+	offset,
+	flip,
+	shift,
+} from "@floating-ui/dom";
 
 const MenuButton: Component<{
 	icon?: any;
@@ -121,9 +135,6 @@ export const ContextMenu: Component<ContextMenuProps> = (props) => {
 																fallback={
 																	<ContextMenuSide
 																		{...item}
-																		position={
-																			state.position
-																		}
 																	/>
 																}
 															>
@@ -175,16 +186,17 @@ export const ContextMenu: Component<ContextMenuProps> = (props) => {
 	);
 };
 
-function ContextMenuSide({
-	icon,
-	label,
-	children,
-	position,
-}: ContextMenuItemButton & {
-	position: Accessor<{ xflip: boolean; yflip: boolean }>;
-}) {
+function ContextMenuSide({ icon, label, children }: ContextMenuItemButton) {
 	const [hovered, setHovered] = createSignal(false);
+	const [position, setPosition] = createSignal<{ x: number; y: number }>({
+		x: 0,
+		y: 0,
+	});
+	let buttonRef: HTMLButtonElement | undefined;
+	let sideMenuRef: HTMLDivElement | undefined;
 	let timeoutId: ReturnType<typeof setTimeout> | null = null;
+	let cleanupAutoUpdate: (() => void) | undefined;
+
 	const handleMouseOver = () => {
 		setHovered(true);
 		if (timeoutId) {
@@ -192,16 +204,58 @@ function ContextMenuSide({
 			timeoutId = null;
 		}
 	};
+
 	const handleMouseLeave = () => {
 		timeoutId = setTimeout(() => {
 			setHovered(false);
 		}, 300);
 	};
 
+	const updatePosition = () => {
+		if (!buttonRef || !sideMenuRef) return;
+
+		computePosition(buttonRef, sideMenuRef, {
+			placement: "right-start",
+			middleware: [offset(12), flip(), shift({ padding: 8 })],
+		}).then(({ x, y }) => {
+			setPosition({ x, y });
+		});
+	};
+
+	createEffect(() => {
+		if (hovered() && buttonRef && sideMenuRef) {
+			requestAnimationFrame(() => {
+				updatePosition();
+				cleanupAutoUpdate?.();
+				cleanupAutoUpdate = autoUpdate(
+					buttonRef!,
+					sideMenuRef!,
+					updatePosition,
+				);
+			});
+		} else {
+			cleanupAutoUpdate?.();
+			cleanupAutoUpdate = undefined;
+		}
+	});
+
+	onCleanup(() => {
+		cleanupAutoUpdate?.();
+		if (timeoutId) {
+			clearTimeout(timeoutId);
+		}
+	});
+
 	return (
 		<div class="relative" onMouseLeave={handleMouseLeave}>
-			<button class="button-cm" onMouseOver={handleMouseOver}>
-				<DynamicIcon class="size-4.5" icon={icon} />
+			<button
+				ref={buttonRef}
+				class="button-cm"
+				onMouseOver={handleMouseOver}
+			>
+				<Show when={icon}>
+					<DynamicIcon class="size-4.5" icon={icon} />
+				</Show>
 				{label}
 				{children && (
 					<ChevronRightIcon class="text-secondary-30 ml-auto" />
@@ -210,13 +264,12 @@ function ContextMenuSide({
 			<Presence>
 				<Show when={hovered()}>
 					<Motion.div
-						class="bg-secondary absolute mx-3 h-fit w-70 rounded-lg p-1 backdrop-blur-sm"
+						ref={sideMenuRef}
+						class="bg-secondary fixed z-1001 h-fit w-70 rounded-lg p-1 backdrop-blur-sm"
 						onMouseOver={handleMouseOver}
-						classList={{
-							"right-[100%]": position().xflip,
-							"bottom-0": position().yflip,
-							"left-[100%]": !position().xflip,
-							"top-0": !position().yflip,
+						style={{
+							left: `${position().x}px`,
+							top: `${position().y}px`,
 						}}
 						initial={{ opacity: 0, y: -25 }}
 						animate={{ opacity: 1, y: 0 }}

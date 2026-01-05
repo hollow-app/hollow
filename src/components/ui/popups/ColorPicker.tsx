@@ -53,7 +53,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 	};
 	return (
 		<PopupWrapper Icon={ColorPickerIcon} title="Color Picker">
-			<div class="flex flex-col gap-3">
+			<div class="flex flex-col gap-3 px-5 pb-5">
 				<div class="flex h-fit w-100 items-center gap-2">
 					<div
 						class="border-secondary-10 relative size-12 shrink-0 rounded-xl border-[6px] transition-transform hover:scale-105"

@@ -25,7 +25,7 @@ export default function DatePicker(props: Props) {
 			title="Date Picker"
 			onClose={props.hide}
 		>
-			<div class="">
+			<div class="px-4 pb-4">
 				<div ref={el}></div>
 				<div class="border-secondary-15 flex w-full justify-end gap-3 border-t border-dashed pt-2">
 					<button

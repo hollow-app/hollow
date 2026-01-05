@@ -1,5 +1,12 @@
 import { CardType, ContextMenuItem } from "@type/hollow";
-import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
+import {
+	Accessor,
+	createMemo,
+	createSignal,
+	createUniqueId,
+	For,
+	Setter,
+} from "solid-js";
 import { NotebookType } from "../NotebookType";
 import { NotebookManager } from "../NotebookManager";
 import FilterButton from "@components/FilterButton";
@@ -7,12 +14,14 @@ import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
 import { hollow } from "hollow";
 import { MyIconFun } from "@components/MyIcon";
+import { SearchIcon } from "lucide-solid";
+import Checkbox from "@components/Checkbox";
 
 type NoteListProps = {
 	card: CardType;
 	book: NotebookType;
 	changeSelected: (id: string) => void;
-	isExpand?: boolean;
+	isExpand?: Accessor<boolean>;
 };
 
 export default function NoteList(props: NoteListProps) {
@@ -85,25 +94,34 @@ export default function NoteList(props: NoteListProps) {
 
 	return (
 		<div
-			class="flex h-full w-full flex-col justify-center gap-2 px-0"
+			class="flex h-full w-full flex-col justify-center"
 			classList={{
 				// "border-l border-secondary-10 pl-2 py-5": props.isExpand,
-				"pt-2 pb-5": !props.isExpand,
+				"pt-2 px-0 pb-5 gap-2": !props.isExpand(),
+				"px-3 py-5 gap-4": props.isExpand(),
 			}}
 			oncontextmenu={onContextMenu}
 		>
+			<Show when={props.isExpand()}>
+				<div class="space-y-1">
+					<h2 class="text-lg font-semibold tracking-tight">Notes</h2>
+					<p class="text-sm text-neutral-500">Manage your Notes.</p>
+				</div>
+			</Show>
 			<div class="flex gap-1">
-				<input
-					class="input flex-1 text-sm"
-					placeholder="Search"
-					value={searchTerm()}
-					onInput={(e) => setSearchTerm(e.currentTarget.value)}
-					style={{
-						"--padding-x": "calc(var(--spacing) * 2)",
-						"--padding-y": "calc(var(--spacing) * 1)",
-					}}
-				/>
-
+				<div class="relative flex-1">
+					<input
+						class="input peer ml-auto h-fit max-w-full transition-all duration-200"
+						style={{
+							"--padding-x":
+								"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
+						}}
+						value={searchTerm()}
+						onInput={(e) => setSearchTerm(e.currentTarget.value)}
+						placeholder="Search"
+					/>
+					<SearchIcon class="text-secondary-30 peer-focus:text-secondary-50 absolute top-1/2 left-2 size-5 -translate-y-1/2 transition-colors" />
+				</div>
 				<FilterButton
 					options={() => [
 						{
@@ -118,7 +136,7 @@ export default function NoteList(props: NoteListProps) {
 
 			<div class="grid w-full flex-1 auto-rows-min grid-cols-1 gap-2 @lg:grid-cols-2 @4xl:grid-cols-3">
 				<For each={filteredNotes()}>
-					{(note) => (
+					{(note, index) => (
 						<NotePreview
 							note={note}
 							changeSelected={props.changeSelected}
@@ -159,7 +177,7 @@ function NotePreview({
 	};
 	return (
 		<div
-			class="group bg-secondary-10 border-primary relative mx-auto flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
+			class="group border-primary relative mx-auto flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md"
 			onclick={(e) =>
 				e.ctrlKey ? onSelect() : changeSelected(note.title)
 			}
@@ -167,25 +185,23 @@ function NotePreview({
 				"border-secondary-10 hover:border-secondary-10": !selected(),
 			}}
 		>
-			<input
-				type="checkbox"
-				class="checkbox top-1 right-1 opacity-0 group-hover:opacity-100"
+			<div
+				class="absolute top-1 right-1 opacity-0 group-hover:opacity-100"
 				classList={{ "opacity-100": selected() }}
-				style={{ "--position": "absolute", "--margin": "0" }}
-				checked={selected()}
-				onclick={(e) => {
-					e.stopPropagation();
-					onSelect();
-				}}
-			/>
+				onclick={(e) => e.stopPropagation()}
+			>
+				<Checkbox checked={selected()} onclick={onSelect} />
+			</div>
 
 			<div
-				class="border-secondary-05 flex h-full flex-col gap-1 rounded-lg border-2 p-2 px-3 text-xs text-neutral-500"
+				class="border-secondary-05 flex h-full flex-col gap-1 rounded-lg p-2 px-3 text-xs text-neutral-500"
 				style={{
-					"background-image": `linear-gradient(to right, var(--secondary-color-05), transparent), url(${note.attributes.banner})`,
 					"background-size": "cover",
 					"background-position": "center",
 					"background-repeat": "no-repeat",
+					...(note.attributes.banner && {
+						"background-image": `linear-gradient(to right, var(--secondary-color), transparent), url(${note.attributes.banner})`,
+					}),
 				}}
 			>
 				<h2 class="truncate text-lg font-medium text-neutral-800 dark:text-neutral-200">

@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 
 type PopupWrapperProps = {
-	Icon: (props: ComponentProps<"svg">) => any;
+	Icon?: (props: ComponentProps<"svg">) => any;
 	title: string;
 	children: JSX.Element;
 	onClose?: () => void;
@@ -79,11 +79,13 @@ export default function PopupWrapper({
 				class="title-panel flex h-fit w-full cursor-grab items-center gap-2 rounded-t-lg select-none"
 				onPointerDown={down}
 			>
-				<Icon class="text-secondary-50 size-5" />
+				<Show when={Icon}>
+					<Icon class="text-secondary-50 bg-secondary-10 size-8 rounded p-1.5" />
+				</Show>
 				<h1 class="h1-title">{title}</h1>
 				<Show when={onClose}>
 					<button
-						class="bg-secondary-15 group ml-auto rounded-full"
+						class="bg-secondary-15 group mr-2 ml-auto rounded-full"
 						onclick={onClose}
 					>
 						<XIcon class="text-secondary-50 size-4 p-0.5 opacity-0 group-hover:opacity-100" />

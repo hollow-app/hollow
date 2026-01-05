@@ -8,6 +8,7 @@ export class MarkdownManager {
 	private slugger = new GithubSlugger();
 	private noteId: string;
 	private renderer!: InstanceType<typeof marked.Renderer>;
+	private checkboxIndex = 0;
 
 	constructor(managers: Managers) {
 		this.managers = managers;
@@ -52,6 +53,30 @@ export class MarkdownManager {
 			return `<a href="${href}" ${!href[0].startsWith("#") && 'target="_blank"'}>${text}</a>`;
 		};
 
+		const originalListItem = this.renderer.listitem.bind(this.renderer);
+
+		this.renderer.listitem = (item) => {
+			if (!item.task) {
+				return originalListItem(item);
+			}
+
+			const index = ++this.checkboxIndex;
+			const checkboxId = `hollow-${this.noteId}-task-${index}`;
+			const checkedAttr = item.checked ? "checked" : "";
+
+			return `
+<li class="task-item">
+	<div class="checkbox md">
+		<div class="round">
+			<input type="checkbox" id="${checkboxId}" ${checkedAttr} />
+			<label for="${checkboxId}"></label>
+		</div>
+	</div>
+	<span class="task-text">${item.text}</span>
+</li>
+	`.trim();
+		};
+
 		marked.use(markedKatex());
 		marked.setOptions({ renderer: this.renderer });
 	}
@@ -67,6 +92,7 @@ export class MarkdownManager {
 		this.noteId = id;
 		// for unique elements
 		this.slugger.reset();
+		this.checkboxIndex = 0;
 		return await marked(markdown);
 	}
 

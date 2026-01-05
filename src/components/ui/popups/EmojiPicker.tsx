@@ -26,7 +26,7 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 	};
 	return (
 		<PopupWrapper Icon={EmojiIcon} title="Emoji Picker">
-			<div class="emoji-picker flex flex-col gap-3">
+			<div class="emoji-picker flex flex-col gap-3 px-5 pb-5">
 				<div class="flex w-full gap-2">
 					<div class="bg-secondary-10/70 flex items-center rounded">
 						<span class="flex size-12 shrink-0 items-center justify-center text-center text-2xl">

@@ -28,17 +28,7 @@ export const Card: Component<CardProps> = (props) => {
 				<div
 					class={"h-full w-full"}
 					ref={state.setCardEl}
-					style={{
-						position: state.isExpand() ? "absolute" : "static",
-						...props.node.style,
-						...(state.isExpand()
-							? {
-									// "border-width": "0px",
-									// "border-radius": "var(--radius-xl)",
-									"z-index": "502",
-								}
-							: {}),
-					}}
+					style={props.node.style}
 					onContextMenu={actions.onContextMenu}
 				>
 					<div

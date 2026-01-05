@@ -97,7 +97,7 @@ a:not([target="_blank"]) {
 }
 
 *::selection {
-	background: rgba(var(--primary-rgb), 0.3);
+	background: color-mix(in oklab, var(--color-primary) 20%, transparent);
 	color: var(--primary-color);
 }
 
@@ -201,12 +201,13 @@ a {
 	--border-w: 1px;
 	--shadow: #4d4d4d;
 	--position: absolute;
+	--p: 2;
 	border: 1px solid var(--color-secondary-10);
 	position: var(--position);
 	background: var(--bg-color);
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-2xl);
-	padding: calc(var(--spacing) * 2);
+	/* padding: calc(var(--spacing) * var(--p)); */
 	/* overflow: hidden; */
 	/* transition: 0.2s all ease-in-out; */
 	/* animation: animatetop 0.4s */
@@ -226,11 +227,10 @@ a {
 }
 
 .up-pop .title-panel {
-	--padding-x: 1rem;
-	padding: 0.8rem var(--padding-x);
-	/* border: 1px solid var(--color-secondary-10); */
-	background-color: var(--color-secondary-10);
-	border-radius: var(--radius-md);
+	padding: 0.5rem;
+	border-bottom: 1px solid var(--color-secondary-10);
+	/* background-color: var(--color-secondary-10); */
+	/* border-radius: var(--radius-md); */
 
 
 	& .h1-title {

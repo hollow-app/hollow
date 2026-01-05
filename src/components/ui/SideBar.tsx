@@ -89,7 +89,7 @@ export default function SideBar({
 			selectedCondition: () =>
 				layout.isPanelVisible("right", "notifications"),
 			style: {
-				"--c": "var(--alert-color)",
+				"--opacity": "var(--alert)",
 			},
 		},
 		{
@@ -120,9 +120,7 @@ export default function SideBar({
 			id="sidebar"
 			class="border-secondary-10 bg-secondary-05 my-2 mr-2 box-content flex w-13 shrink-0 flex-col gap-4 rounded-xl border-r-0 py-2"
 			style={{
-				"--alert-color": alert()
-					? "var(--color-primary) "
-					: "var(--color-secondary-95)",
+				"--alert": alert() ? "0.9" : "0.5",
 			}}
 		>
 			<button class="outline-none">
@@ -132,7 +130,7 @@ export default function SideBar({
 				<For each={top}>{(btn) => <ControlButton {...btn} />}</For>
 			</div>
 			<Show when={layout.anyExtraPanels()}>
-				<div class="bg-secondary-10 mx-auto flex flex-col gap-3 rounded p-1">
+				<div class="bg-secondary-10 mx-auto flex flex-col gap-3 rounded-lg p-1">
 					<For
 						each={[
 							...layout.get.left.panels,

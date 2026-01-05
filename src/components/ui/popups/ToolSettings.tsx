@@ -2,6 +2,8 @@ import DynamicOption from "@components/dynamic/DynamicOption";
 import { ToolOption, ToolOptions } from "@type/hollow";
 import { hollow } from "hollow";
 import { createMemo, For, Show } from "solid-js";
+import PopupWrapper from "../PopupWrapper";
+import { MyIconFun } from "@components/MyIcon";
 
 type ToolSettingsProps = {
 	pluginSettings: ToolOptions;
@@ -10,9 +12,9 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 	const card = createMemo(() =>
 		hollow.toolManager
 			.getHand()
-		[
-			pluginSettings.tool.toLowerCase()
-		].cards.find((i) => i.data.name == pluginSettings.card),
+			[
+				pluginSettings.tool.toLowerCase()
+			].cards.find((i) => i.data.name == pluginSettings.card),
 	);
 
 	const onSave = () => {
@@ -28,33 +30,32 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 		hollow.events.emit("tool-settings", null);
 	};
 	return (
-		<div class="pop-up">
-			<div class="up-pop pointer-events-auto flex h-fit max-h-[70%] w-[60%] flex-col overflow-hidden p-5">
-				<div class="flex h-fit gap-10 pb-5">
-					<span class="bg-secondary-05 flex h-30 w-30 items-center justify-center rounded-lg p-3 text-center text-6xl">
+		<PopupWrapper
+			title={pluginSettings.tool}
+			Icon={MyIconFun({ name: "gear-outline" })}
+			onClose={onCancel}
+		>
+			<div class="max-h-[70vh] min-w-[30vw] px-5 pb-5">
+				<div class="flex h-fit items-center gap-2 pb-5">
+					<span class="bg-secondary-05 flex size-10 items-center justify-center rounded-lg p-1 text-center text-xl">
 						{card().data.emoji}
 					</span>
-					<div class="flex-1 rounded-lg">
-						<h1 class="text-4xl font-bold text-gray-950 dark:text-gray-50">
-							{pluginSettings.tool}
-						</h1>
-						<h3 class="text-secondary-60 text-xl font-semibold">
-							{pluginSettings.card}
-						</h3>
-					</div>
+					<h3 class="text-secondary-60 text-2xl font-semibold">
+						{pluginSettings.card}
+					</h3>
 				</div>
 				<hr class="border-secondary-15 h-px w-full border-dashed" />
 				<div class="flex h-fit flex-col gap-10 overflow-hidden overflow-y-scroll py-5 text-neutral-950 dark:text-neutral-100">
 					<For each={pluginSettings.options}>
 						{(option: ToolOption, index) => (
 							<>
-								<div class="flex w-full justify-between px-3">
-									<div class="w-full">
-										<h1 class="text-lg font-bold">
+								<div class="flex w-full flex-col justify-between gap-2 px-3">
+									<div class="w-full space-y-1.5">
+										<h2 class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
 											{option.label}
-										</h1>
+										</h2>
 										<Show when={option.description}>
-											<h3 class="text-secondary-40">
+											<p class="text-xs text-neutral-500">
 												<For
 													each={option.description.split(
 														/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,
@@ -89,7 +90,7 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 														}
 													}}
 												</For>
-											</h3>
+											</p>
 										</Show>
 									</div>
 
@@ -122,6 +123,6 @@ export default function ToolSettings({ pluginSettings }: ToolSettingsProps) {
 					</button>
 				</div>
 			</div>
-		</div>
+		</PopupWrapper>
 	);
 }

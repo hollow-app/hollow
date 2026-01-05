@@ -79,11 +79,11 @@ export class HollowManager {
 		}
 		await this.managers?.realm.start();
 		await this.managers?.deeplink.start();
-		//
-		const window = getCurrentWindow();
-		this.unlisten = await window.onCloseRequested((event) =>
-			this.handleClose(event),
-		);
+		// not needed
+		// const window = getCurrentWindow();
+		// this.unlisten = await window.onCloseRequested((event) =>
+		// 	this.handleClose(event),
+		// );
 
 		return true;
 	}

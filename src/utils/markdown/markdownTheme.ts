@@ -8,6 +8,9 @@ export const markDownTheme = {
 	".cm-cursor": {
 		borderColor: "var(--secondary-color-95)",
 	},
+	".cm-scroller": {
+		fontFamily: "Inter",
+	},
 	"&.cm-focused .cm-selectionBackground": {
 		backgroundColor: "rgb(var(--primary-rgb), 0.3) !important",
 	},

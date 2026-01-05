@@ -1,4 +1,4 @@
-import { Accessor, createMemo, Setter } from "solid-js";
+import { Accessor, createMemo, createUniqueId, Setter } from "solid-js";
 import { PenLineIcon, SendIcon } from "lucide-solid";
 import { TagType } from "@type/hollow";
 import { HollowEvent } from "@type/hollow";
@@ -8,6 +8,7 @@ import { ItemType } from "../types/ItemType";
 import { hollow } from "hollow";
 import ItemDisplay from "./ItemDisplay";
 import { MyIconFun } from "@components/MyIcon";
+import Checkbox from "@components/Checkbox";
 
 type ItemProps = {
 	toolEvent?: HollowEvent;
@@ -91,7 +92,7 @@ export default function Item(props: ItemProps) {
 				containerStyle={{
 					"border-color": selected()
 						? props.accentColor
-						: "var(--color-secondary-10)",
+						: "var(--color-secondary-15)",
 				}}
 				headerContent={
 					<div
@@ -102,16 +103,7 @@ export default function Item(props: ItemProps) {
 								?.includes(props.item.id),
 						}}
 					>
-						<input
-							type="checkbox"
-							class="checkbox"
-							style={{
-								"--accent-color": props.accentColor,
-								"--margin": 0,
-							}}
-							checked={selected()}
-							onclick={onSelect}
-						/>
+						<Checkbox checked={selected()} onclick={onSelect} />
 					</div>
 				}
 			/>

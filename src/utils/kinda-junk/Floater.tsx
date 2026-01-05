@@ -1,4 +1,12 @@
 import { JSX, onMount, onCleanup, createSignal } from "solid-js";
+import {
+	computePosition,
+	autoUpdate,
+	offset,
+	flip,
+	shift,
+	Placement,
+} from "@floating-ui/dom";
 
 interface Props {
 	children: JSX.Element;
@@ -6,17 +14,16 @@ interface Props {
 	includedEl: HTMLElement;
 	class?: string;
 	style?: JSX.CSSProperties;
+	placement?: Placement;
 }
 
 export default function Floater(props: Props) {
 	let el!: HTMLDivElement;
 
-	const [position, setPosition] = createSignal<{ left: string; top: string }>(
-		{
-			left: "0px",
-			top: "0px",
-		},
-	);
+	const [position, setPosition] = createSignal<{ x: number; y: number }>({
+		x: 0,
+		y: 0,
+	});
 
 	const onPointerDown = (e: PointerEvent) => {
 		const target = e.target as Node;
@@ -26,44 +33,29 @@ export default function Floater(props: Props) {
 		}
 	};
 
-	const updatePosition = () => {
-		if (!el || !props.includedEl) return;
-
-		const anchor = props.includedEl.getBoundingClientRect();
-		const floating = el.getBoundingClientRect();
-
-		let x = anchor.left;
-		let y = anchor.bottom;
-
-		if (x + floating.width > window.innerWidth) {
-			x = window.innerWidth - floating.width;
-		}
-		if (x < 0) x = 0;
-
-		if (y + floating.height > window.innerHeight) {
-			y = anchor.top - floating.height;
-		}
-
-		if (y < 0) y = 0;
-
-		setPosition({
-			left: `${Math.round(x)}px`,
-			top: `${Math.round(y)}px`,
-		});
-	};
+	let cleanupAutoUpdate: (() => void) | undefined;
 
 	onMount(() => {
+		if (!el || !props.includedEl) return;
+
+		const updatePosition = () => {
+			computePosition(props.includedEl, el, {
+				placement: props.placement || "bottom-start",
+				middleware: [offset(8), flip(), shift({ padding: 8 })],
+			}).then(({ x, y }) => {
+				setPosition({ x, y });
+			});
+		};
+
 		updatePosition();
 
-		window.addEventListener("scroll", updatePosition, true);
-		window.addEventListener("resize", updatePosition);
+		cleanupAutoUpdate = autoUpdate(props.includedEl, el, updatePosition);
 
 		document.addEventListener("pointerdown", onPointerDown, true);
 	});
 
 	onCleanup(() => {
-		window.removeEventListener("scroll", updatePosition, true);
-		window.removeEventListener("resize", updatePosition);
+		cleanupAutoUpdate?.();
 		document.removeEventListener("pointerdown", onPointerDown, true);
 	});
 
@@ -72,8 +64,8 @@ export default function Floater(props: Props) {
 			ref={el}
 			class={"fixed z-601 h-fit w-fit " + (props.class ?? "")}
 			style={{
-				left: position().left,
-				top: position().top,
+				left: `${position().x}px`,
+				top: `${position().y}px`,
 				...props.style,
 			}}
 		>

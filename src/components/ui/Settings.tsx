@@ -49,7 +49,7 @@ export default function Settings(props: SettingsProps) {
 				}}
 			>
 				<div class="flex h-full w-full">
-					<div class="bg-secondary-10/30 box-border flex h-full w-[25%] flex-col justify-between rounded-md px-5 pt-5 pb-10">
+					<div class="bg-secondary-10/30 box-border flex h-full w-[25%] flex-col justify-between px-5 pt-5 pb-10">
 						<div class="flex flex-col gap-2">
 							<div class="bg-secondary-10 mb-5 box-border flex overflow-hidden rounded px-3 py-5">
 								<HollowIcon class="fill-primary orbit my-auto mr-2 size-12 shrink-0 transition-transform duration-300" />

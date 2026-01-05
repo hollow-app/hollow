@@ -98,7 +98,7 @@ export default function Expand() {
 
 	return (
 		<div class="my-2 size-full rounded-xl">
-			<div class="flex h-full flex-col gap-3 px-3 py-3">
+			<div class="flex h-full flex-col gap-3 py-3 pr-5 pl-3">
 				<div class="border-secondary-10 flex flex-col gap-4 border-b pb-4">
 					<div class="space-y-1">
 						<h2 class="text-lg font-semibold tracking-tight">

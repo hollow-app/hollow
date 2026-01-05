@@ -14,6 +14,7 @@ import { ExpandIcon } from "lucide-solid";
 import { MyIconFun } from "@components/MyIcon";
 import { ContextMenuItem } from "@type/hollow";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
+import { useHollow } from "../../../Hollow";
 
 export interface CardProps {
 	node: CardType;
@@ -47,7 +48,7 @@ export const useCard = (props: CardProps): CardHook => {
 	const [cardEl, setCardEl] = createSignal<HTMLDivElement>();
 	const [isLoaded, setLoaded] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
-
+	const { setFocus } = useHollow();
 	const tool = props.node.data.tool;
 
 	createEffect(
@@ -131,19 +132,26 @@ export const useCard = (props: CardProps): CardHook => {
 						size({
 							apply({ rects, elements }) {
 								Object.assign(elements.floating.style, {
+									position: "absolute",
 									width: `${rects.reference.width}px`,
 									height: `${rects.reference.height}px`,
+									left: `${rects.reference.x}px`,
+									top: `${rects.reference.y}px`,
+									"z-index": "502",
 								});
 							},
 						}),
 					],
 				});
 			});
+			setFocus(true);
 			onCleanup(() => {
 				Object.assign(nestedChild.style, {
+					position: "static",
 					width: "100%",
 					height: "100%",
 				});
+				setFocus(false);
 				cleanup();
 			});
 		}

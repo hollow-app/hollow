@@ -65,7 +65,7 @@ export default function MarkdownEditor({
 				<p class="text-secondary-30 absolute top-0 left-[6px] text-xl">
 					{
 						placeholders[
-						Math.floor(Math.random() * placeholders.length)
+							Math.floor(Math.random() * placeholders.length)
 						]
 					}
 				</p>

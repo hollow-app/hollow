@@ -34,8 +34,8 @@ export default function Form({ form, setForm, index }: FormProps) {
 				if (i.optional) return false;
 				return i.dependsOn
 					? i.dependsOn.conditions.includes(
-						submission[i.dependsOn.key] && !submission[i.key],
-					)
+							submission[i.dependsOn.key] && !submission[i.key],
+						)
 					: !submission[i.key];
 			})
 		) {
@@ -93,7 +93,7 @@ export default function Form({ form, setForm, index }: FormProps) {
 									}}
 								>
 									<div class="mb-2 flex w-full flex-col gap-1.5">
-										<h2 class="flex items-center gap-2 text-sm font-medium leading-none select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+										<h2 class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
 											{option.label}
 											<Show when={!option.optional}>
 												<span class="text-primary-10 text-sm">

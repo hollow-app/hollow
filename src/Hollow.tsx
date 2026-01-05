@@ -15,6 +15,8 @@ import { hollow } from "hollow";
 interface HollowContextValue {
 	tags: Accessor<TagType[]>;
 	setTags: Setter<TagType[]>;
+	isFocus: Accessor<boolean>;
+	setFocus: Setter<boolean>;
 }
 const HollowContext = createContext<HollowContextValue>();
 
@@ -22,9 +24,12 @@ export function HollowProvider(props: { children: JSX.Element }) {
 	const [tags, setTags] = createSignal<TagType[]>(
 		manager.settings.getConfig("custom-tags"),
 	);
+	const [isFocus, setFocus] = createSignal<boolean>(false);
 	const value: HollowContextValue = {
 		tags,
 		setTags,
+		isFocus,
+		setFocus,
 	};
 	const onUpdateTags = (tags: TagType[]) => {
 		setTags([...tags]);

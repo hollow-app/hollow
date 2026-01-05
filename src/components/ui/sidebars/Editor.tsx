@@ -109,7 +109,7 @@ export default function Editor() {
 				}
 			>
 				<>
-					<div class="flex-1 overflow-y-scroll pr-3 pl-[calc(var(--spacing)*3+8px)] text-gray-950 dark:text-gray-50">
+					<div class="flex-1 overflow-y-scroll pl-[8px] text-gray-950 dark:text-gray-50">
 						<div class="h-fit">
 							<h1 class="mt-5 text-2xl font-bold">Size</h1>
 							<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">

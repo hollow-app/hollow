@@ -31,6 +31,10 @@ export function ShadeIt(name: string, color: string) {
 		});
 	}
 
+	result.push({
+		name: `--${name}-color-foreground`,
+		value: readableColor(color),
+	});
 	return result;
 }
 

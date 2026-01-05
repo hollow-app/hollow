@@ -13,12 +13,12 @@ export default function WordInput(props: Props) {
 
 	return (
 		<div
-			class="group border-secondary-10 bg-secondary-05 relative flex min-h-[2.5rem] w-full flex-wrap items-center gap-1.5 rounded-md border-1 px-3 py-2 text-sm shadow-sm"
+			class="group border-secondary-10 bg-secondary-05 relative flex min-h-[2.5rem] w-full flex-wrap gap-1.5 rounded-md border-1 px-2 py-2 text-sm shadow-sm"
 			onclick={() => inpt.focus()}
 		>
 			<For each={keywords()}>
 				{(tag: string) => (
-					<span class="border-secondary-15 bg-secondary-10 inline-flex items-center gap-1 rounded-md border-1 px-2 py-0.5 text-xs font-medium">
+					<span class="border-secondary-15 bg-secondary-10 inline-flex h-fit items-center gap-1 rounded-md border-1 px-2 py-0.5 text-xs font-medium">
 						{tag}
 						<button
 							type="button"
@@ -40,7 +40,7 @@ export default function WordInput(props: Props) {
 			<input
 				ref={inpt}
 				placeholder={props.placeholder ?? "Add item..."}
-				class="min-w-[120px] flex-1 bg-transparent text-sm outline-none focus:outline-none"
+				class="h-fit min-w-[120px] flex-1 bg-transparent py-0.5 text-sm outline-none focus:outline-none"
 				onkeydown={(e) => {
 					if (
 						(e.key === "Enter" || e.key === ",") &&

@@ -8,7 +8,8 @@ export type HotKeyName =
 	| "Toggle Editor"
 	| "Toggle Vault"
 	| "Accept Confirm Message"
-	| "Refuse Confirm Message";
+	| "Refuse Confirm Message"
+	| "Toggle Card Focus Mode";
 export type HotKeyType = {
 	name: HotKeyName;
 	keys: string[];

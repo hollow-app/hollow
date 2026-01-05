@@ -174,7 +174,6 @@ export default function Account() {
 					<div class="w-[50%]">
 						<input
 							class="input"
-							placeholder="username"
 							value={character().name}
 							onInput={(e) =>
 								setCharacter((prev) => ({
@@ -198,7 +197,6 @@ export default function Account() {
 					<div class="w-[50%]">
 						<textarea
 							class="input resize-none"
-							placeholder="name your self"
 							value={character().bio}
 							onInput={(e) =>
 								setCharacter((prev) => ({

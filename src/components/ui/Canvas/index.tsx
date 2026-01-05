@@ -1,10 +1,11 @@
-import { Component, createSignal, For } from "solid-js";
+import { Component, createEffect, createSignal, For, on } from "solid-js";
 import "gridstack/dist/gridstack.css";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
 import { hollow } from "hollow";
 import { Card } from "../Card";
 import { useCanvas, CanvasProps } from "./hooks";
+import { useHollow } from "../../../Hollow";
 
 export const Canvas: Component<CanvasProps> = (props) => {
 	const { state } = useCanvas(props);
@@ -17,15 +18,7 @@ export const Canvas: Component<CanvasProps> = (props) => {
 			<OverlayScrollbarsComponent
 				element="div"
 				class={"h-full w-full"}
-				options={{
-					overflow: { x: "scroll", y: "scroll" },
-					scrollbars: {
-						visibility: "auto",
-						autoHide: "leave",
-						autoHideDelay: 800,
-						theme: "os-theme-native",
-					},
-				}}
+				options={state.options()}
 				defer
 			>
 				<div

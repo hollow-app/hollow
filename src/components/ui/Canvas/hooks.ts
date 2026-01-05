@@ -11,6 +11,7 @@ import { GridStack, GridStackOptions, GridStackNode } from "gridstack";
 import { Layout } from "@utils/layout";
 import { hollow } from "hollow";
 import { CardType } from "@type/hollow";
+import { useHollow } from "../../../Hollow";
 
 export interface CanvasProps {
 	canvasConfigs: Accessor<GridStackOptions>;
@@ -25,6 +26,8 @@ export interface CanvasState {
 	canvasEl: Accessor<HTMLDivElement | undefined>;
 	setCanvasEl: (el: HTMLDivElement) => void;
 	grid: Accessor<GridStack | undefined>;
+	options: Accessor<any>;
+	setOptions: Setter<any>;
 }
 
 export interface CanvasHook {
@@ -35,7 +38,16 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 	const [gridEl, setGridElSignal] = createSignal<HTMLDivElement>();
 	const [canvasEl, setCanvasEl] = createSignal<HTMLDivElement>();
 	const [grid, setGrid] = createSignal<GridStack>();
-
+	const [options, setOptions] = createSignal<any>({
+		overflow: { x: "scroll", y: "scroll" },
+		scrollbars: {
+			visibility: "auto",
+			autoHide: "leave",
+			autoHideDelay: 800,
+			theme: "os-theme-native",
+		},
+	});
+	const { isFocus } = useHollow();
 	const onChange = (_: any, changed: GridStackNode[]) => {
 		if (!changed.length) return;
 		const fin: Record<string, CardType[]> = {};
@@ -99,6 +111,29 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 		),
 	);
 
+	createEffect(
+		on(
+			isFocus,
+			(v) => {
+				if (v) {
+					setOptions({
+						overflow: { x: "hidden", y: "hidden" },
+					});
+				} else {
+					setOptions({
+						overflow: { x: "scroll", y: "scroll" },
+						scrollbars: {
+							visibility: "auto",
+							autoHide: "leave",
+							autoHideDelay: 800,
+							theme: "os-theme-native",
+						},
+					});
+				}
+			},
+			{ defer: true },
+		),
+	);
 	onMount(() => {
 		const element = gridEl();
 		if (element) {
@@ -114,6 +149,8 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 			canvasEl,
 			setCanvasEl,
 			grid,
+			options,
+			setOptions,
 		},
 	};
 };

@@ -122,11 +122,10 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 				</h1>
 			</div>
 			<button
-				class="button primary mt-7 ml-auto flex items-center gap-3 text-black"
+				class="button primary mt-7 ml-auto flex items-center gap-3"
 				onclick={props.onNext}
 			>
-				<RocketIcon class="hidden size-5" />
-				<span class="relative z-10">Start</span>
+				Start
 			</button>
 		</div>
 	</Motion.div>
@@ -718,7 +717,7 @@ function CreateCharacter(props: { onSuccess: () => void }) {
 export default function Selector({ onSelect }: SelectorProps) {
 	const [ready] = createResource(async () => {
 		useColor({ name: "secondary", color: "#0b0b0b", oneTime: true });
-		useColor({ name: "primary", color: "#FF0033", oneTime: true });
+		useColor({ name: "primary", color: "#FFFFFF", oneTime: true });
 		return true;
 	});
 	const [realms, setRealms] = createSignal<Realm[]>(

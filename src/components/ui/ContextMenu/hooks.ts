@@ -8,6 +8,13 @@ import {
 } from "solid-js";
 import { hollow } from "hollow";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
+import {
+	computePosition,
+	autoUpdate,
+	offset,
+	flip,
+	shift,
+} from "@floating-ui/dom";
 
 export interface ContextMenuProps {}
 
@@ -43,6 +50,9 @@ export const useContextMenu = (): ContextMenuHook => {
 		yflip: false,
 	});
 	const [isVisible, setVisible] = createSignal(false);
+	let cleanupAutoUpdate: (() => void) | undefined;
+	let currentVirtualElement: { getBoundingClientRect: () => DOMRect } | null =
+		null;
 
 	const onContextMenu = (e: MouseEvent) => {
 		e.preventDefault();
@@ -104,14 +114,54 @@ export const useContextMenu = (): ContextMenuHook => {
 			const element = el();
 			if (element) {
 				element.focus();
-				const flipx = x > window.innerWidth - element.scrollWidth;
-				const flipy = y > window.innerHeight - element.scrollHeight;
-				setPosition({
-					x: flipx ? x - element.scrollWidth : x,
-					y: flipy ? y - element.scrollHeight : y,
-					xflip: x > window.innerWidth - element.scrollWidth * 2,
-					yflip: y > window.innerHeight - element.scrollHeight * 2,
-				});
+				const rect = {
+					width: 0,
+					height: 0,
+					x: x,
+					y: y,
+					top: y,
+					left: x,
+					right: x,
+					bottom: y,
+					toJSON: () => ({}),
+				} as DOMRect;
+
+				currentVirtualElement = {
+					getBoundingClientRect: () => rect,
+				};
+
+				const updatePosition = () => {
+					if (!currentVirtualElement || !element) return;
+
+					computePosition(currentVirtualElement, element, {
+						placement: "bottom-start",
+						middleware: [offset(8), flip(), shift({ padding: 8 })],
+					}).then(
+						({
+							x: computedX,
+							y: computedY,
+							placement: computedPlacement,
+						}) => {
+							const yflip = computedPlacement.startsWith("top");
+							const xflip = computedPlacement.includes("end");
+
+							setPosition({
+								x: computedX,
+								y: computedY,
+								xflip,
+								yflip,
+							});
+						},
+					);
+				};
+
+				updatePosition();
+				cleanupAutoUpdate?.();
+				cleanupAutoUpdate = autoUpdate(
+					currentVirtualElement,
+					element,
+					updatePosition,
+				);
 			}
 		});
 		document.body.addEventListener("mousedown", onFocusOut);
@@ -121,6 +171,9 @@ export const useContextMenu = (): ContextMenuHook => {
 		const element = el();
 		if (element && !element.contains(e.target as Node)) {
 			setVisible(false);
+			cleanupAutoUpdate?.();
+			cleanupAutoUpdate = undefined;
+			currentVirtualElement = null;
 			document.body.removeEventListener("mousedown", onFocusOut);
 		}
 	};
@@ -140,6 +193,7 @@ export const useContextMenu = (): ContextMenuHook => {
 	});
 
 	onCleanup(() => {
+		cleanupAutoUpdate?.();
 		hollow.pevents.off("context-menu", setVisible);
 		hollow.events.off("context-menu-extend", addItems);
 	});

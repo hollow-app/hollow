@@ -351,4 +351,9 @@ a.no-underline-alt {
 
 .dark .driver-overlay path {
 	fill: rgba(250, 250, 250, 0.2) !important;
+
+}
+
+.auto-text {
+	filter: invert(1) grayscale(1) contrast(999);
 }

@@ -9,11 +9,20 @@ import { ToolDataBase } from "./ToolDataBase";
 import { Storage } from "./Storage";
 import useGrid from "@hooks/useGrid";
 import { manager, Managers } from ".";
+import {
+	getCurrentWindow,
+	type CloseRequestedEvent,
+} from "@tauri-apps/api/window";
 import { relaunch } from "@tauri-apps/plugin-process";
 
+type ShutdownHandler = () => Promise<void> | void;
 export class HollowManager {
 	private readonly managers: Managers;
 	private downloading = false;
+
+	private handlers = new Set<ShutdownHandler>();
+	private closing = false;
+	private unlisten?: () => void;
 
 	constructor(managers: Managers) {
 		this.managers = managers;
@@ -70,6 +79,12 @@ export class HollowManager {
 		}
 		await this.managers?.realm.start();
 		await this.managers?.deeplink.start();
+		//
+		const window = getCurrentWindow();
+		this.unlisten = await window.onCloseRequested((event) =>
+			this.handleClose(event),
+		);
+
 		return true;
 	}
 
@@ -223,5 +238,27 @@ export class HollowManager {
 		} finally {
 			this.downloading = false;
 		}
+	}
+
+	register(handler: ShutdownHandler): () => void {
+		this.handlers.add(handler);
+		return () => this.handlers.delete(handler);
+	}
+
+	private async handleClose(event: CloseRequestedEvent) {
+		if (this.closing) return;
+		this.closing = true;
+		event.preventDefault();
+		try {
+			await Promise.all(
+				Array.from(this.handlers).map((fn) =>
+					Promise.resolve().then(fn),
+				),
+			);
+		} catch (err) {
+			console.error("Shutdown handler failed:", err);
+		}
+		this.unlisten?.();
+		await getCurrentWindow().close();
 	}
 }

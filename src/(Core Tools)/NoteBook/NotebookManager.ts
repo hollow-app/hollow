@@ -15,7 +15,7 @@ export class NotebookManager {
 		return this.self;
 	}
 
-	private constructor() {}
+	private constructor() { }
 
 	init(toolEvent: ToolApi) {
 		this.toolEvent = toolEvent;
@@ -49,7 +49,7 @@ export class NotebookManager {
 		const entries = await this.getCardFs(cardName).readDir();
 		const notes: NoteType[] = await Promise.all(
 			entries
-				.filter((i) => !i.isDir)
+				.filter((i) => !i.is_dir)
 				.map(async (i) => ({
 					...fm(await this.getNote(cardName, i.name)),
 					title: i.name.split(".md")[0],

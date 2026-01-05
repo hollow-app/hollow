@@ -313,14 +313,9 @@ export type TagType = {
 	name: string;
 
 	/**
-	 * Text color.
-	 */
-	foreground: string;
-
-	/**
 	 * Background color.
 	 */
-	background: string;
+	color: string;
 };
 
 /**
@@ -600,6 +595,11 @@ export interface IStore {
 	 */
 	close(): Promise<void>;
 }
+
+export type DirEntry = {
+	name: string;
+	is_dir: boolean;
+};
 
 export type CardFs = {
 	exists(path: string): Promise<boolean>;

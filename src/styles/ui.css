@@ -185,6 +185,7 @@
 	padding-inline: calc(var(--spacing) * 2.5);
 	margin-inline: auto;
 	color: var(--color-neutral-600);
+	font-size: var(--text-sm);
 
 	&:hover {
 		background: var(--secondary-color-10);

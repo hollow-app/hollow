@@ -272,8 +272,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 		const updateNewName = prev && !tags().some((i) => i.name === prev.name);
 		const newTag = {
 			name,
-			background,
-			foreground: readableColor(background),
+			color: background,
 		};
 		if (name !== "") {
 			const newTags = updateNewName
@@ -347,7 +346,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 							onclick={() =>
 								onNewTag({
 									name: tag.name,
-									background: tag.background,
+									background: tag.color,
 								})
 							}
 						>

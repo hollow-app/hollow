@@ -24,6 +24,7 @@ export default function App() {
 		selectRealmOnStartup ? null : manager.realm.currentRealmId,
 	);
 	const [cards, setCards] = createStore<CardType[]>([]);
+
 	const Container = createMemo(() => {
 		const realm = selectedRealm();
 		const LazyContainer = lazy(async () => {
@@ -33,6 +34,7 @@ export default function App() {
 		});
 		return <LazyContainer />;
 	});
+
 	const onSelect = (id: string) => {
 		manager.realm.enterRealm(id);
 	};

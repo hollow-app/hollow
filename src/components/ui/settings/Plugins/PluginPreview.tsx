@@ -1,5 +1,5 @@
 import { createSignal, Setter } from "solid-js";
-import { PluginType } from ".";
+import { PluginType } from "./hooks";
 import Loading from "@components/Loading";
 import { Show } from "solid-js";
 import { hollow } from "hollow";

@@ -7,8 +7,13 @@ type PathProps = {
 	path?: string;
 };
 
+export type CardDirEntry = {
+	name: string;
+	is_dir: boolean;
+};
+
 export class CardFileManager {
-	async mkdir(props: PathProps) {
+	async mkdir(props: PathProps): Promise<void> {
 		await invoke("card_mkdir", {
 			toolName: props.toolName,
 			cardName: props.cardName,
@@ -16,23 +21,23 @@ export class CardFileManager {
 		});
 	}
 
-	async readDir(props: PathProps) {
-		return await invoke("card_read_dir", {
+	async readDir(props: PathProps): Promise<CardDirEntry[]> {
+		return await invoke<CardDirEntry[]>("card_read_dir", {
 			toolName: props.toolName,
 			cardName: props.cardName,
 			path: props.path || "",
 		});
 	}
 
-	async readFile(props: PathProps) {
-		return await invoke("card_read_file", {
+	async readFile(props: PathProps): Promise<string> {
+		return await invoke<string>("card_read_file", {
 			toolName: props.toolName,
 			cardName: props.cardName,
 			path: props.path || "",
 		});
 	}
 
-	async writeFile(props: PathProps & { contents: string }) {
+	async writeFile(props: PathProps & { contents: string }): Promise<void> {
 		await invoke("card_write_file", {
 			toolName: props.toolName,
 			cardName: props.cardName,
@@ -41,7 +46,7 @@ export class CardFileManager {
 		});
 	}
 
-	async rename(props: PathProps & { newPath: string }) {
+	async rename(props: PathProps & { newPath: string }): Promise<void> {
 		await invoke("card_rename", {
 			toolName: props.toolName,
 			cardName: props.cardName,
@@ -50,7 +55,7 @@ export class CardFileManager {
 		});
 	}
 
-	async remove(props: PathProps) {
+	async remove(props: PathProps): Promise<void> {
 		await invoke("card_remove", {
 			toolName: props.toolName,
 			cardName: props.cardName,
@@ -58,8 +63,8 @@ export class CardFileManager {
 		});
 	}
 
-	async exists(props: PathProps) {
-		return await invoke("card_exists", {
+	async exists(props: PathProps): Promise<boolean> {
+		return await invoke<boolean>("card_exists", {
 			toolName: props.toolName,
 			cardName: props.cardName,
 			path: props.path || "",

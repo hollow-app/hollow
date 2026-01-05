@@ -1,6 +1,7 @@
 import { manager } from "@managers/index";
 import { TagType } from "@type/hollow";
 import { hollow } from "hollow";
+import setStyle from "./setStyle";
 
 export default function useTags(tags?: TagType[]) {
 	let data: TagType[] = manager.settings.getConfig("custom-tags");
@@ -9,4 +10,20 @@ export default function useTags(tags?: TagType[]) {
 		manager.settings.setConfig("custom-tags", tags);
 	}
 	hollow.events.emit("tags", data);
+	setStyle(
+		data.map((i) => ({
+			name: formatCSSVarName(i.name),
+			value: i.color,
+		})),
+	);
 }
+
+export const formatCSSVarName = (name: string) => {
+	const sanitized = name
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+
+	return `--tag-${sanitized}`;
+};

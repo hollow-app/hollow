@@ -4,10 +4,8 @@ import { manager } from "@managers/index";
 import { Character } from "@type/Character";
 import { FormType } from "@type/hollow";
 import { hollow } from "hollow";
-import { LogOutIcon, SquarePenIcon } from "lucide-solid";
-import { onCleanup } from "solid-js";
-import { onMount } from "solid-js";
-import { For, Show } from "solid-js";
+import { SquarePenIcon } from "lucide-solid";
+import { For } from "solid-js";
 import { createSignal } from "solid-js";
 
 export default function Account() {
@@ -225,7 +223,9 @@ export default function Account() {
 						<Dropdown
 							options={[
 								{
-									items: character().titles,
+									items: character().titles.map(
+										(i) => i.title,
+									),
 								},
 							]}
 							onSelect={(t) =>

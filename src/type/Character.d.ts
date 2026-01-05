@@ -7,7 +7,7 @@ export type Character = {
 	level?: number;
 	xp?: number;
 	achievements?: string[];
-	titles: string[];
+	titles: { title: string; rarity: string }[];
 	meta?: {
 		id: string;
 		icon: string;

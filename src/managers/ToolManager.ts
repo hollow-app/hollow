@@ -279,7 +279,6 @@ export class ToolManager {
 					reconcile(group.filter((c) => c.data.tool !== name)),
 				);
 			}
-			const icon = this.getHand()[name].icon;
 			this.store.remove(name);
 			const toolEvents = this.getToolEvents(name);
 			const store: IStore = toolEvents.getData("config");

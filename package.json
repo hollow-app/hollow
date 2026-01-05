@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@codemirror/lang-markdown": "^6.3.2",
 		"@codemirror/view": "^6.36.2",
+		"@floating-ui/dom": "^1.7.4",
 		"@kuyoonjo/tauri-plugin-tcp": "^0.1.2",
 		"@lezer/highlight": "^1.2.1",
 		"@tailwindcss/vite": "^4.1.11",
@@ -48,6 +49,7 @@
 		"polished": "^4.3.1",
 		"solid-codemirror": "^2.3.1",
 		"solid-colorful": "^0.0.2",
+		"solid-floating-ui": "^0.3.1",
 		"solid-js": "^1.9.3",
 		"solid-motionone": "^1.0.3",
 		"solid-textarea-autosize": "^0.0.5",

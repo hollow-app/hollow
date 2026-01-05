@@ -2,7 +2,6 @@ import { Character } from "@type/Character";
 import { hollow } from "hollow";
 import { ReactiveManager } from "./ReactiveManager";
 import DEFAULT from "@assets/configs/character.json?raw";
-
 export class CharacterManager extends ReactiveManager<Character> {
 	constructor() {
 		const saved = localStorage.getItem("character") ?? DEFAULT;
@@ -14,20 +13,9 @@ export class CharacterManager extends ReactiveManager<Character> {
 			"character-add-achievement",
 			this.addAchievement.bind(this),
 		);
-		hollow.events.on("character-add-title", this.addTitle.bind(this));
 		hollow.events.on("character-add-xp", this.addXp.bind(this));
 	}
 
-	addTitle(title: string) {
-		const state = this.get;
-		if (!state.titles.includes(title)) {
-			this.set = { titles: [...state.titles, title] };
-			hollow.events.emit("alert", {
-				title: "Title Gained",
-				message: title,
-			});
-		}
-	}
 	addAchievement(achievement: string) {
 		const state = this.get;
 		if (!state.achievements.includes(achievement)) {

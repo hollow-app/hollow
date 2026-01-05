@@ -1,13 +1,5 @@
-import {
-	on,
-	createSignal,
-	For,
-	Show,
-	createEffect,
-	Accessor,
-	createUniqueId,
-} from "solid-js";
-import { ChevronDownIcon, ChevronsUpDownIcon } from "lucide-solid";
+import { on, createSignal, For, Show, createEffect } from "solid-js";
+import { ChevronsUpDownIcon } from "lucide-solid";
 import Floater from "@utils/kinda-junk/Floater";
 
 export type DropdownProps = {

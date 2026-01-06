@@ -43,7 +43,7 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 			onMouseEnter={handleMouseOn}
 			onMouseLeave={handleMouseOff}
 			class="window-control bg-secondary-05 border-secondary-10 h-8 overflow-hidden rounded border-1 transition-all duration-300"
-			classList={{ "w-24": isVisi(), "w-8": !isVisi() }}
+			classList={{ "w-fit": isVisi(), "w-8": !isVisi() }}
 		>
 			<Presence exitBeforeEnter>
 				<Show when={isVisi()}>
@@ -61,32 +61,28 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 						transition={{
 							duration: 0.3,
 						}}
-						class="grid h-full w-full grid-cols-[1fr_1fr_1fr]"
+						class="flex h-full w-full"
 					>
 						<button
-							class="hover:bg-secondary-10 flex h-full w-full items-center justify-center transition-opacity"
+							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center transition-opacity"
 							classList={{
 								"opacity-0": !isVisi(),
 							}}
-							onclick={() =>
-								manager.rust.minimize_window()
-							}
+							onclick={() => manager.rust.minimize_window()}
 						>
 							<ChevronDownIcon class="size-6 p-1" />
 						</button>
 						<button
-							class="hover:bg-secondary-10 flex h-full w-full items-center justify-center"
+							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center"
 							classList={{
 								"opacity-0": !isVisi(),
 							}}
-							onclick={() =>
-								manager.rust.maximize_window()
-							}
+							onclick={() => manager.rust.maximize_window()}
 						>
 							<ChevronsLeftRightIcon class="size-6 p-1" />
 						</button>
 						<button
-							class="hover:bg-secondary-10 flex h-full w-full items-center justify-center"
+							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center"
 							classList={{
 								"opacity-0": !isVisi(),
 							}}

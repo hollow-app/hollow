@@ -1,4 +1,3 @@
-use tauri::Manager;
 use std::sync::Mutex;
 use tauri::plugin::Builder as PluginBuilder;
 use tauri_plugin_log::log::{self};
@@ -30,7 +29,7 @@ pub fn run() {
         .build();
 
     tauri::Builder::default()
-        .plugin(tauri_plugin_stronghold::Builder::new(|_pass| todo!()).build())
+        // .plugin(tauri_plugin_stronghold::Builder::new(|_pass| todo!()).build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         // static
@@ -47,12 +46,12 @@ pub fn run() {
         
         .plugin(tauri_plugin_deep_link::init())
         .setup(|app| {
-            let salt_path = app
-                .path()
-                .app_local_data_dir()
-                .expect("could not resolve app local data path")
-                .join("stronghold_salt");
-                app.handle().plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
+            // let salt_path = app
+            //     .path()
+            //     .app_local_data_dir()
+            //     .expect("could not resolve app local data path")
+            //     .join("stronghold_salt");
+            //     app.handle().plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
             
             deeplink::setup_deeplink_handler(app)?;
             

@@ -41,6 +41,9 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Build frontend
+        run: npm run build
+
       - name: Build Tauri app (Windows ${{ matrix.platform }})
         run: npm run tauri build -- --target ${{ matrix.target }}
         env:

@@ -1,4 +1,4 @@
-name: build-windows
+name: build-windows-aarch64
 
 on:
   workflow_dispatch:
@@ -11,14 +11,6 @@ jobs:
     permissions:
       contents: write
     runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: 'x86_64'
-            target: 'x86_64-pc-windows-msvc'
-          - platform: 'aarch64'
-            target: 'aarch64-pc-windows-msvc'
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +23,7 @@ jobs:
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target }}
+          targets: aarch64-pc-windows-msvc
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -44,8 +36,8 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      - name: Build Tauri app (Windows ${{ matrix.platform }})
-        run: npm run tauri build -- --target ${{ matrix.target }}
+      - name: Build Tauri app (Windows aarch64)
+        run: npm run tauri build -- --target aarch64-pc-windows-msvc
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -59,5 +51,6 @@ jobs:
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hollow-windows-${{ matrix.platform }}
+          name: hollow-windows-aarch64
           path: src-tauri/target/**/bundle/msi/*.msi
+

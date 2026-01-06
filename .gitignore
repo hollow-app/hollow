@@ -1,6 +1,7 @@
 buildForLinux.sh
 .env
 build.md
+stats.html
 
 node_modules/
 

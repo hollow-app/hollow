@@ -26,6 +26,7 @@ export class CodeThemeManager {
 			req.onsuccess = () => resolve(req.result);
 			req.onerror = () => reject(req.error);
 		});
+		await this.applyLastUsedTheme("default");
 	}
 
 	private store(mode: IDBTransactionMode) {

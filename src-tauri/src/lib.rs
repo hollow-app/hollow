@@ -1,5 +1,4 @@
 use std::sync::Mutex;
-use tauri::plugin::Builder as PluginBuilder;
 use tauri_plugin_log::log::{self};
 
 mod app;
@@ -22,11 +21,6 @@ pub fn run() {
         )
         .build();
 
-    let nav_plugin = PluginBuilder::<tauri::Wry, ()>::new("nav_blocker")
-        .on_navigation(|_window, url| {
-            url.scheme() == "tauri" || url.host_str() == Some("localhost")
-        })
-        .build();
 
     tauri::Builder::default()
         // .plugin(tauri_plugin_stronghold::Builder::new(|_pass| todo!()).build())
@@ -37,7 +31,6 @@ pub fn run() {
             log::debug!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
         }))
         // relative
-        .plugin(nav_plugin)
         .manage(Mutex::new(app::AppData {
             realm_location: None,
         }))

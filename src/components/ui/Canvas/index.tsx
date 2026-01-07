@@ -12,7 +12,7 @@ export const Canvas: Component<CanvasProps> = (props) => {
 	return (
 		<div
 			ref={state.setCanvasEl}
-			class="canvas-parent relative h-full w-full overflow-hidden"
+			class="canvas-parent relative h-full flex-1 overflow-hidden"
 		>
 			<OverlayScrollbarsComponent
 				element="div"

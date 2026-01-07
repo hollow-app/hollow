@@ -29,7 +29,7 @@
 	},
 	"bundle": {
 		"active": true,
-		"targets": ["app", "msi"],
+		"targets": ["appimage"],
 		"createUpdaterArtifacts": true,
 		"licenseFile": "wix\\license.rtf",
 		"linux": {

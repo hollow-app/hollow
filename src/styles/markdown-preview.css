@@ -10,6 +10,7 @@
 }
 
 .markdown-preview code {
+	color: var(--color-secondary-80);
 	background-color: var(--color-secondary-10);
 	padding-inline: 0.4em;
 	border-radius: var(--radius-sm);

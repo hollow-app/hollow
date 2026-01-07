@@ -118,6 +118,7 @@ export const useNotebook = (props: NotebookProps): NotebookHook => {
 				setBook((prev) => ({
 					...prev,
 					notes: [...prev.notes, currentNote],
+					last: currentNote.title,
 				}));
 				updateBook();
 			} else {

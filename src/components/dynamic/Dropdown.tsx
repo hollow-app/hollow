@@ -61,7 +61,7 @@ export default function Dropdown(props: DropdownProps) {
 					placement="bottom-start"
 				>
 					<div
-						class="bg-secondary-05 border-secondary-10 popup-shadow drop-down-list rounded-md border text-sm"
+						class="bg-secondary-05 border-secondary-10 popup-shadow drop-down-list overflow-hidden rounded-md border text-sm"
 						style={{
 							width:
 								dropdownRef?.getBoundingClientRect().width +
@@ -75,13 +75,9 @@ export default function Dropdown(props: DropdownProps) {
 										<div class="relative">
 											<Show when={group.title}>
 												<div class="bg-secondary-05 sticky top-0 z-20 flex w-full items-center gap-1 px-3">
-													<h1 class="py-1 text-sm font-medium text-neutral-400 select-none dark:text-neutral-600">
+													<h1 class="overflow-hidden py-1.5 text-xs font-medium text-neutral-500">
 														{group.title}
 													</h1>
-													<hr class="border-secondary-10 w-full" />
-													<span class="text-secondary-30 text-xs">
-														{group.items.length}
-													</span>
 												</div>
 											</Show>
 											<ul>
@@ -98,7 +94,7 @@ export default function Dropdown(props: DropdownProps) {
 													<For each={group.items}>
 														{(item) => (
 															<li
-																class="hover:bg-primary/10 text-secondary-60 hover:text-primary relative flex w-full cursor-pointer justify-between rounded-md bg-transparent px-3 py-2 text-xs"
+																class="hover:bg-primary/10 hover:text-primary relative flex w-full cursor-pointer justify-between rounded-md bg-transparent px-3 py-2 text-xs text-neutral-800 dark:text-neutral-300"
 																onClick={() =>
 																	selectItem(
 																		item,

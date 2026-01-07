@@ -102,10 +102,10 @@ export default function Expand() {
 				<div class="border-secondary-10 flex flex-col gap-4 border-b pb-4">
 					<div class="space-y-1">
 						<h2 class="text-lg font-semibold tracking-tight">
-							Expand
+							Tools Manager
 						</h2>
 						<p class="text-sm text-neutral-500">
-							Manage your cards and tools.
+							Manage your tools instances.
 						</p>
 					</div>
 					<div class="flex items-center gap-2">

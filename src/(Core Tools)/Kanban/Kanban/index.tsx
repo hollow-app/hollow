@@ -50,7 +50,7 @@ const Kanban: Component<KanbanProps> = (props) => {
 					<DragDropSensors />
 					<div
 						ref={state.setListDiv}
-						class="column flex w-full flex-col gap-3 pb-24"
+						class="column flex w-[calc(100%-1px)] flex-col gap-3 pb-24"
 					>
 						<SortableProvider
 							ids={state.kanban().items.map((item) => item.id)}

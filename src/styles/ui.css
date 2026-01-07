@@ -76,6 +76,7 @@
 	padding-inline: var(--padding-x);
 	padding-block: var(--padding-y);
 	font-size: var(--text-sm);
+	font-weight: var(--font-weight-medium);
 	transition: 0.1s all ease-in-out;
 	cursor: pointer;
 	user-select: none;

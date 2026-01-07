@@ -35,6 +35,13 @@ export default function Item(props: ItemProps) {
 	};
 	// context menu
 	const handleContextMenu = () => {
+		if (props.selectedGroup) {
+			const group = props.selectedGroup();
+			if (group.length > 0) {
+				return;
+			}
+		}
+
 		const metadata: ToolMetadata = props.toolEvent.getData("metadata");
 		const columns = metadata.cards
 			.filter((i) => i.data.name !== props.cardName && i.data.isPlaced)
@@ -92,7 +99,7 @@ export default function Item(props: ItemProps) {
 				containerStyle={{
 					"border-color": selected()
 						? props.accentColor
-						: "var(--color-secondary-15)",
+						: "var(--color-secondary-10)",
 				}}
 				headerContent={
 					<div

@@ -165,7 +165,7 @@ const Notebook: Component<NotebookProps> = (props) => {
 				</div>
 			</div>
 			{/* Body */}
-			<div class="h-full w-full px-3 py-1">
+			<div class="flex min-h-0 w-full flex-1 flex-col px-3 py-1">
 				<Switch
 					fallback={
 						<div
@@ -173,14 +173,14 @@ const Notebook: Component<NotebookProps> = (props) => {
 							oncontextmenu={actions.onContextMenu}
 						>
 							<div
-								class="relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-lg border opacity-100 group-hover:opacity-100 @7xl:h-35 @7xl:w-[50%]"
+								class="relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-lg opacity-100 group-hover:opacity-100 @7xl:h-35 @7xl:w-[50%]"
 								classList={{
 									"border-secondary-15": !state.editMode(),
 									"border-transparent": state.editMode(),
 								}}
 							>
 								<div
-									class="border-secondary-05 flex h-full w-full flex-col gap-2 rounded-xl border-2"
+									class="border-secondary-10 flex h-full w-full flex-col gap-2 rounded-xl border-2"
 									style={{
 										...(!state.editMode() && {
 											"background-image": `linear-gradient(to right, var(--color-secondary-05), transparent), url(${state.note()?.attributes?.banner})`,

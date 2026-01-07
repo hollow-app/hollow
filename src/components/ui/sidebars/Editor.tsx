@@ -232,15 +232,6 @@ export default function Editor() {
 									setValue={(v) => updateRootProp("y", v)}
 									min={-10000}
 								/>
-								<NumRow
-									label="Z"
-									value={Number(cardStyle()["z-index"] ?? 0)}
-									setValue={(v) =>
-										updateStyleProp("z-index", v)
-									}
-									max={500}
-									min={0}
-								/>
 							</div>
 						</div>
 

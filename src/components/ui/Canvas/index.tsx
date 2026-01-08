@@ -10,7 +10,10 @@ export const Canvas: Component<CanvasProps> = (props) => {
 	return (
 		<div
 			ref={state.setCanvasEl}
-			class="canvas-parent relative flex h-full flex-1 overflow-hidden"
+			class="canvas-parent relative flex h-full flex-1 overflow-hidden bg-red-400"
+			style={{
+				"--m": "calc(var(--grid-gap) * -1px)",
+			}}
 		>
 			<OverlayScrollbarsComponent
 				element="div"
@@ -19,9 +22,7 @@ export const Canvas: Component<CanvasProps> = (props) => {
 				defer
 			>
 				<div
-					class="min-w-0"
 					style={{
-						"--m": "calc(var(--grid-gap) * -1px)",
 						width: "calc(100vw - calc(var(--spacing) * 19) - 2px)",
 						"min-height":
 							"calc(100vh - calc(var(--spacing) * 4) - 2px)",

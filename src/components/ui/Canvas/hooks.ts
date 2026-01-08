@@ -39,7 +39,7 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 		overflow: { x: "scroll", y: "scroll" },
 		scrollbars: {
 			visibility: "auto",
-			autoHide: "leave",
+			autoHide: "never",
 			autoHideDelay: 800,
 			theme: "os-theme-native",
 		},

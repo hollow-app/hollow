@@ -42,7 +42,7 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 		<div
 			onMouseEnter={handleMouseOn}
 			onMouseLeave={handleMouseOff}
-			class="window-control bg-secondary-05 border-secondary-10 h-8 overflow-hidden rounded border-1 transition-all duration-300"
+			class="window-control border-secondary-10 h-8 overflow-hidden rounded border-1 bg-[var(--front)] transition-all duration-300"
 			classList={{ "w-fit": isVisi(), "w-8": !isVisi() }}
 		>
 			<Presence exitBeforeEnter>

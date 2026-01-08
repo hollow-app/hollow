@@ -27,6 +27,7 @@ export default function Sidepanel(props: SidepanelProps) {
 						<Motion.div
 							style={{
 								width: props.width,
+								[props.type]: "0",
 							}}
 							class="border-secondary-10 flex h-full shrink-0 overflow-hidden"
 							classList={{
@@ -64,7 +65,7 @@ export default function Sidepanel(props: SidepanelProps) {
 									class="h-full w-px shrink-0 border-0"
 									style={{
 										background:
-											"linear-gradient(to bottom, transparent , var(--color-secondary-10) 20%, var(--color-secondary-10) 80%, transparent)",
+											"linear-gradient(to bottom, transparent , var(--high) 20%, var(--high) 80%, transparent)",
 									}}
 								/>
 							</Show>

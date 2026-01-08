@@ -149,7 +149,7 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 	return (
 		<div class="h-full w-full">
 			<div
-				class="bg-secondary-10/40 relative flex h-full items-center justify-center overflow-hidden rounded-lg"
+				class="relative flex h-full items-center justify-center overflow-hidden rounded-lg bg-[var(--front)]"
 				onMouseEnter={() => setShowControls(true)}
 				onMouseLeave={() => setShowControls(false)}
 			>

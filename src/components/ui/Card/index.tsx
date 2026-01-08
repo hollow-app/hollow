@@ -1,7 +1,9 @@
 import { Component } from "solid-js";
 import { useCard, CardProps } from "./hooks";
+import { useHollow } from "../../../HollowContext";
 
 export const Card: Component<CardProps> = (props) => {
+	const { isLiveEditor } = useHollow();
 	const { state, actions } = useCard(props);
 
 	return (
@@ -17,7 +19,7 @@ export const Card: Component<CardProps> = (props) => {
 			<div
 				class="box-border h-full w-full"
 				classList={{
-					"cursor-move pointer-events-none": props.isLiveEditor(),
+					"cursor-move pointer-events-none": isLiveEditor(),
 				}}
 				style={{
 					"--p": "calc(var(--grid-gap) * 1px)",

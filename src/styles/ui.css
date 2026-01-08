@@ -152,7 +152,7 @@
 	--padding-x: calc(var(--spacing) * 2.5);
 	--padding-y: calc(var(--spacing) * 1.5);
 	--border-w: 2px;
-	--bg-color: var(--color-secondary-10);
+	--bg-color: var(--high);
 	--border-color: var(--color-secondary-15);
 	--radius: var(--radius-md);
 	--w: 100%;

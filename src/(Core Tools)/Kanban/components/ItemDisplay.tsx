@@ -15,7 +15,7 @@ type ItemDisplayProps = {
 export default function ItemDisplay(props: ItemDisplayProps) {
 	return (
 		<div
-			class={`group bg-card text-card-foreground bg-secondary-05 relative flex flex-col gap-2 rounded-lg border-2 p-3 shadow-sm transition-all hover:shadow-md ${props.containerClass ?? ""}`}
+			class={`group relative flex flex-col gap-2 rounded-lg border-2 bg-[var(--front)] p-3 text-neutral-950 shadow-sm transition-all hover:shadow-md dark:text-neutral-50 ${props.containerClass ?? ""}`}
 			style={props.containerStyle}
 		>
 			<div class="bg-secondary-10 flex w-full items-center justify-between gap-2 rounded px-2">

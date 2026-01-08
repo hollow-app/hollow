@@ -19,7 +19,6 @@ import { useHollow } from "../../../HollowContext";
 export interface CardProps {
 	node: CardType;
 	grid: GridStack;
-	isLiveEditor: Accessor<boolean>;
 	canvasEl: Accessor<HTMLDivElement | undefined>;
 }
 
@@ -44,6 +43,7 @@ export interface CardHook {
 }
 
 export const useCard = (props: CardProps): CardHook => {
+	const { isLiveEditor } = useHollow();
 	const [el, setElSignal] = createSignal<HTMLDivElement>();
 	const [cardEl, setCardEl] = createSignal<HTMLDivElement>();
 	const [isLoaded, setLoaded] = createSignal(false);
@@ -56,7 +56,7 @@ export const useCard = (props: CardProps): CardHook => {
 			() => [props.node.w, props.node.x, props.node.h, props.node.y],
 			() => {
 				const element = el();
-				if (element && !props.isLiveEditor()) {
+				if (element && !isLiveEditor()) {
 					props.grid.update(element, props.node);
 				}
 			},

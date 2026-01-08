@@ -16,31 +16,25 @@ const Container: Component<ContainerProps> = (props) => {
 
 	return (
 		<HollowProvider>
-			<div class="bg-secondary flex h-full w-full flex-col px-2">
+			<div
+				class="flex h-full w-full flex-col px-2"
+				style={{ background: "var(--back)" }}
+			>
 				<div class="relative flex h-full flex-1">
 					<SideBar
 						layout={state.controller}
 						setSettings={state.setSettings}
-						setCanvasConfigs={state.setCanvasConfigs}
-						isLiveEditor={state.isLiveEditor}
 					/>
 					<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
 						<Navbar />
-						<div class="flex min-h-0 w-full flex-1 pb-2">
+						<div class="relative flex min-h-0 w-full flex-1 pb-2">
 							<Sidepanel
 								type="left"
 								width="calc(var(--spacing) * 104)"
 								controller={state.controller}
 								padding="0 calc(var(--spacing) * 2) 0 0"
 							/>
-							<Canvas
-								canvasConfigs={
-									state.canvasConfigs as Accessor<any>
-								}
-								setCanvasConfigs={state.setCanvasConfigs}
-								isLiveEditor={state.isLiveEditor}
-								layout={state.controller}
-							/>
+							<Canvas layout={state.controller} />
 							<Sidepanel
 								type="right"
 								controller={state.controller}
@@ -52,11 +46,7 @@ const Container: Component<ContainerProps> = (props) => {
 				</div>
 				<Show when={state.isSettings()}>
 					<Suspense>
-						<Settings
-							setSettings={state.setSettings}
-							canvasConfigs={state.canvasConfigs}
-							setCanvasConfigs={state.setCanvasConfigs}
-						/>
+						<Settings setSettings={state.setSettings} />
 					</Suspense>
 				</Show>
 			</div>

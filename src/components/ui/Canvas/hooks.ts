@@ -1,6 +1,5 @@
 import {
 	createSignal,
-	createMemo,
 	createEffect,
 	on,
 	onMount,
@@ -14,9 +13,6 @@ import { CardType } from "@type/hollow";
 import { useHollow } from "../../../HollowContext";
 
 export interface CanvasProps {
-	canvasConfigs: Accessor<GridStackOptions>;
-	setCanvasConfigs: Accessor<GridStackOptions>;
-	isLiveEditor: Accessor<boolean>;
 	layout: Layout;
 }
 
@@ -35,6 +31,7 @@ export interface CanvasHook {
 }
 
 export const useCanvas = (props: CanvasProps): CanvasHook => {
+	const { isLiveEditor, canvasConfigs } = useHollow();
 	const [gridEl, setGridElSignal] = createSignal<HTMLDivElement>();
 	const [canvasEl, setCanvasEl] = createSignal<HTMLDivElement>();
 	const [grid, setGrid] = createSignal<GridStack>();
@@ -86,7 +83,7 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 
 	createEffect(
 		on(
-			props.canvasConfigs,
+			canvasConfigs,
 			(configs) => {
 				const g = grid();
 				if (g) g.updateOptions(configs);
@@ -97,11 +94,11 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 
 	createEffect(
 		on(
-			props.isLiveEditor,
-			() => {
+			isLiveEditor,
+			(v) => {
 				const g = grid();
 				if (!g) return;
-				if (props.isLiveEditor()) {
+				if (v) {
 					g.on("change", onChange);
 				} else {
 					g.off("change");
@@ -137,7 +134,7 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 	onMount(() => {
 		const element = gridEl();
 		if (element) {
-			const g = GridStack.init(props.canvasConfigs(), element);
+			const g = GridStack.init(canvasConfigs(), element);
 			setGrid(g);
 		}
 	});

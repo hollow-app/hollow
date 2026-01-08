@@ -35,7 +35,7 @@
 		"emojibase-data": "^16.0.2",
 		"front-matter": "^4.0.2",
 		"github-slugger": "^2.0.0",
-		"gridstack": "^12.3.3",
+		"gridstack": "^12.4.2",
 		"highlight.js": "^11.11.1",
 		"install": "^0.13.0",
 		"katex": "^0.16.22",

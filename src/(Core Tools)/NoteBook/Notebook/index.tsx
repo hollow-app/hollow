@@ -172,25 +172,24 @@ const Notebook: Component<NotebookProps> = (props) => {
 							class="relative flex min-h-0 w-full flex-1 flex-col"
 							oncontextmenu={actions.onContextMenu}
 						>
-							<div
-								class="relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-lg opacity-100 group-hover:opacity-100 @7xl:h-35 @7xl:w-[50%]"
-								classList={{
-									"border-secondary-15": !state.editMode(),
-									"border-transparent": state.editMode(),
-								}}
-							>
+							<div class="relative bottom-0 mx-auto mt-3 box-border h-30 w-full overflow-hidden rounded-lg opacity-100 group-hover:opacity-100 @7xl:h-35 @7xl:w-[50%]">
 								<div
-									class="border-secondary-10 flex h-full w-full flex-col gap-2 rounded-xl border-2"
+									class="flex h-full w-full flex-col gap-2 rounded-xl border-2"
 									style={{
 										...(!state.editMode() && {
-											"background-image": `linear-gradient(to right, var(--color-secondary-05), transparent), url(${state.note()?.attributes?.banner})`,
+											"background-image": `linear-gradient(to right, var(--front), transparent), url(${state.note()?.attributes?.banner})`,
 											"background-size": "cover",
 											"background-position": "center",
 											"background-repeat": "no-repeat",
 										}),
 										"line-height": "0",
 									}}
-									classList={{ "p-2": !state.editMode() }}
+									classList={{
+										"border-secondary-10":
+											!state.editMode(),
+										"border-transparent": state.editMode(),
+										"p-2": !state.editMode(),
+									}}
 								>
 									<input
 										class="focus:border-secondary-10 w-full max-w-full overflow-hidden rounded border-transparent text-[1.3em] font-medium text-ellipsis whitespace-nowrap text-neutral-900 dark:text-neutral-50"

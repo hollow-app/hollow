@@ -28,8 +28,6 @@ const Account = lazy(() => import("./settings/Character"));
 
 type SettingsProps = {
 	setSettings: Setter<boolean>;
-	canvasConfigs: Accessor<GridStackOptions>;
-	setCanvasConfigs: Setter<GridStackOptions>;
 	selected?: number;
 };
 export default function Settings(props: SettingsProps) {
@@ -223,7 +221,7 @@ export default function Settings(props: SettingsProps) {
 									class="h-full"
 								>
 									<Suspense>
-										<Appearance {...props} />
+										<Appearance />
 									</Suspense>
 								</Motion.div>
 							</Show>

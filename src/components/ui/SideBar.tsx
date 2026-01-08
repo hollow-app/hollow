@@ -16,6 +16,7 @@ import { GridStackOptions } from "gridstack";
 import { Layout } from "@utils/layout";
 import { DynamicIcon } from "@components/DynamicIcon";
 import { guide } from "@utils/help";
+import { useHollow } from "../../HollowContext";
 
 interface SideBarButton {
 	id: string;
@@ -30,15 +31,9 @@ interface SideBarButton {
 type SideBarProps = {
 	layout: Layout;
 	setSettings: Setter<boolean>;
-	setCanvasConfigs: Setter<GridStackOptions>;
-	isLiveEditor: Accessor<boolean>;
 };
-export default function SideBar({
-	layout,
-	setSettings,
-	setCanvasConfigs,
-	isLiveEditor,
-}: SideBarProps) {
+export default function SideBar({ layout, setSettings }: SideBarProps) {
+	const { isLiveEditor, setCanvasConfigs } = useHollow();
 	const [alert, setAlert] = createSignal(false);
 
 	const toggleDnd = () => {
@@ -118,7 +113,7 @@ export default function SideBar({
 	return (
 		<div
 			id="sidebar"
-			class="border-secondary-10 bg-secondary-05 my-2 mr-2 box-content flex w-13 shrink-0 flex-col gap-4 rounded-xl border-r-0 py-2"
+			class="border-secondary-10 my-2 mr-2 box-content flex w-13 shrink-0 flex-col gap-4 rounded-xl border-r-0 bg-[var(--front)] py-2"
 			style={{
 				"--alert": alert() ? "0.9" : "0.5",
 			}}

@@ -33,19 +33,19 @@ export default function FilterButton({ options }: FilterButtonProps) {
 				class="hover:bg-secondary-10 text-secondary-60 hover:text-secondary-foreground flex h-9 w-9 items-center justify-center rounded-md transition-colors"
 				onClick={toggleOpen}
 				classList={{
-					"bg-secondary-10 text-secondary-foreground": isOpen(),
+					"bg-[var(--high)] text-secondary-foreground": isOpen(),
 				}}
 			>
 				<ListFilterPlusIcon class="size-4" />
 			</button>
 
 			<Show when={isOpen()}>
-				<Floater 
-					hide={() => setIsOpen(false)} 
+				<Floater
+					hide={() => setIsOpen(false)}
 					includedEl={dropdownRef!}
 					placement="bottom-end"
 				>
-					<div class="bg-secondary-05 border-secondary-10 text-secondary-foreground animate-in fade-in zoom-in-95 w-fit overflow-hidden rounded-md border shadow-md">
+					<div class="border-secondary-10 text-secondary-foreground animate-in fade-in zoom-in-95 w-fit overflow-hidden rounded-md border bg-[var(--front)] shadow-md">
 						<div class="max-h-80 overflow-y-auto p-1">
 							<For
 								each={options().filter(

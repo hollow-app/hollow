@@ -8,9 +8,6 @@ export interface ContainerState {
 	controller: Layout;
 	isSettings: Accessor<boolean>;
 	setSettings: Setter<boolean>;
-	canvasConfigs: Accessor<GridStackOptions>;
-	setCanvasConfigs: Setter<GridStackOptions>;
-	isLiveEditor: Accessor<boolean>;
 }
 
 export interface ContainerActions {}
@@ -22,19 +19,7 @@ export interface ContainerHook {
 
 export const useContainer = (): ContainerHook => {
 	const controller = createLayout();
-	const settingsManager = manager.settings;
 	const [isSettings, setSettings] = createSignal(false);
-	const [canvasConfigs, setCanvasConfigs] = createSignal<GridStackOptions>({
-		disableResize: true,
-		disableDrag: true,
-		// float: true,
-		column: settingsManager.getConfig("grid-size"),
-		cellHeight:
-			(window.innerHeight - 16 + settingsManager.getConfig("grid-gap")) /
-			settingsManager.getConfig("grid-size"),
-	});
-
-	const isLiveEditor = createMemo(() => !canvasConfigs().disableDrag);
 
 	// Actions
 	const showEditor = () => {
@@ -59,9 +44,6 @@ export const useContainer = (): ContainerHook => {
 			controller,
 			isSettings,
 			setSettings,
-			canvasConfigs,
-			setCanvasConfigs,
-			isLiveEditor,
 		},
 		actions: {},
 	};

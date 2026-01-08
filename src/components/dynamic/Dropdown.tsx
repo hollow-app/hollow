@@ -46,7 +46,10 @@ export default function Dropdown(props: DropdownProps) {
 					value={innerValue()}
 					placeholder={props.placeholder}
 					readonly
-					class="border-secondary-15 placeholder:text-secondary-40 bg-secondary-05 relative w-full cursor-pointer rounded-md border px-2.5 py-2 text-sm text-neutral-950 shadow-sm outline-none dark:text-neutral-50"
+					style={{
+						background: "var(--front)",
+					}}
+					class="border-secondary-15 placeholder:text-secondary-40 relative w-full cursor-pointer rounded-md border px-2.5 py-2 text-sm text-neutral-950 shadow-sm outline-none dark:text-neutral-50"
 				/>
 				<ChevronsUpDownIcon
 					class="text-secondary-40 absolute top-0 right-3 size-4 h-full transition duration-300"
@@ -61,7 +64,7 @@ export default function Dropdown(props: DropdownProps) {
 					placement="bottom-start"
 				>
 					<div
-						class="bg-secondary-05 border-secondary-10 popup-shadow drop-down-list overflow-hidden rounded-md border text-sm"
+						class="border-secondary-10 popup-shadow drop-down-list overflow-hidden rounded-md border bg-[var(--front)] text-sm"
 						style={{
 							width:
 								dropdownRef?.getBoundingClientRect().width +

@@ -442,7 +442,7 @@ export class ToolManager {
 				"border-color": "#3d3d3d",
 				"border-width": "0px",
 				background:
-					"color-mix(in oklab, var(--color-secondary-05) var(--opacity), transparent)",
+					"color-mix(in oklab, var(--front) var(--opacity), transparent)",
 			},
 			data: {
 				name,

@@ -1,26 +1,25 @@
-import { Component, createSignal, For, onCleanup, onMount } from "solid-js";
+import { Component, For } from "solid-js";
 import "gridstack/dist/gridstack.css";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
 import { hollow } from "hollow";
 import { Card } from "../Card";
 import { useCanvas, CanvasProps } from "./hooks";
-
 export const Canvas: Component<CanvasProps> = (props) => {
 	const { state } = useCanvas(props);
 	return (
 		<div
 			ref={state.setCanvasEl}
-			class="canvas-parent relative h-full flex-1 overflow-hidden"
+			class="canvas-parent relative flex h-full flex-1 overflow-hidden"
 		>
 			<OverlayScrollbarsComponent
 				element="div"
-				class={"h-full w-full"}
+				class={"h-full w-full flex-1"}
 				options={state.options()}
 				defer
 			>
 				<div
-					class="overflow-hidden"
+					class="min-w-0"
 					style={{
 						"--m": "calc(var(--grid-gap) * -1px)",
 						width: "calc(100vw - calc(var(--spacing) * 19) - 2px)",
@@ -39,7 +38,6 @@ export const Canvas: Component<CanvasProps> = (props) => {
 									node={item}
 									grid={state.grid()!}
 									canvasEl={state.canvasEl}
-									isLiveEditor={props.isLiveEditor}
 								/>
 							)}
 						</For>

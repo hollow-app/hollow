@@ -24,13 +24,13 @@ import { GridStackOptions } from "gridstack";
 import { Accessor } from "solid-js";
 import { Setter } from "solid-js";
 import { SettingsManager } from "@managers/SettingsManager";
+import { useHollow } from "../../../HollowContext";
 
-type Props = CanvasProps;
-export default function Appearance(props: Props) {
+export default function Appearance() {
 	const settingsManager = manager.settings;
 	return (
 		<div class="h-full p-10">
-			<CanvasSettings {...props} />
+			<CanvasSettings />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
 			<ColorSettings />
 			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
@@ -44,22 +44,19 @@ type CommonSettings = {
 	settingsManager: SettingsManager;
 };
 
-interface CanvasProps {
-	canvasConfigs: Accessor<GridStackOptions>;
-	setCanvasConfigs: Setter<GridStackOptions>;
-}
-function CanvasSettings(props: CanvasProps) {
+function CanvasSettings() {
+	const { canvasConfigs, setCanvasConfigs } = useHollow();
 	const [gridGap, setGridGap] = createSignal(
 		manager.settings.getConfig("grid-gap"),
 	);
-	const [gridSize, setGridSize] = createSignal(props.canvasConfigs().column);
+	const [gridSize, setGridSize] = createSignal(canvasConfigs().column);
 	const cellHeight = createMemo(() => {
 		return (window.innerHeight - 16 + gridGap()) / (gridSize() as number);
 	});
 	const setGapBetweenCards = (v: number) => {
 		setGridGap(v);
 		useGrid([{ name: "--grid-gap", value: v }]);
-		props.setCanvasConfigs((prev) => ({
+		setCanvasConfigs((prev) => ({
 			...prev,
 			cellHeight: cellHeight(),
 		}));
@@ -67,7 +64,7 @@ function CanvasSettings(props: CanvasProps) {
 
 	const setGrid_size = (v: number) => {
 		setGridSize(v);
-		props.setCanvasConfigs((prev) => ({
+		setCanvasConfigs((prev) => ({
 			...prev,
 			column: v,
 			cellHeight: cellHeight(),

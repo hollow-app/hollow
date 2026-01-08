@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal, For, on } from "solid-js";
+import { Component, createSignal, For, onCleanup, onMount } from "solid-js";
 import "gridstack/dist/gridstack.css";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import "overlayscrollbars/overlayscrollbars.css";
@@ -8,7 +8,6 @@ import { useCanvas, CanvasProps } from "./hooks";
 
 export const Canvas: Component<CanvasProps> = (props) => {
 	const { state } = useCanvas(props);
-
 	return (
 		<div
 			ref={state.setCanvasEl}
@@ -21,28 +20,30 @@ export const Canvas: Component<CanvasProps> = (props) => {
 				defer
 			>
 				<div
-					class="grid-stack"
-					ref={state.setGridEl}
+					class="overflow-hidden"
 					style={{
 						"--m": "calc(var(--grid-gap) * -1px)",
-						"min-width":
-							"calc(100vw - calc(var(--spacing) * 19) - 2px)",
+						width: "calc(100vw - calc(var(--spacing) * 19) - 2px)",
 						"min-height":
 							"calc(100vh - calc(var(--spacing) * 4) - 2px)",
 						"margin-left": "var(--m)",
 						"margin-top": "var(--m)",
 					}}
 				>
-					<For each={hollow.cards().filter((i) => i.data.isPlaced)}>
-						{(item) => (
-							<Card
-								node={item}
-								grid={state.grid()!}
-								canvasEl={state.canvasEl}
-								isLiveEditor={props.isLiveEditor}
-							/>
-						)}
-					</For>
+					<div class="grid-stack h-full w-full" ref={state.setGridEl}>
+						<For
+							each={hollow.cards().filter((i) => i.data.isPlaced)}
+						>
+							{(item) => (
+								<Card
+									node={item}
+									grid={state.grid()!}
+									canvasEl={state.canvasEl}
+									isLiveEditor={props.isLiveEditor}
+								/>
+							)}
+						</For>
+					</div>
 				</div>
 			</OverlayScrollbarsComponent>
 		</div>

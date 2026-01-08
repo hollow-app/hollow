@@ -27,7 +27,7 @@ export const useContainer = (): ContainerHook => {
 	const [canvasConfigs, setCanvasConfigs] = createSignal<GridStackOptions>({
 		disableResize: true,
 		disableDrag: true,
-		float: true,
+		// float: true,
 		column: settingsManager.getConfig("grid-size"),
 		cellHeight:
 			(window.innerHeight - 16 + settingsManager.getConfig("grid-gap")) /

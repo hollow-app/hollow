@@ -32,7 +32,7 @@ export default function ColorPick(props: ColorPickProps) {
 				style={{
 					background: props.direct ? props.color : myColor(),
 					"border-color":
-						props.borderColor ?? "var(--secondary-color-10)",
+						props.borderColor ?? "var(--color-secondary-10)",
 				}}
 				onClick={pick}
 			/>

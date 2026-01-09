@@ -9,7 +9,7 @@ export class CodeThemeManager {
 	private readonly styleId = "hljs-theme-style";
 
 	private get lastThemeKey(): string {
-		return `${this.managers?.realm.currentRealmId}-last-theme`;
+		return `${this.managers?.realm.getCurrent().id}-last-theme`;
 	}
 
 	constructor(managers: Managers) {

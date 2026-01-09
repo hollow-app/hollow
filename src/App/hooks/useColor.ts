@@ -16,7 +16,7 @@ export function useColor({ name, color, oneTime }: useColorProps) {
 	if (oneTime) {
 		shades = ShadeIt(name, color);
 	} else {
-		const storageKey = `${manager.realm.currentRealmId}-color-${name}`;
+		const storageKey = `${manager.realm.getCurrent().id}-color-${name}`;
 		const savedData = localStorage.getItem(storageKey);
 
 		if (savedData && color) {

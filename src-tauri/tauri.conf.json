@@ -10,15 +10,7 @@
 		"frontendDist": "../dist"
 	},
 	"app": {
-		"windows": [
-			{
-				"title": "hollow",
-				"decorations": false,
-				"maximized": true,
-				"width": 800,
-				"height": 600
-			}
-		],
+		"windows": [],
 		"security": {
 			"csp": "default-src 'self' ipc:; connect-src 'self' ipc: https:; img-src 'self' asset: asset://* https:; style-src 'self' 'unsafe-inline';",
 			"assetProtocol": {
@@ -29,7 +21,9 @@
 	},
 	"bundle": {
 		"active": true,
-		"targets": ["appimage"],
+		"targets": [
+			"appimage"
+		],
 		"createUpdaterArtifacts": true,
 		"licenseFile": "wix\\license.rtf",
 		"linux": {
@@ -69,7 +63,9 @@
 	"plugins": {
 		"deep-link": {
 			"desktop": {
-				"schemes": ["hollow"]
+				"schemes": [
+					"hollow"
+				]
 			}
 		},
 		"updater": {

@@ -57,7 +57,7 @@ export default function Settings(props: SettingsProps) {
 									</h1>
 									<div class="flex flex-1">
 										<p class="text-secondary-50 max-w-[50%] overflow-hidden text-sm text-ellipsis whitespace-nowrap">
-											{manager.realm.currentRealmId}
+											{manager.realm.getCurrent().id}
 										</p>
 									</div>
 								</div>

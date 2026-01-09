@@ -14,19 +14,11 @@ import { createStore } from "solid-js/store";
 import { hollow } from "hollow";
 import { CardType } from "@type/hollow";
 
-const Selector = lazy(() => import("@app/Selector"));
-
-const selectRealmOnStartup = JSON.parse(
-	localStorage.realmToggleOnStartup ?? "false",
-);
 export default function App() {
-	const [selectedRealm, setSelectedRealm] = createSignal<string | null>(
-		selectRealmOnStartup ? null : manager.realm.currentRealmId,
-	);
 	const [cards, setCards] = createStore<CardType[]>([]);
 
 	const Container = createMemo(() => {
-		const realm = selectedRealm();
+		const realm = manager.realm.getCurrent().id;
 		const LazyContainer = lazy(async () => {
 			if (!realm) return new Promise(() => {});
 			await manager.hollow.postRealmSelection();
@@ -35,25 +27,16 @@ export default function App() {
 		return <LazyContainer />;
 	});
 
-	const onSelect = (id: string) => {
-		manager.realm.enterRealm(id);
-	};
-	onMount(() => {
-		manager.realm.init(setSelectedRealm);
+	onMount(async () => {
 		hollow.cards = () => cards;
 		hollow.setCards = setCards;
 	});
 
 	return (
 		<main class="app-container text-black dark:text-white">
-			<Show
-				when={selectedRealm()}
-				fallback={<Selector onSelect={onSelect} />}
-			>
-				<Suspense fallback={<Loading />}>
-					<Container />
-				</Suspense>
-			</Show>
+			<Suspense fallback={<Loading />}>
+				<Container />
+			</Suspense>
 			<Popups />
 			<Alerts />
 		</main>

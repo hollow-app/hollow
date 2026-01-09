@@ -73,8 +73,8 @@ export class HollowManager {
 	}
 
 	async preRealmSelection() {
-		if (!localStorage.realmToggleOnStartup) {
-			localStorage.realmToggleOnStartup = "false";
+		if (!localStorage.first_launch) {
+			localStorage.first_launch = "true";
 			await this.managers?.rust.first_launch();
 		}
 		await this.managers?.realm.start();

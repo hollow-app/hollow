@@ -7,34 +7,25 @@ import {
 	PlusIcon,
 	ArrowLeftIcon,
 	RocketIcon,
-	PandaIcon,
 } from "lucide-solid";
 import {
 	Accessor,
 	batch,
-	createResource,
 	createSignal,
 	For,
 	onMount,
 	Setter,
 	Show,
-	Suspense,
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import WindowControl from "@components/WindowControl";
-import { Character } from "@type/Character";
-import { manager } from "@managers/index";
-import { useColor } from "@hooks/useColor";
-import Loading from "@components/Loading";
-import { hollow } from "hollow";
 import Dropdown from "@components/dynamic/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@components/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
-
-type SelectorProps = {
-	onSelect: (id: string) => void;
-};
+import { RealmManager } from "@managers/RealmManager";
+import { manager } from "@managers/index";
+import Segmented from "@components/dynamic/Segmented";
 
 const themes = {
 	dark: [
@@ -82,11 +73,14 @@ const useRealmManager = () => {
 			manager.realm.removeRealm(id);
 			setRealms((prev) => prev.filter((r) => r.id !== id));
 		};
-		hollow.events.emit("confirm", {
-			title: "warning",
-			message: `Are you sure you want to remove ${manager.realm.getRealmFromId(id)?.name} Realm?`,
-			onAccept: handleDecision,
-		});
+		// Simple confirm dialog since hollow might not be available
+		if (
+			confirm(
+				`Are you sure you want to remove ${manager.realm.getRealmFromId(id)?.name} Realm?`,
+			)
+		) {
+			handleDecision();
+		}
 	};
 
 	return {
@@ -135,8 +129,8 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 );
 
 const RealmList = (props: {
-	onBack: () => void;
 	onSelect: (id: string) => void;
+	onCreateRealm: () => void;
 	realms: Accessor<Realm[]>;
 	setRealms: Setter<Realm[]>;
 }) => {
@@ -148,31 +142,10 @@ const RealmList = (props: {
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: 10 }}
 			transition={{ duration: 0.3 }}
-			class="border-secondary-10 bg-secondary relative flex max-w-5xl flex-col overflow-hidden rounded-2xl border"
-			style={{
-				"--bg-color": "var(--color-secondary)",
-				"--border-color": "var(--color-secondary-10)",
-			}}
+			class="relative h-full w-full flex-col overflow-hidden"
 		>
-			{/* Header */}
-			<div class="border-secondary-10 flex items-center justify-between border-b px-8 py-6">
-				<div class="space-y-1">
-					<h1 class="text-xl font-medium text-white">Realms</h1>
-					<p class="text-secondary-60 text-sm font-normal">
-						Choose a realm to continue
-					</p>
-				</div>
-				<button
-					class="button secondary flex items-center gap-2"
-					onclick={props.onBack}
-				>
-					<PlusIcon class="h-4 w-4" />
-					New Realm
-				</button>
-			</div>
-
 			{/* Content */}
-			<div class="flex-1 overflow-y-auto p-8">
+			<div class="h-full w-full overflow-hidden overflow-y-auto p-8">
 				<Show
 					when={props.realms().length > 0}
 					fallback={
@@ -190,8 +163,8 @@ const RealmList = (props: {
 								</p>
 							</div>
 							<button
-								class="button secondary mt-2"
-								onclick={props.onBack}
+								class="button secondary mt-2 flex items-center gap-2"
+								onclick={props.onCreateRealm}
 							>
 								<PlusIcon class="mr-2 h-4 w-4" />
 								Create Realm
@@ -199,15 +172,16 @@ const RealmList = (props: {
 						</div>
 					}
 				>
-					<div class="grid gap-3">
+					<div
+						class="flex w-full flex-col gap-px"
+						style={{
+							background:
+								"linear-gradient(to right, transparent, var(--color-secondary-10), transparent)",
+						}}
+					>
 						<For each={props.realms()}>
 							{(realm) => (
-								<Motion.div
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									transition={{ duration: 0.2 }}
-									class="group border-secondary-10 bg-secondary-05 hover:border-secondary-15 hover:bg-secondary-10 relative overflow-hidden rounded-xl border p-6 transition-all"
-								>
+								<div class="group bg-secondary border-secondary-10 hover:border-secondary-15 relative w-full overflow-hidden p-6 transition-all">
 									<div class="flex items-center justify-between gap-6">
 										<div class="flex min-w-0 flex-1 items-center gap-4">
 											<div
@@ -270,35 +244,35 @@ const RealmList = (props: {
 													</span>
 												</div>
 											</div>
-										</div>
-										<div class="flex shrink-0 items-center gap-2">
-											<button
-												class="button secondary flex items-center gap-2"
-												onclick={() =>
-													props.onSelect(realm.id)
-												}
-											>
-												<RocketIcon class="h-4 w-4" />
-												Enter
-											</button>
-											<button
-												class="button-control red"
-												onclick={() =>
-													removeRealm(
-														realm.id,
-														props.setRealms,
-													)
-												}
-												title="Delete realm"
-											>
-												<MyIcon
-													name="trash"
-													class="size-4"
-												/>
-											</button>
+											<div class="flex shrink-0 items-center gap-2">
+												<button
+													class="button secondary flex items-center gap-2"
+													onclick={() =>
+														props.onSelect(realm.id)
+													}
+												>
+													<RocketIcon class="h-4 w-4" />
+													Enter
+												</button>
+												<button
+													class="button-control red"
+													onclick={() =>
+														removeRealm(
+															realm.id,
+															props.setRealms,
+														)
+													}
+													title="Delete realm"
+												>
+													<MyIcon
+														name="trash"
+														class="size-4"
+													/>
+												</button>
+											</div>
 										</div>
 									</div>
-								</Motion.div>
+								</div>
 							)}
 						</For>
 					</div>
@@ -351,11 +325,9 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 			!normalizedPath.startsWith(normalizedHome + "/") &&
 			normalizedPath !== normalizedHome
 		) {
-			hollow.events.emit("alert", {
-				type: "warning",
-				title: "Invalid Location",
-				message: "Please select a folder inside your home directory.",
-			});
+			alert(
+				"Invalid Location: Please select a folder inside your home directory.",
+			);
 			return;
 		}
 		setLocation(path);
@@ -371,26 +343,9 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: 10 }}
 			transition={{ duration: 0.3 }}
-			class="border-secondary-10 bg-secondary relative flex w-fit flex-col overflow-hidden rounded-2xl border"
-			style={{
-				"--bg-color": "var(--color-secondary)",
-				"--border-color": "var(--color-secondary-10)",
-			}}
+			class="relative flex h-full w-full flex-col p-10"
 		>
-			{/* Header */}
-			<div class="border-secondary-10 flex items-center gap-4 border-b px-2 py-2">
-				<button
-					class="text-secondary-60 hover:bg-secondary-10 rounded-lg p-2 transition-colors hover:text-white"
-					onclick={props.onBack}
-				>
-					<ArrowLeftIcon class="h-5 w-5" />
-				</button>
-				<div class="space-y-1">
-					<h1 class="text-xl font-medium text-white">Create Realm</h1>
-				</div>
-			</div>
-
-			<div class="flex flex-1 gap-12 p-8">
+			<div class="flex flex-1 gap-12">
 				{/* Form Section */}
 				<div class="flex w-full max-w-lg flex-col gap-8">
 					<div class="space-y-6">
@@ -580,220 +535,62 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 	);
 };
 
-function CreateCharacter(props: { onSuccess: () => void }) {
-	const [character, setCharacter] = createSignal<Character>(
-		manager.character.get,
-	);
-
-	const importAvatar = async () => {};
-
-	const save = () => {
-		manager.character.set = character();
-		props.onSuccess();
-	};
-
-	return (
-		<Motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			transition={{ duration: 0.3 }}
-			class="up-pop flex w-121 flex-col overflow-hidden"
-			style={{
-				"--bg-color": "var(--color-neutral-950)",
-				"--border-color": "var(--color-neutral-900)",
-				"--position": "relative",
-			}}
-		>
-			<div class="title-panel flex items-center gap-2">
-				<PandaIcon class="text-secondary-50 m-1 h-5 w-5" />
-				<h1 class="h1-title">Character Sheet</h1>
-			</div>
-			<div class="flex flex-col gap-3 p-3">
-				<div class="flex justify-between">
-					<p class="text-secondary-40 text-sm tracking-wider">
-						Wait. You there. Step forward. Who are you?
-					</p>
-					<span class="text-secondary-40 tool-tip text-sm tracking-wider">
-						<span class="tool-tip-content" data-side="right">
-							The Characters feature is currently experimental. It
-							doesn’t serve a specific purpose yet, but we wanted
-							to introduce it and explore its potential. If, over
-							time, it doesn’t provide value to most users, we may
-							decide to remove it.
-						</span>
-						[ i ]
-					</span>
-				</div>
-				<hr class="border-secondary bg-secondary-10/50 h-[2px] w-full" />
-				<div class="flex gap-5">
-					<div
-						class="border-secondary-10 flex size-40 shrink-0 flex-col justify-between rounded border p-2"
-						style={{
-							"background-image": `url(${character().avatar})`,
-							"background-size": "cover",
-						}}
-					>
-						<Show when={!character().avatar}>
-							<span class="text-secondary-20 w-full pt-10 text-center text-sm tracking-widest">
-								AVATAR
-							</span>
-						</Show>
-						<input
-							class="input mt-auto"
-							placeholder="https://"
-							oninput={(e) =>
-								setCharacter((p) => ({
-									...p,
-									avatar: e.currentTarget.value,
-								}))
-							}
-						/>
-					</div>
-					<div class="flex h-40 w-full flex-col justify-around gap-2">
-						<div class="w-full space-y-2">
-							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-								Name
-							</h2>
-							<input
-								class="input"
-								placeholder="All realms remember a name"
-								value={character().name}
-								onInput={(e) =>
-									setCharacter((prev) => ({
-										...prev,
-										name: e.currentTarget.value,
-									}))
-								}
-							/>
-						</div>
-						<div class="w-full space-y-2">
-							<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-								Title
-							</h2>
-							<Dropdown
-								value={character().title}
-								options={[
-									{
-										items: ["Elder", "The Original Few"],
-									},
-								]}
-								onSelect={(s: string) =>
-									setCharacter((prev) => ({
-										...prev,
-										title: s,
-									}))
-								}
-							/>
-						</div>
-					</div>
-				</div>
-				<div class="space-y-2">
-					<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-						Description
-					</h2>
-					<textarea
-						class="input resize-none"
-						placeholder="Your tale begins here"
-						value={character().bio}
-						onInput={(e) =>
-							setCharacter((prev) => ({
-								...prev,
-								bio: e.currentTarget.value,
-							}))
-						}
-					/>
-				</div>
-
-				<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
-				<div class="flex w-full flex-wrap items-center gap-2">
-					<h2 class="text-sm tracking-widest text-neutral-500 uppercase">
-						achievements :
-					</h2>
-					<For each={["🌀 First Step"]}>
-						{(ach) => (
-							<span class="bg-secondary-10 text-secondary-70 rounded px-2">
-								{ach}
-							</span>
-						)}
-					</For>
-				</div>
-				<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
-			</div>
-			<div class="mx-5 mb-5 flex gap-2">
-				<button
-					class="button primary"
-					onclick={save}
-					style={{ "--w": "100%" }}
-				>
-					Save
-				</button>
-				<button
-					class="button secondary"
-					onclick={() => props.onSuccess()}
-					style={{ "--w": "100%" }}
-				>
-					Skip
-				</button>
-			</div>
-		</Motion.div>
-	);
-}
-
-export default function Selector({ onSelect }: SelectorProps) {
-	const [ready] = createResource(async () => {
-		useColor({ name: "secondary", color: "#0b0b0b", oneTime: true });
-		useColor({ name: "primary", color: "#FFFFFF", oneTime: true });
-		return true;
-	});
+export default function SelectorWindow() {
 	const [realms, setRealms] = createSignal<Realm[]>(
 		manager.realm.getRealms(),
 	);
-	const [level, setLevel] = createSignal(realms().length === 0 ? 0 : 1);
-	//
+	const [level, setLevel] = createSignal(realms().length > 0 ? 1 : 0);
+
+	const handleSelect = async (id: string) => {
+		// Update realm in manager
+		await manager.realm.enterRealm(id);
+	};
+
 	return (
-		<Suspense fallback={<Loading />}>
-			<Show when={ready()}>
-				<div class="bg-secondary flex h-full w-full items-center justify-center p-8">
-					<div class="absolute top-4 right-4 z-10">
-						<WindowControl expanded />
+		<div class="h-full w-full overflow-hidden">
+			<div class="box-border flex h-full w-full flex-col p-5">
+				<div class="flex h-fit min-h-15 w-full items-center justify-between gap-10 overflow-hidden">
+					<div class="flex-1">
+						<Show when={level() !== 0}>
+							<Segmented
+								value={level()}
+								options={[
+									{ key: 1, title: "Realm List" },
+									{ key: 2, title: "Create Realm" },
+								]}
+								setValue={(v: number) => setLevel(v)}
+							/>
+						</Show>
 					</div>
-					<div class="flex w-full max-w-7xl items-center justify-center">
-						<Presence exitBeforeEnter>
-							<Show when={level() === 0}>
-								<WelcomeScreen onNext={() => setLevel(3)} />
-							</Show>
-
-							<Show when={level() === 1}>
-								<RealmList
-									onBack={() => setLevel(2)}
-									onSelect={(id) => {
-										onSelect(id);
-									}}
-									realms={realms}
-									setRealms={setRealms}
-								/>
-							</Show>
-
-							<Show when={level() === 2}>
-								<CreateRealm
-									onBack={() => setLevel(1)}
-									onSuccess={() => {
-										setRealms(manager.realm.getRealms());
-										setLevel(1);
-									}}
-								/>
-							</Show>
-
-							<Show when={level() === 3}>
-								<CreateCharacter
-									onSuccess={() => setLevel(2)}
-								/>
-							</Show>
-						</Presence>
-					</div>
+					<WindowControl expanded isSelector />
 				</div>
-			</Show>
-		</Suspense>
+				<div class="flex w-full flex-1 items-center justify-center overflow-hidden">
+					<Presence exitBeforeEnter>
+						<Show when={level() === 0}>
+							<WelcomeScreen onNext={() => setLevel(1)} />
+						</Show>
+
+						<Show when={level() === 1}>
+							<RealmList
+								onSelect={handleSelect}
+								realms={realms}
+								setRealms={setRealms}
+								onCreateRealm={() => setLevel(2)}
+							/>
+						</Show>
+
+						<Show when={level() === 2}>
+							<CreateRealm
+								onBack={() => setLevel(1)}
+								onSuccess={() => {
+									setRealms(manager.realm.getRealms());
+									setLevel(1);
+								}}
+							/>
+						</Show>
+					</Presence>
+				</div>
+			</div>
+		</div>
 	);
 }

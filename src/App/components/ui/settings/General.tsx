@@ -93,14 +93,11 @@ export default function General() {
 						class="toggle-input"
 						type="checkbox"
 						id="choose-realm-toggle"
-						checked={JSON.parse(
-							localStorage.realmToggleOnStartup ?? "false",
-						)}
-						onchange={(e) =>
-							(localStorage.realmToggleOnStartup = JSON.stringify(
-								e.currentTarget.checked,
-							))
-						}
+						checked={manager.realm.getSelectOnStartup()}
+						onchange={(e) => {
+							const value = e.currentTarget.checked;
+							manager.realm.setSelectOnStartup(value);
+						}}
 					/>
 					<label
 						class="toggle-label"

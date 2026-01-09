@@ -77,7 +77,7 @@ export default function Dropdown(props: DropdownProps) {
 									{(group) => (
 										<div class="relative">
 											<Show when={group.title}>
-												<div class="bg-secondary-05 sticky top-0 z-20 flex w-full items-center gap-1 px-3">
+												<div class="sticky top-0 z-20 flex w-full items-center gap-1 bg-[var(--front)] px-3">
 													<h1 class="overflow-hidden py-1.5 text-xs font-medium text-neutral-500">
 														{group.title}
 													</h1>

@@ -130,7 +130,7 @@ function CanvasSettings() {
 }
 
 function ColorSettings() {
-	const realm = createMemo(() => manager.realm.currentRealmId);
+	const realm = createMemo(() => manager.realm.getCurrent().id);
 	const primaryColor = createMemo(
 		() =>
 			JSON.parse(localStorage.getItem(`${realm()}-color-primary`))

@@ -30,6 +30,10 @@ export class Storage {
 		}
 	}
 
+	getStore() {
+		return this.store;
+	}
+
 	getData() {
 		this.ensureNotDisposed();
 		return this.data;

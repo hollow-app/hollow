@@ -67,8 +67,9 @@ export class RustManager {
 		invoke("first_launch");
 	}
 
-	reload(): void {
-		invoke("reload");
+	async reload() {
+		// invoke("reload");
+		window.location.reload();
 	}
 
 	async get_version(): Promise<string> {

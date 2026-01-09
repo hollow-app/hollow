@@ -4,8 +4,8 @@ import { readableColor } from "polished";
 import { createSelector, createSignal, For, onMount, Show } from "solid-js";
 
 interface Props {
-	value: string;
-	setValue: (v: string) => void;
+	value: any;
+	setValue: (v: any) => void;
 	options: { key: any; title?: string; icon?: any }[];
 }
 
@@ -28,7 +28,7 @@ export default function Segmented(props: Props) {
 	};
 
 	const onSelect = (
-		v: string,
+		v: any,
 		e: MouseEvent & { currentTarget: HTMLButtonElement },
 	) => {
 		detectPosition(e.currentTarget);

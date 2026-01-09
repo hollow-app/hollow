@@ -14,8 +14,12 @@ let timer: ReturnType<typeof setTimeout> | null = null;
 
 type WindowControlProps = {
 	expanded?: boolean;
+	isSelector?: boolean;
 };
-export default function WindowControl({ expanded }: WindowControlProps) {
+export default function WindowControl({
+	expanded,
+	isSelector,
+}: WindowControlProps) {
 	const [isVisi, setVisi] = createSignal(expanded);
 
 	const handleMouseOn = () => {
@@ -42,7 +46,7 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 		<div
 			onMouseEnter={handleMouseOn}
 			onMouseLeave={handleMouseOff}
-			class="window-control border-secondary-10 h-8 overflow-hidden rounded border-1 bg-[var(--front)] transition-all duration-300"
+			class="window-control border-secondary-10 h-8 shrink-0 overflow-hidden rounded border bg-[var(--front)] transition-all duration-300"
 			classList={{ "w-fit": isVisi(), "w-8": !isVisi() }}
 		>
 			<Presence exitBeforeEnter>
@@ -64,7 +68,7 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 						class="flex h-full w-full"
 					>
 						<button
-							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center transition-opacity"
+							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center transition-opacity outline-none"
 							classList={{
 								"opacity-0": !isVisi(),
 							}}
@@ -72,17 +76,19 @@ export default function WindowControl({ expanded }: WindowControlProps) {
 						>
 							<ChevronDownIcon class="size-6 p-1" />
 						</button>
+						<Show when={!isSelector}>
+							<button
+								class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center outline-none"
+								classList={{
+									"opacity-0": !isVisi(),
+								}}
+								onclick={() => manager.rust.maximize_window()}
+							>
+								<ChevronsLeftRightIcon class="size-6 p-1" />
+							</button>
+						</Show>
 						<button
-							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center"
-							classList={{
-								"opacity-0": !isVisi(),
-							}}
-							onclick={() => manager.rust.maximize_window()}
-						>
-							<ChevronsLeftRightIcon class="size-6 p-1" />
-						</button>
-						<button
-							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center"
+							class="hover:bg-secondary-10 flex h-full w-8 shrink-0 items-center justify-center outline-none"
 							classList={{
 								"opacity-0": !isVisi(),
 							}}

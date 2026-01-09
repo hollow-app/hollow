@@ -17,7 +17,7 @@ export const Card: Component<CardProps> = (props) => {
 			gs-h={props.node.h}
 		>
 			<div
-				class="box-border h-full w-full"
+				class="relative box-border h-full w-full"
 				classList={{
 					"cursor-move pointer-events-none": isLiveEditor(),
 				}}

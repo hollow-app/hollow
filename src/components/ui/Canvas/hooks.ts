@@ -36,7 +36,7 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 	const [canvasEl, setCanvasEl] = createSignal<HTMLDivElement>();
 	const [grid, setGrid] = createSignal<GridStack>();
 	const [options, setOptions] = createSignal<any>({
-		overflow: { x: "auto", y: "auto" },
+		overflow: { x: "scroll", y: "scroll" },
 		scrollbars: {
 			visibility: "auto",
 			autoHide: "never",

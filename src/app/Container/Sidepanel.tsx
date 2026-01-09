@@ -1,7 +1,7 @@
 import setStyle from "@hooks/setStyle";
 import { Layout, PanelType } from "@utils/layout";
 import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
-import { createMemo, For, Show } from "solid-js";
+import { createEffect, createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
 import { useHollow } from "../../HollowContext";
@@ -27,7 +27,7 @@ export default function Sidepanel(props: SidepanelProps) {
 						<Motion.div
 							style={{
 								width: props.width,
-								[props.type]: "0",
+								// [props.type]: "0",
 							}}
 							class="border-secondary-10 flex h-full shrink-0 overflow-hidden"
 							classList={{

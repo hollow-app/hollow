@@ -27,6 +27,7 @@ a:not(.outline-none),
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
 	--grid-gap: 8;
+	--negative-grid-gap: calc(var(--grid-gap) * -1px);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;

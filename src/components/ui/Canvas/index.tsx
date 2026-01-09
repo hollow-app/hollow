@@ -10,10 +10,7 @@ export const Canvas: Component<CanvasProps> = (props) => {
 	return (
 		<div
 			ref={state.setCanvasEl}
-			class="canvas-parent relative flex h-full flex-1 overflow-hidden bg-red-400"
-			style={{
-				"--m": "calc(var(--grid-gap) * -1px)",
-			}}
+			class="canvas-parent relative flex h-full flex-1 overflow-hidden"
 		>
 			<OverlayScrollbarsComponent
 				element="div"
@@ -26,8 +23,8 @@ export const Canvas: Component<CanvasProps> = (props) => {
 						width: "calc(100vw - calc(var(--spacing) * 19) - 2px)",
 						"min-height":
 							"calc(100vh - calc(var(--spacing) * 4) - 2px)",
-						"margin-left": "var(--m)",
-						"margin-top": "var(--m)",
+						"margin-left": "var(--negative-grid-gap)",
+						"margin-top": "var(--negative-grid-gap)",
 					}}
 				>
 					<div class="grid-stack h-full w-full" ref={state.setGridEl}>

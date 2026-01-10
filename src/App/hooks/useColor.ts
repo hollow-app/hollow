@@ -65,7 +65,12 @@ function switchMode(isDark: boolean) {
 		(isDark && currentTheme !== "dark") ||
 		(!isDark && currentTheme === "dark")
 	) {
-		localStorage.theme = isDark ? "dark" : "light";
-		document.documentElement.classList.toggle("dark", isDark);
+		if (isDark) {
+			localStorage.theme = "dark";
+			document.documentElement.classList.add("dark");
+		} else {
+			localStorage.theme = "light";
+			document.documentElement.classList.remove("dark");
+		}
 	}
 }

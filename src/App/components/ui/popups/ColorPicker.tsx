@@ -79,7 +79,7 @@ export default function ColorPicker({ p }: ColorPickerProps) {
 					</div>
 				</div>
 
-				<div class="relative h-[280px] w-full rounded-xl px-2 hover:cursor-pointer">
+				<div class="disable-outline relative h-[280px] w-full rounded-xl px-2 hover:cursor-pointer">
 					<HexColorPicker color={myColor()} onChange={changeColor} />
 				</div>
 				<div class="mx-auto flex w-full justify-center gap-2 rounded-xl">

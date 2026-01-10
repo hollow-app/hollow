@@ -4,12 +4,21 @@ import solidSvg from "vite-plugin-solid-svg";
 import { aliases } from "./vite.aliases";
 import tailwindcss from "@tailwindcss/vite";
 import { visualizer } from "rollup-plugin-visualizer";
+import { resolve } from "path";
 
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
+	build: {
+		rollupOptions: {
+			input: {
+				main: resolve(__dirname, "index.html"),
+				selector: resolve(__dirname, "selector.html"),
+			},
+		},
+	},
 	plugins: [
 		solid(),
 		solidSvg({ defaultAsComponent: true }),

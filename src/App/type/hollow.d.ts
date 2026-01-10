@@ -315,7 +315,9 @@ export type TagType = {
 	/**
 	 * Background color.
 	 */
-	color: string;
+	background: string;
+
+	foreground: string;
 };
 
 /**

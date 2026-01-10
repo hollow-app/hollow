@@ -2,19 +2,15 @@
 /* 	outline: none; */
 /* } */
 
-input:not(.outline-none),
-textarea:not(.outline-none),
-button:not(.outline-none),
-select:not(.outline-none),
-a:not(.outline-none),
-[tabindex]:not(.outline-none),
-[contenteditable="true"]:not(.outline-none) {
-	outline-color: var(--color-secondary-10);
-
-	&:focus {
-		outline: 2px solid var(--color-secondary-10);
-		outline-offset: 2px;
-	}
+:where(input,
+	textarea,
+	button,
+	select,
+	a,
+	[tabindex],
+	[contenteditable="true"]):not(.outline-none, .disable-outline):focus-visible {
+	outline: 2px solid var(--color-secondary-10);
+	outline-offset: 2px;
 }
 
 :root {
@@ -51,6 +47,9 @@ a:not([target="_blank"]) {
 	--high: var(--color-secondary-10);
 }
 
+.disable-outline * {
+	outline: none;
+}
 
 .titlebar {
 	app-region: drag;

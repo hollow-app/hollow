@@ -48,7 +48,7 @@ const themes = {
 const useRealmManager = () => {
 	const [name, setName] = createSignal("");
 	const [location, setLocation] = createSignal("");
-	const [primary, setPrimary] = createSignal("#FF0033");
+	const [primary, setPrimary] = createSignal("#FFFFFF");
 	const [secondary, setSecondary] = createSignal("#000000");
 
 	const createRealm = () => {

@@ -10,9 +10,8 @@ import {
 	Show,
 	Suspense,
 } from "solid-js";
-import { FormType } from "@type/hollow";
+import { FormType, TagType } from "@type/hollow";
 import useTags from "@hooks/useTags";
-import { readableColor } from "polished";
 import { manager } from "@managers/index";
 import { hollow } from "hollow";
 import Loading from "@components/Loading";
@@ -20,11 +19,9 @@ import Dropdown from "@components/dynamic/Dropdown";
 import { CircleFadingPlusIcon } from "lucide-solid";
 import Tag from "@components/Tag";
 import useGrid from "@hooks/useGrid";
-import { GridStackOptions } from "gridstack";
-import { Accessor } from "solid-js";
-import { Setter } from "solid-js";
 import { SettingsManager } from "@managers/SettingsManager";
 import { useHollow } from "../../../HollowContext";
+import { readableColor } from "polished";
 
 export default function Appearance() {
 	const settingsManager = manager.settings;
@@ -267,21 +264,21 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 	) => {
 		const { name, background } = data;
 		const updateNewName = prev && !tags().some((i) => i.name === prev.name);
-		const newTag = {
+		const newTag: TagType = {
 			name,
-			color: background,
+			background: background ?? "#fff",
+			foreground: readableColor(background ?? "#fff"),
 		};
-		if (name !== "") {
-			const newTags = updateNewName
-				? [newTag, ...tags().filter((i) => i.name !== prev!.name)]
-				: prev
-					? tags().map((t) => (t.name === prev.name ? newTag : t))
-					: [...tags(), newTag];
-			setTags(newTags);
-			settingsManager.setConfig("custom-tags", newTags);
-			hollow.events.emit("character-add-achievement", "🏷️ Classifier");
-			useTags(newTags);
-		}
+		if (!name) return;
+		const newTags = updateNewName
+			? [newTag, ...tags().filter((i) => i.name !== prev!.name)]
+			: prev
+				? tags().map((t) => (t.name === prev.name ? newTag : t))
+				: [...tags(), newTag];
+		setTags(newTags);
+		settingsManager.setConfig("custom-tags", newTags);
+		hollow.events.emit("character-add-achievement", "🏷️ Classifier");
+		useTags(newTags);
 	};
 	const onNewTag = (data?: { name: string; background: string }) => {
 		const update = !!data;
@@ -327,11 +324,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 						Custom tags that will be used by tools.{" "}
 					</p>
 				</div>
-				<button
-					class="button secondary"
-					style={{ "--padding-y": "calc(var(--spacing) * 3)" }}
-					onclick={() => onNewTag()}
-				>
+				<button class="button-control" onclick={() => onNewTag()}>
 					<CircleFadingPlusIcon class="size-5" />
 				</button>
 			</div>
@@ -343,7 +336,7 @@ function TagsEditor({ settingsManager }: CommonSettings) {
 							onclick={() =>
 								onNewTag({
 									name: tag.name,
-									background: tag.color,
+									background: tag.background,
 								})
 							}
 						>

@@ -11,10 +11,16 @@ export default function useTags(tags?: TagType[]) {
 	}
 	hollow.events.emit("tags", data);
 	setStyle(
-		data.map((i) => ({
-			name: formatCSSVarName(i.name),
-			value: i.color,
-		})),
+		data.flatMap((i) => [
+			{
+				name: formatCSSVarName(i.name) + "-bg",
+				value: i.background,
+			},
+			{
+				name: formatCSSVarName(i.name) + "-fg",
+				value: i.foreground,
+			},
+		]),
 	);
 }
 

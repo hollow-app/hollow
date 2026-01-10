@@ -29,7 +29,7 @@ export default function General() {
 				<a
 					class="button secondary flex"
 					style={{ "--h": "auto" }}
-					href={"buymeacoffee.com/ryusufe"}
+					href={"https://buymeacoffee.com/ryusufe"}
 					target="_blank"
 				>
 					<HeartHandshakeIcon class="my-auto size-6" />

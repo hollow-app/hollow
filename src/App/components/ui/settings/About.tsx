@@ -38,7 +38,7 @@ const links: LinksType[] = [
 		title: "BuyMeCoffee",
 		description: "Support Hollow’s development.",
 		label: "Support",
-		link: "buymeacoffee.com/ryusufe",
+		link: "https://buymeacoffee.com/ryusufe",
 	},
 ];
 export default function About() {

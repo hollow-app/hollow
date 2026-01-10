@@ -12,7 +12,7 @@
 	"app": {
 		"windows": [],
 		"security": {
-			"csp": "default-src 'self' ipc:; connect-src 'self' ipc: https:; img-src 'self' asset: asset://* https:; style-src 'self' 'unsafe-inline';",
+			"csp": null,
 			"assetProtocol": {
 				"enable": true,
 				"scope": []
@@ -72,4 +72,3 @@
 		}
 	}
 }
-

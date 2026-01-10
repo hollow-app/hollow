@@ -560,6 +560,7 @@ export default function SelectorWindow() {
 									{ key: 2, title: "Create Realm" },
 								]}
 								setValue={(v: number) => setLevel(v)}
+								direct
 							/>
 						</Show>
 					</div>

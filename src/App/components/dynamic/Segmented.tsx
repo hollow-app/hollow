@@ -1,55 +1,53 @@
 import { DynamicIcon } from "@components/DynamicIcon";
-import { options } from "marked";
-import { readableColor } from "polished";
-import { createSelector, createSignal, For, onMount, Show } from "solid-js";
+import {
+	createMemo,
+	createSelector,
+	createSignal,
+	For,
+	onMount,
+	Show,
+} from "solid-js";
 
 interface Props {
 	value: any;
 	setValue: (v: any) => void;
 	options: { key: any; title?: string; icon?: any }[];
+	direct?: boolean;
 }
 
 export default function Segmented(props: Props) {
 	let parent!: HTMLDivElement;
-	const [position, setPosition] = createSignal({
-		left: "0px",
-		width: "100%",
+	const itemsRect: Record<string, { width: string; left: string }> = {};
+	const [value, setValue] = createSignal(null);
+	const isSelected = createSelector(props.direct ? () => props.value : value);
+	const position = createMemo(() => {
+		if (!value()) {
+			return {
+				left: "0px",
+				width: "100%",
+			};
+		}
+		return itemsRect[props.direct ? props.value : value()];
 	});
-	const [value, setValue] = createSignal(props.value ?? props.options[0].key);
-	const isSelected = createSelector(value);
-
 	let space = 0;
-
-	const detectPosition = (e: HTMLButtonElement) => {
-		setPosition({
-			width: `${e.scrollWidth + 2 * space}px`,
-			left: `${e.offsetLeft - space}px`,
-		});
-	};
-
-	const onSelect = (
-		v: any,
-		e: MouseEvent & { currentTarget: HTMLButtonElement },
-	) => {
-		detectPosition(e.currentTarget);
+	const onSelect = (v: any) => {
 		setValue(v);
 		props.setValue(v);
 	};
-
 	onMount(() => {
 		const parentLeft = parent.getBoundingClientRect().left;
 		const childLeft = parent.children[1].getBoundingClientRect().left;
 		space = childLeft - parentLeft;
-		const child =
-			parent.children[
-				(props.value
-					? props.options.findIndex((i) => i.key === props.value)
-					: 0) + 1
-			];
-		setPosition({
-			width: `${child.scrollWidth + 2 * space}px`,
-			left: `${child.getBoundingClientRect().left - parent.getBoundingClientRect().left - space}px`,
-		});
+		for (const el of parent.children) {
+			const key = el.getAttribute("data-key");
+			if (key) {
+				itemsRect[key] = {
+					width: el.scrollWidth + 2 * space + "px",
+					left: el.getBoundingClientRect().left - parentLeft + "px",
+				};
+			}
+		}
+		setValue(props.value ?? props.options[0].key);
 	});
 	return (
 		<div class="bg-secondary-05 w-full rounded-lg p-1">
@@ -70,7 +68,8 @@ export default function Segmented(props: Props) {
 								"text-primary ": isSelected(option.key),
 								"text-secondary-40 ": !isSelected(option.key),
 							}}
-							onclick={(e) => onSelect(option.key, e)}
+							onclick={() => onSelect(option.key)}
+							data-key={option.key}
 						>
 							<Show when={option.icon}>
 								<DynamicIcon

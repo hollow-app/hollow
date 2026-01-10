@@ -45,7 +45,7 @@ codegen-units = 1
 lto = true
 opt-level = "s"
 panic = "abort"
-strip = "debuginfo"
+strip = true
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"

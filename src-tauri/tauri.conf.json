@@ -21,9 +21,7 @@
 	},
 	"bundle": {
 		"active": true,
-		"targets": [
-			"appimage"
-		],
+		"targets": ["app", "msi"],
 		"createUpdaterArtifacts": true,
 		"licenseFile": "wix\\license.rtf",
 		"linux": {
@@ -63,9 +61,7 @@
 	"plugins": {
 		"deep-link": {
 			"desktop": {
-				"schemes": [
-					"hollow"
-				]
+				"schemes": ["hollow"]
 			}
 		},
 		"updater": {
@@ -76,3 +72,4 @@
 		}
 	}
 }
+

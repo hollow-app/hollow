@@ -548,8 +548,9 @@ export default function SelectorWindow() {
 
 	return (
 		<div class="h-full w-full overflow-hidden">
-			<div class="box-border flex h-full w-full flex-col p-5">
-				<div class="flex h-fit min-h-15 w-full items-center justify-between gap-10 overflow-hidden">
+			<div class="titlebar h-5" />
+			<div class="box-border flex h-full w-full flex-col px-5 pb-5">
+				<div class="flex h-fit min-h-14 w-full items-center justify-between gap-10 overflow-hidden">
 					<div class="flex-1">
 						<Show when={level() !== 0}>
 							<Segmented

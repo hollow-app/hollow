@@ -38,13 +38,6 @@ pub fn start_realm(
 }
 
 #[command]
-pub fn reload(app: AppHandle) -> Result<(), String> {
-    crate::utils::get_main_window(&app)?
-        .reload()
-        .map_err(|e| format!("Failed to reload window: {}", e))
-}
-
-#[command]
 pub fn get_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }

@@ -38,11 +38,6 @@ pub fn create_dir_internal(path: &str, state: &State<'_, Mutex<AppData>>) -> Res
     Ok(())
 }
 
-pub fn get_main_window(app: &AppHandle) -> Result<tauri::WebviewWindow, String> {
-    app.get_webview_window("main")
-        .ok_or("Main window not found".to_string())
-}
-
 // Commands
 #[command]
 pub fn first_launch(app: AppHandle) {

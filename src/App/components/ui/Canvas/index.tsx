@@ -1,29 +1,30 @@
-import { Component, For } from "solid-js";
+import { Component, For, onCleanup, onMount } from "solid-js";
 import "gridstack/dist/gridstack.css";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import "overlayscrollbars/overlayscrollbars.css";
 import { hollow } from "hollow";
 import { Card } from "../Card";
 import { useCanvas, CanvasProps } from "./hooks";
+import Scrollbar from "smooth-scrollbar";
 export const Canvas: Component<CanvasProps> = (props) => {
 	const { state } = useCanvas(props);
+	let scrollEl!: HTMLDivElement;
+	onMount(() => {
+		const scrollbar = Scrollbar.init(scrollEl, {});
+		onCleanup(() => {
+			scrollbar.destroy();
+		});
+	});
 	return (
 		<div
 			ref={state.setCanvasEl}
 			class="canvas-parent relative h-full flex-1 shrink-0 overflow-hidden"
 		>
-			<OverlayScrollbarsComponent
-				element="div"
-				class={"h-full w-full"}
-				options={state.options()}
-				defer
-			>
+			<div ref={scrollEl} class={"h-full w-full"}>
 				<div
 					class="relative"
 					style={{
 						width: "calc(100vw - calc(var(--spacing) * 19) - 2px - var(--negative-grid-gap))",
 						"min-height":
-							"calc(100vh - calc(var(--spacing) * 4) - 2px - var(--negative-grid-gap) + calc(var(--spacing) * 10))",
+							"calc(100vh - calc(var(--spacing) * 4) - 2px - var(--negative-grid-gap))",
 						"margin-left": "var(--negative-grid-gap)",
 						"margin-top": "var(--negative-grid-gap)",
 					}}
@@ -44,9 +45,8 @@ export const Canvas: Component<CanvasProps> = (props) => {
 							)}
 						</For>
 					</div>
-					<div class="absolute right-0 bottom-0 left-[calc(var(--grid-gap)*1px)] h-8 rounded-lg bg-[var(--front)]"></div>
 				</div>
-			</OverlayScrollbarsComponent>
+			</div>
 		</div>
 	);
 };

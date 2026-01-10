@@ -25,6 +25,21 @@ export default function Sidepanel(props: SidepanelProps) {
 				{(panel) => (
 					<Show when={layout().visible && layout().current === panel}>
 						<Motion.div
+							initial={{
+								opacity: 0,
+								padding: 0,
+							}}
+							animate={{
+								opacity: 1,
+								padding: props.padding,
+							}}
+							exit={{
+								opacity: 0,
+								padding: 0,
+							}}
+							transition={{
+								duration: 0.3,
+							}}
 							style={{
 								width: props.width,
 								// [props.type]: "0",

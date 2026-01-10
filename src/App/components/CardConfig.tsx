@@ -45,7 +45,7 @@ export default function CardConfig({
 		<>
 			<div class="group card-config flex w-[calc(calc(var(--spacing)*104)-40px)] shrink-0 justify-between px-1 py-3">
 				<div class="min-w-0 space-y-2">
-					<div class="text-secondary-30 flex w-fit items-center gap-1">
+					<div class="dark:text-secondary-30 text-secondary-50 flex w-fit items-center gap-1">
 						<ToolIcon
 							toolName={icon ?? myCard.data.tool}
 							class="size-4"
@@ -73,9 +73,9 @@ export default function CardConfig({
 					</div>
 				</div>
 
-				<div class="flex h-full flex-col items-end gap-3">
+				<div class="dark:text-secondary-30 text-secondary-50 flex h-full flex-col items-end gap-3">
 					<StarIcon
-						class="text-secondary-30 size-4 cursor-pointer rounded transition-transform hover:rotate-12"
+						class="size-4 cursor-pointer rounded transition-transform hover:rotate-12"
 						onclick={handleFav}
 						classList={{
 							"text-yellow-500 fill-yellow-500": isFav(),
@@ -84,14 +84,14 @@ export default function CardConfig({
 
 					<div class="mt-auto flex gap-5">
 						<button
-							class="text-secondary-30 size-4 cursor-pointer rounded transition-transform hover:rotate-12"
+							class="size-4 cursor-pointer rounded transition-transform hover:rotate-12"
 							onclick={handleDelete}
 						>
 							<MyIcon name="trash" class="size-4" />
 						</button>
 
 						<button
-							class="text-secondary-30 card-config-place size-4 cursor-pointer rounded transition-transform hover:rotate-12"
+							class="card-config-place size-4 cursor-pointer rounded transition-transform hover:rotate-12"
 							onclick={handlePlacement}
 						>
 							<Show

@@ -23,7 +23,6 @@ import Dropdown from "@components/dynamic/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@components/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
-import { RealmManager } from "@managers/RealmManager";
 import { manager } from "@managers/index";
 import Segmented from "@components/dynamic/Segmented";
 
@@ -187,7 +186,8 @@ const RealmList = (props: {
 											<div
 												class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl"
 												style={{
-													background: `color-mix(in oklab, ${realm.colors.secondary} 15%, transparent)`,
+													background:
+														realm.colors.secondary,
 												}}
 											>
 												<HollowIcon
@@ -548,7 +548,9 @@ export default function SelectorWindow() {
 
 	return (
 		<div class="h-full w-full overflow-hidden">
-			<div class="titlebar h-5" />
+			<div class="titlebar bg-secondary-05 flex justify-end rounded">
+				<WindowControl expanded isSelector />
+			</div>
 			<div class="box-border flex h-full w-full flex-col px-5 pb-5">
 				<div class="flex h-fit min-h-14 w-full items-center justify-between gap-10 overflow-hidden">
 					<div class="flex-1">
@@ -564,7 +566,6 @@ export default function SelectorWindow() {
 							/>
 						</Show>
 					</div>
-					<WindowControl expanded isSelector />
 				</div>
 				<div class="flex w-full flex-1 items-center justify-center overflow-hidden">
 					<Presence exitBeforeEnter>

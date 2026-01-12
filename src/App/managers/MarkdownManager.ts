@@ -19,8 +19,15 @@ export class MarkdownManager {
 		);
 	}
 
+	private hljs: any;
+	private loadedLanguages = new Set<string>();
+
 	async start() {
-		const { default: hljs } = await import("highlight.js");
+		const { default: hljs } = await import("highlight.js/lib/core");
+		this.hljs = hljs;
+		// @ts-ignore
+		window.hljs = hljs; // Expose to window for CDN scripts
+
 		const { default: markedKatex } = await import("marked-katex-extension");
 
 		this.renderer = new marked.Renderer();
@@ -32,10 +39,18 @@ export class MarkdownManager {
 		};
 
 		this.renderer.code = ({ text, lang, escaped }) => {
-			const validLang = hljs.getLanguage(lang) ? lang : "plaintext";
-			const highlighted = hljs.highlight(text, {
-				language: validLang,
-			}).value;
+			let highlighted: string;
+
+			if (lang && this.hljs.getLanguage(lang)) {
+				// Use the provided language
+				highlighted = this.hljs.highlight(text, {
+					language: lang,
+				}).value;
+			} else {
+				// Fallback to auto-detect or plaintext safely
+				highlighted = this.hljs.highlightAuto(text).value;
+			}
+
 			return `<pre><code class="hljs ${lang}">${
 				escaped
 					? highlighted.replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -88,11 +103,47 @@ export class MarkdownManager {
 			.trim();
 	}
 
+	private async loadLanguage(lang: string) {
+		if (this.loadedLanguages.has(lang)) return;
+		if (this.hljs.getLanguage(lang)) {
+			this.loadedLanguages.add(lang);
+			return;
+		}
+
+		try {
+			const response = await fetch(
+				`https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/${lang}.min.js`,
+			);
+			if (!response.ok) throw new Error("Language not found");
+			const script = await response.text();
+			// Execute script in global scope where window.hljs is defined
+			new Function(script)();
+			this.loadedLanguages.add(lang);
+		} catch (e) {
+			console.warn(`Failed to load language: ${lang}`, e);
+		}
+	}
+
+	private async preloadLanguages(markdown: string) {
+		const codeBlockRegex = /^```(\w+)/gm;
+		const matches = [...markdown.matchAll(codeBlockRegex)];
+		const languages = new Set(matches.map((m) => m[1]));
+
+		await Promise.all(
+			Array.from(languages).map((lang) => this.loadLanguage(lang)),
+		);
+	}
+
 	async renderMarkdown(markdown: string, id: string): Promise<string> {
 		this.noteId = id;
 		// for unique elements
 		this.slugger.reset();
 		this.checkboxIndex = 0;
+
+		if (this.hljs) {
+			await this.preloadLanguages(markdown);
+		}
+
 		return await marked(markdown);
 	}
 

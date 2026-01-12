@@ -23,7 +23,11 @@ export default defineConfig(async () => ({
 		solid(),
 		solidSvg({ defaultAsComponent: true }),
 		tailwindcss(),
-		visualizer({ open: false }),
+		visualizer({
+			open: true,
+			gzipSize: true,
+			filename: "dist/vite-vis.html",
+		}),
 	],
 
 	// Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

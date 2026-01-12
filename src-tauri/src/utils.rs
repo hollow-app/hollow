@@ -62,6 +62,24 @@ pub fn create_dir(paths: Vec<String>, state: State<'_, Mutex<AppData>>) -> Resul
 }
 
 #[command]
+pub fn remove_dir(path: String, state: State<'_, Mutex<AppData>>) -> Result<(), String> {
+    validate_path(&path)?;
+    let full_path = get_full_path(&path, &state)?;
+    if full_path.exists() {
+        fs::remove_dir_all(&full_path).map_err(|e| e.to_string())?;
+        log::info!("Directory removed: {}", full_path.display());
+    }
+    Ok(())
+}
+
+#[command]
+pub fn path_exists(path: String, state: State<'_, Mutex<AppData>>) -> Result<bool, String> {
+    validate_path(&path)?;
+    let full_path = get_full_path(&path, &state)?;
+    Ok(full_path.exists())
+}
+
+#[command]
 pub fn read_file(path: String, state: State<'_, Mutex<AppData>>) -> Result<String, String> {
     validate_path(&path)?;
     let file_path = get_full_path(&path, &state)?;

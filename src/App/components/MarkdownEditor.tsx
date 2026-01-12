@@ -2,7 +2,7 @@ import {
 	createCodeMirror,
 	createEditorControlledValue,
 } from "solid-codemirror";
-import { Accessor, createResource, createSignal, Suspense } from "solid-js";
+import { createSignal } from "solid-js";
 import {
 	drawSelection,
 	EditorView,
@@ -15,7 +15,6 @@ import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { syntaxHighlighting } from "@codemirror/language";
 import highlightStyle from "@utils/markdown/highlightStyle";
 import { Show } from "solid-js";
-import { manager } from "@managers/index";
 
 const codemirrorSetup = (() => [
 	highlightSpecialChars(),
@@ -28,20 +27,13 @@ const codemirrorSetup = (() => [
 ])();
 
 type MarkdownEditorProps = {
-	editMode: Accessor<boolean>;
 	value: () => string;
 	setValue: (s: string) => void;
-	uniqueNote: () => string;
 };
 export default function MarkdownEditor({
-	editMode,
 	value,
 	setValue,
-	uniqueNote,
 }: MarkdownEditorProps) {
-	const [parsedMd] = createResource(value, () =>
-		manager.markdown.renderMarkdown(value(), uniqueNote()),
-	);
 	const [inValue, setInValue] = createSignal(value());
 	const {
 		editorView,
@@ -61,11 +53,11 @@ export default function MarkdownEditor({
 
 	return (
 		<div class="relative h-fit w-full shrink-0">
-			<Show when={editMode() && inValue() === ""}>
+			<Show when={inValue() === ""}>
 				<p class="text-secondary-30 absolute top-0 left-[6px] text-xl">
 					{
 						placeholders[
-							Math.floor(Math.random() * placeholders.length)
+						Math.floor(Math.random() * placeholders.length)
 						]
 					}
 				</p>
@@ -74,23 +66,8 @@ export default function MarkdownEditor({
 				class={
 					"h-full max-w-full overflow-x-hidden text-gray-900 dark:text-gray-50"
 				}
-				classList={{ hidden: !editMode() }}
 				ref={editorRef}
 			/>
-			<Show when={!editMode() && parsedMd()}>
-				<Suspense
-					fallback={
-						<div class="flex h-full w-full items-center justify-center">
-							<div class="chaotic-orbit" />
-						</div>
-					}
-				>
-					<div
-						class="markdown-preview pt-2 pb-4"
-						innerHTML={parsedMd()}
-					/>
-				</Suspense>
-			</Show>
 		</div>
 	);
 }

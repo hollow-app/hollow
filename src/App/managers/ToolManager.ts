@@ -284,11 +284,7 @@ export class ToolManager {
 			const store: IStore = toolEvents.getData("config");
 			await store.close();
 			this.toolMap.delete(name);
-			const toolPath = await join(
-				this.managers?.realm.getCurrent().location,
-				"main",
-				name,
-			);
+			const toolPath = await join("main", name);
 			await this.managers?.rust.remove_dir(toolPath);
 			return request;
 		} catch (error) {
@@ -433,7 +429,7 @@ export class ToolManager {
 		const newCard: CardType = {
 			id,
 			w: 3,
-			h: 3,
+			h: 4,
 			// x: 10,
 			// y: 10,
 			style: {
@@ -463,12 +459,7 @@ export class ToolManager {
 			this.store.set(toolName, tool);
 			hollow.setCards(reconcile([...hollow.cards(), newCard]));
 			await this.managers?.rust.create_dir(
-				await join(
-					this.managers?.realm.getCurrent().location,
-					"main",
-					tool.name,
-					newCard.data.name,
-				),
+				await join("main", tool.name, newCard.data.name),
 			);
 		} else {
 			console.error(result);

@@ -9,9 +9,12 @@ import {
 	on,
 	createRoot,
 	onCleanup,
+	lazy,
+	Suspense,
 } from "solid-js";
 import { render } from "solid-js/web";
-import MarkdownEditor from "@components/MarkdownEditor";
+const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
+import MarkdownPreview from "@components/MarkdownPreview";
 import WordInput from "@components/dynamic/WordInput.tsx";
 import Tag from "@components/Tag";
 import { NotebookTabsIcon } from "lucide-solid";
@@ -113,17 +116,17 @@ const Notebook: Component<NotebookProps> = (props) => {
 						onclick={() => {
 							state.note()?.newNote
 								? (() => {
-										state.setEditMode(false);
-										state.setNote(
-											state.book.last
-												? state.book.notes.find(
-														(i) =>
-															i.title ===
-															state.book.last,
-													) || null
-												: null,
-										);
-									})()
+									state.setEditMode(false);
+									state.setNote(
+										state.book.last
+											? state.book.notes.find(
+												(i) =>
+													i.title ===
+													state.book.last,
+											) || null
+											: null,
+									);
+								})()
 								: actions.onNewNote();
 						}}
 						style={{
@@ -198,11 +201,11 @@ const Notebook: Component<NotebookProps> = (props) => {
 											state.setNote((prev) =>
 												prev
 													? {
-															...prev,
-															title: e
-																.currentTarget
-																.value,
-														}
+														...prev,
+														title: e
+															.currentTarget
+															.value,
+													}
 													: null,
 											)
 										}
@@ -222,25 +225,25 @@ const Notebook: Component<NotebookProps> = (props) => {
 														state.note()?.attributes
 															?.tags
 															? state
-																	.note()!
-																	.attributes.tags.split(
-																		",",
-																	)
+																.note()!
+																.attributes.tags.split(
+																	",",
+																)
 															: []
 													}
 													setWords={(tgs) =>
 														state.setNote((prev) =>
 															prev
 																? {
-																		...prev,
-																		attributes:
-																			{
-																				...prev.attributes,
-																				tags: tgs.join(
-																					", ",
-																				),
-																			},
-																	}
+																	...prev,
+																	attributes:
+																	{
+																		...prev.attributes,
+																		tags: tgs.join(
+																			", ",
+																		),
+																	},
+																}
 																: null,
 														)
 													}
@@ -278,23 +281,43 @@ const Notebook: Component<NotebookProps> = (props) => {
 							</div>
 							<div class="w-full flex-1 shrink-0 justify-center overflow-hidden overflow-y-scroll scroll-smooth">
 								<div class="mx-auto flex w-full px-5 @4xl:w-[70%] @7xl:w-[50%]">
-									<MarkdownEditor
-										editMode={state.editMode}
-										value={() => state.note()?.body ?? ""}
-										setValue={(v) => {
-											state.setNote((prev) =>
-												prev
-													? {
-															...prev,
-															body: v,
-														}
-													: null,
-											);
-										}}
-										uniqueNote={() =>
-											`${state.book.name.toLowerCase()}-${state.note()?.title.toLowerCase() ?? ""}`
+									<Show
+										when={state.editMode()}
+										fallback={
+											<MarkdownPreview
+												value={() =>
+													state.note()?.body ?? ""
+												}
+												uniqueNote={() =>
+													`${state.book.name.toLowerCase()}-${state.note()?.title.toLowerCase() ?? ""}`
+												}
+											/>
 										}
-									/>
+									>
+										<Suspense
+											fallback={
+												<div class="flex h-full w-full items-center justify-center">
+													<div class="chaotic-orbit" />
+												</div>
+											}
+										>
+											<MarkdownEditor
+												value={() =>
+													state.note()?.body ?? ""
+												}
+												setValue={(v) => {
+													state.setNote((prev) =>
+														prev
+															? {
+																...prev,
+																body: v,
+															}
+															: null,
+													);
+												}}
+											/>
+										</Suspense>
+									</Show>
 								</div>
 							</div>
 						</div>

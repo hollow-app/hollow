@@ -39,7 +39,7 @@ pub fn run() {
         .manage(Mutex::new(app::AppData {
             realm_location: None,
         }))
-        .plugin(tauri_plugin_fs::init())
+        // .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_deep_link::init())
         .setup(|app| {
@@ -74,6 +74,8 @@ pub fn run() {
             app::get_version,
             app::get_platform,
             utils::create_dir,
+            utils::remove_dir,
+            utils::path_exists,
             utils::read_file,
             utils::first_launch,
             plugins::get_unsigned_plugins,

@@ -2,12 +2,17 @@ import { For, lazy, onMount, Show } from "solid-js";
 import { createSignal } from "solid-js";
 import { hollow } from "hollow";
 
-import { ContextMenu } from "../ContextMenu";
-import { Vault } from "./Vault";
-import ToolSettings from "./ToolSettings";
 import { ConfirmType, FormType, InsightType } from "@type/hollow";
 import { FormatDateString, Options } from "vanilla-calendar-pro";
 import MyIcon, { MyIconFun } from "@components/MyIcon";
+
+const ContextMenu = lazy(() =>
+	import("../ContextMenu").then((module) => ({ default: module.ContextMenu })),
+);
+const Vault = lazy(() =>
+	import("./Vault").then((module) => ({ default: module.Vault })),
+);
+const ToolSettings = lazy(() => import("./ToolSettings"));
 
 const ColorPicker = lazy(() => import("@components/ui/popups/ColorPicker"));
 const Confirm = lazy(() => import("@components/ui/popups/Confirm"));

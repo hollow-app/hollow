@@ -11,7 +11,7 @@ import {
 	ToolEventReturns,
 	ToolEvents,
 } from "@type/hollow";
-import { exists, mkdir, remove } from "@tauri-apps/plugin-fs";
+
 import { hollow } from "hollow";
 import { Managers } from ".";
 
@@ -199,17 +199,25 @@ export class RustManager {
 	}
 
 	async create_dir(path: string) {
-		const doesExist = await exists(path);
-		if (!doesExist) {
-			await mkdir(path, { recursive: true });
-		}
+		const relativePath = this.getRelativePath(path);
+		await invoke("create_dir", { paths: [relativePath] });
 	}
 
 	async remove_dir(path: string) {
-		const doesExist = await exists(path);
-		if (doesExist) {
-			await remove(path, { recursive: true });
+		const relativePath = this.getRelativePath(path);
+		await invoke("remove_dir", { path: relativePath });
+	}
+
+	private getRelativePath(path: string): string {
+		const realmLocation = this.managers.realm.getCurrent().location;
+		if (path.startsWith(realmLocation)) {
+			let relative = path.slice(realmLocation.length);
+			if (relative.startsWith("/") || relative.startsWith("\\")) {
+				relative = relative.slice(1);
+			}
+			return relative;
 		}
+		return path;
 	}
 
 	close_window() {

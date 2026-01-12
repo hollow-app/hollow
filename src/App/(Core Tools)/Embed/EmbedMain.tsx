@@ -29,7 +29,7 @@ export class EmbedMain implements IPlugin {
 
 	public async onCreate(card: CardType): Promise<PluginResult> {
 		try {
-			this.store.set(card.id, { src: null });
+			this.store.set(card.id, { src: "" });
 			return { status: true };
 		} catch (error) {
 			return {

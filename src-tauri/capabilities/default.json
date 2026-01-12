@@ -17,7 +17,6 @@
 		"dialog:allow-open",
 		"store:default",
 		"log:allow-log",
-		"fs:default",
 		"updater:default"
 	]
 }

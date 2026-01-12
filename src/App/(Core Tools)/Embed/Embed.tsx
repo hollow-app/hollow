@@ -22,7 +22,11 @@ type EmbedProps = {
 export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 	const [embed, setEmbed] = createSignal(data);
 	const url = createMemo(() => {
-		return new URL(embed().src);
+		try {
+			return new URL(embed().src);
+		} catch (e) {
+			return null;
+		}
 	});
 
 	const setSettingsVisible = () => {
@@ -76,10 +80,12 @@ export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 			</Show>
 			{/* Panel */}
 			<div class="bg-secondary-05 border-secondary-10 absolute top-1 left-1 flex items-center gap-1 rounded border p-1 opacity-0 transition-all group-hover:opacity-100">
-				<img src={`${url().origin}/favicon.ico`} class="size-4" />
-				<p class="text-secondary-50 truncate text-xs">
-					{url().hostname}
-				</p>
+				<Show when={url()}>
+					<img src={`${url().origin}/favicon.ico`} class="size-4" />
+					<p class="text-secondary-50 truncate text-xs">
+						{url().hostname}
+					</p>
+				</Show>
 			</div>
 		</div>
 	);

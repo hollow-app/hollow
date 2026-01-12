@@ -80,7 +80,7 @@ export default function PopupWrapper({
 				onPointerDown={down}
 			>
 				<Show when={Icon}>
-					<Icon class="text-secondary-50 bg-secondary-10 size-8 rounded p-1.5" />
+					<Icon class="text-secondary-50 bg-secondary-10 size-8 rounded-md p-1.5" />
 				</Show>
 				<h1 class="h1-title">{title}</h1>
 				<Show when={onClose}>

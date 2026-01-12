@@ -24,7 +24,7 @@ export default defineConfig(async () => ({
 		solidSvg({ defaultAsComponent: true }),
 		tailwindcss(),
 		visualizer({
-			open: true,
+			open: false,
 			gzipSize: true,
 			filename: "dist/vite-vis.html",
 		}),

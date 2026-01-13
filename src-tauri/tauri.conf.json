@@ -21,7 +21,7 @@
 	},
 	"bundle": {
 		"active": true,
-		"targets": ["app", "msi"],
+		"targets": ["deb", "rpm"],
 		"createUpdaterArtifacts": true,
 		"licenseFile": "wix\\license.rtf",
 		"linux": {

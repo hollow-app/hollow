@@ -11,7 +11,6 @@ import {
 import { createStore, SetStoreFunction, unwrap } from "solid-js/store";
 import fm from "front-matter";
 import { hollow } from "hollow";
-import { manager } from "@managers/index";
 import { NotebookType } from "../NotebookType";
 import { NoteType } from "../NoteType";
 import {
@@ -21,7 +20,7 @@ import {
 	ToolOptions,
 } from "@type/hollow";
 import { NotebookManager } from "../NotebookManager";
-import { MyIconFun } from "@components/MyIcon";
+import { MyIconFun } from "@components/ui/MyIcon";
 
 export interface NotebookProps {
 	card: CardType;

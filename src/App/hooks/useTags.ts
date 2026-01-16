@@ -1,15 +1,18 @@
-import { manager } from "@managers/index";
 import { TagType } from "@type/hollow";
-import { hollow } from "hollow";
 import setStyle from "./setStyle";
+import { useStore } from "../store";
 
 export default function useTags(tags?: TagType[]) {
-	let data: TagType[] = manager.settings.getConfig("custom-tags");
+	const { state, dispatch } = useStore();
+	let data: TagType[] = state.settings["custom-tags"];
 	if (tags) {
 		data = tags;
-		manager.settings.setConfig("custom-tags", tags);
+		dispatch({
+			domain: "settings",
+			type: "set-configs",
+			configs: { "custom-tags": tags },
+		});
 	}
-	hollow.events.emit("tags", data);
 	setStyle(
 		data.flatMap((i) => [
 			{

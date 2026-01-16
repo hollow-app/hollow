@@ -13,13 +13,13 @@ import {
 	Suspense,
 } from "solid-js";
 import { render } from "solid-js/web";
-const MarkdownEditor = lazy(() => import("@components/MarkdownEditor"));
-import MarkdownPreview from "@components/MarkdownPreview";
+const MarkdownEditor = lazy(() => import("@components/ui/MarkdownEditor.tsx"));
+import MarkdownPreview from "@components/ui/MarkdownPreview.tsx";
 import WordInput from "@components/dynamic/WordInput.tsx";
-import Tag from "@components/Tag";
+import Tag from "@components/ui/Tag.tsx";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
-import MyIcon, { MyIconFun } from "@components/MyIcon.tsx";
+import MyIcon, { MyIconFun } from "@components/ui/MyIcon.tsx";
 import { hollow } from "hollow";
 import { useNotebook, NotebookProps } from "./hooks";
 
@@ -116,17 +116,17 @@ const Notebook: Component<NotebookProps> = (props) => {
 						onclick={() => {
 							state.note()?.newNote
 								? (() => {
-									state.setEditMode(false);
-									state.setNote(
-										state.book.last
-											? state.book.notes.find(
-												(i) =>
-													i.title ===
-													state.book.last,
-											) || null
-											: null,
-									);
-								})()
+										state.setEditMode(false);
+										state.setNote(
+											state.book.last
+												? state.book.notes.find(
+														(i) =>
+															i.title ===
+															state.book.last,
+													) || null
+												: null,
+										);
+									})()
 								: actions.onNewNote();
 						}}
 						style={{
@@ -201,11 +201,11 @@ const Notebook: Component<NotebookProps> = (props) => {
 											state.setNote((prev) =>
 												prev
 													? {
-														...prev,
-														title: e
-															.currentTarget
-															.value,
-													}
+															...prev,
+															title: e
+																.currentTarget
+																.value,
+														}
 													: null,
 											)
 										}
@@ -225,25 +225,25 @@ const Notebook: Component<NotebookProps> = (props) => {
 														state.note()?.attributes
 															?.tags
 															? state
-																.note()!
-																.attributes.tags.split(
-																	",",
-																)
+																	.note()!
+																	.attributes.tags.split(
+																		",",
+																	)
 															: []
 													}
 													setWords={(tgs) =>
 														state.setNote((prev) =>
 															prev
 																? {
-																	...prev,
-																	attributes:
-																	{
-																		...prev.attributes,
-																		tags: tgs.join(
-																			", ",
-																		),
-																	},
-																}
+																		...prev,
+																		attributes:
+																			{
+																				...prev.attributes,
+																				tags: tgs.join(
+																					", ",
+																				),
+																			},
+																	}
 																: null,
 														)
 													}
@@ -309,9 +309,9 @@ const Notebook: Component<NotebookProps> = (props) => {
 													state.setNote((prev) =>
 														prev
 															? {
-																...prev,
-																body: v,
-															}
+																	...prev,
+																	body: v,
+																}
 															: null,
 													);
 												}}

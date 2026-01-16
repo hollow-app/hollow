@@ -1,12 +1,14 @@
 import { Component, Accessor, lazy, Suspense, Show } from "solid-js";
-import SideBar from "../../components/ui/SideBar";
-import Navbar from "../../components/ui/sidebars/Navbar";
-import Canvas from "../../components/ui/Canvas";
+import SideBar from "../../components/layout-ui/SideBar";
+import Navbar from "../../components/layout-ui/sidebars/Navbar";
+import Canvas from "../../components/layout-ui/Canvas";
 import Sidepanel from "./Sidepanel";
 import { useContainer } from "./hooks";
-import { HollowProvider } from "../../HollowContext";
+import { StoreProvider } from "../../store";
 
-const Settings = lazy(async () => import("../../components/ui/Settings"));
+const Settings = lazy(
+	async () => import("../../components/layout-ui/Settings"),
+);
 
 export interface ContainerProps {
 	// Add your props here
@@ -15,7 +17,7 @@ const Container: Component<ContainerProps> = (props) => {
 	const { state, actions } = useContainer();
 
 	return (
-		<HollowProvider>
+		<StoreProvider>
 			<div
 				class="flex h-full w-full flex-col px-2"
 				style={{ background: "var(--back)" }}
@@ -50,7 +52,7 @@ const Container: Component<ContainerProps> = (props) => {
 					</Suspense>
 				</Show>
 			</div>
-		</HollowProvider>
+		</StoreProvider>
 	);
 };
 

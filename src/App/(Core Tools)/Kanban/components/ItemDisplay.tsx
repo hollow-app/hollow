@@ -1,5 +1,5 @@
 import { Show, For, JSX } from "solid-js";
-import Tag from "../../../components/Tag";
+import Tag from "../../../components/ui/Tag";
 import { Clock8Icon } from "lucide-solid";
 import { ItemType } from "../types/ItemType";
 import { timeDifferenceMin } from "@utils/manipulation/strings";

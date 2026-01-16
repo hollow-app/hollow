@@ -9,7 +9,7 @@ import {
 import { CirclePlusIcon, EllipsisVerticalIcon } from "lucide-solid";
 import { hollow } from "hollow";
 import KanbanItem from "@coretools/Kanban/components/Item";
-import Sortable from "@components/Sortable";
+import Sortable from "@components/ui/Sortable";
 import ItemDisplay from "../components/ItemDisplay";
 import { ItemType } from "../types/ItemType";
 import { useKanban, KanbanProps } from "./hooks";

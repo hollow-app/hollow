@@ -1,38 +1,21 @@
-import { manager } from "@managers/index";
-import {
-	Suspense,
-	createMemo,
-	createSignal,
-	lazy,
-	Show,
-	onMount,
-} from "solid-js";
-import Loading from "@components/Loading";
-import { createStore } from "solid-js/store";
-import { hollow } from "hollow";
-import { CardType } from "@type/hollow";
+import { Suspense, createMemo, lazy } from "solid-js";
+import Loading from "@components/ui/Loading";
+import { getCurrentRealm } from "@managers/Realm";
+import { postRealmSelection } from "../../Hollow/hollow";
 
-const Popups = lazy(() => import("@components/ui/popups/Popups"));
-const Alerts = lazy(() => import("@components/ui/popups/Alerts"));
+const Popups = lazy(() => import("@components/layout-ui/popups/Popups"));
+const Alerts = lazy(() => import("@components/layout-ui/popups/Alerts"));
 
 export default function App() {
-	const [cards, setCards] = createStore<CardType[]>([]);
-
 	const Container = createMemo(() => {
-		const realm = manager.realm.getCurrent().id;
+		const realm = getCurrentRealm();
 		const LazyContainer = lazy(async () => {
-			if (!realm) return new Promise(() => { });
-			await manager.hollow.postRealmSelection();
+			if (!realm) return new Promise(() => {});
+			await postRealmSelection(realm.location);
 			return import("./Container");
 		});
 		return <LazyContainer />;
 	});
-
-	onMount(async () => {
-		hollow.cards = () => cards;
-		hollow.setCards = setCards;
-	});
-
 	return (
 		<main class="app-container text-black dark:text-white">
 			<Suspense fallback={<Loading />}>

@@ -2,8 +2,7 @@ import { ShadeIt } from "@utils/manipulation/colors";
 import { Property } from "@type/Property";
 import { readableColor } from "polished";
 import setStyle from "./setStyle";
-import { manager } from "@managers/index";
-import { Realm } from "@type/Realm";
+import { getCurrentRealm } from "@managers/Realm";
 
 type useColorProps = {
 	name: string;
@@ -11,12 +10,13 @@ type useColorProps = {
 	oneTime?: boolean;
 };
 export function useColor({ name, color, oneTime }: useColorProps) {
+	const realm = getCurrentRealm();
 	let shades: Property[];
 
 	if (oneTime) {
 		shades = ShadeIt(name, color);
 	} else {
-		const storageKey = `${manager.realm.getCurrent().id}-color-${name}`;
+		const storageKey = `${realm.id}-color-${name}`;
 		const savedData = localStorage.getItem(storageKey);
 
 		if (savedData && color) {
@@ -34,11 +34,9 @@ export function useColor({ name, color, oneTime }: useColorProps) {
 					}),
 				);
 			}
-			manager.realm.updateColors({ [name]: color });
 		} else if (savedData && !color) {
 			shades = JSON.parse(savedData).savedShades;
 		} else {
-			const realm = manager.realm.getCurrent();
 			const defaultColor =
 				name === "primary"
 					? realm.colors.primary

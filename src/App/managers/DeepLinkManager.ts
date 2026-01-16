@@ -1,12 +1,4 @@
 import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
-import { ReactiveManager } from "./ReactiveManager";
-import { important } from "polished";
-
-// interface DeepLinkState {
-// 	clerk: Clerk | null;
-// 	user: UserResource;
-// 	isSignedIn: boolean;
-// }
 
 export class DeepLinkManager {
 	async start() {

@@ -1,4 +1,4 @@
-import { DynamicIcon } from "@components/DynamicIcon";
+import { DynamicIcon } from "@components/ui/DynamicIcon";
 import {
 	createMemo,
 	createSelector,

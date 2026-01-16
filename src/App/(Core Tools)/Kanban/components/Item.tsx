@@ -7,8 +7,8 @@ import { ToolMetadata } from "@type/ToolMetadata";
 import { ItemType } from "../types/ItemType";
 import { hollow } from "hollow";
 import ItemDisplay from "./ItemDisplay";
-import { MyIconFun } from "@components/MyIcon";
-import Checkbox from "@components/Checkbox";
+import { MyIconFun } from "@components/ui/MyIcon";
+import Checkbox from "@components/ui/Checkbox";
 
 type ItemProps = {
 	toolEvent?: HollowEvent;

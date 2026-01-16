@@ -1,4 +1,4 @@
-import { MyIconsType } from "@components/MyIcon";
+import { MyIconsType } from "@components/ui/MyIcon";
 import { Store } from "@tauri-apps/plugin-store";
 import { Component, JSX } from "solid-js";
 

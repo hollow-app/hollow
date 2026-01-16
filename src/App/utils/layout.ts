@@ -2,10 +2,14 @@ import { hollow } from "hollow";
 import { Accessor, batch, Component, createMemo, lazy } from "solid-js";
 import { createStore } from "solid-js/store";
 //
-const Expand = lazy(() => import("@components/ui/sidebars/Expand"));
-const Character = lazy(() => import("@components/ui/sidebars/Character"));
-const Editor = lazy(() => import("@components/ui/sidebars/Editor"));
-const Notifications = lazy(async () => import("@components/ui/Notifications"));
+const Expand = lazy(() => import("@components/layout-ui/sidebars/Expand"));
+const Character = lazy(
+	() => import("@components/layout-ui/sidebars/Character"),
+);
+const Editor = lazy(() => import("@components/layout-ui/sidebars/Editor"));
+const Notifications = lazy(
+	async () => import("@components/layout-ui/Notifications"),
+);
 
 export type PanelType = "left" | "right";
 

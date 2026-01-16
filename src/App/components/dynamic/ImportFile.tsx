@@ -1,7 +1,7 @@
 import { Show } from "solid-js";
 import { createSignal } from "solid-js";
 import { hollow } from "hollow";
-import MyIcon from "../MyIcon";
+import MyIcon from "../ui/MyIcon";
 
 type ImportFileProps = {
 	xfile?: string;

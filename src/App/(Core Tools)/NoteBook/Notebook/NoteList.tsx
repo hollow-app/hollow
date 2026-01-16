@@ -9,13 +9,13 @@ import {
 } from "solid-js";
 import { NotebookType } from "../NotebookType";
 import { NotebookManager } from "../NotebookManager";
-import FilterButton from "@components/FilterButton";
+import FilterButton from "@components/ui/FilterButton";
 import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
 import { hollow } from "hollow";
-import { MyIconFun } from "@components/MyIcon";
+import { MyIconFun } from "@components/ui/MyIcon";
 import { SearchIcon } from "lucide-solid";
-import Checkbox from "@components/Checkbox";
+import Checkbox from "@components/ui/Checkbox";
 
 type NoteListProps = {
 	card: CardType;

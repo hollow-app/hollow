@@ -2,12 +2,7 @@ import ColorPick from "@components/dynamic/ColorPick";
 import { formatDate, timeDifference } from "@utils/manipulation/strings";
 import { Realm } from "@type/Realm";
 import HollowIcon from "@assets/logo.svg";
-import {
-	CalendarIcon,
-	PlusIcon,
-	ArrowLeftIcon,
-	RocketIcon,
-} from "lucide-solid";
+import { CalendarIcon, PlusIcon, RocketIcon } from "lucide-solid";
 import {
 	Accessor,
 	batch,
@@ -18,13 +13,13 @@ import {
 	Show,
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import WindowControl from "@components/WindowControl";
+import WindowControl from "@components/ui/WindowControl";
 import Dropdown from "@components/dynamic/Dropdown";
 import { open } from "@tauri-apps/plugin-dialog";
-import MyIcon from "@components/MyIcon";
+import MyIcon from "@components/ui/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
-import { manager } from "@managers/index";
 import Segmented from "@components/dynamic/Segmented";
+import { useStore } from "./store";
 
 const themes = {
 	dark: [
@@ -45,6 +40,7 @@ const themes = {
 };
 
 const useRealmManager = () => {
+	const { state, dispatch } = useStore();
 	const [name, setName] = createSignal("");
 	const [location, setLocation] = createSignal("");
 	const [primary, setPrimary] = createSignal("#FFFFFF");
@@ -63,19 +59,26 @@ const useRealmManager = () => {
 				secondary: secondary(),
 			},
 		};
-		manager.realm.addRealm(newRealm);
+		dispatch({
+			domain: "realm",
+			type: "add-realm",
+			realm: newRealm,
+		});
 		return true;
 	};
 
-	const removeRealm = (id: string, setRealms: Setter<Realm[]>) => {
+	const removeRealm = (id: string) => {
 		const handleDecision = () => {
-			manager.realm.removeRealm(id);
-			setRealms((prev) => prev.filter((r) => r.id !== id));
+			dispatch({
+				domain: "realm",
+				type: "remove-realm",
+				realmId: id,
+			});
 		};
 		// Simple confirm dialog since hollow might not be available
 		if (
 			confirm(
-				`Are you sure you want to remove ${manager.realm.getRealmFromId(id)?.name} Realm?`,
+				`Are you sure you want to remove ${state.realm.realms.find((i) => i.id === id).name} Realm?`,
 			)
 		) {
 			handleDecision();
@@ -130,9 +133,8 @@ const WelcomeScreen = (props: { onNext: () => void }) => (
 const RealmList = (props: {
 	onSelect: (id: string) => void;
 	onCreateRealm: () => void;
-	realms: Accessor<Realm[]>;
-	setRealms: Setter<Realm[]>;
 }) => {
+	const { state, dispatch } = useStore();
 	const { removeRealm } = useRealmManager();
 
 	return (
@@ -146,7 +148,7 @@ const RealmList = (props: {
 			{/* Content */}
 			<div class="h-full w-full overflow-hidden overflow-y-auto p-8">
 				<Show
-					when={props.realms().length > 0}
+					when={state.realm.realms.length > 0}
 					fallback={
 						<div class="flex min-h-[500px] flex-col items-center justify-center gap-6 py-16">
 							<div class="bg-secondary-05 rounded-2xl p-8">
@@ -178,7 +180,7 @@ const RealmList = (props: {
 								"linear-gradient(to right, transparent, var(--color-secondary-10), transparent)",
 						}}
 					>
-						<For each={props.realms()}>
+						<For each={state.realm.realms}>
 							{(realm) => (
 								<div class="group bg-secondary border-secondary-10 hover:border-secondary-15 relative w-full overflow-hidden p-6 transition-all">
 									<div class="flex items-center justify-between gap-6">
@@ -257,10 +259,7 @@ const RealmList = (props: {
 												<button
 													class="button-control red"
 													onclick={() =>
-														removeRealm(
-															realm.id,
-															props.setRealms,
-														)
+														removeRealm(realm.id)
 													}
 													title="Delete realm"
 												>
@@ -536,14 +535,18 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 };
 
 export default function SelectorWindow() {
-	const [realms, setRealms] = createSignal<Realm[]>(
-		manager.realm.getRealms(),
+	const { state, dispatch } = useStore();
+	const [level, setLevel] = createSignal(
+		state.realm.realms.length > 0 ? 1 : 0,
 	);
-	const [level, setLevel] = createSignal(realms().length > 0 ? 1 : 0);
-
 	const handleSelect = async (id: string) => {
 		// Update realm in manager
-		await manager.realm.enterRealm(id);
+		// TODO, the async back to stop the loading proces??
+		dispatch({
+			domain: "realm",
+			type: "enter-realm",
+			realmId: id,
+		});
 	};
 
 	return (
@@ -576,8 +579,6 @@ export default function SelectorWindow() {
 						<Show when={level() === 1}>
 							<RealmList
 								onSelect={handleSelect}
-								realms={realms}
-								setRealms={setRealms}
 								onCreateRealm={() => setLevel(2)}
 							/>
 						</Show>
@@ -586,7 +587,6 @@ export default function SelectorWindow() {
 							<CreateRealm
 								onBack={() => setLevel(1)}
 								onSuccess={() => {
-									setRealms(manager.realm.getRealms());
 									setLevel(1);
 								}}
 							/>

@@ -4,7 +4,7 @@ import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
 import { createEffect, createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
-import { useHollow } from "../../HollowContext";
+import { useStore } from "store";
 
 type SidepanelProps = {
 	type: PanelType;
@@ -17,7 +17,7 @@ type SidepanelProps = {
 export default function Sidepanel(props: SidepanelProps) {
 	const layout = createMemo(() => props.controller.get[props.type]);
 	// const opp = side[side.indexOf(props.type) ^ 1];
-	const { isFocus } = useHollow();
+	const { state } = useStore();
 
 	return (
 		<Presence exitBeforeEnter>
@@ -52,7 +52,7 @@ export default function Sidepanel(props: SidepanelProps) {
 							<div
 								class="h-full"
 								style={{
-									"min-width": `calc(${props.width} - ${isFocus() ? "0px" : "1px"})`,
+									"min-width": `calc(${props.width} - ${state.context.isFocus ? "0px" : "1px"})`,
 								}}
 							>
 								<Dynamic
@@ -75,7 +75,7 @@ export default function Sidepanel(props: SidepanelProps) {
 									}}
 								/>
 							</div>
-							<Show when={!isFocus()}>
+							<Show when={!state.context.isFocus}>
 								<hr
 									class="h-full w-px shrink-0 border-0"
 									style={{

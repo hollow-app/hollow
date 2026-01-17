@@ -72,10 +72,11 @@ export const useCard = (props: CardProps): CardHook => {
 	});
 
 	const showEditor = () => {
-		hollow.pevents.emit("editor", {
-			tool: tool,
-			cardId: props.node.id,
-		});
+		//TODO;
+		// hollow.pevents.emit("editor", {
+		// 	tool: tool,
+		// 	cardId: props.node.id,
+		// });
 		hollow.events.emit("context-menu", false);
 	};
 

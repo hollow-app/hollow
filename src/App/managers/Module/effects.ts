@@ -206,15 +206,15 @@ export async function moduleEffects(action: Events, state: ModuleState) {
 				toolMap.delete(name);
 				const toolPath = await join("main", name);
 				await remove_dir(toolPath);
+				return true;
 			} catch (error) {
 				console.error("[uninstallTool] FAILED", {
 					name,
 					error,
 					stack: (error as Error)?.stack,
 				});
-				throw error;
+				return false;
 			}
-			break;
 		}
 		case "add-instance": {
 			const { name, toolName, emoji } = action;

@@ -541,12 +541,11 @@ export default function SelectorWindow() {
 	);
 	const handleSelect = async (id: string) => {
 		// Update realm in manager
-		// TODO, the async back to stop the loading proces??
 		dispatch({
 			domain: "realm",
 			type: "enter-realm",
 			realmId: id,
-		});
+		}).finally(() => {});
 	};
 
 	return (

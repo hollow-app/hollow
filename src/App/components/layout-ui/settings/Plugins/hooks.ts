@@ -95,16 +95,10 @@ export const usePlugins = (): PluginsHook => {
 				type: "loading",
 			});
 
-			const success = await new Promise<boolean>((resolve) => {
-				dispatch(
-					//uninstallTool(name.toLowerCase(), resolve)
-					{
-						domain: "module",
-						type: "uninstall-module",
-						name: name.toLowerCase(),
-						// TODO maybe an optional thing that effects/reducers call when they are done -> resolve
-					},
-				);
+			const success = await dispatch({
+				domain: "module",
+				type: "uninstall-module",
+				name: name.toLowerCase(),
 			});
 
 			await delay();
@@ -175,18 +169,12 @@ export const usePlugins = (): PluginsHook => {
 				}
 			}
 
-			success = await new Promise<boolean>((resolve) => {
-				dispatch(
-					//installTool(name.toLowerCase(), newTool, resolve)
-					{
-						domain: "module",
-						type: "install-module",
-						name: name.toLowerCase(),
-						repo: plugin.repo,
-						isUpdate,
-						// TODO maybe an optional thing that effects/reducers call when they are done -> resolve
-					},
-				);
+			success = await dispatch({
+				domain: "module",
+				type: "install-module",
+				name: name.toLowerCase(),
+				repo: plugin.repo,
+				isUpdate,
 			});
 
 			if (isUpdate) {

@@ -41,7 +41,7 @@ export async function notificationsEffects(
 
     switch (action.type) {
         case "check-repo":
-            checkRepo(state.notifications);
+            await checkRepo(state.notifications);
             break;
     }
 }

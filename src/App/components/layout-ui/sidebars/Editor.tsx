@@ -2,11 +2,9 @@ import ColorPick from "@components/dynamic/ColorPick";
 import NumberInput from "@components/dynamic/NumberInput";
 import { TentTreeIcon } from "lucide-solid";
 import {
-	createEffect,
 	createMemo,
 	createSignal,
 	JSX,
-	on,
 	onMount,
 	Show,
 	type Accessor,
@@ -19,107 +17,85 @@ import { unwrap } from "solid-js/store";
 import { useStore } from "../../../store/index";
 import { getHand } from "@managers/Module/effects";
 
-interface SelectedCard {
-	tool: string;
-	cardId: string;
+interface SelectedInstance {
+	module: string;
+	id: string;
 }
 
 export default function Editor() {
 	const { state, dispatch } = useStore();
 	const instances = createMemo(() => state.module.instances);
-	const [selectedCard, setSelectedCard] = createSignal<SelectedCard>(
-		(hollow.pevents as any).getData("editor"),
-	);
-	const [initialState, setInitialState] = createSignal(null);
+	const [instance, setInstance] = createSignal<SelectedInstance>();
 
-	const cardData = createMemo(() => {
-		if (!selectedCard()) return null;
-		const id = selectedCard().cardId;
+	const instanceData = createMemo(() => {
+		if (!instance()) return null;
+		const id = instance().id;
 		return id ? instances().find((c) => c.id === id) : null;
 	});
-	const cardStyle = createMemo(() => cardData()?.style ?? {});
+	const instanceStyle = createMemo(() => instanceData()?.style ?? {});
 
+	// updaters
 	const updateRootProp = (key: keyof CardType, value: any) => {
-		const id = selectedCard().cardId;
-		const tool = selectedCard().tool;
-		dispatch({
-			domain: "module",
-			type: "update-instance",
-			cardId: id,
-			toolName: tool,
-			rect: { [key]: value },
-		});
-	};
-
-	const updateStyleProp = (key: keyof JSX.CSSProperties, value: any) => {
-		const id = selectedCard().cardId;
-		const tool = selectedCard().tool;
-		const currentCard = instances().find((c) => c.id === id);
-		if (currentCard) {
-			const newStyle = { ...currentCard.style, [key]: value };
-			dispatch({
+		const id = instance().id;
+		const module = instance().module;
+		dispatch(
+			{
 				domain: "module",
 				type: "update-instance",
 				cardId: id,
-				toolName: tool,
-				updates: { style: newStyle },
-				// TODO checkpoint maybe before editing anything to be able to go back when the user clickes cancel, and the ability to block effect till save cilcked
-			});
+				toolName: module,
+				rect: { [key]: value },
+			},
+			{ draft: "editor" },
+		);
+	};
+
+	const updateStyleProp = (key: keyof JSX.CSSProperties, value: any) => {
+		const id = instance().id;
+		const module = instance().module;
+		const currentCard = instances().find((c) => c.id === id);
+		if (currentCard) {
+			const newStyle = { ...currentCard.style, [key]: value };
+			dispatch(
+				{
+					domain: "module",
+					type: "update-instance",
+					cardId: id,
+					toolName: module,
+					updates: { style: newStyle },
+				},
+				{ draft: "editor" },
+			);
 		}
 	};
 
-	const selectCard = (payload: SelectedCard) => {
-		if (!payload.cardId) return;
-
-		if (selectedCard().cardId === payload.cardId) return;
-
-		const data = instances().find((i) => i.id === payload.cardId);
-		if (!data) return;
-
-		// initialState = { ...unwrap(data) };
-		setInitialState(structuredClone(unwrap(data)));
-		setSelectedCard(payload);
-	};
+	// selector
 
 	const onSave = () => {
-		const id = selectedCard().cardId;
-		const card = unwrap(instances().find((i) => i.id === id));
-		// delete card.data.tool; // Why delete tool?
-		// hollow.toolManager.updateCards([
-		// 	{ toolName: selectedCard().tool, cards: [card] },
-		// ]);
-		// updateCards action expects { toolName, cards }[]
-		// dispatch(
-		//updateCards([{ toolName: selectedCard().tool, cards: [card] }]),
-		// 	{},
-		// );
+		dispatch(
+			{
+				type: "DRAFT_COMMIT",
+			},
+			{ draft: "editor" },
+		);
 		hollow.pevents.emit("editor", null);
 	};
 
 	const onCancel = () => {
-		if (initialState()) {
-			// hollow.setCards(
-			// 	(c) => c.id === selectedCard().cardId,
-			// 	initialState(),
-			// );
-			// Restore initial state
-			const tool = selectedCard().tool;
-			const id = selectedCard().cardId;
-			// initialState is the whole card object?
-			// Yes, structuredClone(unwrap(data))
-			// But updateCard expects Partial<CardType>.
-			// If I pass the whole card it should work if types align.
-			// But wait, initialState has 'data', 'style', etc.
-			// updateCard merges properties.
-			// So passing initialState should overwrite properties.
-			// dispatch(updateCard(tool, id, initialState()));
-		}
+		dispatch(
+			{
+				type: "DRAFT_CANCEL",
+			},
+			{ draft: "editor" },
+		);
 		hollow.pevents.emit("editor", null);
 	};
 	onMount(() => {
-		if (!initialState()) {
-			setInitialState(structuredClone(unwrap(cardData())));
-		}
+		// dispatch({
+		// 	type: "DRAFT_START",
+		// 	path: "module.instances",
+		// 	select: { key: "id" },
+		// });
 	});
 
 	return (
@@ -128,15 +104,11 @@ export default function Editor() {
 			class="flex size-full flex-col overflow-hidden rounded-xl p-5"
 		>
 			<div class="">
-				<Header
-					selected={selectedCard}
-					selectCard={selectCard}
-					setSelected={setSelectedCard}
-				/>
+				<Header instance={instance} setInstance={setInstance} />
 			</div>
 
 			<Show
-				when={cardData()}
+				when={instanceData()}
 				fallback={
 					<div class="flex h-full w-full items-center justify-center">
 						<div class="text-secondary-20 animate-pulse">
@@ -153,14 +125,14 @@ export default function Editor() {
 							<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 								<NumRow
 									label="Width"
-									value={cardData().w}
+									value={instanceData().w}
 									step={1}
 									min={1}
 									setValue={(v) => updateRootProp("w", v)}
 								/>
 								<NumRow
 									label="Height"
-									value={cardData().h}
+									value={instanceData().h}
 									step={1}
 									min={1}
 									setValue={(v) => updateRootProp("h", v)}
@@ -172,7 +144,7 @@ export default function Editor() {
 								<NumRow
 									label="Corner"
 									value={Number(
-										cardStyle()
+										instanceStyle()
 											["border-radius"]?.toString()
 											.split("px")[0] ?? 0,
 									)}
@@ -187,7 +159,7 @@ export default function Editor() {
 								<NumRow
 									label="Opacity"
 									value={Number(
-										(cardStyle()["--opacity"] ?? "100%")
+										(instanceStyle()["--opacity"] ?? "100%")
 											.toString()
 											.split("%")[0],
 									)}
@@ -202,7 +174,9 @@ export default function Editor() {
 									<h3>Border</h3>
 									<div class="flex w-[60%] items-center justify-end gap-1">
 										<ColorPick
-											color={cardStyle()["border-color"]}
+											color={
+												instanceStyle()["border-color"]
+											}
 											setColor={(v) =>
 												updateStyleProp(
 													"border-color",
@@ -213,7 +187,7 @@ export default function Editor() {
 										<div class="w-70 max-w-[90%]">
 											<NumberInput
 												value={Number(
-													cardStyle()
+													instanceStyle()
 														[
 															"border-width"
 														]?.toString()
@@ -233,7 +207,9 @@ export default function Editor() {
 
 								<ToggleRow
 									label="Glass"
-									checked={!!cardStyle()["backdrop-filter"]}
+									checked={
+										!!instanceStyle()["backdrop-filter"]
+									}
 									onToggle={(on) =>
 										updateStyleProp(
 											"backdrop-filter",
@@ -246,7 +222,7 @@ export default function Editor() {
 
 								<ToggleRow
 									label="Shadow"
-									checked={!!cardStyle()["box-shadow"]}
+									checked={!!instanceStyle()["box-shadow"]}
 									onToggle={(on) =>
 										updateStyleProp(
 											"box-shadow",
@@ -260,13 +236,13 @@ export default function Editor() {
 							<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 								<NumRow
 									label="X"
-									value={cardData().x}
+									value={instanceData().x}
 									setValue={(v) => updateRootProp("x", v)}
 									min={-10000}
 								/>
 								<NumRow
 									label="Y"
-									value={cardData().y}
+									value={instanceData().y}
 									setValue={(v) => updateRootProp("y", v)}
 									min={-10000}
 								/>
@@ -337,15 +313,14 @@ function ToggleRow(props: {
 }
 
 function Header(props: {
-	selected: Accessor<SelectedCard>;
-	setSelected: Setter<SelectedCard>;
-	selectCard: (v: SelectedCard) => void;
+	instance: Accessor<SelectedInstance>;
+	setInstance: Setter<SelectedInstance>;
 }) {
-	const { state } = useStore();
+	const { state, dispatch } = useStore();
 	const modules = getHand();
 	const cardList = createMemo<{ name: string; id: string }[]>(() => {
-		if (!props.selected()) return [];
-		const toolName = props.selected().tool;
+		if (!props.instance()) return [];
+		const toolName = props.instance().module;
 		if (!toolName) return [];
 		const tool = modules[toolName];
 		return (
@@ -353,6 +328,29 @@ function Header(props: {
 				.filter((c) => c.data.isPlaced)
 				.map((c) => ({ name: c.data.name, id: c.id })) ?? []
 		);
+	});
+	const selectCard = (payload: SelectedInstance) => {
+		if (!payload.id) return;
+
+		if (props.instance().id === payload.id) return;
+
+		const data = state.module.instances.find((i) => i.id === payload.id);
+		if (!data) return;
+		props.setInstance(payload);
+		dispatch(
+			{
+				type: "DRAFT_START",
+				path: "module.instances",
+				select: {
+					key: "id",
+					value: payload.id,
+				},
+			},
+			{ draft: "editor" },
+		);
+	};
+	onMount(() => {
+		// TODO opened by context menu
 	});
 
 	return (
@@ -366,9 +364,9 @@ function Header(props: {
 			<div class="flex gap-2">
 				<div class="flex-1">
 					<Dropdown
-						value={props.selected()?.tool ?? ""}
+						value={props.instance()?.module ?? ""}
 						onSelect={(v) =>
-							props.setSelected({ tool: v, cardId: null })
+							props.setInstance({ module: v, id: null })
 						}
 						options={[
 							{
@@ -382,15 +380,14 @@ function Header(props: {
 				<div class="flex-1">
 					<Dropdown
 						value={
-							cardList().find(
-								(c) => c.id === props.selected().cardId,
-							)?.name ?? ""
+							cardList().find((c) => c.id === props.instance().id)
+								?.name ?? ""
 						}
 						onSelect={(n) => {
-							if (!props.selected()) return;
-							props.selectCard({
-								tool: props.selected().tool,
-								cardId: cardList().find((c) => c.name === n).id,
+							if (!props.instance()) return;
+							selectCard({
+								module: props.instance().module,
+								id: cardList().find((c) => c.name === n).id,
 							});
 						}}
 						options={[{ items: cardList().map((i) => i.name) }]}

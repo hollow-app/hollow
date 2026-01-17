@@ -3,21 +3,6 @@ import { CardType, TagType } from "../type/hollow"; // Check this path
 import { GridStackOptions } from "gridstack";
 import { SettingsConfig } from "@managers/Settings/types";
 import { CodeThemeState } from "@managers/CodeTheme/types";
-
-// Root State
-export interface RootState {
-	account: CharacterState;
-	context: ContextState;
-	settings: SettingsConfig;
-	codeTheme: CodeThemeState;
-	module: ModuleState;
-	hotkeys: HotkeysState;
-	vault: VaultState;
-	notifications: NotificationsState;
-	realm: RealmState;
-}
-
-// Actions
 import { Events as AccountEvents } from "@managers/Account/types";
 import { Events as SettingsEvents } from "@managers/Settings/types";
 import { Events as CodeThemeEvents } from "@managers/CodeTheme/types";
@@ -32,12 +17,22 @@ import { VaultState } from "@managers/Vault";
 import { ContextEvents, ContextState } from "context/type";
 import { NotificationsState } from "@managers/Notifications";
 import { RealmState } from "@managers/Realm";
-
-// We need to define ContextEvents. Currently they might be mixed or not defined explicitly as a union.
-// I'll define a placeholder for now or try to find them.
-// In HollowContext.tsx, there are setters but no explicit "events" for context state updates in the old architecture?
-// Wait, HollowContext just exposed setters: setTags, setFocus, setCards.
-// So I need to CREATE actions for Context domain.
+// Root State
+export interface RootState {
+	account: CharacterState;
+	context: ContextState;
+	settings: SettingsConfig;
+	codeTheme: CodeThemeState;
+	module: ModuleState;
+	hotkeys: HotkeysState;
+	vault: VaultState;
+	notifications: NotificationsState;
+	realm: RealmState;
+	_drafts?: Record<
+		string,
+		{ path: string; data: any; select?: { key: string; value: any } }
+	>;
+}
 
 export type Action =
 	| AccountEvents
@@ -48,4 +43,29 @@ export type Action =
 	| HotkeysEvents
 	| VaultEvents
 	| NotificationsEvents
-	| RealmEvents;
+	| RealmEvents
+	| {
+			type: "DRAFT_START";
+			path: string;
+			select?: { key: string; value: any };
+	  }
+	| { type: "DRAFT_COMMIT" }
+	| { type: "DRAFT_CANCEL" };
+
+export type DispatchOptions = {
+	runEffects?: boolean;
+	draft?: string;
+};
+
+// external
+type Path<T> = T extends object
+	? {
+			[K in keyof T & string]: K | `${K}.${Path<T[K]>}`;
+		}[keyof T & string]
+	: never;
+
+export function usePath<T>() {
+	return <P extends Path<T>>(p: P) => p;
+}
+// internal
+export const storePath = usePath<RootState>();

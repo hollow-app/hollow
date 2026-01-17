@@ -7,7 +7,7 @@ import { runEffects, setupEffects } from "./effects";
 // Create Context
 const StoreContext = createContext<{
 	state: RootState;
-	dispatch: (action: Action) => void;
+	dispatch: (action: Action) => Promise<void>;
 }>();
 
 export function StoreProvider(props: { children: JSX.Element }) {
@@ -16,7 +16,7 @@ export function StoreProvider(props: { children: JSX.Element }) {
 
 	const [state, setState] = createStore<RootState>(initialState);
 
-	function dispatch(action: Action) {
+	function dispatch(action: Action): Promise<void> {
 		// Pure state update
 		const newState = rootReducer(state, action);
 
@@ -24,7 +24,8 @@ export function StoreProvider(props: { children: JSX.Element }) {
 		setState(reconcile(newState));
 
 		// Side effects
-		runEffects(action, newState);
+		const result: any = runEffects(action, newState);
+		return result instanceof Promise ? result : Promise.resolve();
 	}
 
 	// Setup global listeners

@@ -12,14 +12,31 @@ import {
 import { realmEffects, setupRealm } from "@managers/Realm";
 
 export function runEffects(action: Action, state: RootState) {
-	accountEffects(action as any, state.account);
-	settingsEffects(action as any, state.settings);
-	codeThemeEffects(action as any, state.codeTheme);
-	moduleEffects(action as any, state.module);
-	hotkeysEffects(action as any, state.hotkeys);
-	vaultEffects(action as any, state.vault);
-	notificationsEffects(action as any, state.notifications);
-	realmEffects(action as any, state.realm);
+	const results = [
+		accountEffects(action as any, state.account),
+		settingsEffects(action as any, state.settings),
+		codeThemeEffects(action as any, state.codeTheme),
+		moduleEffects(action as any, state.module),
+		hotkeysEffects(action as any, state.hotkeys),
+		vaultEffects(action as any, state.vault),
+		notificationsEffects(action as any, state.notifications),
+		realmEffects(action as any, state.realm),
+	];
+
+	// const promises = results.filter((r) => r instanceof Promise);
+	// if (promises.length > 0) {
+	// 	return Promise.all(results).then((res) =>
+	// 		res.find((r) => r !== undefined),
+	// 	);
+	// }
+	// return results.find((r) => r !== undefined);
+	const promises = results.filter(
+		(e): e is Promise<void> => e instanceof Promise,
+	);
+
+	return promises.length > 0
+		? Promise.all(promises).then(() => {})
+		: Promise.resolve();
 }
 
 export function setupEffects(dispatch: (action: Action) => void) {

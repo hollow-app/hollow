@@ -1,13 +1,13 @@
 import { createStore, reconcile } from "solid-js/store";
 import { createContext, useContext, JSX, onMount } from "solid-js";
-import { RootState, Action } from "./types";
+import { RootState, Action, DispatchOptions } from "./types";
 import { rootReducer } from "./reducer";
-import { runEffects, setupEffects } from "./effects";
+import { runEffects as Effects, setupEffects } from "./effects";
 
 // Create Context
 const StoreContext = createContext<{
 	state: RootState;
-	dispatch: (action: Action) => void;
+	dispatch: (action: Action, options?: DispatchOptions) => Promise<any>;
 }>();
 
 export function StoreProvider(props: { children: JSX.Element }) {
@@ -16,15 +16,57 @@ export function StoreProvider(props: { children: JSX.Element }) {
 
 	const [state, setState] = createStore<RootState>(initialState);
 
-	function dispatch(action: Action) {
+	// Queue for draft effects
+	const draftQueues = new Map<string, Action[]>();
+	function drafter(
+		action: Action,
+		options: DispatchOptions,
+		newState: RootState,
+	) {
+		const { draft } = options;
+		// Handle Draft Commit/Cancel
+		if (draft && action.type === "DRAFT_COMMIT") {
+			const queue = draftQueues.get(draft) || [];
+			draftQueues.delete(draft);
+			// Run all queued effects
+			const promises = queue.map((a) => Effects(a, newState));
+			return Promise.all(promises).then(() => void 0);
+		}
+
+		if (draft && action.type === "DRAFT_CANCEL") {
+			draftQueues.delete(draft);
+			return Promise.resolve();
+		}
+
+		// Queue effects if in draft mode
+		if (draft) {
+			const queue = draftQueues.get(draft) || [];
+			queue.push(action);
+			draftQueues.set(draft, queue);
+			return Promise.resolve();
+		}
+	}
+
+	function dispatch(
+		action: Action,
+		options: DispatchOptions = {},
+	): Promise<void> {
+		const { runEffects = true, draft } = options;
 		// Pure state update
-		const newState = rootReducer(state, action);
+		const newState = rootReducer(state, action, draft);
 
 		// We update the store.
 		setState(reconcile(newState));
 
+		// Draft
+		const draftPromise = drafter(action, options, newState);
+
 		// Side effects
-		runEffects(action, newState);
+		if (runEffects) {
+			const result: any = Effects(action, newState);
+			return result instanceof Promise ? result : Promise.resolve();
+		}
+		return draftPromise ?? Promise.resolve();
 	}
 
 	// Setup global listeners

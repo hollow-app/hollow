@@ -1,10 +1,9 @@
-import setStyle from "@hooks/setStyle";
 import { getLayoutPanels, PanelType, selectPanel } from "@managers/layout";
 import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
-import { createEffect, createMemo, For, on, Show } from "solid-js";
+import { createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
-import { useStore } from "store";
+import { useStore } from "@store";
 
 type SidepanelProps = {
 	type: PanelType;

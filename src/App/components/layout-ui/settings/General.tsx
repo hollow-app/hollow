@@ -2,9 +2,12 @@ import { createResource, Suspense } from "solid-js";
 import { HeartHandshakeIcon, RefreshCwIcon } from "lucide-solid";
 import { guide } from "@utils/help";
 import { executeHotkey } from "@managers/Hotkeys";
-import { get_version } from "../../../../Hollow/rust";
-import { checkUpdate } from "../../../../Hollow/hollow";
-import { selectRealmOnStartup, setSelectRealmOnStartup } from "@managers/Realm";
+import { get_version } from "@rust";
+import {
+	selectRealmOnStartup,
+	setSelectRealmOnStartup,
+} from "@shared/managers/Realm";
+import { checkUpdate } from "../../../../lib/app";
 
 export default function General() {
 	const [version] = createResource(() => get_version());

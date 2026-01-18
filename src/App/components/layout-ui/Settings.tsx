@@ -9,13 +9,14 @@ import {
 	PaletteIcon,
 	PandaIcon,
 } from "lucide-solid";
-import { createSignal, Setter, Show, Suspense } from "solid-js";
+import { createMemo, createSignal, Setter, Show, Suspense } from "solid-js";
 import HollowIcon from "@assets/logo.svg";
 
 import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
-import { getCurrentRealm, toggleRealm } from "@managers/Realm";
+import { getCurrentRealm, toggleRealm } from "@shared/managers/Realm";
+import { useStore } from "@store";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
 const Modifier = lazy(() => import("./settings/Modifier"));
@@ -30,8 +31,9 @@ type SettingsProps = {
 	selected?: number;
 };
 export default function Settings(props: SettingsProps) {
+	const { state } = useStore();
+	const currentRealm = createMemo(() => state.realm.current);
 	const [selected, setSelected] = createSignal(0);
-	const currentRealm = getCurrentRealm();
 
 	return (
 		<div
@@ -53,11 +55,11 @@ export default function Settings(props: SettingsProps) {
 								<HollowIcon class="fill-primary orbit my-auto mr-2 size-12 shrink-0 transition-transform duration-300" />
 								<div class="flex min-w-0 flex-1 flex-col">
 									<h1 class="my-auto text-xl font-bold text-neutral-950 dark:text-neutral-50">
-										{currentRealm.name} Realm
+										{currentRealm().name} Realm
 									</h1>
 									<div class="flex flex-1">
 										<p class="text-secondary-50 max-w-[50%] overflow-hidden text-sm text-ellipsis whitespace-nowrap">
-											{currentRealm.id}
+											{currentRealm().id}
 										</p>
 									</div>
 								</div>

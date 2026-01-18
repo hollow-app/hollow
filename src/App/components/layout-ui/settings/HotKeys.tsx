@@ -8,7 +8,7 @@ import {
 	onCleanup,
 	createMemo,
 } from "solid-js";
-import { useStore } from "store";
+import { useStore } from "@store";
 const KEY_MAP: Record<string, string> = {
 	Control: "ctrl",
 	Alt: "alt",

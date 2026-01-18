@@ -1,4 +1,4 @@
-import { getCurrentRealm } from "@managers/Realm";
+import { getCurrentRealm } from "@shared/managers/Realm";
 import { Events, CodeThemeState } from "./types";
 import { hollow } from "../../../hollow";
 

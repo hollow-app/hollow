@@ -1,10 +1,9 @@
 import { Component, For, onCleanup, onMount } from "solid-js";
 import "gridstack/dist/gridstack.css";
-import { hollow } from "../../../../hollow";
 import { Card } from "../Card";
 import { useCanvas, CanvasProps } from "./hooks";
 import Scrollbar from "smooth-scrollbar";
-import { useStore } from "store";
+import { useStore } from "@store";
 export const Canvas: Component<CanvasProps> = (props) => {
 	const { state } = useCanvas(props);
 	const store = useStore();

@@ -1,6 +1,6 @@
 import { Property } from "@type/Property";
 import setStyle from "./setStyle";
-import { useStore } from "../store";
+import { useStore } from "@shared/store";
 
 export default function useGrid(properties?: Property[]) {
 	const { state } = useStore();

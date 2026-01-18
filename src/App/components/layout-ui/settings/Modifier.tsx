@@ -3,7 +3,7 @@ import { createMemo, createSignal, Show } from "solid-js";
 import Dropdown from "@components/dynamic/Dropdown";
 import { hollow } from "../../../../hollow";
 import TextFormater from "@components/ui/TextFormater";
-import { getCurrentRealm } from "@managers/Realm";
+import { getCurrentRealm } from "@shared/managers/Realm";
 
 const keys = ["color-primary", "color-secondary"];
 

@@ -3,9 +3,13 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "skipLibCheck": true,
-    "baseUrl":"./src/App",
+    "baseUrl": "./src/App",
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -14,25 +18,59 @@
     "noEmit": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-
     /* Linting */
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-	"paths": {
-	    "@app/*": ["app/*"],
-	    "@utils/*": ["utils/*"],
-	    "@coretools/*": ["(Core Tools)/*"],
-	    "@components/*": ["components/*"],
-	    "@managers/*": ["managers/*"],
-	    "@hooks/*": ["hooks/*"],
-	    "@services/*": ["services/*"],
-	    "@styles/*": ["styles/*"],
-	    "@type/*": ["type/*"]
-	}
-
+    "paths": {
+      "@shared/*": [
+        "../shared/*"
+      ],
+      "@app/*": [
+        "app/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@coretools/*": [
+        "(Core Tools)/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@managers/*": [
+        "managers/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@styles/*": [
+        "styles/*"
+      ],
+      "@type/*": [
+        "type/*"
+      ],
+      "@store": [
+        "../shared/store"
+      ],
+      "@context/*": [
+        "context/*"
+      ],
+      "@rust": [
+        "../lib/rust"
+      ]
+    }
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

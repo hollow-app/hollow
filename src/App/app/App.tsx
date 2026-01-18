@@ -1,31 +1,38 @@
-import { Suspense, createSignal, createEffect, lazy, Show } from "solid-js";
+import {
+	Suspense,
+	createSignal,
+	createEffect,
+	lazy,
+	Show,
+	onMount,
+} from "solid-js";
 import Loading from "@components/ui/Loading";
-import { getCurrentRealm } from "@managers/Realm";
-import { postRealmSelection } from "../../Hollow/hollow";
-import { StoreProvider } from "store";
+import { useStore } from "@shared/store";
+import { postRealmSelection } from "../../lib/app";
 
 const Container = lazy(() => import("./Container"));
 const Popups = lazy(() => import("@components/layout-ui/popups/Popups"));
 const Alerts = lazy(() => import("@components/layout-ui/popups/Alerts"));
 
 export default function App() {
+	const { state } = useStore();
 	const [ready, setReady] = createSignal(false);
-	createEffect(async () => {
-		const realm = getCurrentRealm();
+
+	onMount(async () => {
+		const realm = state.realm.current;
 		if (!realm) return;
 		await postRealmSelection(realm.location);
 		setReady(true);
 	});
+
 	return (
 		<main class="app-container text-black dark:text-white">
 			<Suspense fallback={<Loading />}>
-				<StoreProvider>
-					<Show when={ready()} fallback={<Loading />}>
-						<Container />
-					</Show>
-					<Popups />
-					<Alerts />
-				</StoreProvider>
+				<Show when={ready()} fallback={<Loading />}>
+					<Container />
+				</Show>
+				<Popups />
+				<Alerts />
 			</Suspense>
 		</main>
 	);

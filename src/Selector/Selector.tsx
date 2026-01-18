@@ -11,7 +11,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@components/ui/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
 import Segmented from "@components/dynamic/Segmented";
-import { useStore } from "./store";
+import { useStore } from "@shared/store";
 
 const themes = {
 	dark: [

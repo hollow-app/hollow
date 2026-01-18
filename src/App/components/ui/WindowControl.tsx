@@ -6,11 +6,7 @@ import {
 } from "lucide-solid";
 import { createSignal, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import {
-	close_window,
-	maximize_window,
-	minimize_window,
-} from "../../../Hollow/rust";
+import { close_window, maximize_window, minimize_window } from "@rust";
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 

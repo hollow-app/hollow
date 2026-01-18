@@ -4,8 +4,8 @@ import { Storage } from "@managers/Storage";
 import { join } from "@tauri-apps/api/path";
 import { hollow } from "../../../hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { getCurrentRealm } from "@managers/Realm";
-import { vault_add, vault_add_url, vault_remove } from "../../../Hollow/rust";
+import { getCurrentRealm } from "@shared/managers/Realm";
+import { vault_add, vault_add_url, vault_remove } from "@rust";
 
 let store: Storage | null = null;
 let dispatch: ((action: any) => void) | null = null;

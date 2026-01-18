@@ -9,8 +9,8 @@ import {
 import { Check, ImageUpIcon, XIcon } from "lucide-solid";
 import FetchedIcon from "@components/ui/FetchedIcon";
 import { useCharacter, CharacterProps } from "./hooks";
-import { useStore } from "store";
-import { getCurrentRealm } from "@managers/Realm";
+import { useStore } from "@store";
+import { getCurrentRealm } from "@shared/managers/Realm";
 
 const CharacterSidebar: Component<CharacterProps> = (props) => {
 	const { state, actions } = useCharacter();

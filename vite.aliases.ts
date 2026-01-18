@@ -12,4 +12,7 @@ export const aliases = {
 	"@services": path.resolve(__dirname, "src/App/services"),
 	"@styles": path.resolve(__dirname, "src/App/styles"),
 	"@type": path.resolve(__dirname, "src/App/type"),
+	"@context": path.resolve(__dirname, "src/App/context"),
+	"@store": path.resolve(__dirname, "src/store"),
+	"@rust": path.resolve(__dirname, "src/lib/rust.ts"),
 };

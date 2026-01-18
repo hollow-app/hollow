@@ -14,7 +14,7 @@ import { ExpandIcon } from "lucide-solid";
 import { MyIconFun } from "@components/ui/MyIcon";
 import { ContextMenuItem } from "@type/hollow";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
-import { useStore } from "store";
+import { useStore } from "@store";
 import { getToolEvents, loadCard } from "@managers/Module/effects";
 
 export interface CardProps {

@@ -2,8 +2,8 @@ import { Events, HotkeysState } from "./type";
 import { HotKeyName } from "@type/HotKeyType";
 import { hollow } from "../../../hollow";
 import { defaultState } from "./reducer";
-import { reload } from "../../../Hollow/rust";
-import { toggleRealm } from "@managers/Realm";
+import { reload } from "@rust";
+import { toggleRealm } from "@shared/managers/Realm";
 
 let dispatch: ((action: any) => void) | null = null;
 let globalListener: ((e: KeyboardEvent) => void) | null = null;

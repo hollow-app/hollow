@@ -18,8 +18,8 @@ import { CircleFadingPlusIcon } from "lucide-solid";
 import Tag from "@components/ui/Tag";
 import useGrid from "@hooks/useGrid";
 import { readableColor } from "polished";
-import { useStore } from "store";
-import { getCurrentRealm } from "@managers/Realm";
+import { useStore } from "@store";
+import { getCurrentRealm } from "@shared/managers/Realm";
 import { renderMarkdown } from "@managers/Markdown";
 
 export default function Appearance() {
@@ -134,8 +134,8 @@ function CanvasSettings() {
 }
 
 function ColorSettings() {
-	const { dispatch } = useStore();
-	const realmId = getCurrentRealm().id;
+	const { state, dispatch } = useStore();
+	const realmId = state.realm.current.id;
 	const primaryColor = createMemo(
 		() =>
 			JSON.parse(localStorage.getItem(`${realmId}-color-primary`))

@@ -4,7 +4,7 @@ import { FormType } from "@type/hollow";
 import { hollow } from "../../../../hollow";
 import { SquarePenIcon } from "lucide-solid";
 import { For } from "solid-js";
-import { useStore } from "store";
+import { useStore } from "@store";
 
 export default function Account() {
 	const { state, dispatch } = useStore();

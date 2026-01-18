@@ -1,5 +1,4 @@
 import { CharacterState } from "@managers/Account/types";
-import { CardType, TagType } from "../type/hollow"; // Check this path
 import { GridStackOptions } from "gridstack";
 import { SettingsConfig } from "@managers/Settings/types";
 import { CodeThemeState } from "@managers/CodeTheme/types";
@@ -10,14 +9,14 @@ import { Events as ModuleEvents } from "@managers/Module/type";
 import { Events as HotkeysEvents } from "@managers/Hotkeys/type";
 import { Events as VaultEvents } from "@managers/Vault/type";
 import { Events as NotificationsEvents } from "@managers/Notifications/type";
-import { Events as RealmEvents } from "@managers/Realm/type";
 import { LayoutEvents, LayoutState } from "@managers/layout";
 import { ModuleState } from "@managers/Module/type";
 import { HotkeysState } from "@managers/Hotkeys";
 import { VaultState } from "@managers/Vault";
 import { ContextEvents, ContextState } from "context/type";
 import { NotificationsState } from "@managers/Notifications";
-import { RealmState } from "@managers/Realm";
+import { Events as RealmEvents, RealmState } from "../managers/Realm";
+
 // Root State
 export interface RootState {
 	account: CharacterState;
@@ -48,10 +47,10 @@ export type Action =
 	| RealmEvents
 	| LayoutEvents
 	| {
-		type: "DRAFT_START";
-		path: string;
-		select?: { key: string; value: any };
-	}
+			type: "DRAFT_START";
+			path: string;
+			select?: { key: string; value: any };
+	  }
 	| { type: "DRAFT_COMMIT" }
 	| { type: "DRAFT_CANCEL" };
 
@@ -63,8 +62,8 @@ export type DispatchOptions = {
 // external
 type Path<T> = T extends object
 	? {
-		[K in keyof T & string]: K | `${K}.${Path<T[K]>}`;
-	}[keyof T & string]
+			[K in keyof T & string]: K | `${K}.${Path<T[K]>}`;
+		}[keyof T & string]
 	: never;
 
 export function usePath<T>() {

@@ -1,7 +1,7 @@
 import { Accessor, createMemo } from "solid-js";
 import { hollow } from "../../../../../hollow";
 import { Character } from "@type/Character";
-import { useStore } from "store";
+import { useStore } from "@store";
 
 export interface CharacterProps {}
 

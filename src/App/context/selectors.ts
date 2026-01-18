@@ -1,4 +1,4 @@
-import { RootState } from "../store/types";
+import { RootState } from "@shared/store/types";
 
 // export const selectCards = (state: RootState) => state.modu.cards;
 export const selectTags = (state: RootState) => state.context.tags;

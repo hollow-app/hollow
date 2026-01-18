@@ -43,9 +43,9 @@ export interface PluginsHook {
 }
 
 import { HandType } from "@type/HandType";
-import { useStore } from "store";
+import { useStore } from "@store";
 import { getHand } from "@managers/Module/effects";
-import { add_plugin, reload } from "../../../../../Hollow/rust";
+import { add_plugin, reload } from "@rust";
 
 // ... (imports)
 

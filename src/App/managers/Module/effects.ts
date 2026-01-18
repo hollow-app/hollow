@@ -23,7 +23,7 @@ import { KanbanMain } from "@coretools/Kanban/KanbanMain";
 import { EmbedMain } from "@coretools/Embed/EmbedMain";
 import { EventsManager } from "../EventsManager";
 import { ToolMetadata } from "@type/ToolMetadata";
-import { getCurrentRealm } from "@managers/Realm";
+import { getCurrentRealm } from "@shared/managers/Realm";
 import * as cfm from "@managers/CardFS";
 import {
 	add_plugin,
@@ -33,7 +33,7 @@ import {
 	reload,
 	remove_dir,
 	remove_plugin,
-} from "../../../Hollow/rust";
+} from "@rust";
 
 export let store: Storage | null = null;
 export let toolMap: ToolMap = new Map();

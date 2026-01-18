@@ -4,7 +4,7 @@ import { Grid2X2PlusIcon, Grid2x2XIcon, StarIcon } from "lucide-solid";
 import { Accessor, createSignal, Setter, Show } from "solid-js";
 import EmojiPick from "../dynamic/EmojiPick";
 import { timeDifference } from "@utils/manipulation/strings";
-import { useStore } from "../../store/index";
+import { useStore } from "@shared/store";
 import ToolIcon from "./ToolIcon";
 import MyIcon from "./MyIcon";
 

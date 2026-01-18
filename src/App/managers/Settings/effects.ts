@@ -3,7 +3,7 @@ import { Storage } from "../Storage";
 import { hollow } from "../../../hollow";
 import { join } from "@tauri-apps/api/path";
 import DEFAULT from "@assets/configs/settings.json?raw";
-import { getCurrentRealm } from "@managers/Realm";
+import { getCurrentRealm } from "@shared/managers/Realm";
 
 let storage: Storage | null = null;
 

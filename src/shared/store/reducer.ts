@@ -1,14 +1,14 @@
 import { RootState, Action } from "./types";
 import { accountReducer } from "@managers/Account/reducer";
-import { contextReducer } from "../context/reducer";
+import { contextReducer } from "context/reducer";
 import { settingsReducer } from "@managers/Settings/reducer";
 import { codeThemeReducer } from "@managers/CodeTheme/reducer";
 import { moduleReducer } from "@managers/Module/reducer";
 import { hotkeysReducer } from "@managers/Hotkeys";
 import { vaultReducer } from "@managers/Vault";
 import { notificationsReducer } from "@managers/Notifications";
-import { realmReducer } from "@managers/Realm";
 import { layoutReducer } from "@managers/layout";
+import { realmReducer } from "@shared/managers/Realm";
 
 // Helper to get value from path
 function getValue(obj: any, path: string): any {

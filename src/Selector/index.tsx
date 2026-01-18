@@ -2,8 +2,8 @@
 import "@styles/index.css";
 import { render } from "solid-js/web";
 import SelectorWindow from "./Selector";
-import { preRealmSelection } from "../Hollow/hollow";
-import { StoreProvider } from "./store";
+import { StoreProvider } from "@store";
+import { preRealmSelection } from "../lib/app";
 
 async function ascend() {
 	const root = document.getElementById("root");

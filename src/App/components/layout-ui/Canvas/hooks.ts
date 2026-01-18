@@ -8,7 +8,7 @@ import {
 } from "solid-js";
 import { GridStack, GridStackNode } from "gridstack";
 import { CardType } from "@type/hollow";
-import { useStore } from "../../../store/index";
+import { useStore } from "@shared/store";
 import {
 	selectCanvasConfigs,
 	selectIsLiveEditor,

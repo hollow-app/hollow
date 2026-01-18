@@ -14,7 +14,7 @@ import { hollow } from "../../../../hollow";
 import Dropdown from "@components/dynamic/Dropdown";
 import { CardType } from "@type/hollow";
 import { unwrap } from "solid-js/store";
-import { useStore } from "../../../store/index";
+import { useStore } from "@shared/store";
 import { getHand } from "@managers/Module/effects";
 
 interface SelectedInstance {

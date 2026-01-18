@@ -1,6 +1,6 @@
 import { Component } from "solid-js";
 import { useCard, CardProps } from "./hooks";
-import { useStore } from "store";
+import { useStore } from "@store";
 
 export const Card: Component<CardProps> = (props) => {
 	const store = useStore();

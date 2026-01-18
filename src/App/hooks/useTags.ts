@@ -1,6 +1,6 @@
 import { TagType } from "@type/hollow";
 import setStyle from "./setStyle";
-import { useStore } from "../store";
+import { useStore } from "@shared/store";
 
 export default function useTags(tags?: TagType[]) {
 	const { state, dispatch } = useStore();

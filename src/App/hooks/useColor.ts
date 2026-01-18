@@ -2,7 +2,7 @@ import { ShadeIt } from "@utils/manipulation/colors";
 import { Property } from "@type/Property";
 import { readableColor } from "polished";
 import setStyle from "./setStyle";
-import { getCurrentRealm } from "@managers/Realm";
+import { getCurrentRealm } from "@shared/managers/Realm";
 
 type useColorProps = {
 	name: string;

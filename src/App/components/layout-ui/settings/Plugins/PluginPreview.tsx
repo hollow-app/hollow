@@ -3,7 +3,7 @@ import { PluginType } from "./hooks";
 import Loading from "@components/ui/Loading";
 import { Show } from "solid-js";
 import { marked } from "marked";
-import { useStore } from "store";
+import { useStore } from "@store";
 import { getHand } from "@managers/Module/effects";
 
 type Props = {

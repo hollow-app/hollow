@@ -4,7 +4,7 @@ import { PlusIcon, SearchIcon } from "lucide-solid";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
 import { hollow } from "../../../../hollow";
 import FilterButton from "@components/ui/FilterButton";
-import { useStore } from "../../../store/index";
+import { useStore } from "@shared/store";
 import { getHand } from "@managers/Module/effects";
 
 type FilterType = {

@@ -1,14 +1,27 @@
-import "@styles/index.css";
-import { fetchRealms, renderApp, renderSelector } from "./Hollow/realm";
-import { getCurrentRealm } from "@managers/Realm";
+import { render } from "solid-js/web";
+import { StoreProvider } from "@shared/store";
+import { Show } from "solid-js";
+import { useStore } from "@shared/store";
+import App from "@app/App";
+import Selector from "./Selector/Selector";
 
-async function ascend() {
-	await fetchRealms();
-	const currentRealm = getCurrentRealm();
-	if (currentRealm) {
-		renderApp();
-	} else {
-		renderSelector();
-	}
+function Root() {
+	const { state } = useStore();
+
+	return (
+		<Show when={state.realm.current} fallback={<Selector />}>
+			<App />
+		</Show>
+	);
 }
-ascend();
+
+function Bootstrap() {
+	return (
+		<StoreProvider>
+			<Root />
+		</StoreProvider>
+	);
+}
+
+const root = document.getElementById("root");
+render(() => <Bootstrap />, root);

@@ -1,6 +1,6 @@
 import { Accessor, createMemo } from "solid-js";
 import { NotifyType } from "@type/NotifyType";
-import { useStore } from "store";
+import { useStore } from "@store";
 
 export interface NotificationsProps {
 	hide: () => void;

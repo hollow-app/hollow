@@ -9,7 +9,7 @@ import {
 	notificationsEffects,
 	setupNotifications,
 } from "@managers/Notifications";
-import { realmEffects, setupRealm } from "@managers/Realm";
+import { realmEffects, setupRealm } from "../managers/Realm";
 import { setupLayoutRegistry } from "@managers/layout";
 
 export function runEffects(action: Action, state: RootState) {
@@ -24,19 +24,12 @@ export function runEffects(action: Action, state: RootState) {
 		realmEffects(action as any, state.realm),
 	];
 
-	// const promises = results.filter((r) => r instanceof Promise);
-	// if (promises.length > 0) {
-	// 	return Promise.all(results).then((res) =>
-	// 		res.find((r) => r !== undefined),
-	// 	);
-	// }
-	// return results.find((r) => r !== undefined);
 	const promises = results.filter(
 		(e): e is Promise<void> => e instanceof Promise,
 	);
 
 	return promises.length > 0
-		? Promise.all(promises).then(() => { })
+		? Promise.all(promises).then(() => {})
 		: Promise.resolve();
 }
 

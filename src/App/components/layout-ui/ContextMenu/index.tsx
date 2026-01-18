@@ -26,8 +26,8 @@ import {
 	flip,
 	shift,
 } from "@floating-ui/dom";
-import { getCurrentRealm } from "@managers/Realm";
-import { reload } from "../../../../Hollow/rust";
+import { useStore } from "@shared/store";
+import { reload } from "@rust";
 
 const MenuButton: Component<{
 	icon?: any;
@@ -65,6 +65,7 @@ const SectionHeader: Component<{
 );
 
 export const ContextMenu: Component<ContextMenuProps> = (props) => {
+	const store = useStore();
 	const { state } = useContextMenu();
 
 	return (
@@ -159,7 +160,7 @@ export const ContextMenu: Component<ContextMenuProps> = (props) => {
 									</For>
 								</Show>
 								<SectionHeader
-									title={`${getCurrentRealm().name} Realm`}
+									title={`${store.state.realm.current.name} Realm`}
 									showDivider={true}
 								/>
 								<div class="">

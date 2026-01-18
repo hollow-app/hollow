@@ -1,4 +1,4 @@
-import { CardType, TagType } from "../type/hollow";
+import { TagType } from "../type/hollow";
 import { GridStackOptions } from "gridstack";
 import { ContextEvents } from "./type";
 

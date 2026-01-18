@@ -6,12 +6,13 @@ type hollowType = {
 	onCut?: () => void;
 	onPaste?: () => void;
 	coreTools: string[];
-	events: HollowEvent<AppEvents, AppEventReturns>;
+	// events: HollowEvent<AppEvents, AppEventReturns>;
+	events: EventEmitter2;
 	pevents: EventEmitter2;
 	// promises should accept future diff types
 };
 export const hollow: hollowType = {
 	coreTools: ["image", "notebook", "kanban", "embed"],
-	events: new EventsManager() as HollowEvent<AppEvents, AppEventReturns>,
+	events: new EventEmitter2({}),
 	pevents: new EventEmitter2({}),
 };

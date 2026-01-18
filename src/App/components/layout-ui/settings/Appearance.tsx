@@ -19,7 +19,6 @@ import Tag from "@components/ui/Tag";
 import useGrid from "@hooks/useGrid";
 import { readableColor } from "polished";
 import { useStore } from "@store";
-import { getCurrentRealm } from "@shared/managers/Realm";
 import { renderMarkdown } from "@managers/Markdown";
 
 export default function Appearance() {

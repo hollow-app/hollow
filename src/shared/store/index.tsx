@@ -1,4 +1,4 @@
-import { createStore, reconcile } from "solid-js/store";
+import { createStore, reconcile, unwrap } from "solid-js/store";
 import { createContext, useContext, JSX, onMount } from "solid-js";
 import { RootState, Action, DispatchOptions } from "./types";
 import { rootReducer } from "./reducer";
@@ -71,7 +71,7 @@ export function StoreProvider(props: { children: JSX.Element }) {
 
 	// Setup global listeners
 	onMount(() => {
-		setupEffects(dispatch, () => state);
+		setupEffects(dispatch, () => unwrap(state));
 	});
 
 	return (

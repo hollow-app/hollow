@@ -26,10 +26,8 @@ interface SideBarButton {
 	class?: string;
 }
 
-type SideBarProps = {
-	setSettings: Setter<boolean>;
-};
-export default function SideBar({ setSettings }: SideBarProps) {
+type SideBarProps = {};
+export default function SideBar(props: SideBarProps) {
 	const { state, dispatch } = useStore();
 	const alert = createMemo(
 		() => state.notifications.notifications.length > 0,
@@ -96,7 +94,8 @@ export default function SideBar({ setSettings }: SideBarProps) {
 		{
 			id: "settings-btn",
 			Icon: MyIconFun({ name: "gear-fill" }),
-			onClick: () => setSettings((prev) => !prev),
+			onClick: () =>
+				dispatch({ domain: "context", type: "toggle-settings" }),
 		},
 	];
 	onMount(() => {

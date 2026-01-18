@@ -16,6 +16,7 @@ import { ContextMenuItem } from "@type/hollow";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
 import { useStore } from "@store";
 import { getToolEvents, loadCard } from "@managers/Module/effects";
+import { selectPanel } from "@managers/layout";
 
 export interface CardProps {
 	node: CardType;
@@ -72,11 +73,15 @@ export const useCard = (props: CardProps): CardHook => {
 	});
 
 	const showEditor = () => {
-		//TODO;
-		// hollow.pevents.emit("editor", {
-		// 	tool: tool,
-		// 	cardId: props.node.id,
-		// });
+		dispatch({
+			domain: "context",
+			type: "edit-instance",
+			instance: {
+				id: props.node.id,
+				module: tool,
+			},
+		});
+		selectPanel("right", "editor");
 		hollow.events.emit("context-menu", false);
 	};
 

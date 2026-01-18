@@ -1,6 +1,6 @@
 import { RootState, Action } from "./types";
 import { accountReducer } from "@managers/Account/reducer";
-import { contextReducer } from "context/reducer";
+import { contextReducer } from "@context/reducer";
 import { settingsReducer } from "@managers/Settings/reducer";
 import { codeThemeReducer } from "@managers/CodeTheme/reducer";
 import { moduleReducer } from "@managers/Module/reducer";

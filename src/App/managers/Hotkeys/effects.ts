@@ -4,13 +4,12 @@ import { hollow } from "../../../hollow";
 import { defaultState } from "./reducer";
 import { reload } from "@rust";
 import { toggleRealm } from "@shared/managers/Realm";
+import { _dispatch } from "@shared/store/effects";
 
-let dispatch: ((action: any) => void) | null = null;
 let globalListener: ((e: KeyboardEvent) => void) | null = null;
 const events: Partial<Record<HotKeyName, () => void>> = {};
 
 export function setupHotkeys(d: (action: any) => void) {
-	dispatch = d;
 	const savedData = localStorage.getItem("hotkeys");
 	let parsedData: HotkeysState;
 	if (savedData) {
@@ -20,7 +19,7 @@ export function setupHotkeys(d: (action: any) => void) {
 		localStorage.setItem("hotkeys", JSON.stringify(parsedData));
 	}
 
-	dispatch({
+	_dispatch({
 		domain: "hotkeys",
 		type: "set-hotkeys",
 		hotkeys: parsedData.hotkeys,

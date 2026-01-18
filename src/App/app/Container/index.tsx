@@ -4,7 +4,7 @@ import Navbar from "../../components/layout-ui/sidebars/Navbar";
 import Canvas from "../../components/layout-ui/Canvas";
 import Sidepanel from "./Sidepanel";
 import { useContainer } from "./hooks";
-import { StoreProvider } from "@shared/store";
+import { StoreProvider, useStore } from "@shared/store";
 
 const Settings = lazy(
 	async () => import("../../components/layout-ui/Settings"),
@@ -14,6 +14,7 @@ export interface ContainerProps {
 	// Add your props here
 }
 const Container: Component<ContainerProps> = (props) => {
+	const store = useStore();
 	const { state, actions } = useContainer();
 
 	return (
@@ -23,7 +24,7 @@ const Container: Component<ContainerProps> = (props) => {
 				style={{ background: "var(--back)" }}
 			>
 				<div class="relative flex h-full flex-1">
-					<SideBar setSettings={state.setSettings} />
+					<SideBar />
 					<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
 						<Navbar />
 						<div class="relative flex min-h-0 w-full flex-1 pb-2">
@@ -41,9 +42,9 @@ const Container: Component<ContainerProps> = (props) => {
 						</div>
 					</div>
 				</div>
-				<Show when={state.isSettings()}>
+				<Show when={store.state.context.isSettingsVisible}>
 					<Suspense>
-						<Settings setSettings={state.setSettings} />
+						<Settings />
 					</Suspense>
 				</Show>
 			</div>

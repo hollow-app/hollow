@@ -1,6 +1,6 @@
 [package]
 name = "hollow"
-version = "0.0.4"
+version = "0.0.5"
 description = "Shape your tools, stay productive"
 authors = ["ryu"]
 edition = "2021"

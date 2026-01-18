@@ -1,13 +1,13 @@
 import { TagType } from "@type/hollow";
 import setStyle from "./setStyle";
-import { useStore } from "@shared/store";
+import { _dispatch } from "@shared/store/effects";
+import { getSettingsConfig } from "@managers/Settings/effects";
 
 export default function useTags(tags?: TagType[]) {
-	const { state, dispatch } = useStore();
-	let data: TagType[] = state.settings["custom-tags"];
+	let data: TagType[] = getSettingsConfig("custom-tags") as TagType[];
 	if (tags) {
 		data = tags;
-		dispatch({
+		_dispatch({
 			domain: "settings",
 			type: "set-configs",
 			configs: { "custom-tags": tags },

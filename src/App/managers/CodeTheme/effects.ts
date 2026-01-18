@@ -97,7 +97,9 @@ async function getCachedTheme(
 export function setupCodeTheme(dispatch: (action: any) => void) {
 	hollow.pevents.on("post-realm", async () => {
 		localDB = await initDatabase();
-		const realmId = getCurrentRealm().id;
+		const currentRealm = getCurrentRealm();
+		if (!currentRealm) return;
+		const realmId = currentRealm.id;
 		const lastTheme =
 			localStorage.getItem(getLastThemeKey(realmId)) || "default";
 		dispatch({ domain: "code-theme", type: "set-theme", name: lastTheme });
@@ -122,8 +124,9 @@ export async function codeThemeEffects(action: Events, state: CodeThemeState) {
 					}
 				}
 				applyTheme(css);
-
-				const realmId = getCurrentRealm().id;
+				const currentRealm = getCurrentRealm();
+				if (!currentRealm) return;
+				const realmId = currentRealm.id;
 				if (realmId) {
 					localStorage.setItem(getLastThemeKey(realmId), action.name);
 				}

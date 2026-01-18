@@ -78,7 +78,7 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 					<div class="text-sm text-gray-400">
 						<span class="text-secondary-50">Realm:</span>{" "}
 						<span class="text-secondary-95 pl-2">
-							{getCurrentRealm().name}
+							{getCurrentRealm()?.name}
 						</span>
 					</div>
 					{/* XP Progress */}

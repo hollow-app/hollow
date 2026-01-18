@@ -1,12 +1,11 @@
 import { Property } from "@type/Property";
 import setStyle from "./setStyle";
-import { useStore } from "@shared/store";
+import { getSettingsConfig } from "@managers/Settings/effects";
 
 export default function useGrid(properties?: Property[]) {
-	const { state } = useStore();
 	const options: Property[] =
 		properties ??
-		Object.entries(state.settings["grid-gap"]).map(([k, v]) => ({
+		Object.entries(getSettingsConfig("grid-gap")).map(([k, v]) => ({
 			name: k,
 			value: v,
 		}));

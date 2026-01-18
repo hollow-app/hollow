@@ -6,26 +6,28 @@ import { hollow } from "../../../hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentRealm } from "@shared/managers/Realm";
 import { vault_add, vault_add_url, vault_remove } from "@rust";
+import { _dispatch } from "@shared/store/effects";
 
 let store: Storage | null = null;
-let dispatch: ((action: any) => void) | null = null;
 
-export async function setupVault(d: (action: any) => void) {
-	dispatch = d;
-	const path = await join(
-		...[getCurrentRealm().location, ".hollow", "vault.json"],
-	);
-	store = await Storage.create({
-		path,
-		options: {
-			defaults: { __root__: [] },
-		},
-	});
+export function setupVault(d: (action: any) => void) {
+	hollow.pevents.on("post-realm", async () => {
+		const currentRealm = getCurrentRealm();
+		const path = await join(
+			...[currentRealm.location, ".hollow", "vault.json"],
+		);
+		store = await Storage.create({
+			path,
+			options: {
+				defaults: { __root__: [] },
+			},
+		});
 
-	dispatch({
-		domain: "vault",
-		type: "set-items",
-		items: store.get("__root__"),
+		_dispatch({
+			domain: "vault",
+			type: "set-items",
+			items: store.get("__root__"),
+		});
 	});
 }
 
@@ -63,7 +65,7 @@ export async function vaultEffects(action: Events, state: VaultState) {
 				};
 				removeAlert();
 
-				dispatch!({
+				_dispatch!({
 					domain: "vault",
 					type: "add-items",
 					items: [urlItem],
@@ -138,7 +140,7 @@ export async function importFiles(images: string[]) {
 		});
 		hollow.events.emit("character-add-achievement", "🎨 Aesthetic Choice");
 
-		dispatch!({
+		_dispatch!({
 			domain: "vault",
 			type: "add-items",
 			items: asVaultItems,
@@ -165,10 +167,10 @@ export async function importFileUrl(image: string, name?: string) {
 			uploadedAt: new Date(),
 		};
 		removeAlert();
-		dispatch!({
+		_dispatch!({
 			domain: "vault",
 			type: "add-items",
-			items: urlItem,
+			items: [urlItem],
 		});
 		hollow.events.emit("alert", {
 			type: "success",

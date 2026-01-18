@@ -3,12 +3,12 @@ import { createMemo, createSignal, Show } from "solid-js";
 import Dropdown from "@components/dynamic/Dropdown";
 import { hollow } from "../../../../hollow";
 import TextFormater from "@components/ui/TextFormater";
-import { getCurrentRealm } from "@shared/managers/Realm";
+import { useStore } from "@store";
 
 const keys = ["color-primary", "color-secondary"];
 
 export default function Modifier() {
-	const realmId = getCurrentRealm().id;
+	const { state } = useStore();
 	const [key, setKey] = createSignal("");
 	const [value, setValue] = createSignal("");
 	const [error, setError] = createSignal("");
@@ -113,7 +113,7 @@ export default function Modifier() {
 									placeholder="Select Key"
 									options={[{ items: keys }]}
 									onSelect={(v) => {
-										setKey(`${realmId}-${v}`);
+										setKey(`${state.realm.current}-${v}`);
 										selectKey();
 									}}
 								/>

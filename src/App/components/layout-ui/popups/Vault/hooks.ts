@@ -8,7 +8,6 @@ import { DropdownOption } from "@components/ui/FilterButton";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { useStore } from "@store";
 import { importFiles, importFileUrl } from "@managers/Vault";
-import { getCurrentRealm } from "@shared/managers/Realm";
 
 export interface VaultProps {
 	onSelect?: (p: string) => void;

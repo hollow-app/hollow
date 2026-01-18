@@ -6,6 +6,7 @@ import { Realm } from "@type/Realm";
 import { Storage } from "@managers/Storage";
 import { useColor } from "@hooks/useColor";
 import { hollow } from "../../../hollow";
+import { _dispatch } from "@shared/store/effects";
 
 type RealmsConfig = {
 	current: string | null;
@@ -14,10 +15,8 @@ type RealmsConfig = {
 };
 
 let store: Storage | null = null;
-let dispatch: ((action: any) => void) | null = null;
 
 export async function setupRealm(d: (action: any) => void) {
-	dispatch = d;
 	const path = await join(...[await appConfigDir(), "realms.json"]);
 	store = await Storage.create({
 		path,
@@ -31,7 +30,7 @@ export async function setupRealm(d: (action: any) => void) {
 	});
 
 	const data = store.getData() as RealmsConfig;
-	dispatch({
+	_dispatch({
 		domain: "realm",
 		type: "load-realms",
 		state: data,
@@ -70,10 +69,8 @@ export async function realmEffects(action: Events, state: RealmState) {
 			break;
 		}
 		case "enter-realm":
+			store.set("current", action.realmId);
 			// Open main window and close selector
-			await invoke("open_main_window");
-			const window = getCurrentWindow();
-			await window.close();
 			break;
 		case "remove-realm":
 			// Clean up localStorage for removed realm
@@ -85,7 +82,9 @@ export async function realmEffects(action: Events, state: RealmState) {
 
 // Helper functions for convenience
 export function getCurrentRealm(): Realm | null {
-	return store.get("current");
+	if (!store) return;
+	const list: Realm[] = store.get("realms");
+	return list.find((i) => i.id === store.get("current"));
 }
 
 export function getRealmList(state: RealmState): Realm[] {

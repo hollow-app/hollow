@@ -1,10 +1,8 @@
 import { createSignal, onMount } from "solid-js";
 import { hollow } from "../../../../hollow";
-import { open } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
 import { useStore } from "@store";
 import { reload } from "@rust";
-import { getCurrentRealm } from "@shared/managers/Realm";
 import { openPath } from "@tauri-apps/plugin-opener";
 
 // jk

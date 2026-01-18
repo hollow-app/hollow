@@ -12,6 +12,8 @@ import {
 import { realmEffects, setupRealm } from "../managers/Realm";
 import { setupLayoutRegistry } from "@managers/layout";
 
+export let _dispatch: (action: Action) => void;
+export let _state: () => RootState;
 export function runEffects(action: Action, state: RootState) {
 	const results = [
 		accountEffects(action as any, state.account),
@@ -37,6 +39,8 @@ export function setupEffects(
 	dispatch: (action: Action) => void,
 	getState: () => RootState,
 ) {
+	_dispatch = dispatch;
+	_state = getState;
 	setupAccount(dispatch);
 	setupSettings(dispatch);
 	setupCodeTheme(dispatch);

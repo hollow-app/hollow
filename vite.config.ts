@@ -11,14 +11,6 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-	build: {
-		rollupOptions: {
-			input: {
-				main: resolve(__dirname, "index.html"),
-				selector: resolve(__dirname, "selector.html"),
-			},
-		},
-	},
 	plugins: [
 		solid(),
 		solidSvg({ defaultAsComponent: true }),
@@ -48,10 +40,10 @@ export default defineConfig(async () => ({
 		host: host || false,
 		hmr: host
 			? {
-					protocol: "ws",
-					host,
-					port: 1421,
-				}
+				protocol: "ws",
+				host,
+				port: 1421,
+			}
 			: undefined,
 		watch: {
 			// 3. tell vite to ignore watching `src-tauri`

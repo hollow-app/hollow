@@ -7,13 +7,26 @@ export interface ContextState {
 	isFocus: boolean;
 	isLiveEditor: boolean;
 	canvasConfigs: GridStackOptions;
+	isSettingsVisible: boolean;
+	editorInstance?: {
+		module: string;
+		id: string;
+	};
 }
 
-export type ContextEvents =
-	| { domain: "context"; type: "set-tags"; tags: TagType[] }
-	| { domain: "context"; type: "set-focus"; focus: boolean }
+export type ContextEvents = { domain: "context" } & (
+	| { type: "set-tags"; tags: TagType[] }
+	| { type: "set-focus"; focus: boolean }
 	| {
-			domain: "context";
 			type: "set-canvas-configs";
 			configs: GridStackOptions;
-	  };
+	  }
+	| {
+			type: "toggle-settings";
+			value?: boolean;
+	  }
+	| {
+			type: "edit-instance";
+			instance: { id: string; module: string };
+	  }
+);

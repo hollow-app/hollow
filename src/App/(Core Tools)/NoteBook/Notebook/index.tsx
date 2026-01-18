@@ -32,7 +32,7 @@ const Notebook: Component<NotebookProps> = (props) => {
 			(v) => {
 				if (v) {
 					const id = crypto.randomUUID();
-					const control = hollow.events.getData("add-layout")({
+					const control: any = hollow.events.emit("add-layout", {
 						id,
 						icon: MyIconFun({ name: "folder-open" }),
 						type: "left",

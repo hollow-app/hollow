@@ -15,7 +15,7 @@ import HollowIcon from "@assets/logo.svg";
 import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
-import { getCurrentRealm, toggleRealm } from "@shared/managers/Realm";
+import { toggleRealm } from "@shared/managers/Realm";
 import { useStore } from "@store";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
@@ -27,11 +27,10 @@ const About = lazy(() => import("./settings/About"));
 const Account = lazy(() => import("./settings/Character"));
 
 type SettingsProps = {
-	setSettings: Setter<boolean>;
 	selected?: number;
 };
 export default function Settings(props: SettingsProps) {
-	const { state } = useStore();
+	const { state, dispatch } = useStore();
 	const currentRealm = createMemo(() => state.realm.current);
 	const [selected, setSelected] = createSignal(0);
 
@@ -177,7 +176,13 @@ export default function Settings(props: SettingsProps) {
 						<button
 							class="button secondary"
 							style={{ "--w": "100%" }}
-							onclick={() => props.setSettings(false)}
+							onclick={() =>
+								dispatch({
+									domain: "context",
+									type: "toggle-settings",
+									value: false,
+								})
+							}
 							tabIndex={-1}
 						>
 							Close

@@ -37,3 +37,7 @@ export function settingsEffects(action: Events, state: SettingsConfig) {
 			break;
 	}
 }
+
+export function getSettingsConfig(key: string) {
+	return storage.get(key);
+}

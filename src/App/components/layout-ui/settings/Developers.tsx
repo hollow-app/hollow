@@ -1,5 +1,5 @@
 import { createSignal, onMount } from "solid-js";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { open } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
 import { useStore } from "store";

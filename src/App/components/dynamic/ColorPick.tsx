@@ -1,4 +1,4 @@
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { createSignal } from "solid-js";
 
 type ColorPickProps = {

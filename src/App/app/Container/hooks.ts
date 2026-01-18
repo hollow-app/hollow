@@ -1,10 +1,9 @@
 import { createSignal, createMemo, onMount, Accessor, Setter } from "solid-js";
-import { createLayout, Layout } from "@utils/layout";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { registerHotkeyEvent } from "@managers/Hotkeys";
+import { selectPanel } from "@managers/layout";
 
 export interface ContainerState {
-	controller: Layout;
 	isSettings: Accessor<boolean>;
 	setSettings: Setter<boolean>;
 }
@@ -17,31 +16,29 @@ export interface ContainerHook {
 }
 
 export const useContainer = (): ContainerHook => {
-	const controller = createLayout();
 	const [isSettings, setSettings] = createSignal(false);
 
 	// Actions
 	const showEditor = () => {
-		controller.selectPanel("right", "editor");
+		selectPanel("right", "editor");
 	};
 
 	onMount(() => {
 		hollow.pevents.on("editor", showEditor);
 		registerHotkeyEvent("Toggle Notifications", () =>
-			controller.selectPanel("right", "notifications"),
+			selectPanel("right", "notifications"),
 		);
 		registerHotkeyEvent("Toggle Expand", () =>
-			controller.selectPanel("left", "expand"),
+			selectPanel("left", "expand"),
 		);
 		registerHotkeyEvent("Toggle Settings", () => setSettings((p) => !p));
 		registerHotkeyEvent("Toggle Editor", () =>
-			controller.selectPanel("right", "editor"),
+			selectPanel("right", "editor"),
 		);
 	});
 
 	return {
 		state: {
-			controller,
 			isSettings,
 			setSettings,
 		},

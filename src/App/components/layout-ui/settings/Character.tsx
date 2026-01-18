@@ -1,7 +1,7 @@
 import Dropdown from "@components/dynamic/Dropdown";
 import MyIcon from "@components/ui/MyIcon";
 import { FormType } from "@type/hollow";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { SquarePenIcon } from "lucide-solid";
 import { For } from "solid-js";
 import { useStore } from "store";

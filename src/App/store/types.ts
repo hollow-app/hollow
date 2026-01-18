@@ -11,6 +11,7 @@ import { Events as HotkeysEvents } from "@managers/Hotkeys/type";
 import { Events as VaultEvents } from "@managers/Vault/type";
 import { Events as NotificationsEvents } from "@managers/Notifications/type";
 import { Events as RealmEvents } from "@managers/Realm/type";
+import { LayoutEvents, LayoutState } from "@managers/layout";
 import { ModuleState } from "@managers/Module/type";
 import { HotkeysState } from "@managers/Hotkeys";
 import { VaultState } from "@managers/Vault";
@@ -28,6 +29,7 @@ export interface RootState {
 	vault: VaultState;
 	notifications: NotificationsState;
 	realm: RealmState;
+	layout: LayoutState;
 	_drafts?: Record<
 		string,
 		{ path: string; data: any; select?: { key: string; value: any } }
@@ -44,11 +46,12 @@ export type Action =
 	| VaultEvents
 	| NotificationsEvents
 	| RealmEvents
+	| LayoutEvents
 	| {
-			type: "DRAFT_START";
-			path: string;
-			select?: { key: string; value: any };
-	  }
+		type: "DRAFT_START";
+		path: string;
+		select?: { key: string; value: any };
+	}
 	| { type: "DRAFT_COMMIT" }
 	| { type: "DRAFT_CANCEL" };
 
@@ -60,8 +63,8 @@ export type DispatchOptions = {
 // external
 type Path<T> = T extends object
 	? {
-			[K in keyof T & string]: K | `${K}.${Path<T[K]>}`;
-		}[keyof T & string]
+		[K in keyof T & string]: K | `${K}.${Path<T[K]>}`;
+	}[keyof T & string]
 	: never;
 
 export function usePath<T>() {

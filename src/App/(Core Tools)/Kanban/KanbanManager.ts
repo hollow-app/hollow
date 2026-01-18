@@ -10,7 +10,7 @@ import {
 } from "@type/hollow";
 import { ItemType } from "./types/ItemType";
 import { timeDifferenceMin } from "@utils/manipulation/strings";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 
 export class KanbanManager {
 	private store: IStore = null;

@@ -8,6 +8,7 @@ import { hotkeysReducer } from "@managers/Hotkeys";
 import { vaultReducer } from "@managers/Vault";
 import { notificationsReducer } from "@managers/Notifications";
 import { realmReducer } from "@managers/Realm";
+import { layoutReducer } from "@managers/layout";
 
 // Helper to get value from path
 function getValue(obj: any, path: string): any {
@@ -115,6 +116,7 @@ export function rootReducer(
 		vault: vaultReducer(base.vault, action as any),
 		notifications: notificationsReducer(base.notifications, action as any),
 		realm: realmReducer(base.realm, action as any),
+		layout: layoutReducer(base.layout, action as any),
 	};
 
 	return {

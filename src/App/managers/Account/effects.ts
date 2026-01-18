@@ -1,5 +1,5 @@
 import { Events, CharacterState } from "./types";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 
 export function setupAccount(dispatch: (action: any) => void) {
 	hollow.events.on("character-add-achievement", (achievement: string) => {

@@ -1,5 +1,5 @@
 import setStyle from "@hooks/setStyle";
-import { Layout, PanelType } from "@utils/layout";
+import { getLayoutPanels, PanelType, selectPanel } from "@managers/layout";
 import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
 import { createEffect, createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
@@ -8,16 +8,15 @@ import { useStore } from "store";
 
 type SidepanelProps = {
 	type: PanelType;
-	controller: Layout;
 	width: string;
 	padding: string;
 };
 
 // const side = ["left", "right"];
 export default function Sidepanel(props: SidepanelProps) {
-	const layout = createMemo(() => props.controller.get[props.type]);
-	// const opp = side[side.indexOf(props.type) ^ 1];
 	const { state } = useStore();
+	const layout = createMemo(() => state.layout[props.type]);
+	// const opp = side[side.indexOf(props.type) ^ 1];
 
 	return (
 		<Presence exitBeforeEnter>
@@ -57,20 +56,14 @@ export default function Sidepanel(props: SidepanelProps) {
 							>
 								<Dynamic
 									component={
-										props.controller.panels[props.type][
-											panel
-										] ??
+										getLayoutPanels()[props.type][panel] ??
 										PanelWrapper({
 											id: panel,
-											layout: props.controller,
 										})
 									}
 									{...{
 										hide: () =>
-											props.controller.selectPanel(
-												props.type,
-												panel,
-											),
+											selectPanel(props.type, panel),
 										type: props.type,
 									}}
 								/>

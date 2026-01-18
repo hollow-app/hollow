@@ -9,7 +9,7 @@ import {
 	Show,
 } from "solid-js";
 import { EmbedData } from "./EmbedMain";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { em } from "polished";
 import { Accessor } from "solid-js";
 

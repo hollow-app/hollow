@@ -10,6 +10,7 @@ import {
 	setupNotifications,
 } from "@managers/Notifications";
 import { realmEffects, setupRealm } from "@managers/Realm";
+import { setupLayoutRegistry } from "@managers/layout";
 
 export function runEffects(action: Action, state: RootState) {
 	const results = [
@@ -35,11 +36,14 @@ export function runEffects(action: Action, state: RootState) {
 	);
 
 	return promises.length > 0
-		? Promise.all(promises).then(() => {})
+		? Promise.all(promises).then(() => { })
 		: Promise.resolve();
 }
 
-export function setupEffects(dispatch: (action: Action) => void) {
+export function setupEffects(
+	dispatch: (action: Action) => void,
+	getState: () => RootState,
+) {
 	setupAccount(dispatch);
 	setupSettings(dispatch);
 	setupCodeTheme(dispatch);
@@ -48,4 +52,5 @@ export function setupEffects(dispatch: (action: Action) => void) {
 	setupVault(dispatch);
 	setupNotifications(dispatch);
 	setupRealm(dispatch);
+	setupLayoutRegistry(dispatch, getState);
 }

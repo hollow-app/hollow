@@ -1,7 +1,7 @@
 /* @refresh reload */
 import "@styles/index.css";
 import { render } from "solid-js/web";
-import SelectorWindow from "./SelectorWindow";
+import SelectorWindow from "./Selector";
 import { preRealmSelection } from "../Hollow/hollow";
 import { StoreProvider } from "./store";
 

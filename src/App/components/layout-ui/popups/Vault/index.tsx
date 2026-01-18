@@ -1,6 +1,6 @@
 import { Component, createSignal, For, Show } from "solid-js";
 import PopupWrapper from "@components/layout-ui/PopupWrapper";
-import { hollow } from "hollow";
+import { hollow } from "../../../../../hollow";
 import {
 	CopyIcon,
 	ImageUpIcon,

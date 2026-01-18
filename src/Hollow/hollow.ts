@@ -1,6 +1,6 @@
 import { warn, debug, trace, info, error } from "@tauri-apps/plugin-log";
 import { check, Update } from "@tauri-apps/plugin-updater";
-import { hollow } from "hollow";
+import { hollow } from "../hollow";
 import { useColor } from "@hooks/useColor";
 import useTags from "@hooks/useTags";
 import { IStore, StoreType } from "@type/hollow";
@@ -68,6 +68,7 @@ export async function preRealmSelection() {
 		localStorage.first_launch = "true";
 		first_launch();
 	}
+	await hollow.pevents.emitAsync("pre-realm");
 	return true;
 }
 

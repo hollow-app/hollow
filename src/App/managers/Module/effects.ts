@@ -1,5 +1,5 @@
 import { join } from "@tauri-apps/api/path";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { Storage } from "@managers/Storage";
 import { CoreTool, Events, ModuleState, ToolMap, ToolMethods } from "./type";
 import DEFAULT from "@assets/configs/main.json?raw";

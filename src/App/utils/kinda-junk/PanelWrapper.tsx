@@ -1,18 +1,17 @@
 import { onCleanup, onMount } from "solid-js";
 import styles from "./index.module.css";
-import { Layout } from "../layout";
+import { getLayoutPanels } from "@managers/layout";
 
 interface PanelWrapperProps {
 	id: string;
-	layout: Layout;
 }
 
 export function PanelWrapper(props: PanelWrapperProps) {
 	return () => {
 		let el: HTMLDivElement;
 		onMount(() => {
-			const obj = props.layout.panels.extra
-				.find((i) => i.id === props.id)
+			const obj = getLayoutPanels()
+				.extra.find((i) => i.id === props.id)
 				.mount(el);
 			onCleanup(() => {
 				obj.unmount();

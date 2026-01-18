@@ -1,4 +1,4 @@
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import ImageIcon from "@assets/icons/tools/image.svg";
 import NotebookIcon from "@assets/icons/tools/notebook.svg";
 import EmbedIcon from "@assets/icons/tools/embed.svg";

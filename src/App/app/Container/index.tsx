@@ -23,23 +23,18 @@ const Container: Component<ContainerProps> = (props) => {
 				style={{ background: "var(--back)" }}
 			>
 				<div class="relative flex h-full flex-1">
-					<SideBar
-						layout={state.controller}
-						setSettings={state.setSettings}
-					/>
+					<SideBar setSettings={state.setSettings} />
 					<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
 						<Navbar />
 						<div class="relative flex min-h-0 w-full flex-1 pb-2">
 							<Sidepanel
 								type="left"
 								width="calc(var(--spacing) * 104)"
-								controller={state.controller}
 								padding="0 calc(var(--spacing) * 2) 0 0"
 							/>
-							<Canvas layout={state.controller} />
+							<Canvas />
 							<Sidepanel
 								type="right"
-								controller={state.controller}
 								width="calc(var(--spacing) * 104)"
 								padding="0 0 0 calc(var(--spacing) * 2)"
 							/>

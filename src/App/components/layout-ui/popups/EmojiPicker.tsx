@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 import { SearchIcon } from "lucide-solid";
 import PopupWrapper from "../../layout-ui/PopupWrapper";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 
 type EmojiPickerProps = {
 	p: { emoji: string; setEmoji: (e: string) => void };

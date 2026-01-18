@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { HandType } from "@type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { AppApi, CardType, IPlugin, PluginResult, ToolApi } from "@type/hollow";
-import { hollow } from "hollow";
+import { hollow } from "../hollow";
 import { importFileUrl } from "../App/managers/Vault";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;

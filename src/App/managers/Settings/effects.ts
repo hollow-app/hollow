@@ -1,6 +1,6 @@
 import { Events, SettingsConfig } from "./types";
 import { Storage } from "../Storage";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { join } from "@tauri-apps/api/path";
 import DEFAULT from "@assets/configs/settings.json?raw";
 import { getCurrentRealm } from "@managers/Realm";

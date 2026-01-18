@@ -5,7 +5,7 @@ import {
 	Setter,
 	Resource,
 } from "solid-js";
-import { hollow } from "hollow";
+import { hollow } from "../../../../../hollow";
 
 export interface PluginType {
 	name: string;

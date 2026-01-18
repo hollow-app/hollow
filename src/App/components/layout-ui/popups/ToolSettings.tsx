@@ -1,6 +1,6 @@
 import DynamicOption from "@components/dynamic/DynamicOption";
 import { ToolOption, ToolOptions } from "@type/hollow";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { createMemo, For, Show } from "solid-js";
 import PopupWrapper from "../PopupWrapper";
 import { MyIconFun } from "@components/ui/MyIcon";

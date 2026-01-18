@@ -10,7 +10,7 @@ import {
 	type Accessor,
 	type Setter,
 } from "solid-js";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import Dropdown from "@components/dynamic/Dropdown";
 import { CardType } from "@type/hollow";
 import { unwrap } from "solid-js/store";

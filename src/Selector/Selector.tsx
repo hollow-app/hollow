@@ -3,15 +3,7 @@ import { formatDate, timeDifference } from "@utils/manipulation/strings";
 import { Realm } from "@type/Realm";
 import HollowIcon from "@assets/logo.svg";
 import { CalendarIcon, PlusIcon, RocketIcon } from "lucide-solid";
-import {
-	Accessor,
-	batch,
-	createSignal,
-	For,
-	onMount,
-	Setter,
-	Show,
-} from "solid-js";
+import { batch, createSignal, For, onMount, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import WindowControl from "@components/ui/WindowControl";
 import Dropdown from "@components/dynamic/Dropdown";
@@ -534,7 +526,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 	);
 };
 
-export default function SelectorWindow() {
+export default function Selector() {
 	const { state, dispatch } = useStore();
 	const [level, setLevel] = createSignal(
 		state.realm.realms.length > 0 ? 1 : 0,

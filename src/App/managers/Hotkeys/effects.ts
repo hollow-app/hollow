@@ -1,6 +1,6 @@
 import { Events, HotkeysState } from "./type";
 import { HotKeyName } from "@type/HotKeyType";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { defaultState } from "./reducer";
 import { reload } from "../../../Hollow/rust";
 import { toggleRealm } from "@managers/Realm";

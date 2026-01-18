@@ -7,7 +7,7 @@ import {
 	createEffect,
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import {
 	ChevronRightIcon,
 	ClipboardPasteIcon,

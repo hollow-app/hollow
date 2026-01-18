@@ -2,7 +2,7 @@ import ScrollIcon from "@assets/icons/scroll.svg";
 import { FormType, ToolOption } from "@type/hollow";
 import { Accessor, For, onMount, Setter } from "solid-js";
 import { createSignal } from "solid-js";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { Show } from "solid-js";
 import DynamicOption from "@components/dynamic/DynamicOption";
 import PopupWrapper from "../PopupWrapper";

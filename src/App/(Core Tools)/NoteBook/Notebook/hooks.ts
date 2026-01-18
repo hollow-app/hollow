@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 import { createStore, SetStoreFunction, unwrap } from "solid-js/store";
 import fm from "front-matter";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { NotebookType } from "../NotebookType";
 import { NoteType } from "../NoteType";
 import {

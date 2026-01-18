@@ -9,7 +9,7 @@ import {
 } from "solid-js";
 import { GridStack } from "gridstack";
 import { CardType } from "@type/hollow";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { ExpandIcon } from "lucide-solid";
 import { MyIconFun } from "@components/ui/MyIcon";
 import { ContextMenuItem } from "@type/hollow";

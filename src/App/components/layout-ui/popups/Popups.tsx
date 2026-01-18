@@ -1,6 +1,6 @@
 import { For, lazy, onMount, Show } from "solid-js";
 import { createSignal } from "solid-js";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 
 import { ConfirmType, FormType, InsightType } from "@type/hollow";
 import { Options } from "vanilla-calendar-pro";

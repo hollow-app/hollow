@@ -4,7 +4,7 @@ import { PaintBucketIcon } from "lucide-solid";
 import { HexColorPicker } from "solid-colorful";
 import { createMemo, createSignal, For } from "solid-js";
 import PopupWrapper from "../../layout-ui/PopupWrapper";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 
 type ColorPickerProps = {
 	p: { color: string; setColor: (c: string) => void };

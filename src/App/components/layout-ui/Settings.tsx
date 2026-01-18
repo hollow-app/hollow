@@ -9,7 +9,7 @@ import {
 	PaletteIcon,
 	PandaIcon,
 } from "lucide-solid";
-import { Accessor, createSignal, Setter, Show, Suspense } from "solid-js";
+import { createSignal, Setter, Show, Suspense } from "solid-js";
 import HollowIcon from "@assets/logo.svg";
 
 import { Motion, Presence } from "solid-motionone";

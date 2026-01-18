@@ -4,7 +4,7 @@ import AlertTriangleOutlineIcon from "@assets/icons/alert-triangle.svg";
 import AlertSquareOutlineIcon from "@assets/icons/alert-square.svg";
 import LoaderIcon from "@assets/icons/loader.svg";
 import { AlertType } from "@type/hollow";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { createSignal, For, JSX, onCleanup, onMount, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import { XIcon } from "lucide-solid";

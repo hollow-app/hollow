@@ -4,18 +4,17 @@ import {
 	createMemo,
 	For,
 	JSX,
-	onCleanup,
 	onMount,
 	Setter,
 	Show,
 } from "solid-js";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { MyIconFun } from "@components/ui/MyIcon";
-import { Layout } from "@utils/layout";
 import { DynamicIcon } from "@components/ui/DynamicIcon";
 import { guide } from "@utils/help";
 import { useStore } from "store";
 import { registerHotkeyEvent } from "@managers/Hotkeys";
+import { getLayoutPanels, isPanelVisible, selectPanel } from "@managers/layout";
 
 interface SideBarButton {
 	id: string;
@@ -28,14 +27,17 @@ interface SideBarButton {
 }
 
 type SideBarProps = {
-	layout: Layout;
 	setSettings: Setter<boolean>;
 };
-export default function SideBar({ layout, setSettings }: SideBarProps) {
+export default function SideBar({ setSettings }: SideBarProps) {
 	const { state, dispatch } = useStore();
 	const alert = createMemo(
 		() => state.notifications.notifications.length > 0,
 	);
+	const anyExtraPanels = createMemo(() => {
+		const layout = state.layout;
+		return layout.left.panels.length > 2 || layout.right.panels.length > 2;
+	});
 
 	const toggleDnd = () => {
 		const p = state.context.canvasConfigs;
@@ -53,14 +55,14 @@ export default function SideBar({ layout, setSettings }: SideBarProps) {
 		{
 			id: "expand-btn",
 			Icon: MyIconFun({ name: "home-2-fill" }),
-			onClick: () => layout.selectPanel("left", "expand"),
-			selectedCondition: () => layout.isPanelVisible("left", "expand"),
+			onClick: () => selectPanel("left", "expand"),
+			selectedCondition: () => isPanelVisible("left", "expand"),
 		},
 		{
 			id: "editor-btn",
 			Icon: MyIconFun({ name: "designtools-fill" }),
-			onClick: () => layout.selectPanel("right", "editor"),
-			selectedCondition: () => layout.isPanelVisible("right", "editor"),
+			onClick: () => selectPanel("right", "editor"),
+			selectedCondition: () => isPanelVisible("right", "editor"),
 		},
 		{
 			id: "vault-btn",
@@ -79,15 +81,14 @@ export default function SideBar({ layout, setSettings }: SideBarProps) {
 		{
 			id: "character-btn",
 			Icon: MyIconFun({ name: "user" }),
-			onClick: () => layout.selectPanel("left", "character"),
-			selectedCondition: () => layout.isPanelVisible("left", "character"),
+			onClick: () => selectPanel("left", "character"),
+			selectedCondition: () => isPanelVisible("left", "character"),
 		},
 		{
 			id: "notifications-btn",
 			Icon: MyIconFun({ name: "bell-fill" }),
-			onClick: () => layout.selectPanel("right", "notifications"),
-			selectedCondition: () =>
-				layout.isPanelVisible("right", "notifications"),
+			onClick: () => selectPanel("right", "notifications"),
+			selectedCondition: () => isPanelVisible("right", "notifications"),
 			style: {
 				"--opacity": "var(--alert)",
 			},
@@ -121,16 +122,16 @@ export default function SideBar({ layout, setSettings }: SideBarProps) {
 			<div class="mx-auto flex flex-col gap-3">
 				<For each={top}>{(btn) => <ControlButton {...btn} />}</For>
 			</div>
-			<Show when={layout.anyExtraPanels()}>
+			<Show when={anyExtraPanels()}>
 				<div class="bg-secondary-10 mx-auto flex flex-col gap-3 rounded-lg p-1">
 					<For
 						each={[
-							...layout.get.left.panels,
-							...layout.get.right.panels,
+							...state.layout.left.panels,
+							...state.layout.right.panels,
 						]}
 					>
 						{(id) => {
-							const btn = layout.panels.extra.find(
+							const btn = getLayoutPanels().extra.find(
 								(i) => i.id === id,
 							);
 							if (!btn) return;
@@ -140,10 +141,10 @@ export default function SideBar({ layout, setSettings }: SideBarProps) {
 									Icon={btn.icon}
 									tooltip={btn.tooltip}
 									selectedCondition={() =>
-										layout.isPanelVisible(btn.type, btn.id)
+										isPanelVisible(btn.type, btn.id)
 									}
 									onClick={() =>
-										layout.selectPanel(btn.type, btn.id)
+										selectPanel(btn.type, btn.id)
 									}
 								/>
 							);

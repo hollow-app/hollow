@@ -11,7 +11,7 @@ import {
 } from "solid-js";
 import { FormType, TagType } from "@type/hollow";
 import useTags from "@hooks/useTags";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import Loading from "@components/ui/Loading";
 import Dropdown from "@components/dynamic/Dropdown";
 import { CircleFadingPlusIcon } from "lucide-solid";

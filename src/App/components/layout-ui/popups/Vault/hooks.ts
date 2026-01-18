@@ -1,6 +1,6 @@
 import { createSignal, createMemo, Accessor, Setter } from "solid-js";
 import { open } from "@tauri-apps/plugin-dialog";
-import { hollow } from "hollow";
+import { hollow } from "../../../../../hollow";
 import { ConfirmType, FormOption, FormType } from "@type/hollow";
 import { VaultItem } from "@type/VaultItem";
 import { join } from "@tauri-apps/api/path";

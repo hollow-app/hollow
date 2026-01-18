@@ -7,7 +7,6 @@ import {
 	Setter,
 } from "solid-js";
 import { GridStack, GridStackNode } from "gridstack";
-import { Layout } from "@utils/layout";
 import { CardType } from "@type/hollow";
 import { useStore } from "../../../store/index";
 import {
@@ -16,9 +15,7 @@ import {
 	selectIsFocus,
 } from "../../../context/selectors";
 
-export interface CanvasProps {
-	layout: Layout;
-}
+export interface CanvasProps {}
 
 export interface CanvasState {
 	gridEl: Accessor<HTMLDivElement | undefined>;

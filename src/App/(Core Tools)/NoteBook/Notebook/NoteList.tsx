@@ -12,7 +12,7 @@ import { NotebookManager } from "../NotebookManager";
 import FilterButton from "@components/ui/FilterButton";
 import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { MyIconFun } from "@components/ui/MyIcon";
 import { SearchIcon } from "lucide-solid";
 import Checkbox from "@components/ui/Checkbox";

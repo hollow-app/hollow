@@ -20,7 +20,7 @@ import Tag from "@components/ui/Tag.tsx";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import MyIcon, { MyIconFun } from "@components/ui/MyIcon.tsx";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow.ts";
 import { useNotebook, NotebookProps } from "./hooks";
 
 const Notebook: Component<NotebookProps> = (props) => {

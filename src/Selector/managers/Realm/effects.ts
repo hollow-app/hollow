@@ -1,7 +1,7 @@
 import { Events, RealmState } from "./type";
 import { Storage } from "@managers/Storage";
 import { appConfigDir, join } from "@tauri-apps/api/path";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 

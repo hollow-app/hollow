@@ -1,6 +1,6 @@
 import { getCurrentRealm } from "@managers/Realm";
 import { Events, CodeThemeState } from "./types";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 
 const DB_NAME = "codeThemeDB";
 const STORE_NAME = "themes";

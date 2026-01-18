@@ -71,7 +71,7 @@ export function StoreProvider(props: { children: JSX.Element }) {
 
 	// Setup global listeners
 	onMount(() => {
-		setupEffects(dispatch);
+		setupEffects(dispatch, () => state);
 	});
 
 	return (

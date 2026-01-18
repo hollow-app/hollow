@@ -3,7 +3,7 @@ import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { CardType, IStore, ToolApi } from "@type/hollow";
 import { ToolOptions } from "@type/hollow";
 import { ImageType } from "./ImageType";
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 
 type ImageProps = {
 	data: ImageType;

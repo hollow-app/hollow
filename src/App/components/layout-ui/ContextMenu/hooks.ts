@@ -6,7 +6,7 @@ import {
 	Setter,
 	createMemo,
 } from "solid-js";
-import { hollow } from "hollow";
+import { hollow } from "../../../../hollow";
 import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
 import {
 	computePosition,

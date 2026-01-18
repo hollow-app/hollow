@@ -1,4 +1,4 @@
-import { hollow } from "hollow";
+import { hollow } from "../../../hollow";
 import { createSignal } from "solid-js";
 
 export default function EmojiPick(props: {

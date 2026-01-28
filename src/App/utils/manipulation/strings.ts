@@ -58,3 +58,25 @@ export function weekOld(n_date: string) {
 export function isExpired(n_date: string) {
 	return new Date(n_date).getTime() < Date.now();
 }
+export function estimateReadingTimeMs(
+	lines: string[],
+	wordsPerMinute: number = 350,
+): number {
+	const totalWords = lines
+		.join(" ")
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean).length;
+
+	const minutes = totalWords / wordsPerMinute;
+	return Math.round(minutes * 60_000);
+}
+export function EventEmitterSource(source: string, returns: any[]): any {
+	for (const obj of returns) {
+		if (typeof obj === "object" && obj) {
+			if (obj["source"] === source) {
+				return obj;
+			}
+		}
+	}
+}

@@ -13,7 +13,7 @@ import {
 } from "lucide-solid";
 import FilterButton from "@components/ui/FilterButton";
 import MyIcon, { MyIconFun } from "@components/ui/MyIcon";
-import Tag from "@components/ui/Tag";
+import { Tag } from "@ui";
 import { useVault, VaultProps } from "./hooks";
 import { Accessor } from "solid-js";
 
@@ -264,7 +264,6 @@ function AddUrl({ onAdd }: AddUrlProps) {
 		setUrl("");
 		setOpen(false);
 	};
-
 	return (
 		<div class="relative">
 			<button

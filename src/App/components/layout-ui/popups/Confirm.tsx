@@ -1,7 +1,7 @@
 import { registerHotkeyEvent } from "@managers/Hotkeys";
 import { ConfirmType } from "@type/hollow";
-import { hollow } from "../../../../hollow";
 import { onCleanup, onMount } from "solid-js";
+import { hollow } from "../../../../hollow";
 type ConfirmPopProps = {
 	pack: ConfirmType;
 };
@@ -15,7 +15,6 @@ export default function ConfirmPop({ pack }: ConfirmPopProps) {
 		}
 		hollow.events.emit("confirm", null);
 	};
-
 	onMount(() => {
 		registerHotkeyEvent("Accept Confirm Message", () => decision(true));
 		registerHotkeyEvent("Refuse Confirm Message", () => decision(false));

@@ -15,7 +15,7 @@ import { hollow } from "../../../../hollow";
 import Loading from "@components/ui/Loading";
 import Dropdown from "@components/dynamic/Dropdown";
 import { CircleFadingPlusIcon } from "lucide-solid";
-import Tag from "@components/ui/Tag";
+import Tag from "@ui/Tag";
 import useGrid from "@hooks/useGrid";
 import { readableColor } from "polished";
 import { useStore } from "@store";

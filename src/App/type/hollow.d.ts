@@ -290,19 +290,17 @@ export type ContextMenuItemButton = {
 	children?: Omit<ContextMenuItemButton, "children">[];
 };
 
-export type AlertType =
-	| {
-			type?: "success" | "error" | "warning" | "info";
-			title?: string;
-			message: string;
-			button?: {
-				label: string;
-				callback: () => void;
-			};
-			onTimeOut?: () => void;
-			duration?: number; //ms
-	  }
-	| { type: "loading"; title?: string; message: string };
+export type AlertType = {
+	type?: "success" | "error" | "warning" | "info" | "loading";
+	title?: string;
+	message: string;
+	button?: {
+		label: string;
+		callback: () => void;
+	};
+	onTimeOut?: () => void;
+	duration?: number; //ms
+};
 /**
  * Represents a visual tag with a name and color scheme.
  */
@@ -326,9 +324,11 @@ export type TagType = {
  */
 export type TypedOptionMap = {
 	// native
-	text: { attributes?: JSX.InputHTMLAttributes<HTMLInputElement> };
+	text: { attributes?: JSX.InputHTMLAttributes<HTMLInputElement> & any };
 	// native
-	longtext: { attributes?: JSX.TextAreaHTMLAttributes<HTMLTextAreaElement> };
+	longtext: {
+		attributes?: JSX.TextAreaHTMLAttributes<HTMLTextAreaElement> & any;
+	};
 	number: { min?: number; max?: number };
 	boolean: {};
 	segmented: { options: { title?: string; key: any; icon?: any }[] };
@@ -436,6 +436,7 @@ export type FormType = {
 	 */
 	submit: (submission: any) => void;
 
+	finally?: () => void;
 	/**
 	 * List of input fields the user can interact with.
 	 */

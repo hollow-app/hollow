@@ -13,6 +13,6 @@ type hollowType = {
 };
 export const hollow: hollowType = {
 	coreTools: ["image", "notebook", "kanban", "embed"],
-	events: new EventEmitter2({}),
+	events: new EventEmitter2({ wildcard: true }),
 	pevents: new EventEmitter2({}),
 };

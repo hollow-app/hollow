@@ -1,12 +1,5 @@
 import { CardType, ContextMenuItem } from "@type/hollow";
-import {
-	Accessor,
-	createMemo,
-	createSignal,
-	createUniqueId,
-	For,
-	Setter,
-} from "solid-js";
+import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
 import { NotebookType } from "../NotebookType";
 import { NotebookManager } from "../NotebookManager";
 import FilterButton from "@components/ui/FilterButton";
@@ -15,7 +8,7 @@ import { NoteType } from "../NoteType";
 import { hollow } from "../../../../hollow";
 import { MyIconFun } from "@components/ui/MyIcon";
 import { SearchIcon } from "lucide-solid";
-import Checkbox from "@components/ui/Checkbox";
+import { Checkbox } from "@ui";
 
 type NoteListProps = {
 	card: CardType;

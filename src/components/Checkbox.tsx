@@ -1,10 +1,14 @@
+import { splitProps } from "solid-js";
+import { JSX } from "solid-js";
 import { Accessor, createUniqueId } from "solid-js";
 
-type Props = {
+interface Props {
 	checked: boolean;
 	onclick: () => void;
-};
-export default function Checkbox(props: Props) {
+}
+
+export function Checkbox(props: Props) {
+	const [local, rest] = splitProps(props, ["checked", "onclick"]);
 	const id = "checkbox-unique-" + createUniqueId();
 	return (
 		<div class="checkbox">
@@ -12,8 +16,8 @@ export default function Checkbox(props: Props) {
 				<input
 					type="checkbox"
 					id={id}
-					checked={props.checked}
-					onclick={props.onclick}
+					checked={local.checked}
+					onclick={local.onclick}
 				/>
 				<label for={id}></label>
 			</div>

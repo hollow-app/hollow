@@ -1,39 +1,48 @@
-import CheckSquareOutlineIcon from "@assets/icons/check-square.svg";
-import XSquareOutlineIcon from "@assets/icons/x-square.svg";
-import AlertTriangleOutlineIcon from "@assets/icons/alert-triangle.svg";
-import AlertSquareOutlineIcon from "@assets/icons/alert-square.svg";
+import CheckSquareOutlineIcon from "@assets/icons/check-square-outline.svg";
+import XSquareOutlineIcon from "@assets/icons/x-square-outline.svg";
+import AlertTriangleOutlineIcon from "@assets/icons/alert-triangle-outline.svg";
+import AlertSquareOutlineIcon from "@assets/icons/alert-square-outline.svg";
 import LoaderIcon from "@assets/icons/loader.svg";
 import { AlertType } from "@type/hollow";
 import { hollow } from "../../../../hollow";
-import { createSignal, For, JSX, onCleanup, onMount, Show } from "solid-js";
+import {
+	createMemo,
+	createSignal,
+	For,
+	JSX,
+	onCleanup,
+	onMount,
+	Show,
+} from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import { XIcon } from "lucide-solid";
+import { estimateReadingTimeMs } from "@utils/manipulation/strings";
+import { Accessor } from "solid-js";
 
-const alertTypes: Record<
-	Exclude<AlertType["type"], "loading">,
-	(props: any) => JSX.Element
-> = {
+const alertTypes: Record<AlertType["type"], (props: any) => JSX.Element> = {
 	success: CheckSquareOutlineIcon,
 	error: XSquareOutlineIcon,
 	warning: AlertTriangleOutlineIcon,
 	info: AlertSquareOutlineIcon,
+	loading: LoaderIcon,
 };
-export type NonLoadingAlertType = Extract<
-	AlertType,
-	{ type?: "success" | "error" | "warning" | "info" }
->;
 
 export default function Alerts() {
 	const [alerts, setAlerts] = createSignal<(AlertType & { id: string })[]>(
 		[],
 	);
+	const items = createMemo(() => alerts().map((i) => i.id));
 	const [cue, setCue] = createSignal([]);
 
-	const addAlert = (alert: AlertType) => {
+	const addAlert = async (alert: AlertType) => {
 		const id = crypto.randomUUID();
 		const uniqueAlert = { ...alert, id };
 		setAlerts((prev) => [uniqueAlert, ...prev]);
 		setCue((prev) => [...prev, uniqueAlert.id]);
+		const duration = estimateReadingTimeMs([
+			alert.title ?? "",
+			alert.message ?? "",
+		]);
 		if (alert.type !== "loading") {
 			setTimeout(() => {
 				setCue((prev) => [...prev.filter((i) => i !== id)]);
@@ -41,13 +50,24 @@ export default function Alerts() {
 					setAlerts((prev) => prev.filter((i) => i.id !== id));
 				}, 4000);
 				alert.onTimeOut && alert.onTimeOut();
-			}, alert.duration ?? 3000);
+			}, alert.duration ?? duration);
 		} else {
-			return () => {
-				setCue((prev) => [...prev.filter((i) => i !== id)]);
-				setTimeout(() => {
-					setAlerts((prev) => prev.filter((i) => i.id !== id));
-				}, 4000);
+			return {
+				source: "source",
+				callback: (alert: AlertType) => {
+					setAlerts((p) =>
+						p.map((i) => (i.id === id ? { ...i, ...alert } : i)),
+					);
+					setTimeout(() => {
+						setCue((prev) => [...prev.filter((i) => i !== id)]);
+						setTimeout(() => {
+							setAlerts((prev) =>
+								prev.filter((i) => i.id !== id),
+							);
+						}, 4000);
+						alert.onTimeOut && alert.onTimeOut();
+					}, alert.duration ?? duration);
+				},
 			};
 		}
 	};
@@ -73,12 +93,11 @@ export default function Alerts() {
 	return (
 		<Show when={alerts().length > 0}>
 			<div class="pointer-events-none fixed top-4 right-4 z-700 box-border flex h-full w-fit flex-col items-end gap-2">
-				<For each={alerts()}>
-					{(alert) => {
-						const isLoading = alert.type === "loading";
+				<For each={items()}>
+					{(item) => {
 						return (
 							<Presence>
-								<Show when={cue().includes(alert.id)}>
+								<Show when={cue().includes(item)}>
 									<Motion.div
 										initial={{ x: "100%" }}
 										animate={{ x: 0 }}
@@ -86,29 +105,21 @@ export default function Alerts() {
 										transition={{ duration: 0.4 }}
 										class="border-secondary-10 bg-secondary-05 pointer-events-auto relative w-fit overflow-hidden rounded-lg border"
 									>
-										<Show
-											when={!isLoading}
-											fallback={
-												<div class="flex items-center gap-2 px-3 py-2">
-													<LoaderIcon class="size-5 animate-spin" />
-													<Show when={alert.title}>
-														<h1>{alert.title}</h1>
-													</Show>
-													<span class="text-neutral-500">
-														{alert.message}
-													</span>
-												</div>
-											}
-										>
-											<NormalAlert
-												alert={
-													alert as NonLoadingAlertType
-												}
-												dismiss={() =>
-													dismiss(alert.id)
-												}
-											/>
-										</Show>
+										{(() => {
+											const alert = createMemo((i) =>
+												alerts().find(
+													(i) => i.id === item,
+												),
+											);
+											return (
+												<NormalAlert
+													alert={alert}
+													dismiss={() =>
+														dismiss(item)
+													}
+												/>
+											);
+										})()}
 									</Motion.div>
 								</Show>
 							</Presence>
@@ -120,62 +131,80 @@ export default function Alerts() {
 	);
 }
 
-const NormalAlert = ({
-	alert,
-	dismiss,
-}: {
-	alert: NonLoadingAlertType;
+const NormalAlert = (props: {
+	alert: Accessor<AlertType>;
 	dismiss: () => void;
 }) => {
-	const Icon = alert.type && alertTypes[alert.type];
 	const [hovered, setHovered] = createSignal(false);
 	return (
 		<>
 			<div
-				class="flex items-center gap-2 pl-3"
-				classList={{
-					"px-3": !alert.button,
-				}}
+				class="flex flex-col gap-0 px-3 py-2 text-sm"
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
 			>
-				<Show when={alert.type}>
-					<Show
-						when={!hovered()}
-						fallback={
-							<button
-								class="button-control"
-								style={{ "--size": "calc(var(--spacing) * 6)" }}
-								onclick={dismiss}
-							>
-								<XIcon class="size-5" />
-							</button>
-						}
-					>
-						<Icon class="size-6" />
+				<div class="flex items-center gap-2">
+					<Show when={props.alert().type}>
+						<Show
+							when={
+								!hovered() || props.alert().type === "loading"
+							}
+							fallback={
+								<button
+									class="button-control"
+									style={{
+										"--size": "calc(var(--spacing) * 5)",
+									}}
+									onclick={props.dismiss}
+								>
+									<XIcon class="size-4" />
+								</button>
+							}
+						>
+							<Show when={props.alert().type}>
+								{(() => {
+									const CurrentIcon =
+										alertTypes[props.alert().type];
+									return (
+										<CurrentIcon
+											class="size-5"
+											classList={{
+												"animate-spin":
+													props.alert().type ===
+													"loading",
+											}}
+										/>
+									);
+								})()}
+							</Show>
+						</Show>
 					</Show>
-				</Show>
-				<Show when={alert.title}>
-					<h1>{alert.title}</h1>
-				</Show>
-				<Show when={alert.message}>
-					<span class="py-2 text-neutral-500">{alert.message}</span>
-				</Show>
-				<Show when={alert.button}>
-					<button
-						class="bg-secondary-10 hover:bg-secondary-95 border-secondary-20 text-secondary-foreground hover:text-secondary my-1 mr-2 h-fit rounded-md border px-2 py-1 text-xs transition-colors"
-						onclick={alert.button.callback}
-					>
-						{alert.button.label}
-					</button>
+					<Show when={props.alert().title}>
+						<h1>{props.alert().title}</h1>
+					</Show>
+					<Show when={props.alert().button}>
+						<button
+							class="bg-secondary-10 active:bg-secondary-05 hover:bg-secondary-15 border-secondary-20 text-secondary-foreground hover:border-secondary-25 my-1 ml-auto h-fit rounded-md border px-2 py-1 text-xs transition-colors"
+							onclick={props.alert().button.callback}
+						>
+							{props.alert().button.label}
+						</button>
+					</Show>
+				</div>
+				<Show when={props.alert().message}>
+					<p class="max-w-120 text-neutral-500">
+						{props.alert().message}
+					</p>
 				</Show>
 			</div>
-			<hr
-				class="bg-secondary-20 timer-bar absolute bottom-0 h-[2px] border-0"
-				style={{
-					"--duration": `${alert.duration ?? 3000}ms`,
-				}}
-			/>
+			<Show when={props.alert().type !== "loading"}>
+				<hr
+					class="bg-secondary-20 timer-bar absolute bottom-0 h-[2px] border-0"
+					style={{
+						"--duration": `${props.alert().duration ?? 3000}ms`,
+					}}
+				/>
+			</Show>
 		</>
 	);
 };

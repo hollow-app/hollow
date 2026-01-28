@@ -7,6 +7,8 @@ import {
 	shift,
 	Placement,
 } from "@floating-ui/dom";
+import { Motion, VariantDefinition } from "solid-motionone";
+import { Show } from "solid-js";
 
 interface Props {
 	children: JSX.Element;
@@ -15,6 +17,12 @@ interface Props {
 	class?: string;
 	style?: JSX.CSSProperties;
 	placement?: Placement;
+	animation?: {
+		animate?: VariantDefinition;
+		initial?: VariantDefinition;
+		exit?: VariantDefinition;
+		transition?: any;
+	};
 }
 
 export default function Floater(props: Props) {
@@ -40,7 +48,7 @@ export default function Floater(props: Props) {
 
 		const updatePosition = () => {
 			computePosition(props.includedEl, el, {
-				placement: props.placement || "bottom-start",
+				placement: props.placement || "bottom",
 				middleware: [offset(8), flip(), shift({ padding: 8 })],
 			}).then(({ x, y }) => {
 				setPosition({ x, y });
@@ -60,16 +68,34 @@ export default function Floater(props: Props) {
 	});
 
 	return (
-		<div
-			ref={el}
-			class={"fixed z-601 h-fit w-fit " + (props.class ?? "")}
-			style={{
-				left: `${position().x}px`,
-				top: `${position().y}px`,
-				...props.style,
-			}}
+		<Show
+			when={!props.animation}
+			fallback={
+				<Motion.div
+					ref={el}
+					class={"fixed z-601 h-fit w-fit " + (props.class ?? "")}
+					style={{
+						left: `${position().x}px`,
+						top: `${position().y}px`,
+						...props.style,
+					}}
+					{...props.animation}
+				>
+					{props.children}
+				</Motion.div>
+			}
 		>
-			{props.children}
-		</div>
+			<div
+				ref={el}
+				class={"fixed z-601 h-fit w-fit " + (props.class ?? "")}
+				style={{
+					left: `${position().x}px`,
+					top: `${position().y}px`,
+					...props.style,
+				}}
+			>
+				{props.children}
+			</div>
+		</Show>
 	);
 }

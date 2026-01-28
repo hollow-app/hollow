@@ -8,7 +8,7 @@ import { ItemType } from "../types/ItemType";
 import { hollow } from "../../../../hollow";
 import ItemDisplay from "./ItemDisplay";
 import { MyIconFun } from "@components/ui/MyIcon";
-import Checkbox from "@components/ui/Checkbox";
+import { Checkbox } from "@ui";
 
 type ItemProps = {
 	toolEvent?: HollowEvent;

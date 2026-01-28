@@ -24,14 +24,10 @@ function Bootstrap() {
 		</StoreProvider>
 	);
 }
-function UI() {
-	return <div class="flex items-center justify-center"></div>;
-}
 
 const root = document.getElementById("root");
 (async () => {
-	// await preRealmSelection();
+	await preRealmSelection();
 	root.textContent = "";
-	render(() => <UI />, root);
-	// render(() => <Bootstrap />, root);
+	render(() => <Bootstrap />, root);
 })();

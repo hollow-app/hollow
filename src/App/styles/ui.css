@@ -67,9 +67,11 @@
 	--padding-x: calc(var(--spacing) * 5);
 	--padding-y: calc(var(--spacing) * 1.2);
 	--border-w: 1px;
+	--color: var(--color-secondary-foreground);
 	--w: fit-content;
+	--h: fit-content;
 	width: var(--w);
-	height: fit-content;
+	height: var(--h);
 	border-width: var(--border-w);
 	border-style: solid;
 	border-radius: var(--radius-lg);
@@ -80,6 +82,7 @@
 	transition: 0.1s all ease-in-out;
 	cursor: pointer;
 	user-select: none;
+	color: var(--color);
 
 	&:disabled {
 		opacity: 0.5;
@@ -89,29 +92,30 @@
 	&.w-full {
 		--w: 100%;
 	}
+}
 
+.button.icon {
+	--padding-x: calc(var(--spacing) * 1.2);
 }
 
 .button.primary {
-	color: var(--color-primary-foreground);
-	border-color: var(--color-primary-30);
-	background-color: var(--color-primary-05);
+	--color: var(--color-primary-foreground);
+	border-color: var(--color-primary);
+	background-color: var(--color-primary-20);
 
 	&:not(:disabled):hover {
 		background-color: var(--color-primary-10);
-		border-color: var(--color-primary-15);
+		border-color: var(--color-primary);
 	}
 
 	&:not(:disabled):active {
-		background-color: var(--color-primary);
+		background-color: var(--color-primary-30);
 		border-color: var(--color-primary-10);
 	}
 }
 
 .button.secondary {
-	--h: fit-content;
-	height: var(--h);
-	color: var(--color-secondary-foreground);
+	--color: var(--color-secondary-foreground);
 	border-color: var(--color-secondary-10);
 	background-color: var(--color-secondary-05);
 
@@ -126,6 +130,21 @@
 	}
 }
 
+.button.destructive {
+	--color: white;
+	border-color: #8b1e1e;
+	background-color: #b03030;
+
+	&:not(:disabled):hover {
+		background-color: #9e2a2a;
+		border-color: #731818;
+	}
+
+	&:not(:disabled):active {
+		background-color: #7f2020;
+		border-color: #5f1414;
+	}
+}
 
 .button.empty {
 	--bg-color: transparent;
@@ -150,13 +169,14 @@
 
 .input {
 	--padding-x: calc(var(--spacing) * 2.5);
-	--padding-y: calc(var(--spacing) * 1.5);
+	--padding-y: calc(var(--spacing) * 1);
 	--border-w: 2px;
 	--bg-color: var(--high);
 	--border-color: var(--color-secondary-15);
 	--radius: var(--radius-md);
 	--w: 100%;
 	width: var(--w);
+	font-size: var(--text-sm);
 	border: 1px solid var(--bg-color);
 	background-color: color-mix(in oklab, var(--bg-color) 50%, transparent);
 	padding-inline: var(--padding-x);
@@ -174,7 +194,7 @@
 	}
 
 	&::placeholder {
-		color: var(--color-secondary-30);
+		color: var(--color-secondary-40);
 	}
 }
 
@@ -223,7 +243,6 @@
 	display: inline-block;
 	width: 40px;
 	height: 24px;
-	margin: 10px;
 }
 
 /* Giriş stil */
@@ -310,7 +329,7 @@
 	-webkit-appearance: none;
 	background: var(--primary-color);
 	border-radius: 8px;
-	border: 4px solid var(--color-primary-90);
+	border: 4px solid var(--color-primary-60);
 	/* box-shadow: inset 0 0 0 4px #eaeaea; */
 	width: 16px;
 	height: 16px;

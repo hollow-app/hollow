@@ -3,8 +3,7 @@ import Dropdown from "@components/dynamic/Dropdown";
 import EmojiPick from "@components/dynamic/EmojiPick";
 import ImportFile from "@components/dynamic/ImportFile";
 import NumberInput from "@components/dynamic/NumberInput";
-import Slider from "@components/dynamic/Slider";
-import WordInput from "@components/dynamic/WordInput";
+import { Slider, Combobox, Input } from "@ui";
 import { ToolOption } from "@type/hollow";
 import { Accessor, Match, onCleanup, onMount, Switch } from "solid-js";
 import Segmented from "./Segmented";
@@ -74,7 +73,7 @@ export default function DynamicOption(props: {
 	);
 }
 const TextOption = (props: { option: OptionType<"text"> }) => (
-	<input
+	<Input
 		type="text"
 		class="input option-input"
 		{...props.option.attributes}
@@ -174,9 +173,9 @@ const RangeOption = (props: { option: OptionType<"range"> }) => (
 );
 
 const KeywordsOption = (props: { option: OptionType<"keywords"> }) => (
-	<WordInput
-		words={props.option.value}
-		setWords={props.option.onAction}
+	<Combobox
+		items={props.option.value}
+		onselect={props.option.onAction}
 		placeholder={props.option.placeholder}
 	/>
 );

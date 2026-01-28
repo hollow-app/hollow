@@ -1,4 +1,4 @@
-import { readableColor, lighten, darken, getLuminance } from "polished";
+import { readableColor, mix, getLuminance } from "polished";
 import { Property } from "@type/Property";
 
 export function ShadeIt(name: string, color: string) {
@@ -18,16 +18,12 @@ export function ShadeIt(name: string, color: string) {
 		},
 	];
 
-	const luminance = getLuminance(color);
-
-	const maxShift = isDark ? 1 - luminance : luminance;
-
 	for (let i = 5; i <= 95; i += 5) {
-		const scaled = (i / 100) * maxShift;
+		const t = i / 100;
 
 		result.push({
 			name: `--${name}-color-${i === 5 ? "05" : i}`,
-			value: isDark ? lighten(scaled, color) : darken(scaled, color),
+			value: isDark ? mix(t, "#fff", color) : mix(t, "#000", color),
 		});
 	}
 

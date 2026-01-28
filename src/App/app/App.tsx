@@ -27,10 +27,10 @@ export default function App() {
 
 	return (
 		<main class="app-container text-black dark:text-white">
-			<Suspense fallback={<Loading />}>
-				<Show when={ready()} fallback={<Loading />}>
-					<Container />
-				</Show>
+			<Suspense>
+				{/* <Show when={ready()} fallback={<Loading />}> */}
+				{/* 	<Container /> */}
+				{/* </Show> */}
 				<Popups />
 				<Alerts />
 			</Suspense>

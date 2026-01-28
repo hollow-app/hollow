@@ -1,6 +1,6 @@
 {
 	"name": "hollow",
-	"version": "0.0.5",
+	"version": "0.0.4",
 	"description": "Shape your tools, stay productive",
 	"type": "module",
 	"scripts": {
@@ -58,6 +58,7 @@
 	},
 	"devDependencies": {
 		"@tauri-apps/cli": "^2.8.4",
+		"@types/culori": "^4.0.1",
 		"@types/node": "^24.9.1",
 		"prettier": "^3.6.2",
 		"prettier-plugin-tailwindcss": "^0.6.14",

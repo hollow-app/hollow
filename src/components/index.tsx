@@ -1,0 +1,13 @@
+export { default as Confirm } from "./Confirm";
+export * from "./Slider";
+export * from "./Kbd";
+export * from "./Tag";
+export * from "./Input";
+export * from "./Button";
+export * from "./Switch";
+export * from "./Tooltip";
+export * from "./Checkbox";
+export * from "./Combobox";
+export * from "./FormTrigger";
+export * from "./Dropdown";
+export * from "./Pagination";

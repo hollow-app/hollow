@@ -67,7 +67,21 @@
 
 	/* breakpoints  */
 	--breakpoint-xxs: 15rem;
+
 	/* fonts */
+	@keyframes pulse-dot {
+
+		0%,
+		100% {
+			opacity: 0.4;
+		}
+
+		50% {
+			opacity: 1;
+		}
+	}
+
+	--animate-pulse-dot: pulse-dot 1s ease-in-out infinite;
 
 }
 

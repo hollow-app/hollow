@@ -68,7 +68,7 @@ export default function PopupWrapper({
 	return (
 		<div
 			ref={winRef}
-			class="up-pop pointer-events-auto top-0 left-0 flex flex-col gap-3"
+			class="up-pop pointer-events-auto top-0 left-0"
 			style={{
 				left: `${position().x}px`,
 				top: `${position().y}px`,
@@ -92,8 +92,7 @@ export default function PopupWrapper({
 					</button>
 				</Show>
 			</div>
-
-			{children}
+			<div class="content-panel">{children}</div>
 		</div>
 	);
 }

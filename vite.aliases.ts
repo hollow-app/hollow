@@ -16,4 +16,5 @@ export const aliases = {
 	"@shared": path.resolve(__dirname, "src/shared"),
 	"@store": path.resolve(__dirname, "src/shared/store"),
 	"@rust": path.resolve(__dirname, "src/lib/rust.ts"),
+	"@ui": path.resolve(__dirname, "src/components"),
 };

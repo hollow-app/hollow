@@ -6,7 +6,7 @@ type SliderProps = {
 	min?: number;
 	max?: number;
 };
-export default function Slider({
+export function Slider({
 	value = 0,
 	setValue,
 	min = 0,
@@ -49,7 +49,7 @@ export default function Slider({
 				onInput={handleRangeChange}
 				onMouseMove={handleRangeChange}
 				style={{
-					background: `linear-gradient(to right, var(--primary-color-05) 0%, var(--primary-color-05)  ${myValue()}%, var(--secondary-color-10) ${myValue()}%, var(--secondary-color-10) 100%)`,
+					background: `linear-gradient(to right, var(--primary-color-05) 0%, var(--primary-color-05)  ${myValue()}%, var(--color-secondary-10) ${myValue()}%, var(--color-secondary-10) 100%)`,
 				}}
 			/>
 		</div>

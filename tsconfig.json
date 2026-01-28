@@ -62,6 +62,12 @@
       ],
       "@rust": [
         "../lib/rust"
+      ],
+      "@ui":[
+	      "../components"
+      ],
+      "@ui/*":[
+	      "../components/*"
       ]
     }
   },

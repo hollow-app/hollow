@@ -44,6 +44,7 @@ export default function Form({ form, setForm, index }: FormProps) {
 		}
 	};
 	const onCancel = () => {
+		form.finally && form.finally();
 		setForm((prev) => prev.filter((i) => i.id !== form.id));
 	};
 	return (

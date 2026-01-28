@@ -4,7 +4,7 @@ type TagProps = {
 	tag: string;
 	title?: string;
 };
-export default function Tag(props: TagProps) {
+export function Tag(props: TagProps) {
 	const name = formatCSSVarName(props.tag);
 	const bg = `var(${name + "-bg"}, var(--color-secondary-95))`;
 	const fg = `var(${name + "-fg"}, var(--color-secondary))`;

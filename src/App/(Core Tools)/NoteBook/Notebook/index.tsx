@@ -15,8 +15,7 @@ import {
 import { render } from "solid-js/web";
 const MarkdownEditor = lazy(() => import("@components/ui/MarkdownEditor.tsx"));
 import MarkdownPreview from "@components/ui/MarkdownPreview.tsx";
-import WordInput from "@components/dynamic/WordInput.tsx";
-import Tag from "@components/ui/Tag.tsx";
+import { Combobox, Tag } from "@ui";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import MyIcon, { MyIconFun } from "@components/ui/MyIcon.tsx";
@@ -220,8 +219,8 @@ const Notebook: Component<NotebookProps> = (props) => {
 										<Show
 											when={!state.editMode()}
 											fallback={
-												<WordInput
-													words={
+												<Combobox
+													items={
 														state.note()?.attributes
 															?.tags
 															? state
@@ -231,7 +230,7 @@ const Notebook: Component<NotebookProps> = (props) => {
 																	)
 															: []
 													}
-													setWords={(tgs) =>
+													onSelect={(tgs) =>
 														state.setNote((prev) =>
 															prev
 																? {

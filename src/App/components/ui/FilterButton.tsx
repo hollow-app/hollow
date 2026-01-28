@@ -28,7 +28,7 @@ export default function FilterButton({ options }: FilterButtonProps) {
 	};
 
 	return (
-		<div ref={dropdownRef} class="relative">
+		<div ref={dropdownRef} class="relative w-fit">
 			<button
 				class="hover:bg-secondary-10 text-secondary-60 hover:text-secondary-foreground flex h-9 w-9 items-center justify-center rounded-md transition-colors"
 				onClick={toggleOpen}
@@ -43,9 +43,9 @@ export default function FilterButton({ options }: FilterButtonProps) {
 				<Floater
 					hide={() => setIsOpen(false)}
 					includedEl={dropdownRef!}
-					placement="bottom-end"
+					placement="bottom-start"
 				>
-					<div class="border-secondary-10 text-secondary-foreground animate-in fade-in zoom-in-95 w-fit overflow-hidden rounded-md border bg-[var(--front)] shadow-md">
+					<div class="border-secondary-10 text-secondary-foreground animate-in fade-in zoom-in-95 w-fit min-w-40 overflow-hidden rounded-md border bg-[var(--front)] shadow-md">
 						<div class="max-h-80 overflow-y-auto p-1">
 							<For
 								each={options().filter(
@@ -55,7 +55,7 @@ export default function FilterButton({ options }: FilterButtonProps) {
 								{(group, i) => (
 									<div>
 										<Show when={group.title}>
-											<div class="px-2 py-1.5 text-xs font-semibold text-neutral-500">
+											<div class="overflow-hidden px-3 py-1.5 text-xs font-medium text-neutral-500">
 												{group.title}
 											</div>
 										</Show>
@@ -117,7 +117,7 @@ export function ItemsList({
 
 				return (
 					<div
-						class="hover:bg-secondary-10 hover:text-secondary-foreground relative flex cursor-pointer items-center rounded-sm py-1.5 pr-10 pl-2 text-sm transition-colors outline-none select-none"
+						class="hover:bg-primary/10 hover:text-primary relative flex w-full cursor-pointer justify-between rounded-md bg-transparent px-3 py-2 text-xs text-neutral-800 dark:text-neutral-300"
 						onClick={() => {
 							if (isCheckBox) {
 								const checked = !selected().includes(
@@ -135,12 +135,12 @@ export function ItemsList({
 							}
 						}}
 					>
-						<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+						<span class="">{item.label}</span>
+						<span class="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
 							<Show when={isSelected()}>
 								<CheckIcon class="size-4" />
 							</Show>
 						</span>
-						<span class="pl-8">{item.label}</span>
 					</div>
 				);
 			}}

@@ -8,9 +8,9 @@ import {
 	onCleanup,
 	onMount,
 } from "solid-js";
-import { SearchIcon } from "lucide-solid";
 import PopupWrapper from "../../layout-ui/PopupWrapper";
 import { hollow } from "../../../../hollow";
+import { Input } from "@ui";
 
 type EmojiPickerProps = {
 	p: { emoji: string; setEmoji: (e: string) => void };
@@ -108,21 +108,12 @@ export default function EmojiPicker({ p }: EmojiPickerProps) {
 							{miEmoji()}
 						</span>
 					</div>
-					<div class="relative flex-1">
-						<input
-							class="input bg-secondary-10/70 peer focus:bg-secondary-10 h-fit w-full text-sm transition-all duration-200"
-							style={{
-								"--border-w": "0px",
-								"--padding-y": "calc(var(--spacing) * 3.5)",
-								"--padding-x":
-									"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
-								"--bg-color": "var(--color-secondary-10)",
-							}}
-							placeholder="Search emojis..."
-							oninput={(e) => setSearch(e.currentTarget.value)}
-						/>
-						<SearchIcon class="text-secondary-30 peer-focus:text-secondary-90 absolute top-1/2 left-3 w-5 -translate-y-1/2 transition-colors" />
-					</div>
+					<Input
+						icon="search"
+						placeholder="Search emojis..."
+						oninput={(e) => setSearch(e.currentTarget.value)}
+						style={{ "--padding-y": "calc(var(--spacing) * 3)" }}
+					/>
 				</div>
 				<Show
 					when={emojiData().length > 0}

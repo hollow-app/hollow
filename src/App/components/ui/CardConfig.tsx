@@ -1,9 +1,9 @@
-import { CardType } from "@type/hollow";
-import { HandType } from "@type/HandType";
+import { CardType } from "@app/type/hollow";
+import { HandType } from "@app/type/HandType";
 import { Grid2X2PlusIcon, Grid2x2XIcon, StarIcon } from "lucide-solid";
 import { Accessor, createSignal, Setter, Show } from "solid-js";
 import EmojiPick from "../dynamic/EmojiPick";
-import { timeDifference } from "@utils/manipulation/strings";
+import { timeDifference } from "@app/utils/manipulation/strings";
 import { useStore } from "@shared/store";
 import ToolIcon from "./ToolIcon";
 import MyIcon from "./MyIcon";

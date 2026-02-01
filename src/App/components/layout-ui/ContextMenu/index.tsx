@@ -15,9 +15,9 @@ import {
 	ScissorsIcon,
 	VaultIcon,
 } from "lucide-solid";
-import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
-import { DynamicIcon } from "@components/ui/DynamicIcon";
-import MyIcon from "@components/ui/MyIcon";
+import { ContextMenuItem, ContextMenuItemButton } from "@app/type/hollow";
+import { DynamicIcon } from "@app/components/ui/DynamicIcon";
+import MyIcon from "@app/components/ui/MyIcon";
 import { useContextMenu, ContextMenuProps } from "./hooks";
 import {
 	computePosition,

@@ -1,6 +1,6 @@
 import fm from "front-matter";
 import { NotebookType } from "./NotebookType";
-import { AppApi, CardFs, IStore, ToolApi } from "@type/hollow";
+import { AppApi, CardFs, IStore, ToolApi } from "@app/type/hollow";
 import { NoteType } from "./NoteType";
 
 export class NotebookManager {
@@ -15,7 +15,7 @@ export class NotebookManager {
 		return this.self;
 	}
 
-	private constructor() { }
+	private constructor() {}
 
 	init(toolEvent: ToolApi) {
 		this.toolEvent = toolEvent;
@@ -89,6 +89,10 @@ export class NotebookManager {
 	}
 	//
 	private getCardFs(cardName: string): CardFs {
-		return this.toolEvent.emit("card-fs", { cardName });
+		return this.toolEvent.emit(
+			"card-fs",
+			{ cardName },
+			{ source: "source" },
+		);
 	}
 }

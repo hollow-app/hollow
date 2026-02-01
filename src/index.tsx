@@ -3,9 +3,9 @@ import { render } from "solid-js/web";
 import { StoreProvider } from "@shared/store";
 import { Show } from "solid-js";
 import { useStore } from "@shared/store";
-import App from "@app/App";
 import Selector from "./Selector/Selector";
 import { preRealmSelection } from "./lib/app";
+import App from "@app/app/App";
 
 function Root() {
 	const { state } = useStore();

@@ -9,12 +9,17 @@ import {
 	Show,
 } from "solid-js";
 import { hollow } from "../../../hollow";
-import { MyIconFun } from "@components/ui/MyIcon";
-import { DynamicIcon } from "@components/ui/DynamicIcon";
-import { guide } from "@utils/help";
+import { MyIconFun } from "@app/components/ui/MyIcon";
+import { DynamicIcon } from "@app/components/ui/DynamicIcon";
+import { guide } from "@app/utils/help";
 import { useStore } from "@store";
-import { registerHotkeyEvent } from "@managers/Hotkeys";
-import { getLayoutPanels, isPanelVisible, selectPanel } from "@managers/layout";
+import { registerHotkeyEvent } from "@app/managers/Hotkeys";
+import {
+	getLayoutPanels,
+	isPanelVisible,
+	selectPanel,
+} from "@app/managers/layout";
+import { toggleVault } from "@app/context/actions";
 
 interface SideBarButton {
 	id: string;
@@ -65,7 +70,7 @@ export default function SideBar(props: SideBarProps) {
 		{
 			id: "vault-btn",
 			Icon: MyIconFun({ name: "strongbox-fill" }),
-			onClick: () => hollow.events.toggle("show-vault"),
+			onClick: () => toggleVault(),
 		},
 	];
 	const bottom: SideBarButton[] = [

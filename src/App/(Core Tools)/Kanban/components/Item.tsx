@@ -1,13 +1,13 @@
 import { Accessor, createMemo, createUniqueId, Setter } from "solid-js";
 import { PenLineIcon, SendIcon } from "lucide-solid";
-import { TagType } from "@type/hollow";
-import { HollowEvent } from "@type/hollow";
-import { ContextMenuItem, ContextMenuItemButton } from "@type/hollow";
-import { ToolMetadata } from "@type/ToolMetadata";
+import { TagType } from "@app/type/hollow";
+import { HollowEvent } from "@app/type/hollow";
+import { ContextMenuItem, ContextMenuItemButton } from "@app/type/hollow";
+import { ToolMetadata } from "@app/type/ToolMetadata";
 import { ItemType } from "../types/ItemType";
 import { hollow } from "../../../../hollow";
 import ItemDisplay from "./ItemDisplay";
-import { MyIconFun } from "@components/ui/MyIcon";
+import { MyIconFun } from "@app/components/ui/MyIcon";
 import { Checkbox } from "@ui";
 
 type ItemProps = {

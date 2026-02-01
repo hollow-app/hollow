@@ -1,4 +1,4 @@
-import { CardType, IStore, ToolApi, ToolOptions } from "@type/hollow";
+import { CardType, IStore, ToolApi, ToolOptions } from "@app/type/hollow";
 import {
 	createEffect,
 	createMemo,

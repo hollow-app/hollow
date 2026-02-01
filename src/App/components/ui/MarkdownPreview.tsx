@@ -1,4 +1,4 @@
-import { renderMarkdown } from "@managers/Markdown";
+import { renderMarkdown } from "@app/managers/Markdown";
 import { createResource, Suspense } from "solid-js";
 
 type MarkdownPreviewProps = {

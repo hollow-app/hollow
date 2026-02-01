@@ -1,5 +1,5 @@
 import { createSignal, createContext, useContext, JSX, Show } from "solid-js";
-import type { Property } from "@type/Property";
+import type { Property } from "@app/type/Property";
 
 type UpdateContextType = {
 	registerValue: (property: Property) => void;

@@ -224,13 +224,13 @@ a {
 	--border-w: 1px;
 	--shadow: #4d4d4d;
 	--position: absolute;
-	--p: 2;
+	--p: 0.5rem;
 	border: 1px solid var(--color-secondary-10);
 	position: var(--position);
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-2xl);
 	background-color: var(--color-secondary-05);
-	padding: 0.5rem;
+	padding: var(--p);
 	/* padding: calc(var(--spacing) * var(--p)); */
 	/* overflow: hidden; */
 	/* transition: 0.2s all ease-in-out; */

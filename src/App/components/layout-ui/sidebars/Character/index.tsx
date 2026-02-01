@@ -7,7 +7,7 @@ import {
 	onCleanup,
 } from "solid-js";
 import { Check, ImageUpIcon, XIcon } from "lucide-solid";
-import FetchedIcon from "@components/ui/FetchedIcon";
+import FetchedIcon from "@app/components/ui/FetchedIcon";
 import { useCharacter, CharacterProps } from "./hooks";
 import { useStore } from "@store";
 import { getCurrentRealm } from "@shared/managers/Realm";

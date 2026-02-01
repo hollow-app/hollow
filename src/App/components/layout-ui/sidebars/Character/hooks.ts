@@ -1,7 +1,8 @@
 import { Accessor, createMemo } from "solid-js";
 import { hollow } from "../../../../../hollow";
-import { Character } from "@type/Character";
+import { Character } from "@app/type/Character";
 import { useStore } from "@store";
+import { toggleVault } from "@app/context/actions";
 
 export interface CharacterProps {}
 
@@ -23,15 +24,13 @@ export const useCharacter = (): CharacterHook => {
 	const character = createMemo(() => state.account);
 
 	const import_image = async (key: "banner" | "avatar") => {
-		hollow.events.emit("show-vault", {
-			onSelect: (image: string) => {
-				dispatch({
-					domain: "account",
-					type: "update-field",
-					key,
-					value: image,
-				});
-			},
+		toggleVault((image: string) => {
+			dispatch({
+				domain: "account",
+				type: "update-field",
+				key,
+				value: image,
+			});
 		});
 	};
 

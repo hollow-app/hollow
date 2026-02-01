@@ -1,4 +1,4 @@
-import { CardType, PluginResult, ToolApi } from "@type/hollow";
+import { CardType, PluginResult, ToolApi } from "@app/type/hollow";
 import { hollow } from "../../../hollow";
 import { Part } from "solid-js/store";
 

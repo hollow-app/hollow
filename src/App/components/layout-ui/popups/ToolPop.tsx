@@ -1,8 +1,8 @@
-import { HandType } from "@type/HandType";
+import { HandType } from "@app/type/HandType";
 import { Setter } from "solid-js";
 import Icon from "../../ui/MyIcon";
 import { hollow } from "../../../../hollow";
-import ToolIcon from "@components/ui/ToolIcon";
+import ToolIcon from "@app/components/ui/ToolIcon";
 
 export default function ToolPop({
 	tool,

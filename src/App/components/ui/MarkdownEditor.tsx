@@ -10,10 +10,10 @@ import {
 	keymap,
 } from "@codemirror/view";
 import { markdown } from "@codemirror/lang-markdown";
-import { markDownTheme } from "@utils/markdown/markdownTheme";
+import { markDownTheme } from "@app/utils/markdown/markdownTheme";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { syntaxHighlighting } from "@codemirror/language";
-import highlightStyle from "@utils/markdown/highlightStyle";
+import highlightStyle from "@app/utils/markdown/highlightStyle";
 import { Show } from "solid-js";
 
 const codemirrorSetup = (() => [
@@ -57,7 +57,7 @@ export default function MarkdownEditor({
 				<p class="text-secondary-30 absolute top-0 left-[6px] text-xl">
 					{
 						placeholders[
-						Math.floor(Math.random() * placeholders.length)
+							Math.floor(Math.random() * placeholders.length)
 						]
 					}
 				</p>

@@ -34,7 +34,6 @@
 		"driver.js": "^1.4.0",
 		"emittery": "^1.2.0",
 		"emojibase-data": "^16.0.2",
-		"eventemitter2": "^6.4.9",
 		"front-matter": "^4.0.2",
 		"github-slugger": "^2.0.0",
 		"gridstack": "^12.4.2",

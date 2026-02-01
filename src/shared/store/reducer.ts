@@ -1,13 +1,13 @@
 import { RootState, Action } from "./types";
-import { accountReducer } from "@managers/Account/reducer";
-import { contextReducer } from "@context/reducer";
-import { settingsReducer } from "@managers/Settings/reducer";
-import { codeThemeReducer } from "@managers/CodeTheme/reducer";
-import { moduleReducer } from "@managers/Module/reducer";
-import { hotkeysReducer } from "@managers/Hotkeys";
-import { vaultReducer } from "@managers/Vault";
-import { notificationsReducer } from "@managers/Notifications";
-import { layoutReducer } from "@managers/layout";
+import { accountReducer } from "@app/managers/Account/reducer";
+import { contextReducer } from "@app/context/reducer";
+import { settingsReducer } from "@app/managers/Settings/reducer";
+import { codeThemeReducer } from "@app/managers/CodeTheme/reducer";
+import { moduleReducer } from "@app/managers/Module/reducer";
+import { hotkeysReducer } from "@app/managers/Hotkeys";
+import { vaultReducer } from "@app/managers/Vault";
+import { notificationsReducer } from "@app/managers/Notifications";
+import { layoutReducer } from "@app/managers/layout";
 import { realmReducer } from "@shared/managers/Realm";
 
 // Helper to get value from path

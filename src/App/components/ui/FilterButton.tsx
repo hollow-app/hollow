@@ -1,6 +1,6 @@
 import { createSignal, For, Show } from "solid-js";
 import { ListFilterPlusIcon, CheckIcon } from "lucide-solid";
-import Floater from "@utils/kinda-junk/Floater";
+import Floater from "@app/utils/kinda-junk/Floater";
 
 type DropdownItem = {
 	label: string;

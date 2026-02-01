@@ -1,4 +1,4 @@
-import MyIcon, { MyIconsType } from "@components/ui/MyIcon";
+import MyIcon, { MyIconsType } from "@app/components/ui/MyIcon";
 import { JSX, Show, splitProps } from "solid-js";
 
 interface Props extends JSX.InputHTMLAttributes<HTMLInputElement> {
@@ -7,20 +7,21 @@ interface Props extends JSX.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export function Input(props: Props) {
-	const [local, rest] = splitProps(props, ["icon", "side", "class"]);
+	const [local, rest] = splitProps(props, ["icon", "side", "class", "style"]);
 
 	return (
-		<div class="relative">
+		<div class="relative h-fit w-full">
 			<input
 				class={local.class + " input"}
-				style={
-					local.icon && {
+				style={{
+					...((local.style ?? {}) as JSX.CSSProperties),
+					...(local.icon && {
 						"--padding-x":
 							local.side === "right"
 								? "calc(calc(var(--spacing) * 3)) var(--spacing) * 10)"
 								: "calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
-					}
-				}
+					}),
+				}}
 				{...rest}
 			/>
 			<Show when={local.icon}>

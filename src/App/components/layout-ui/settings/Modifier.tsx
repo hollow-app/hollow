@@ -1,9 +1,9 @@
 import { KeyIcon } from "lucide-solid";
 import { createMemo, createSignal, Show } from "solid-js";
-import Dropdown from "@components/dynamic/Dropdown";
 import { hollow } from "../../../../hollow";
-import TextFormater from "@components/ui/TextFormater";
+import TextFormater from "@app/components/ui/TextFormater";
 import { useStore } from "@store";
+import { Combobox } from "@ui";
 
 const keys = ["color-primary", "color-secondary"];
 
@@ -109,10 +109,18 @@ export default function Modifier() {
 								<KeyIcon class="absolute top-3 left-3 size-5" />
 							</div>
 							<div class="w-[50%]">
-								<Dropdown
+								{/* <Dropdown */}
+								{/* 	placeholder="Select Key" */}
+								{/* 	options={[{ items: keys }]} */}
+								{/* 	onSelect={(v) => { */}
+								{/* 		setKey(`${state.realm.current}-${v}`); */}
+								{/* 		selectKey(); */}
+								{/* 	}} */}
+								{/* /> */}
+								<Combobox
 									placeholder="Select Key"
-									options={[{ items: keys }]}
-									onSelect={(v) => {
+									items={keys}
+									onselect={(v) => {
 										setKey(`${state.realm.current}-${v}`);
 										selectKey();
 									}}

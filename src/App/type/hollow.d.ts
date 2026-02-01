@@ -1,4 +1,4 @@
-import { MyIconsType } from "@components/ui/MyIcon";
+import { MyIconsType } from "@app/components/ui/MyIcon";
 import { Store } from "@tauri-apps/plugin-store";
 import { Component, JSX } from "solid-js";
 
@@ -81,6 +81,7 @@ export type HollowEvent<
 	on<K extends keyof EventMap>(
 		eventName: K,
 		listener: (data: EventMap[K]) => ReturnMap[K] | void,
+		options?: { source?: string },
 	): void;
 
 	/**
@@ -104,9 +105,27 @@ export type HollowEvent<
 	 */
 	emit<K extends keyof EventMap>(
 		eventName: K,
-		data: EventMap[K],
-	): ReturnMap[K] | undefined;
+		data: EventMap[K] | undefined,
+		options: { source: string },
+	): ReturnMap[K];
 
+	// Overload 2: source NOT provided → return array
+	emit<K extends keyof EventMap>(
+		eventName: K,
+		data?: EventMap[K],
+		options?: undefined,
+	): ReturnMap[K][];
+
+	emitAsync<K extends keyof EventMap>(
+		eventName: K,
+		data?: EventMap[K],
+		options: { source: string },
+	): Promise<ReturnMap[K]>;
+	emitAsync<K extends keyof EventMap>(
+		eventName: K,
+		data?: EventMap[K],
+		options?: undefined,
+	): Promise<ReturnMap[K][]>;
 	/**
 	 * Retrieves the current data for a specific event.
 	 *
@@ -139,7 +158,6 @@ export type AppEvents = {
 	"color-picker": { color: string; setColor: (c: string) => void };
 	"date-picker": { options: any; onSave: () => void };
 	"emoji-picker": { emoji: string; setEmoji: (c: string) => void };
-	"show-vault": { onSelect?: (url: string) => void };
 	"context-menu-extend": ContextMenuItem;
 	database: DataBaseRequest;
 	"character-add-achievement": string;
@@ -148,21 +166,22 @@ export type AppEvents = {
 	"network-state": boolean;
 	alert: AlertType;
 	store: (props: StoreType) => Promise<IStore>;
-	"add-layout": (props: {
+	"add-layout": {
 		type: "left" | "right";
 		id: string;
 		mount: (el: HTMLDivElement) => { unmount: () => void };
 		icon: any;
 		tooltip?: string;
-	}) => {
-		isOpen: () => boolean;
-		close: () => void;
 	};
 } & {
 	[key: string]: any;
 };
 export type AppEventReturns = {
-	alert: (() => void) | null;
+	alert: (alert: AlertType) => void;
+	"add-layout": {
+		isOpen: () => boolean;
+		close: () => void;
+	};
 } & {
 	[key: string]: any;
 };

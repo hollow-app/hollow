@@ -1,13 +1,14 @@
 import { createSignal, createMemo, Accessor, Setter } from "solid-js";
 import { open } from "@tauri-apps/plugin-dialog";
 import { hollow } from "../../../../../hollow";
-import { ConfirmType, FormOption, FormType } from "@type/hollow";
-import { VaultItem } from "@type/VaultItem";
+import { ConfirmType, FormOption, FormType } from "@app/type/hollow";
+import { VaultItem } from "@app/type/VaultItem";
 import { join } from "@tauri-apps/api/path";
-import { DropdownOption } from "@components/ui/FilterButton";
+import { DropdownOption } from "@app/components/ui/FilterButton";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { useStore } from "@store";
-import { importFiles, importFileUrl } from "@managers/Vault";
+import { importFiles, importFileUrl } from "@app/managers/Vault";
+import { toggleVault } from "@app/context/actions";
 
 export interface VaultProps {
 	onSelect?: (p: string) => void;
@@ -213,7 +214,7 @@ export const useVault = (props: VaultProps): VaultHook => {
 
 	const onImageSelected = (url: string) => {
 		props.onSelect?.(url);
-		hollow.events.toggle("show-vault");
+		toggleVault();
 	};
 
 	const openVaultDirectory = async () => {

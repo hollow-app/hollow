@@ -8,15 +8,15 @@ import {
 	Setter,
 } from "solid-js";
 import { GridStack } from "gridstack";
-import { CardType } from "@type/hollow";
+import { CardType } from "@app/type/hollow";
 import { hollow } from "../../../../hollow";
 import { ExpandIcon } from "lucide-solid";
-import { MyIconFun } from "@components/ui/MyIcon";
-import { ContextMenuItem } from "@type/hollow";
+import { MyIconFun } from "@app/components/ui/MyIcon";
+import { ContextMenuItem } from "@app/type/hollow";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
 import { useStore } from "@store";
-import { getToolEvents, loadCard } from "@managers/Module/effects";
-import { selectPanel } from "@managers/layout";
+import { getToolEvents, loadCard } from "@app/managers/Module/effects";
+import { selectPanel } from "@app/managers/layout";
 
 export interface CardProps {
 	node: CardType;

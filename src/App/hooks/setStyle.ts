@@ -1,4 +1,4 @@
-import { Property } from "@type/Property";
+import { Property } from "@app/type/Property";
 
 export default function setStyle(properties: Property[]) {
 	const root = document.documentElement;

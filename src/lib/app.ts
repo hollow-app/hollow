@@ -1,11 +1,11 @@
 import { warn, debug, trace, info, error } from "@tauri-apps/plugin-log";
 import { check, Update } from "@tauri-apps/plugin-updater";
 import { hollow } from "../hollow";
-import { useColor } from "@hooks/useColor";
-import useTags from "@hooks/useTags";
-import { IStore, StoreType } from "@type/hollow";
-import { Storage } from "@managers/Storage";
-import useGrid from "@hooks/useGrid";
+import { useColor } from "@app/hooks/useColor";
+import useTags from "@app/hooks/useTags";
+import { IStore, StoreType } from "@app/type/hollow";
+import { Storage } from "@app/managers/Storage";
+import useGrid from "@app/hooks/useGrid";
 import {
 	getCurrentWindow,
 	type CloseRequestedEvent,

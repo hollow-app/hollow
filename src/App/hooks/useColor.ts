@@ -1,5 +1,5 @@
-import { ShadeIt } from "@utils/manipulation/colors";
-import { Property } from "@type/Property";
+import { ShadeIt } from "@app/utils/manipulation/colors";
+import { Property } from "@app/type/Property";
 import { readableColor } from "polished";
 import setStyle from "./setStyle";
 import { getCurrentRealm } from "@shared/managers/Realm";

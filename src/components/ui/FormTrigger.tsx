@@ -1,7 +1,7 @@
-import { FormType } from "@type/hollow";
+import { FormType } from "@app/type/hollow";
 import { createSignal, splitProps } from "solid-js";
 import { JSX } from "solid-js";
-import { hollow } from "../hollow";
+import { hollow } from "../../hollow";
 
 type Props = FormType & Omit<JSX.HTMLAttributes<HTMLElement>, keyof FormType>;
 export function FormTrigger(props: Props) {

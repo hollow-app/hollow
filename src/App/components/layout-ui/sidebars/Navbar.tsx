@@ -1,5 +1,5 @@
 import { createSignal, Show } from "solid-js";
-import WindowControl from "@components/ui/WindowControl";
+import WindowControl from "@app/components/ui/WindowControl";
 import { Motion, Presence } from "solid-motionone";
 
 export default function Navbar() {

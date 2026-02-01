@@ -1,7 +1,7 @@
-import { TagType } from "@type/hollow";
+import { TagType } from "@app/type/hollow";
 import setStyle from "./setStyle";
 import { _dispatch } from "@shared/store/effects";
-import { getSettingsConfig } from "@managers/Settings/effects";
+import { getSettingsConfig } from "@app/managers/Settings/effects";
 
 export default function useTags(tags?: TagType[]) {
 	let data: TagType[] = getSettingsConfig("custom-tags") as TagType[];

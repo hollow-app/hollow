@@ -1,6 +1,6 @@
 import { Events, VaultState } from "./type";
-import { VaultItem } from "@type/VaultItem";
-import { Storage } from "@managers/Storage";
+import { VaultItem } from "@app/type/VaultItem";
+import { Storage } from "@app/managers/Storage";
 import { join } from "@tauri-apps/api/path";
 import { hollow } from "../../../hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
@@ -46,12 +46,16 @@ export async function vaultEffects(action: Events, state: VaultState) {
 	switch (action.type) {
 		case "add-url-item": {
 			const { image, name } = action;
-			try {
-				const removeAlert = hollow.events.emit("alert", {
+			const removeAlert = hollow.events.emit(
+				"alert",
+				{
 					type: "loading",
 					title: "Loading",
 					message: "Downloading...",
-				});
+				},
+				{ source: "source" },
+			);
+			try {
 				const path = await vault_add_url({
 					url: image,
 				});
@@ -63,21 +67,18 @@ export async function vaultEffects(action: Events, state: VaultState) {
 					type: path.split(".").pop() ?? "unknown",
 					uploadedAt: new Date(),
 				};
-				removeAlert();
-
+				removeAlert({
+					type: "success",
+					title: "Vault",
+					message: `added 1 image`,
+				});
 				_dispatch!({
 					domain: "vault",
 					type: "add-items",
 					items: [urlItem],
 				});
-
-				hollow.events.emit("alert", {
-					type: "success",
-					title: "Vault",
-					message: `added 1 image`,
-				});
 			} catch {
-				hollow.events.emit("alert", {
+				removeAlert({
 					type: "error",
 					title: "Vault",
 					message: `Failed to add 1 image`,
@@ -149,12 +150,16 @@ export async function importFiles(images: string[]) {
 }
 
 export async function importFileUrl(image: string, name?: string) {
-	try {
-		const removeAlert = hollow.events.emit("alert", {
+	const removeAlert = hollow.events.emit(
+		"alert",
+		{
 			type: "loading",
 			title: "Loading",
 			message: "Downloading...",
-		});
+		},
+		{ source: "source" },
+	);
+	try {
 		const path = await this.managers?.rust.vault_add_url({
 			url: image,
 		});
@@ -166,20 +171,19 @@ export async function importFileUrl(image: string, name?: string) {
 			type: path.split(".").pop() ?? "unknown",
 			uploadedAt: new Date(),
 		};
-		removeAlert();
 		_dispatch!({
 			domain: "vault",
 			type: "add-items",
 			items: [urlItem],
 		});
-		hollow.events.emit("alert", {
+		removeAlert({
 			type: "success",
 			title: "Vault",
 			message: `added 1 image`,
 		});
 		return url;
 	} catch {
-		hollow.events.emit("alert", {
+		removeAlert({
 			type: "error",
 			title: "Vault",
 			message: `Failed to add 1 image`,

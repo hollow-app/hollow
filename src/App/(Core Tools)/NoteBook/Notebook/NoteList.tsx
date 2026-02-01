@@ -1,14 +1,15 @@
-import { CardType, ContextMenuItem } from "@type/hollow";
+import { CardType, ContextMenuItem } from "@app/type/hollow";
 import { Accessor, createMemo, createSignal, For, Setter } from "solid-js";
 import { NotebookType } from "../NotebookType";
 import { NotebookManager } from "../NotebookManager";
-import FilterButton from "@components/ui/FilterButton";
+import FilterButton from "@app/components/ui/FilterButton";
 import { Show } from "solid-js";
 import { NoteType } from "../NoteType";
 import { hollow } from "../../../../hollow";
-import { MyIconFun } from "@components/ui/MyIcon";
+import { MyIconFun } from "@app/components/ui/MyIcon";
 import { SearchIcon } from "lucide-solid";
-import { Checkbox } from "@ui";
+import { Checkbox, Input } from "@ui";
+import { EventEmitterSource } from "@app/utils/manipulation/strings";
 
 type NoteListProps = {
 	card: CardType;
@@ -38,15 +39,32 @@ export default function NoteList(props: NoteListProps) {
 
 	const removeGroup = async () => {
 		const total = selectedGroup().length;
-		const onDone = hollow.events.emit("alert", {
+		const result = hollow.events.emit("alert", {
 			type: "loading",
 			title: "Notebook",
 			message: `Deleting ${total} Note${total > 1 && "s"}...`,
 		});
-		for (const i of selectedGroup()) {
-			await NotebookManager.getSelf().deleteNote(props.card.data.name, i);
+		const onDone = EventEmitterSource("source", result);
+		try {
+			for (const i of selectedGroup()) {
+				await NotebookManager.getSelf().deleteNote(
+					props.card.data.name,
+					i,
+				);
+			}
+			if (onDone) {
+				onDone["callback"]({
+					type: "success",
+					title: "Deletion Complete",
+				});
+			}
+		} catch (e) {
+			onDone["callback"]({
+				title: "Oops!",
+				type: "error",
+				message: "Something went wrong. Please try again.",
+			});
 		}
-		onDone();
 	};
 
 	const onContextMenu = () => {
@@ -102,19 +120,13 @@ export default function NoteList(props: NoteListProps) {
 				</div>
 			</Show>
 			<div class="flex gap-1">
-				<div class="relative flex-1">
-					<input
-						class="input peer ml-auto h-fit max-w-full transition-all duration-200"
-						style={{
-							"--padding-x":
-								"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
-						}}
-						value={searchTerm()}
-						onInput={(e) => setSearchTerm(e.currentTarget.value)}
-						placeholder="Search"
-					/>
-					<SearchIcon class="text-secondary-30 peer-focus:text-secondary-50 absolute top-1/2 left-2 size-5 -translate-y-1/2 transition-colors" />
-				</div>
+				<Input
+					icon="search"
+					value={searchTerm()}
+					oninput={(e) => setSearchTerm(e.currentTarget.value)}
+					placeholder="Search"
+					class="w-full"
+				/>
 				<FilterButton
 					options={() => [
 						{

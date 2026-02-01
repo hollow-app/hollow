@@ -1,7 +1,7 @@
-import { InsightType } from "@type/hollow";
+import { InsightType } from "@app/type/hollow";
 import ReceiptIcon from "@assets/icons/receipt.svg";
 import { Accessor, For, Show } from "solid-js";
-import MyIcon from "@components/ui/MyIcon";
+import MyIcon from "@app/components/ui/MyIcon";
 
 type InsightPopProps = {
 	data: InsightType;

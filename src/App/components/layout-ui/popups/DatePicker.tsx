@@ -1,4 +1,4 @@
-import { MyIconFun } from "@components/ui/MyIcon";
+import { MyIconFun } from "@app/components/ui/MyIcon";
 import PopupWrapper from "../PopupWrapper";
 import { Calendar, type Options } from "vanilla-calendar-pro";
 import "@styles/calendar.css";

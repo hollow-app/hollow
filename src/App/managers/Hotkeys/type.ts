@@ -1,32 +1,31 @@
-import { HotKeyName, HotKeyType } from "@type/HotKeyType";
+import { HotKeyName, HotKeyType } from "@app/type/HotKeyType";
 
 export type HotkeysState = {
-    configuration: {
-        enabled: boolean;
-    };
-    hotkeys: HotKeyType[];
+	configuration: {
+		enabled: boolean;
+	};
+	hotkeys: HotKeyType[];
 };
 
-export type Events =
-    | { domain: "hotkeys" } & (
-        | {
-            type: "set-hotkeys";
-            hotkeys: HotKeyType[];
-            configuration?: { enabled: boolean };
-        }
-        | {
-            type: "set-hotkey";
-            hotkey: HotKeyType;
-        }
-        | {
-            type: "reset-defaults";
-        }
-        | {
-            type: "toggle-enabled";
-            enabled: boolean;
-        }
-        | {
-            type: "execute-hotkey";
-            name: HotKeyName;
-        }
-    );
+export type Events = { domain: "hotkeys" } & (
+	| {
+			type: "set-hotkeys";
+			hotkeys: HotKeyType[];
+			configuration?: { enabled: boolean };
+	  }
+	| {
+			type: "set-hotkey";
+			hotkey: HotKeyType;
+	  }
+	| {
+			type: "reset-defaults";
+	  }
+	| {
+			type: "toggle-enabled";
+			enabled: boolean;
+	  }
+	| {
+			type: "execute-hotkey";
+			name: HotKeyName;
+	  }
+);

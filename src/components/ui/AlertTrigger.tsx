@@ -1,7 +1,7 @@
-import { AlertType } from "@type/hollow";
+import { AlertType } from "@app/type/hollow";
 import { ParentComponent, splitProps } from "solid-js";
-import { hollow } from "../hollow";
-import { EventEmitterSource } from "@utils/manipulation/strings";
+import { hollow } from "../../hollow";
+import { EventEmitterSource } from "@app/utils/manipulation/strings";
 
 type Props = AlertType & {
 	action?: () => Promise<AlertType | void>;
@@ -17,7 +17,7 @@ export const AlertTrigger: ParentComponent<Props> = (props) => {
 	]);
 	const handleTrigger = async () => {
 		const alert: AlertType = local;
-		const onLoadingFinished = await hollow.events.emitAsync("alert", alert);
+		const onLoadingFinished = hollow.events.emit("alert", alert);
 		if (local.type === "loading") {
 			const sourced = EventEmitterSource("source", onLoadingFinished);
 			try {

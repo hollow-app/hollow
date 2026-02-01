@@ -1,5 +1,5 @@
 import ColorPickerIcon from "@assets/icons/color-picker.svg";
-import { isHexColor } from "@utils/manipulation/colors";
+import { isHexColor } from "@app/utils/manipulation/colors";
 import { PaintBucketIcon } from "lucide-solid";
 import { HexColorPicker } from "solid-colorful";
 import { createMemo, createSignal, For } from "solid-js";

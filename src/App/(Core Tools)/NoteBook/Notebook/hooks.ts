@@ -18,9 +18,10 @@ import {
 	ContextMenuItem,
 	ContextMenuItemButton,
 	ToolOptions,
-} from "@type/hollow";
+} from "@app/type/hollow";
 import { NotebookManager } from "../NotebookManager";
-import { MyIconFun } from "@components/ui/MyIcon";
+import { MyIconFun } from "@app/components/ui/MyIcon";
+import { toggleVault } from "@app/context/actions";
 
 export interface NotebookProps {
 	card: CardType;
@@ -158,25 +159,23 @@ export const useNotebook = (props: NotebookProps): NotebookHook => {
 	};
 
 	const changeBanner = async () => {
-		hollow.events.emit("show-vault", {
-			onSelect: async (url: string) => {
-				setNote((prev) =>
-					prev
-						? {
-								...prev,
-								attributes: { ...prev.attributes, banner: url },
-							}
-						: null,
+		toggleVault(async (url: string) => {
+			setNote((prev) =>
+				prev
+					? {
+							...prev,
+							attributes: { ...prev.attributes, banner: url },
+						}
+					: null,
+			);
+			const currentNote = note();
+			if (currentNote) {
+				await NotebookManager.getSelf().setNote(
+					props.card.data.name,
+					currentNote.title,
+					NotebookManager.getSelf().rebuildMarkdown(currentNote),
 				);
-				const currentNote = note();
-				if (currentNote) {
-					await NotebookManager.getSelf().setNote(
-						props.card.data.name,
-						currentNote.title,
-						NotebookManager.getSelf().rebuildMarkdown(currentNote),
-					);
-				}
-			},
+			}
 		});
 	};
 

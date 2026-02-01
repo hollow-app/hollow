@@ -1,5 +1,5 @@
-import ColorPick from "@components/dynamic/ColorPick";
-import NumberInput from "@components/dynamic/NumberInput";
+import ColorPick from "@app/components/dynamic/ColorPick";
+import NumberInput from "@component/ui/NumberInput";
 import {
 	createMemo,
 	createResource,
@@ -9,17 +9,16 @@ import {
 	Show,
 	Suspense,
 } from "solid-js";
-import { FormType, TagType } from "@type/hollow";
-import useTags from "@hooks/useTags";
+import { FormType, TagType } from "@app/type/hollow";
+import useTags from "@app/hooks/useTags";
 import { hollow } from "../../../../hollow";
-import Loading from "@components/ui/Loading";
-import Dropdown from "@components/dynamic/Dropdown";
+import Loading from "@app/components/ui/Loading";
 import { CircleFadingPlusIcon } from "lucide-solid";
-import Tag from "@ui/Tag";
-import useGrid from "@hooks/useGrid";
+import { Combobox, Tag } from "@ui";
+import useGrid from "@app/hooks/useGrid";
 import { readableColor } from "polished";
 import { useStore } from "@store";
-import { renderMarkdown } from "@managers/Markdown";
+import { renderMarkdown } from "@app/managers/Markdown";
 
 export default function Appearance() {
 	return (
@@ -255,14 +254,19 @@ function CodeThemeSettings() {
 					</Show>
 				</div>
 				<div class="w-70">
-					<Dropdown
+					{/* <Dropdown */}
+					{/* 	value={codeTheme()} */}
+					{/* 	options={[ */}
+					{/* 		{ */}
+					{/* 			items: codeThemes, */}
+					{/* 		}, */}
+					{/* 	]} */}
+					{/* 	onSelect={useCodeTheme} */}
+					{/* /> */}
+					<Combobox
 						value={codeTheme()}
-						options={[
-							{
-								items: codeThemes,
-							},
-						]}
-						onSelect={useCodeTheme}
+						items={codeThemes}
+						onselect={useCodeTheme}
 					/>
 				</div>
 			</div>

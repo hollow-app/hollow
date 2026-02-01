@@ -1,6 +1,6 @@
 import { onCleanup, onMount } from "solid-js";
 import styles from "./index.module.css";
-import { getLayoutPanels } from "@managers/layout";
+import { getLayoutPanels } from "@app/managers/layout";
 
 interface PanelWrapperProps {
 	id: string;

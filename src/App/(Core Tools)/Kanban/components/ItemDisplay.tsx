@@ -2,7 +2,7 @@ import { Show, For, JSX } from "solid-js";
 import { Tag } from "@ui";
 import { Clock8Icon } from "lucide-solid";
 import { ItemType } from "../types/ItemType";
-import { timeDifferenceMin } from "@utils/manipulation/strings";
+import { timeDifferenceMin } from "@app/utils/manipulation/strings";
 
 type ItemDisplayProps = {
 	item: ItemType;

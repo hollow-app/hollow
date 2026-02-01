@@ -1,9 +1,9 @@
 import { join } from "@tauri-apps/api/path";
 import { hollow } from "../../../hollow";
-import { Storage } from "@managers/Storage";
+import { Storage } from "@app/managers/Storage";
 import { CoreTool, Events, ModuleState, ToolMap, ToolMethods } from "./type";
 import DEFAULT from "@assets/configs/main.json?raw";
-import { HandType } from "@type/HandType";
+import { HandType } from "@app/type/HandType";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import {
 	HollowEvent,
@@ -16,15 +16,15 @@ import {
 	ToolApi,
 	AppApi,
 	PluginResult,
-} from "@type/hollow";
+} from "@app/type/hollow";
 import { ImageMain } from "@coretools/Image/ImageMain";
 import { NotebookMain } from "@coretools/NoteBook/NotebookMain";
 import { KanbanMain } from "@coretools/Kanban/KanbanMain";
 import { EmbedMain } from "@coretools/Embed/EmbedMain";
 import { EventsManager } from "../EventsManager";
-import { ToolMetadata } from "@type/ToolMetadata";
+import { ToolMetadata } from "@app/type/ToolMetadata";
 import { getCurrentRealm } from "@shared/managers/Realm";
-import * as cfm from "@managers/CardFS";
+import * as cfm from "@app/managers/CardFS";
 import {
 	add_plugin,
 	create_dir,
@@ -95,6 +95,7 @@ export function setupModule(dispatch: (action: any) => void) {
 					"card-fs",
 					({ cardName }: { cardName: string }) =>
 						getCardFs(tool.name, cardName),
+					{ source: "source" },
 				);
 			}
 
@@ -439,10 +440,7 @@ export async function loadTool(tool: HandType): Promise<ToolMethods | null> {
 
 // create the HollowEvent of a singal tool;
 async function createToolEvent(toolName: string): Promise<ToolApi> {
-	const toolEvent = new EventsManager() as HollowEvent<
-		ToolEvents,
-		ToolEventReturns
-	>;
+	const toolEvent = new EventsManager<ToolEvents, ToolEvents>();
 	const path = await join(
 		...[getCurrentRealm().location, "main", toolName, "config.json"],
 	);

@@ -6,7 +6,7 @@ import {
 	PluginResult,
 	ToolApi,
 	ToolEvents,
-} from "@type/hollow";
+} from "@app/type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";

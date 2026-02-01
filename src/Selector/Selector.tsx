@@ -1,17 +1,17 @@
-import ColorPick from "@components/dynamic/ColorPick";
-import { formatDate, timeDifference } from "@utils/manipulation/strings";
-import { Realm } from "@type/Realm";
+import ColorPick from "@app/components/dynamic/ColorPick";
+import { formatDate, timeDifference } from "@app/utils/manipulation/strings";
+import { Realm } from "@app/type/Realm";
 import HollowIcon from "@assets/logo.svg";
 import { CalendarIcon, PlusIcon, RocketIcon } from "lucide-solid";
 import { batch, createSignal, For, onMount, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import WindowControl from "@components/ui/WindowControl";
-import Dropdown from "@components/dynamic/Dropdown";
+import WindowControl from "@app/components/ui/WindowControl";
 import { open } from "@tauri-apps/plugin-dialog";
-import MyIcon from "@components/ui/MyIcon";
+import MyIcon from "@app/components/ui/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
-import Segmented from "@components/dynamic/Segmented";
+import Segmented from "@component/ui/Segmented";
 import { useStore } from "@shared/store";
+import { Combobox } from "@ui";
 
 const themes = {
 	dark: [
@@ -392,8 +392,23 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 							<label class="text-secondary-60 text-sm font-medium">
 								Theme Preset
 							</label>
-							<Dropdown
-								options={[
+							{/* <Dropdown */}
+							{/* 	options={[ */}
+							{/* 		{ */}
+							{/* 			title: "Light", */}
+							{/* 			items: themes.light.map((i) => i.name), */}
+							{/* 		}, */}
+							{/* 		{ */}
+							{/* 			title: "Dark", */}
+							{/* 			items: themes.dark.map((i) => i.name), */}
+							{/* 		}, */}
+							{/* 	]} */}
+							{/* 	onSelect={selectTheme} */}
+							{/* 	placeholder="Select a theme" */}
+							{/* 	visibleOnSelect */}
+							{/* /> */}
+							<Combobox
+								items={[
 									{
 										title: "Light",
 										items: themes.light.map((i) => i.name),
@@ -403,9 +418,8 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 										items: themes.dark.map((i) => i.name),
 									},
 								]}
-								onSelect={selectTheme}
+								onselect={selectTheme}
 								placeholder="Select a theme"
-								visibleOnSelect
 							/>
 						</div>
 

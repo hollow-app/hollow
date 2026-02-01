@@ -1,4 +1,4 @@
-import { formatCSSVarName } from "@hooks/useTags";
+import { formatCSSVarName } from "@app/hooks/useTags";
 
 type TagProps = {
 	tag: string;

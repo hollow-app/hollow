@@ -1,5 +1,5 @@
-import { getLayoutPanels, PanelType, selectPanel } from "@managers/layout";
-import { PanelWrapper } from "@utils/kinda-junk/PanelWrapper";
+import { getLayoutPanels, PanelType, selectPanel } from "@app/managers/layout";
+import { PanelWrapper } from "@app/utils/kinda-junk/PanelWrapper";
 import { createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";

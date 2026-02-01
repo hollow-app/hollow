@@ -1,9 +1,10 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { CardType, IStore, ToolApi } from "@type/hollow";
-import { ToolOptions } from "@type/hollow";
+import { CardType, IStore, ToolApi } from "@app/type/hollow";
+import { ToolOptions } from "@app/type/hollow";
 import { ImageType } from "./ImageType";
 import { hollow } from "../../../hollow";
+import { toggleVault } from "@app/context/actions";
 
 type ImageProps = {
 	data: ImageType;
@@ -78,10 +79,7 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 			setImage((prev) => ({ ...prev, url: url }));
 			return;
 		}
-		hollow.events.emit("show-vault", {
-			onSelect: (newUrl) =>
-				setImage((prev) => ({ ...prev, url: newUrl })),
-		});
+		toggleVault((newUrl) => setImage((prev) => ({ ...prev, url: newUrl })));
 	};
 	const setSettingsVisible = () => {
 		const settings: ToolOptions = {

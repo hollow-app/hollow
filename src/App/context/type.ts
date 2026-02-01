@@ -1,4 +1,4 @@
-import { TagType } from "@type/hollow";
+import { TagType } from "@app/type/hollow";
 import { GridStackOptions } from "gridstack";
 
 // Domain States
@@ -8,6 +8,11 @@ export interface ContextState {
 	isLiveEditor: boolean;
 	canvasConfigs: GridStackOptions;
 	isSettingsVisible: boolean;
+	isVaultVisible:
+		| {
+				onSelect?: (path: string) => void;
+		  }
+		| undefined;
 	editorInstance?: {
 		module: string;
 		id: string;
@@ -24,6 +29,10 @@ export type ContextEvents = { domain: "context" } & (
 	| {
 			type: "toggle-settings";
 			value?: boolean;
+	  }
+	| {
+			type: "toggle-vault";
+			value?: { onSelect?: (p: string) => void };
 	  }
 	| {
 			type: "edit-instance";

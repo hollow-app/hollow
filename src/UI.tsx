@@ -1,5 +1,5 @@
-import ColorPick from "@components/dynamic/ColorPick";
-import FilterButton from "@components/ui/FilterButton";
+import ColorPick from "@app/components/dynamic/ColorPick";
+import FilterButton from "@app/components/ui/FilterButton";
 import { useStore } from "@shared/store";
 import {
 	Slider,
@@ -16,12 +16,14 @@ import {
 	DropdownTrigger,
 	DropdownContent,
 	Pagination,
+	AlertTrigger,
+	RadioButton,
+	RadioGroup,
+	RadioGroupItem,
 } from "@ui";
 import { createMemo, For } from "solid-js";
 import { hollow } from "./hollow";
 import { PandaIcon } from "lucide-solid";
-import { RadioButton, RadioGroup, RadioGroupItem } from "@ui/RadioGroup";
-import { AlertTrigger } from "@ui/AlertTrigger";
 
 export default function UI() {
 	const { state, dispatch } = useStore();

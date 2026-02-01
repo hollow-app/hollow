@@ -1,5 +1,5 @@
-import ColorPick from "@components/dynamic/ColorPick";
-import NumberInput from "@components/dynamic/NumberInput";
+import ColorPick from "@app/components/dynamic/ColorPick";
+import NumberInput from "@component/ui/NumberInput";
 import { TentTreeIcon } from "lucide-solid";
 import {
 	createMemo,
@@ -11,11 +11,10 @@ import {
 	type Setter,
 } from "solid-js";
 import { hollow } from "../../../../hollow";
-import Dropdown from "@components/dynamic/Dropdown";
-import { CardType } from "@type/hollow";
-import { unwrap } from "solid-js/store";
+import { CardType } from "@app/type/hollow";
 import { useStore } from "@shared/store";
-import { getHand } from "@managers/Module/effects";
+import { getHand } from "@app/managers/Module/effects";
+import { Combobox } from "@ui";
 
 interface SelectedInstance {
 	module: string;
@@ -363,34 +362,57 @@ function Header(props: {
 			</div>
 			<div class="flex gap-2">
 				<div class="flex-1">
-					<Dropdown
+					{/* <Dropdown */}
+					{/* 	value={props.instance()?.module ?? ""} */}
+					{/* 	onSelect={(v) => */}
+					{/* 		props.setInstance({ module: v, id: null }) */}
+					{/* 	} */}
+					{/* 	options={[ */}
+					{/* 		{ */}
+					{/* 			items: Object.keys(modules), */}
+					{/* 		}, */}
+					{/* 	]} */}
+					{/* 	placeholder="Select Tool" */}
+					{/* /> */}
+					<Combobox
 						value={props.instance()?.module ?? ""}
-						onSelect={(v) =>
+						onselect={(v) =>
 							props.setInstance({ module: v, id: null })
 						}
-						options={[
-							{
-								items: Object.keys(modules),
-							},
-						]}
+						items={Object.keys(modules)}
 						placeholder="Select Tool"
 					/>
 				</div>
 
 				<div class="flex-1">
-					<Dropdown
+					{/* <Dropdown */}
+					{/* 	value={ */}
+					{/* 		cardList().find((c) => c.id === props.instance().id) */}
+					{/* 			?.name ?? "" */}
+					{/* 	} */}
+					{/* 	onSelect={(n) => { */}
+					{/* 		if (!props.instance()) return; */}
+					{/* 		selectCard({ */}
+					{/* 			module: props.instance().module, */}
+					{/* 			id: cardList().find((c) => c.name === n).id, */}
+					{/* 		}); */}
+					{/* 	}} */}
+					{/* 	options={[{ items: cardList().map((i) => i.name) }]} */}
+					{/* 	placeholder="Select Card" */}
+					{/* /> */}
+					<Combobox
 						value={
 							cardList().find((c) => c.id === props.instance().id)
 								?.name ?? ""
 						}
-						onSelect={(n) => {
+						onselect={(n) => {
 							if (!props.instance()) return;
 							selectCard({
 								module: props.instance().module,
 								id: cardList().find((c) => c.name === n).id,
 							});
 						}}
-						options={[{ items: cardList().map((i) => i.name) }]}
+						items={cardList().map((i) => i.name)}
 						placeholder="Select Card"
 					/>
 				</div>

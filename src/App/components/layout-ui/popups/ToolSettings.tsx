@@ -1,10 +1,10 @@
-import DynamicOption from "@components/dynamic/DynamicOption";
-import { ToolOption, ToolOptions } from "@type/hollow";
+import DynamicOption from "@app/components/dynamic/DynamicOption";
+import { ToolOption, ToolOptions } from "@app/type/hollow";
 import { hollow } from "../../../../hollow";
 import { createMemo, For, Show } from "solid-js";
 import PopupWrapper from "../PopupWrapper";
-import { MyIconFun } from "@components/ui/MyIcon";
-import { getHand } from "@managers/Module/effects";
+import { MyIconFun } from "@app/components/ui/MyIcon";
+import { getHand } from "@app/managers/Module/effects";
 
 type ToolSettingsProps = {
 	pluginSettings: ToolOptions;

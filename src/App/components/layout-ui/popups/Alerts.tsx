@@ -3,7 +3,7 @@ import XSquareOutlineIcon from "@assets/icons/x-square-outline.svg";
 import AlertTriangleOutlineIcon from "@assets/icons/alert-triangle-outline.svg";
 import AlertSquareOutlineIcon from "@assets/icons/alert-square-outline.svg";
 import LoaderIcon from "@assets/icons/loader.svg";
-import { AlertType } from "@type/hollow";
+import { AlertType } from "@app/type/hollow";
 import { hollow } from "../../../../hollow";
 import {
 	createMemo,
@@ -16,7 +16,7 @@ import {
 } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import { XIcon } from "lucide-solid";
-import { estimateReadingTimeMs } from "@utils/manipulation/strings";
+import { estimateReadingTimeMs } from "@app/utils/manipulation/strings";
 import { Accessor } from "solid-js";
 
 const alertTypes: Record<AlertType["type"], (props: any) => JSX.Element> = {
@@ -34,7 +34,7 @@ export default function Alerts() {
 	const items = createMemo(() => alerts().map((i) => i.id));
 	const [cue, setCue] = createSignal([]);
 
-	const addAlert = async (alert: AlertType) => {
+	const addAlert = (alert: AlertType) => {
 		const id = crypto.randomUUID();
 		const uniqueAlert = { ...alert, id };
 		setAlerts((prev) => [uniqueAlert, ...prev]);
@@ -52,22 +52,17 @@ export default function Alerts() {
 				alert.onTimeOut && alert.onTimeOut();
 			}, alert.duration ?? duration);
 		} else {
-			return {
-				source: "source",
-				callback: (alert: AlertType) => {
-					setAlerts((p) =>
-						p.map((i) => (i.id === id ? { ...i, ...alert } : i)),
-					);
+			return (alert: AlertType) => {
+				setAlerts((p) =>
+					p.map((i) => (i.id === id ? { ...i, ...alert } : i)),
+				);
+				setTimeout(() => {
+					setCue((prev) => [...prev.filter((i) => i !== id)]);
 					setTimeout(() => {
-						setCue((prev) => [...prev.filter((i) => i !== id)]);
-						setTimeout(() => {
-							setAlerts((prev) =>
-								prev.filter((i) => i.id !== id),
-							);
-						}, 4000);
-						alert.onTimeOut && alert.onTimeOut();
-					}, alert.duration ?? duration);
-				},
+						setAlerts((prev) => prev.filter((i) => i.id !== id));
+					}, 4000);
+					alert.onTimeOut && alert.onTimeOut();
+				}, alert.duration ?? duration);
 			};
 		}
 	};

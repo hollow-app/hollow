@@ -1,6 +1,5 @@
 import {
 	Component,
-	createSignal,
 	For,
 	Show,
 	Switch,
@@ -13,12 +12,14 @@ import {
 	Suspense,
 } from "solid-js";
 import { render } from "solid-js/web";
-const MarkdownEditor = lazy(() => import("@components/ui/MarkdownEditor.tsx"));
-import MarkdownPreview from "@components/ui/MarkdownPreview.tsx";
+const MarkdownEditor = lazy(
+	() => import("@app/components/ui/MarkdownEditor.tsx"),
+);
+import MarkdownPreview from "@app/components/ui/MarkdownPreview.tsx";
 import { Combobox, Tag } from "@ui";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
-import MyIcon, { MyIconFun } from "@components/ui/MyIcon.tsx";
+import MyIcon, { MyIconFun } from "@app/components/ui/MyIcon.tsx";
 import { hollow } from "../../../../hollow.ts";
 import { useNotebook, NotebookProps } from "./hooks";
 
@@ -31,30 +32,34 @@ const Notebook: Component<NotebookProps> = (props) => {
 			(v) => {
 				if (v) {
 					const id = crypto.randomUUID();
-					const control: any = hollow.events.emit("add-layout", {
-						id,
-						icon: MyIconFun({ name: "folder-open" }),
-						type: "left",
-						mount: (el: HTMLDivElement) => {
-							const unmount = createRoot((dispose) => {
-								render(
-									() => (
-										<NoteList
-											card={props.card}
-											book={state.book}
-											changeSelected={
-												actions.changeSelected
-											}
-											isExpand={state.isExpand}
-										/>
-									),
-									el,
-								);
-								return dispose;
-							});
-							return { unmount };
+					const control = hollow.events.emit(
+						"add-layout",
+						{
+							id,
+							icon: MyIconFun({ name: "folder-open" }),
+							type: "left",
+							mount: (el: HTMLDivElement) => {
+								const unmount = createRoot((dispose) => {
+									render(
+										() => (
+											<NoteList
+												card={props.card}
+												book={state.book}
+												changeSelected={
+													actions.changeSelected
+												}
+												isExpand={state.isExpand}
+											/>
+										),
+										el,
+									);
+									return dispose;
+								});
+								return { unmount };
+							},
 						},
-					});
+						{ source: "source" },
+					);
 					onCleanup(() => {
 						control.close();
 					});
@@ -230,7 +235,7 @@ const Notebook: Component<NotebookProps> = (props) => {
 																	)
 															: []
 													}
-													onSelect={(tgs) =>
+													onselect={(tgs) =>
 														state.setNote((prev) =>
 															prev
 																? {

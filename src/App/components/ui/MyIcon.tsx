@@ -39,6 +39,7 @@ const HollowIcons = {
 	// bell: () => import("@assets/icons/bell.svg"),
 	check: () => import("@assets/icons/check.svg"),
 	user: () => import("@assets/icons/user.svg"),
+	search: () => import("@assets/icons/search.svg"),
 	// "check-square-outline": () =>
 	// 	import("@assets/icons/check-square-outline.svg"),
 	// "check-square": () => import("@assets/icons/check-square.svg"),

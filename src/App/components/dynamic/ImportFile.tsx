@@ -2,6 +2,7 @@ import { Show } from "solid-js";
 import { createSignal } from "solid-js";
 import { hollow } from "../../../hollow";
 import MyIcon from "../ui/MyIcon";
+import { toggleVault } from "@app/context/actions";
 
 type ImportFileProps = {
 	xfile?: string;
@@ -11,11 +12,9 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 	const [file, setFile] = createSignal(xfile);
 
 	const onImport = async () => {
-		hollow.events.emit("show-vault", {
-			onSelect: (s) => {
-				onChange(s);
-				setFile(s);
-			},
+		toggleVault((s) => {
+			onChange(s);
+			setFile(s);
 		});
 	};
 

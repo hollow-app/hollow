@@ -1,4 +1,4 @@
-import MyIcon, { MyIconsType } from "@components/ui/MyIcon";
+import MyIcon, { MyIconsType } from "@app/components/ui/MyIcon";
 import { createSignal, JSX, Show, splitProps } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 

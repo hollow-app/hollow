@@ -1,5 +1,5 @@
 import { readableColor, mix, getLuminance } from "polished";
-import { Property } from "@type/Property";
+import { Property } from "@app/type/Property";
 
 export function ShadeIt(name: string, color: string) {
 	const isDark =

@@ -5,13 +5,13 @@ import { _dispatch, _state } from "@shared/store/effects";
 import { hollow } from "../../../hollow";
 import { RootState } from "@shared/store/types";
 
-const Expand = lazy(() => import("@components/layout-ui/sidebars/Expand"));
+const Expand = lazy(() => import("@app/components/layout-ui/sidebars/Expand"));
 const Character = lazy(
-	() => import("@components/layout-ui/sidebars/Character"),
+	() => import("@app/components/layout-ui/sidebars/Character"),
 );
-const Editor = lazy(() => import("@components/layout-ui/sidebars/Editor"));
+const Editor = lazy(() => import("@app/components/layout-ui/sidebars/Editor"));
 const Notifications = lazy(
-	async () => import("@components/layout-ui/Notifications"),
+	async () => import("@app/components/layout-ui/Notifications"),
 );
 
 export type PanelMap = Record<string, Component>;
@@ -45,7 +45,7 @@ export function setupLayoutRegistry(
 	d: (action: any) => void,
 	get: () => RootState,
 ) {
-	hollow.events.on("add-layout", add_layout);
+	hollow.events.on("add-layout", add_layout, { source: "source" });
 }
 
 export function addPanel(type: PanelType, name: string, component: Component) {

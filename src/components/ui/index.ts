@@ -1,4 +1,5 @@
-export { default as Confirm } from "./Confirm";
+export { default as Confirm } from "../Confirm";
+export * from "./AlertTrigger";
 export * from "./Slider";
 export * from "./Kbd";
 export * from "./Tag";
@@ -10,4 +11,7 @@ export * from "./Checkbox";
 export * from "./Combobox";
 export * from "./FormTrigger";
 export * from "./Dropdown";
+export * from "./RadioGroup";
 export * from "./Pagination";
+export * from "./NumberInput";
+export * from "./Segmented";

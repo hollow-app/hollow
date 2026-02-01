@@ -1,20 +1,20 @@
-import { CharacterState } from "@managers/Account/types";
+import { CharacterState } from "@app/managers/Account/types";
 import { GridStackOptions } from "gridstack";
-import { SettingsConfig } from "@managers/Settings/types";
-import { CodeThemeState } from "@managers/CodeTheme/types";
-import { Events as AccountEvents } from "@managers/Account/types";
-import { Events as SettingsEvents } from "@managers/Settings/types";
-import { Events as CodeThemeEvents } from "@managers/CodeTheme/types";
-import { Events as ModuleEvents } from "@managers/Module/type";
-import { Events as HotkeysEvents } from "@managers/Hotkeys/type";
-import { Events as VaultEvents } from "@managers/Vault/type";
-import { Events as NotificationsEvents } from "@managers/Notifications/type";
-import { LayoutEvents, LayoutState } from "@managers/layout";
-import { ModuleState } from "@managers/Module/type";
-import { HotkeysState } from "@managers/Hotkeys";
-import { VaultState } from "@managers/Vault";
-import { ContextEvents, ContextState } from "context/type";
-import { NotificationsState } from "@managers/Notifications";
+import { SettingsConfig } from "@app/managers/Settings/types";
+import { CodeThemeState } from "@app/managers/CodeTheme/types";
+import { Events as AccountEvents } from "@app/managers/Account/types";
+import { Events as SettingsEvents } from "@app/managers/Settings/types";
+import { Events as CodeThemeEvents } from "@app/managers/CodeTheme/types";
+import { Events as ModuleEvents } from "@app/managers/Module/type";
+import { Events as HotkeysEvents } from "@app/managers/Hotkeys/type";
+import { Events as VaultEvents } from "@app/managers/Vault/type";
+import { Events as NotificationsEvents } from "@app/managers/Notifications/type";
+import { LayoutEvents, LayoutState } from "@app/managers/layout";
+import { ModuleState } from "@app/managers/Module/type";
+import { HotkeysState } from "@app/managers/Hotkeys";
+import { VaultState } from "@app/managers/Vault";
+import { ContextEvents, ContextState } from "@app/context/type";
+import { NotificationsState } from "@app/managers/Notifications";
 import { Events as RealmEvents, RealmState } from "../managers/Realm";
 
 // Root State

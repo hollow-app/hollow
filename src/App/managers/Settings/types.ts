@@ -1,4 +1,4 @@
-import { TagType } from "@type/hollow";
+import { TagType } from "@app/type/hollow";
 
 //
 export type SettingsConfig = {

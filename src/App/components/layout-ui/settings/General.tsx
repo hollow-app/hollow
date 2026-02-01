@@ -1,7 +1,7 @@
 import { createResource, Suspense } from "solid-js";
 import { HeartHandshakeIcon, RefreshCwIcon } from "lucide-solid";
-import { guide } from "@utils/help";
-import { executeHotkey } from "@managers/Hotkeys";
+import { guide } from "@app/utils/help";
+import { executeHotkey } from "@app/managers/Hotkeys";
 import { get_version } from "@rust";
 import {
 	selectRealmOnStartup,

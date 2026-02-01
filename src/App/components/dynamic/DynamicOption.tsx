@@ -1,12 +1,11 @@
-import ColorPick from "@components/dynamic/ColorPick";
-import Dropdown from "@components/dynamic/Dropdown";
-import EmojiPick from "@components/dynamic/EmojiPick";
-import ImportFile from "@components/dynamic/ImportFile";
-import NumberInput from "@components/dynamic/NumberInput";
+import ColorPick from "@app/components/dynamic/ColorPick";
+import EmojiPick from "@app/components/dynamic/EmojiPick";
+import ImportFile from "@app/components/dynamic/ImportFile";
+import NumberInput from "@component/ui/NumberInput";
 import { Slider, Combobox, Input } from "@ui";
-import { ToolOption } from "@type/hollow";
+import { ToolOption } from "@app/type/hollow";
 import { Accessor, Match, onCleanup, onMount, Switch } from "solid-js";
-import Segmented from "./Segmented";
+import Segmented from "../../../components/ui/Segmented";
 
 type OptionType<T extends ToolOption["type"]> = Extract<
 	ToolOption,
@@ -151,11 +150,21 @@ const EmojiOption = (props: { option: OptionType<"emoji"> }) => (
 );
 
 const DropdownOption = (props: { option: OptionType<"dropdown"> }) => (
-	<Dropdown
+	// <Dropdown
+	// 	value={props.option.value}
+	// 	placeholder={props.option.placeholder}
+	// 	options={props.option.options}
+	// 	onSelect={props.option.onAction}
+	// />
+	<Combobox
 		value={props.option.value}
 		placeholder={props.option.placeholder}
-		options={props.option.options}
-		onSelect={props.option.onAction}
+		items={
+			props.option.options as
+				| string[]
+				| { title: string; items: string[] }[]
+		}
+		onselect={props.option.onAction}
 	/>
 );
 

@@ -1,7 +1,13 @@
 import { invoke } from "@tauri-apps/api/core";
-import { HandType } from "@type/HandType";
+import { HandType } from "@app/type/HandType";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { AppApi, CardType, IPlugin, PluginResult, ToolApi } from "@type/hollow";
+import {
+	AppApi,
+	CardType,
+	IPlugin,
+	PluginResult,
+	ToolApi,
+} from "@app/type/hollow";
 import { hollow } from "../hollow";
 import { importFileUrl } from "../App/managers/Vault";
 

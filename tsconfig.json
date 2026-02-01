@@ -9,7 +9,7 @@
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
-    "baseUrl": "./src/App",
+    "baseUrl": "./src",
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -25,50 +25,29 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@shared/*": [
-        "../shared/*"
+        "shared/*"
       ],
       "@app/*": [
-        "app/*"
-      ],
-      "@utils/*": [
-        "utils/*"
+        "App/*"
       ],
       "@coretools/*": [
-        "(Core Tools)/*"
-      ],
-      "@components/*": [
-        "components/*"
-      ],
-      "@managers/*": [
-        "managers/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@services/*": [
-        "services/*"
+        "App/(Core Tools)/*"
       ],
       "@styles/*": [
         "styles/*"
       ],
-      "@type/*": [
-        "type/*"
-      ],
       "@store": [
-        "../shared/store"
-      ],
-      "@context/*": [
-        "context/*"
+        "shared/store"
       ],
       "@rust": [
-        "../lib/rust"
+        "lib/rust"
       ],
       "@ui":[
-	      "../components"
+	      "components/ui/index.ts"
       ],
-      "@ui/*":[
-	      "../components/*"
-      ]
+      "@component/*":[
+	      "components/*"
+      ] 
     }
   },
   "include": [

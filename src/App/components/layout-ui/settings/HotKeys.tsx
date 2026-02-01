@@ -1,4 +1,4 @@
-import { HotKeyType } from "@type/HotKeyType";
+import { HotKeyType } from "@app/type/HotKeyType";
 import { FeatherIcon } from "lucide-solid";
 import {
 	createSignal,

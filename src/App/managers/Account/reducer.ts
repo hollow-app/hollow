@@ -1,4 +1,4 @@
-import { Character } from "@type/Character";
+import { Character } from "@app/type/Character";
 import { CharacterState, Events } from "./types";
 import DEFAULT from "@assets/configs/character.json?raw";
 

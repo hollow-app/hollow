@@ -1,10 +1,10 @@
-import Dropdown from "@components/dynamic/Dropdown";
-import MyIcon from "@components/ui/MyIcon";
-import { FormType } from "@type/hollow";
+import MyIcon from "@app/components/ui/MyIcon";
+import { FormType } from "@app/type/hollow";
 import { hollow } from "../../../../hollow";
 import { SquarePenIcon } from "lucide-solid";
 import { For } from "solid-js";
 import { useStore } from "@store";
+import { Combobox } from "@ui";
 
 export default function Account() {
 	const { state, dispatch } = useStore();
@@ -221,15 +221,27 @@ export default function Account() {
 						</p>
 					</div>
 					<div>
-						<Dropdown
-							options={[
-								{
-									items: state.account.titles.map(
-										(i) => i.title,
-									),
-								},
-							]}
-							onSelect={(t) =>
+						{/* <Dropdown */}
+						{/* 	options={[ */}
+						{/* 		{ */}
+						{/* 			items: state.account.titles.map( */}
+						{/* 				(i) => i.title, */}
+						{/* 			), */}
+						{/* 		}, */}
+						{/* 	]} */}
+						{/* 	onSelect={(t) => */}
+						{/* 		dispatch({ */}
+						{/* 			domain: "account", */}
+						{/* 			type: "update-field", */}
+						{/* 			key: "title", */}
+						{/* 			value: t, */}
+						{/* 		}) */}
+						{/* 	} */}
+						{/* 	value={state.account.title} */}
+						{/* /> */}
+						<Combobox
+							items={state.account.titles.map((i) => i.title)}
+							onselect={(t) =>
 								dispatch({
 									domain: "account",
 									type: "update-field",

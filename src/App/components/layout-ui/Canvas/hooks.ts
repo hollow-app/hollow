@@ -7,7 +7,7 @@ import {
 	Setter,
 } from "solid-js";
 import { GridStack, GridStackNode } from "gridstack";
-import { CardType } from "@type/hollow";
+import { CardType } from "@app/type/hollow";
 import { useStore } from "@shared/store";
 import {
 	selectCanvasConfigs,

@@ -1,6 +1,6 @@
 import { ParentComponent, Show, useContext } from "solid-js";
 import { DropdownContext } from "./Dropdown";
-import Floater from "@utils/kinda-junk/Floater";
+import Floater from "@app/utils/kinda-junk/Floater";
 import { Placement } from "@floating-ui/dom";
 import { Motion, Presence } from "solid-motionone";
 

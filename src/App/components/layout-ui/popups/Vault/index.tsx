@@ -1,5 +1,5 @@
 import { Component, createSignal, For, Show } from "solid-js";
-import PopupWrapper from "@components/layout-ui/PopupWrapper";
+import PopupWrapper from "@app/components/layout-ui/PopupWrapper";
 import { hollow } from "../../../../../hollow";
 import {
 	CopyIcon,
@@ -11,11 +11,12 @@ import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 } from "lucide-solid";
-import FilterButton from "@components/ui/FilterButton";
-import MyIcon, { MyIconFun } from "@components/ui/MyIcon";
-import { Tag } from "@ui";
+import FilterButton from "@app/components/ui/FilterButton";
+import MyIcon, { MyIconFun } from "@app/components/ui/MyIcon";
+import { Input, Tag } from "@ui";
 import { useVault, VaultProps } from "./hooks";
 import { Accessor } from "solid-js";
+import { toggleVault } from "@app/context/actions";
 
 const ITEMS_PER_PAGE = 21;
 
@@ -26,7 +27,7 @@ export const Vault: Component<VaultProps> = (props) => {
 		<PopupWrapper
 			Icon={MyIconFun({ name: "strongbox-outline" })}
 			title="Vault Storage"
-			onClose={() => hollow.events.toggle("show-vault")}
+			onClose={() => toggleVault()}
 		>
 			<div class="flex h-[650px] max-h-[90vh] w-[1000px] max-w-[80vw] flex-col gap-4 p-1">
 				{/* Header */}
@@ -46,24 +47,21 @@ export const Vault: Component<VaultProps> = (props) => {
 					</div>
 
 					<div class="flex items-center gap-2">
-						<div class="relative w-64">
-							<SearchIcon class="text-secondary-40 absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
-							<input
-								class="border-secondary-20 placeholder:text-secondary-40 focus:border-secondary-30 h-9 w-full rounded-md border bg-transparent pr-3 pl-9 text-sm transition-all outline-none"
-								onInput={(e) =>
-									state.setFilter((prev) => ({
-										...prev,
-										search: e.currentTarget.value,
-									}))
-								}
-								placeholder="Search..."
-							/>
-						</div>
+						<Input
+							icon="search"
+							oninput={(e) =>
+								state.setFilter((prev) => ({
+									...prev,
+									search: e.currentTarget.value,
+								}))
+							}
+							placeholder="Search..."
+						/>
 						<div class="bg-secondary-20 mx-1 h-4 w-[1px]"></div>
 						<AddUrl onAdd={actions.importImageFromLink} />
 						<button
 							id="vault-import-local-btn"
-							class="button-control"
+							class="button-control shrink-0"
 							onClick={actions.importImages}
 							title="Import Local"
 						>

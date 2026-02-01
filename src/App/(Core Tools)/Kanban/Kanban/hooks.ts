@@ -2,7 +2,7 @@ import { createSignal, onMount, onCleanup, Accessor, Setter } from "solid-js";
 import { DragEventHandler } from "@thisbeyond/solid-dnd";
 import { CheckCheckIcon, SendIcon, XIcon } from "lucide-solid";
 import { hollow } from "../../../../hollow";
-import { MyIconFun } from "@components/ui/MyIcon";
+import { MyIconFun } from "@app/components/ui/MyIcon";
 import { KanbanManager } from "../KanbanManager";
 import { ColumnType } from "../types/ColumnType";
 import { ItemType } from "../types/ItemType";
@@ -13,8 +13,8 @@ import {
 	FormType,
 	ToolApi,
 	ToolOptions,
-} from "@type/hollow";
-import { ToolMetadata } from "@type/ToolMetadata";
+} from "@app/type/hollow";
+import { ToolMetadata } from "@app/type/ToolMetadata";
 
 export interface KanbanProps {
 	data: ColumnType;

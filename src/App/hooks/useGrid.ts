@@ -1,6 +1,6 @@
-import { Property } from "@type/Property";
+import { Property } from "@app/type/Property";
 import setStyle from "./setStyle";
-import { getSettingsConfig } from "@managers/Settings/effects";
+import { getSettingsConfig } from "@app/managers/Settings/effects";
 
 export default function useGrid(properties?: Property[]) {
 	const options: Property[] =

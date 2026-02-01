@@ -1,6 +1,7 @@
 import { TagType } from "../type/hollow";
 import { GridStackOptions } from "gridstack";
 import { ContextEvents } from "./type";
+import { _dispatch } from "@shared/store/effects";
 
 export const setTags = (tags: TagType[]): ContextEvents => ({
 	domain: "context",
@@ -19,3 +20,11 @@ export const setCanvasConfigs = (configs: GridStackOptions): ContextEvents => ({
 	type: "set-canvas-configs",
 	configs,
 });
+
+export const toggleVault = (onSelect?: (p: string) => void) => {
+	_dispatch({
+		domain: "context",
+		type: "toggle-vault",
+		value: onSelect ? { onSelect } : undefined,
+	});
+};

@@ -1,5 +1,5 @@
 import { Events, NotificationsState } from "./type";
-import { NotifyType } from "@type/NotifyType";
+import { NotifyType } from "@app/type/NotifyType";
 import { isExpired, weekOld } from "../../utils/manipulation/strings";
 import { _dispatch } from "@shared/store/effects";
 

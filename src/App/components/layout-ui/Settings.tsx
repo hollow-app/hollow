@@ -45,6 +45,7 @@ export default function Settings(props: SettingsProps) {
 				class="up-pop flex h-[calc(90%-calc(var(--spacing)*11))] w-[80%]"
 				style={{
 					"--bg-color": "var(--color-secondary)",
+					"--p": "0",
 				}}
 			>
 				<div class="flex h-full w-full">

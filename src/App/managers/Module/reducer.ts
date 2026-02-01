@@ -1,6 +1,6 @@
 import { ModuleState } from "./type";
 import { Events } from "./type";
-import { CardType } from "@type/hollow";
+import { CardType } from "@app/type/hollow";
 
 const defaultState: ModuleState = {
 	instances: [],

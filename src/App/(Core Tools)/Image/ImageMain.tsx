@@ -1,4 +1,10 @@
-import { CardType, IPlugin, IStore, PluginResult, ToolApi } from "@type/hollow";
+import {
+	CardType,
+	IPlugin,
+	IStore,
+	PluginResult,
+	ToolApi,
+} from "@app/type/hollow";
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";

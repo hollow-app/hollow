@@ -1,11 +1,12 @@
-import CardConfig from "@components/ui/CardConfig";
-import { FormType, CardType } from "@type/hollow";
+import CardConfig from "@app/components/ui/CardConfig";
+import { FormType, CardType } from "@app/type/hollow";
 import { PlusIcon, SearchIcon } from "lucide-solid";
 import { Accessor, createMemo, createSignal, For } from "solid-js";
 import { hollow } from "../../../../hollow";
-import FilterButton from "@components/ui/FilterButton";
+import FilterButton from "@app/components/ui/FilterButton";
 import { useStore } from "@shared/store";
-import { getHand } from "@managers/Module/effects";
+import { getHand } from "@app/managers/Module/effects";
+import { Input } from "@ui";
 
 type FilterType = {
 	tools: string[];
@@ -111,23 +112,16 @@ export default function Expand() {
 						</p>
 					</div>
 					<div class="flex items-center gap-2">
-						<div class="relative flex-1">
-							<input
-								class="input peer ml-auto h-fit max-w-full transition-all duration-200"
-								style={{
-									"--padding-x":
-										"calc(var(--spacing) * 10) calc(var(--spacing) * 3)",
-								}}
-								onInput={(e) =>
-									setFilter((prev) => ({
-										...prev,
-										search: e.currentTarget.value,
-									}))
-								}
-								placeholder="Search"
-							/>
-							<SearchIcon class="text-secondary-30 peer-focus:text-secondary-50 absolute top-1/2 left-2 size-5 -translate-y-1/2 transition-colors" />
-						</div>
+						<Input
+							icon="search"
+							oninput={(e) => {
+								setFilter((prev) => ({
+									...prev,
+									search: e.currentTarget.value,
+								}));
+							}}
+							placeholder="Search"
+						/>
 						<FilterButton
 							options={() => [
 								{

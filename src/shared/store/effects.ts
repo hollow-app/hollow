@@ -1,16 +1,19 @@
 import { Action, RootState } from "./types";
-import { accountEffects, setupAccount } from "@managers/Account/effects";
-import { settingsEffects, setupSettings } from "@managers/Settings/effects";
-import { codeThemeEffects, setupCodeTheme } from "@managers/CodeTheme/effects";
-import { moduleEffects, setupModule } from "@managers/Module/effects";
-import { hotkeysEffects, setupHotkeys } from "@managers/Hotkeys";
-import { setupVault, vaultEffects } from "@managers/Vault";
+import { accountEffects, setupAccount } from "@app/managers/Account/effects";
+import { settingsEffects, setupSettings } from "@app/managers/Settings/effects";
+import {
+	codeThemeEffects,
+	setupCodeTheme,
+} from "@app/managers/CodeTheme/effects";
+import { moduleEffects, setupModule } from "@app/managers/Module/effects";
+import { hotkeysEffects, setupHotkeys } from "@app/managers/Hotkeys";
+import { setupVault, vaultEffects } from "@app/managers/Vault";
 import {
 	notificationsEffects,
 	setupNotifications,
-} from "@managers/Notifications";
+} from "@app/managers/Notifications";
 import { realmEffects, setupRealm } from "../managers/Realm";
-import { setupLayoutRegistry } from "@managers/layout";
+import { setupLayoutRegistry } from "@app/managers/layout";
 
 export let _dispatch: (action: Action) => void;
 export let _state: () => RootState;

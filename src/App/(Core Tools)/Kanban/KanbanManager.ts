@@ -7,9 +7,9 @@ import {
 	ToolEvents,
 	IStore,
 	ToolApi,
-} from "@type/hollow";
+} from "@app/type/hollow";
 import { ItemType } from "./types/ItemType";
-import { timeDifferenceMin } from "@utils/manipulation/strings";
+import { timeDifferenceMin } from "@app/utils/manipulation/strings";
 import { hollow } from "../../../hollow";
 
 export class KanbanManager {

@@ -1,5 +1,5 @@
-import { registerHotkeyEvent } from "@managers/Hotkeys";
-import { ConfirmType } from "@type/hollow";
+import { registerHotkeyEvent } from "@app/managers/Hotkeys";
+import { ConfirmType } from "@app/type/hollow";
 import { hollow } from "../hollow";
 import { onCleanup, onMount } from "solid-js";
 type ConfirmPopProps = {

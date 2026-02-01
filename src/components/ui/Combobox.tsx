@@ -1,11 +1,12 @@
-import MyIcon, { MyIconsType } from "@components/ui/MyIcon";
-import Floater from "@utils/kinda-junk/Floater";
+import MyIcon, { MyIconsType } from "@app/components/ui/MyIcon";
+import Floater from "@app/utils/kinda-junk/Floater";
 import { ChevronsUpDownIcon, XIcon } from "lucide-solid";
 import { For, splitProps, JSX, createSignal, Show, createMemo } from "solid-js";
 
 type GroupedItems = { title: string; items: string[] };
 
 type Props = {
+	value?: any;
 	items: string[] | GroupedItems[];
 	placeholder?: string;
 	class?: string;
@@ -26,7 +27,9 @@ export function Combobox(props: Props) {
 		"icon",
 	]);
 	const [isOpen, setIsOpen] = createSignal(false);
-	const [selected, setSelected] = createSignal<string | string[]>();
+	const [selected, setSelected] = createSignal<string | string[]>(
+		props.value,
+	);
 	const [search, setSearch] = createSignal("");
 
 	let inpt!: HTMLInputElement;

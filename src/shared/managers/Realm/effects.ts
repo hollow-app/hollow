@@ -2,9 +2,9 @@ import { Events, RealmState } from "./types";
 import { appConfigDir, join } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Realm } from "@type/Realm";
-import { Storage } from "@managers/Storage";
-import { useColor } from "@hooks/useColor";
+import { Realm } from "@app/type/Realm";
+import { Storage } from "@app/managers/Storage";
+import { useColor } from "@app/hooks/useColor";
 import { hollow } from "../../../hollow";
 import { _dispatch } from "@shared/store/effects";
 

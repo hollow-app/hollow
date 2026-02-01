@@ -1,4 +1,4 @@
-import { Character } from "@type/Character";
+import { Character } from "@app/type/Character";
 
 export type CharacterState = Character;
 

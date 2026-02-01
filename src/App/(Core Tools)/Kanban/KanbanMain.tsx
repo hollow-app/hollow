@@ -4,7 +4,7 @@ import {
 	IPlugin,
 	PluginResult,
 	ToolEvents,
-} from "@type/hollow";
+} from "@app/type/hollow";
 import { render } from "solid-js/web";
 import { createRoot, lazy } from "solid-js";
 import { ColumnType } from "./types/ColumnType";

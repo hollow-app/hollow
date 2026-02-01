@@ -12,6 +12,7 @@ const initialState: ContextState = {
 		cellHeight: 100,
 	},
 	isSettingsVisible: false,
+	isVaultVisible: undefined,
 };
 
 export function contextReducer(
@@ -31,6 +32,12 @@ export function contextReducer(
 			return {
 				...state,
 				isSettingsVisible: action.value ?? !state.isSettingsVisible,
+			};
+		case "toggle-vault":
+			return {
+				...state,
+				isVaultVisible:
+					action.value ?? (state.isVaultVisible ? undefined : {}),
 			};
 		case "edit-instance":
 			return { ...state, editorInstance: action.instance };

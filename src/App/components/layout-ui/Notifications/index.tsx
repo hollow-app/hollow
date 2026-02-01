@@ -4,7 +4,7 @@ import {
 	SquareArrowOutUpRightIcon,
 	XIcon,
 } from "lucide-solid";
-import MyIcon from "@components/ui/MyIcon";
+import MyIcon from "@app/components/ui/MyIcon";
 import { useNotifications, NotificationsProps } from "./hooks";
 
 const Notifications: Component<NotificationsProps> = (props) => {

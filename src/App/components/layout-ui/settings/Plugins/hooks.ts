@@ -42,10 +42,11 @@ export interface PluginsHook {
 	actions: PluginsActions;
 }
 
-import { HandType } from "@type/HandType";
+import { HandType } from "@app/type/HandType";
 import { useStore } from "@store";
-import { getHand } from "@managers/Module/effects";
+import { getHand } from "@app/managers/Module/effects";
 import { add_plugin, reload } from "@rust";
+import { EventEmitterSource } from "@app/utils/manipulation/strings";
 
 // ... (imports)
 
@@ -90,32 +91,43 @@ export const usePlugins = (): PluginsHook => {
 		if (actionState === "uninstall") {
 			el.classList.add("debounce");
 
-			const closeAlert = hollow.events.emit("alert", {
+			const result = hollow.events.emit("alert", {
 				message: `Uninstalling ${name}`,
 				type: "loading",
 			});
+			const closeAlert = EventEmitterSource("source", result);
+			try {
+				const success = await dispatch({
+					domain: "module",
+					type: "uninstall-module",
+					name: name.toLowerCase(),
+				});
 
-			const success = await dispatch({
-				domain: "module",
-				type: "uninstall-module",
-				name: name.toLowerCase(),
-			});
+				await delay();
+				el.classList.remove("debounce");
+				await removeIcon();
+				closeAlert({
+					type: "success",
+					title: "Uninstalled successfully",
+				});
 
-			await delay();
-			el.classList.remove("debounce");
-			await removeIcon();
-			closeAlert();
-
-			if (success) {
-				setSelectedPlugin((p) =>
-					p
-						? {
-								...p,
-								installed: false,
-								action_state: "install",
-							}
-						: null,
-				);
+				if (success) {
+					setSelectedPlugin((p) =>
+						p
+							? {
+									...p,
+									installed: false,
+									action_state: "install",
+								}
+							: null,
+					);
+				}
+			} catch (e) {
+				closeAlert({
+					title: "Oops!",
+					type: "error",
+					message: "Something went wrong. Please try again.",
+				});
 			}
 
 			return;
@@ -141,62 +153,73 @@ export const usePlugins = (): PluginsHook => {
 
 		el.classList.add("debounce");
 
-		const closeAlert = hollow.events.emit("alert", {
+		const result = hollow.events.emit("alert", {
 			message: `${isUpdate ? "Updating" : "Installing"} ${name}`,
 			type: "loading",
 		});
+		const closeAlert = EventEmitterSource("source", result);
+		try {
+			// Install Logic
+			let success = false;
+			const request = await add_plugin({
+				name,
+				repo: plugin.repo,
+			});
+			if (request.state) {
+				const manifest = JSON.parse(request.manifest);
+				const newTool: HandType = {
+					...manifest,
+					icon: request.icon,
+					name: manifest.name.toLowerCase(),
+					cards: [],
+					signed: true,
+				};
 
-		// Install Logic
-		let success = false;
-		const request = await add_plugin({
-			name,
-			repo: plugin.repo,
-		});
-		if (request.state) {
-			const manifest = JSON.parse(request.manifest);
-			const newTool: HandType = {
-				...manifest,
-				icon: request.icon,
-				name: manifest.name.toLowerCase(),
-				cards: [],
-				signed: true,
-			};
+				if (isUpdate) {
+					const currentTool = getHand()[name.toLowerCase()];
+					if (currentTool) {
+						newTool.cards = currentTool.cards;
+					}
+				}
 
-			if (isUpdate) {
-				const currentTool = getHand()[name.toLowerCase()];
-				if (currentTool) {
-					newTool.cards = currentTool.cards;
+				success = await dispatch({
+					domain: "module",
+					type: "install-module",
+					name: name.toLowerCase(),
+					repo: plugin.repo,
+					isUpdate,
+				});
+
+				if (isUpdate) {
+					await delay();
+					reload();
 				}
 			}
 
-			success = await dispatch({
-				domain: "module",
-				type: "install-module",
-				name: name.toLowerCase(),
-				repo: plugin.repo,
-				isUpdate,
+			await delay();
+			el.classList.remove("debounce");
+			closeAlert({
+				type: "success",
+				title: "Installed successfully",
 			});
 
-			if (isUpdate) {
-				await delay();
-				reload();
+			if (success) {
+				setSelectedPlugin((p) =>
+					p
+						? {
+								...p,
+								installed: true,
+								action_state: "uninstall",
+							}
+						: null,
+				);
 			}
-		}
-
-		await delay();
-		el.classList.remove("debounce");
-		closeAlert();
-
-		if (success) {
-			setSelectedPlugin((p) =>
-				p
-					? {
-							...p,
-							installed: true,
-							action_state: "uninstall",
-						}
-					: null,
-			);
+		} catch (e) {
+			closeAlert({
+				title: "Oops!",
+				type: "error",
+				message: "Something went wrong. Please try again.",
+			});
 		}
 	};
 

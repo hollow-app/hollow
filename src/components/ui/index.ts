@@ -1,4 +1,4 @@
-export { default as Confirm } from "../Confirm";
+export { default as Confirm } from "../../overlays/Confirm";
 export * from "./AlertTrigger";
 export * from "./Slider";
 export * from "./Kbd";
@@ -15,3 +15,9 @@ export * from "./RadioGroup";
 export * from "./Pagination";
 export * from "./NumberInput";
 export * from "./Segmented";
+export * from "./ColorButton";
+export * from "./EmojiButton";
+export * from "./NumberInput";
+export * from "./Empty";
+export * from "./Dialog";
+export * from "./GradientEffect";

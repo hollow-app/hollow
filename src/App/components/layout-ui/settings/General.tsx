@@ -8,6 +8,8 @@ import {
 	setSelectRealmOnStartup,
 } from "@shared/managers/Realm";
 import { checkUpdate } from "../../../../lib/app";
+import { Button, Dialog, DialogContent, DialogTrigger } from "@ui";
+import Authentication from "../Authentication";
 
 export default function General() {
 	const [version] = createResource(() => get_version());
@@ -40,6 +42,24 @@ export default function General() {
 				>
 					<HeartHandshakeIcon class="my-auto size-6" />
 				</a>
+			</div>
+			<hr class="bg-secondary-10 h-px w-full border-0" />
+			<div class="flex items-center justify-between">
+				<div>
+					<h1 class="text-lg font-bold">Account</h1>
+
+					<p class="text-sm text-neutral-600 dark:text-neutral-400">
+						Sign in
+					</p>
+				</div>
+				<Dialog>
+					<DialogTrigger>
+						<Button>Sign-Up</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<Authentication />
+					</DialogContent>
+				</Dialog>
 			</div>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
 			<div class="flex items-center justify-between">

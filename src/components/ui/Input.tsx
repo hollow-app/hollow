@@ -7,11 +7,21 @@ interface Props extends JSX.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export function Input(props: Props) {
+	let input!: HTMLInputElement;
 	const [local, rest] = splitProps(props, ["icon", "side", "class", "style"]);
 
+	const togglePassword = (
+		e: Event & { currentTarget: HTMLButtonElement },
+	) => {
+		const isPassword = input.getAttribute("type") === "password";
+		input.setAttribute("type", isPassword ? "text" : "password");
+		e.currentTarget.classList.toggle("text-secondary-30");
+	};
+
 	return (
-		<div class="relative h-fit w-full">
+		<div class="relative flex h-fit w-full items-center">
 			<input
+				ref={input}
 				class={local.class + " input"}
 				style={{
 					...((local.style ?? {}) as JSX.CSSProperties),
@@ -32,6 +42,18 @@ export function Input(props: Props) {
 						[local.side ?? "left"]: "calc(var(--spacing) * 2.5)",
 					}}
 				/>
+			</Show>
+			<Show when={rest.type === "password"}>
+				<button
+					class="text-secondary-30 absolute right-1 rounded-md p-1 outline-none hover:scale-105 active:scale-95"
+					onclick={togglePassword}
+				>
+					<MyIcon
+						name={"eye"}
+						data-visible="some"
+						class="size-5 transition-colors"
+					/>
+				</button>
 			</Show>
 		</div>
 	);

@@ -189,7 +189,7 @@ export default function Settings(props: SettingsProps) {
 							Close
 						</button>
 					</div>
-					<div class="relative h-full flex-1 overflow-hidden overflow-y-scroll">
+					<div class="bg-secondary relative h-full flex-1 overflow-hidden overflow-y-scroll">
 						<Presence exitBeforeEnter>
 							<Show when={selected() === 0}>
 								<Motion.div

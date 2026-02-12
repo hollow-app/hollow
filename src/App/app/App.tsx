@@ -1,19 +1,11 @@
-import {
-	Suspense,
-	createSignal,
-	createEffect,
-	lazy,
-	Show,
-	onMount,
-} from "solid-js";
+import { Suspense, createSignal, lazy, Show, onMount } from "solid-js";
 import Loading from "@app/components/ui/Loading";
-import { useStore } from "@shared/store";
 import { postRealmSelection } from "../../lib/app";
 import { getCurrentRealm } from "@shared/managers/Realm";
 
 const Container = lazy(() => import("./Container"));
-const Popups = lazy(() => import("@app/components/layout-ui/popups/Popups"));
-const Alerts = lazy(() => import("@app/components/layout-ui/popups/Alerts"));
+const Popups = lazy(() => import("@overlays/Popups"));
+const Alerts = lazy(() => import("@overlays/Alerts"));
 
 export default function App() {
 	const [ready, setReady] = createSignal(false);

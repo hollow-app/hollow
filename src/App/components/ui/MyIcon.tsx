@@ -38,8 +38,16 @@ const HollowIcons = {
 	// "bell-ringing": () => import("@assets/icons/bell-ringing.svg"),
 	// bell: () => import("@assets/icons/bell.svg"),
 	check: () => import("@assets/icons/check.svg"),
+	"user-add": () => import("@assets/icons/user-add.svg"),
 	user: () => import("@assets/icons/user.svg"),
 	search: () => import("@assets/icons/search.svg"),
+	username: () => import("@assets/icons/username.svg"),
+	discord: () => import("@assets/icons/discord.svg"),
+	password: () => import("@assets/icons/password.svg"),
+	password2: () => import("@assets/icons/password2.svg"),
+	"eye-off": () => import("@assets/icons/eye-off.svg"),
+	eye: () => import("@assets/icons/eye.svg"),
+	unlock: () => import("@assets/icons/unlock.svg"),
 	// "check-square-outline": () =>
 	// 	import("@assets/icons/check-square-outline.svg"),
 	// "check-square": () => import("@assets/icons/check-square.svg"),
@@ -89,6 +97,8 @@ const HollowIcons = {
 	"broom-outline": () => import("@assets/icons/broom-outline.svg"),
 	// Files subdirectory
 	"files/file-check": () => import("@assets/icons/files/file-check.svg"),
+	"files/upload-outline": () =>
+		import("@assets/icons/files/upload-outline.svg"),
 	// "files/file-description": () =>
 	// 	import("@assets/icons/files/file-description.svg"),
 	"files/file-pen": () => import("@assets/icons/files/file-pen.svg"),

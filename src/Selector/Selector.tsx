@@ -1,4 +1,3 @@
-import ColorPick from "@app/components/dynamic/ColorPick";
 import { formatDate, timeDifference } from "@app/utils/manipulation/strings";
 import { Realm } from "@app/type/Realm";
 import HollowIcon from "@assets/logo.svg";
@@ -11,7 +10,7 @@ import MyIcon from "@app/components/ui/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
 import Segmented from "@component/ui/Segmented";
 import { useStore } from "@shared/store";
-import { Combobox } from "@ui";
+import { ColorButton, Combobox } from "@ui";
 
 const themes = {
 	dark: [
@@ -430,7 +429,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 									Primary Color
 								</label>
 								<div class="flex items-center gap-3">
-									<ColorPick
+									<ColorButton
 										color={primary()}
 										setColor={setPrimary}
 										direct
@@ -442,7 +441,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 									Secondary Color
 								</label>
 								<div class="flex items-center gap-3">
-									<ColorPick
+									<ColorButton
 										color={secondary()}
 										setColor={setSecondary}
 										direct

@@ -5,7 +5,7 @@ import { Motion, Presence } from "solid-motionone";
 interface Props
 	extends Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, "onclick"> {
 	onclick?: (e: MouseEvent) => void | Promise<void>;
-	variant?: "primary" | "secondary" | "destructive";
+	variant?: "primary" | "secondary" | "empty" | "destructive";
 	leftIcon?: MyIconsType;
 	rightIcon?: MyIconsType;
 	icon?: boolean;
@@ -45,7 +45,7 @@ export function Button(props: Props) {
 				"button relative flex items-center justify-center gap-3 overflow-hidden",
 				local.icon ? "icon" : "",
 				local.class,
-				local.variant ?? "",
+				local.variant ?? "secondary",
 			].join(" ")}
 			onclick={handleClick}
 			{...rest}
@@ -88,11 +88,20 @@ export function Button(props: Props) {
 				class="flex items-center gap-2"
 			>
 				<Show when={local.leftIcon}>
-					<MyIcon name={local.leftIcon} />
+					<MyIcon
+						name={local.leftIcon}
+						class="size-6"
+						style={{
+							color: "var(--icon-color, var(--color-secondary-30))",
+						}}
+					/>
 				</Show>
 				{local.children}
 				<Show when={local.rightIcon}>
-					<MyIcon name={local.rightIcon} />
+					<MyIcon
+						name={local.rightIcon}
+						class="text-secondary-30 size-6"
+					/>
 				</Show>
 			</Motion.div>
 		</button>

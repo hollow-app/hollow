@@ -1,5 +1,3 @@
-import ColorPick from "@app/components/dynamic/ColorPick";
-import NumberInput from "@component/ui/NumberInput";
 import {
 	createMemo,
 	createResource,
@@ -14,7 +12,7 @@ import useTags from "@app/hooks/useTags";
 import { hollow } from "../../../../hollow";
 import Loading from "@app/components/ui/Loading";
 import { CircleFadingPlusIcon } from "lucide-solid";
-import { Combobox, Tag } from "@ui";
+import { Combobox, Tag, ColorButton, EmojiButton, NumberInput } from "@ui";
 import useGrid from "@app/hooks/useGrid";
 import { readableColor } from "polished";
 import { useStore } from "@store";
@@ -177,7 +175,7 @@ function ColorSettings() {
 								elements in the app.
 							</p>
 						</div>
-						<ColorPick
+						<ColorButton
 							color={primaryColor()}
 							setColor={setPrimaryColor}
 						/>
@@ -192,7 +190,7 @@ function ColorSettings() {
 								Secondary color used for the background theme.
 							</p>
 						</div>
-						<ColorPick
+						<ColorButton
 							color={secondaryColor()}
 							setColor={setSecondaryColor}
 						/>

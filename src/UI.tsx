@@ -1,4 +1,3 @@
-import ColorPick from "@app/components/dynamic/ColorPick";
 import FilterButton from "@app/components/ui/FilterButton";
 import { useStore } from "@shared/store";
 import {
@@ -20,6 +19,8 @@ import {
 	RadioButton,
 	RadioGroup,
 	RadioGroupItem,
+	ColorButton,
+	Empty,
 } from "@ui";
 import { createMemo, For } from "solid-js";
 import { hollow } from "./hollow";
@@ -57,8 +58,8 @@ export default function UI() {
 	return (
 		<div class="bg-secondary pointer-events-auto absolute inset-0 z-10 space-y-5 p-10">
 			<div class="flex gap-5">
-				<ColorPick color={primary()} setColor={setPrimary} />
-				<ColorPick color={secondary()} setColor={setSecondary} />
+				<ColorButton color={primary()} setColor={setPrimary} />
+				<ColorButton color={secondary()} setColor={setSecondary} />
 			</div>
 			<div class="flex flex-wrap gap-5">
 				<div class="space-y-5">
@@ -201,6 +202,17 @@ export default function UI() {
 					>
 						<Button variant="secondary">Alert</Button>
 					</AlertTrigger>
+					<Empty
+						current={
+							"https://i.pinimg.com/1200x/8b/d5/31/8bd531260c06a3bfcd70d24f94c783ff.jpg"
+						}
+						onChange={() => {}}
+						icon="comet"
+						title={"No Projects Yet"}
+						descriptions={
+							"You haven't created any projects yet. Get started by creating your first project."
+						}
+					/>
 				</div>
 				<div></div>
 			</div>

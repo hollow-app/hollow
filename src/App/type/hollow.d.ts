@@ -8,9 +8,14 @@ export interface PluginResult {
 	error?: Error;
 	data?: unknown;
 }
-
-// Represents a plugin with lifecycle methods that interact with cards and the app.
 export interface IPlugin {
+	capabilities: PluginFeature[];
+}
+export type PluginFeature =
+	| { kind: "module"; handler: ToolCapability }
+	| { kind: "panel"; handler: PanelCapability };
+// Represents a plugin with lifecycle methods that interact with cards and the app.
+export interface ModuleCapability {
 	/**
 	 * Called when a card is created.
 	 * @param name - The name of the card being created.

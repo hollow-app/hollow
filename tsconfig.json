@@ -47,6 +47,9 @@
       ],
       "@component/*":[
 	      "components/*"
+      ],
+      "@overlays/*":[
+	      "overlays/*"
       ] 
     }
   },

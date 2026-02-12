@@ -1,4 +1,4 @@
-import "./App/styles/index.css";
+import "@styles/index.css";
 import { render } from "solid-js/web";
 import { StoreProvider } from "@shared/store";
 import { Show } from "solid-js";

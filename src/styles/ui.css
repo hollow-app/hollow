@@ -148,9 +148,9 @@
 
 .button.empty {
 	--bg-color: transparent;
-	--border-color: var(--color-empty-10, gray);
-	--hover-bg-color: var(--color-empty-05, rgba(0, 0, 0, 0.05));
-	--hover-border-color: var(--color-empty, gray);
+	--border-color: gray;
+	--hover-bg-color: var(--border-color, rgba(0, 0, 0, 0.05));
+	/* --hover-border-color: var(--bg-color, gray); */
 	--text-color: var(--color-empty-20, black);
 	color: var(--color-secondary-foreground);
 	border-color: var(--border-color);
@@ -158,7 +158,7 @@
 
 	&:not(:disabled):hover {
 		background-color: var(--hover-bg-color);
-		border-color: var(--hover-border-color);
+		/* border-color: var(--hover-border-color); */
 	}
 
 	&:not(:disabled):active {

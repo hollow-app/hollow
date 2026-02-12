@@ -8,7 +8,7 @@ type NumberInputProps = {
 	min?: number;
 	direct?: boolean;
 };
-export default function NumberInput(props: NumberInputProps) {
+export function NumberInput(props: NumberInputProps) {
 	const [myValue, setMyValue] = createSignal(props.value);
 	const max = props.max ?? 1000;
 	const min = props.min ?? 0;

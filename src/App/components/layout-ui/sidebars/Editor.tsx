@@ -1,5 +1,3 @@
-import ColorPick from "@app/components/dynamic/ColorPick";
-import NumberInput from "@component/ui/NumberInput";
 import { TentTreeIcon } from "lucide-solid";
 import {
 	createMemo,
@@ -14,7 +12,7 @@ import { hollow } from "../../../../hollow";
 import { CardType } from "@app/type/hollow";
 import { useStore } from "@shared/store";
 import { getHand } from "@app/managers/Module/effects";
-import { Combobox } from "@ui";
+import { Combobox, ColorButton, NumberInput } from "@ui";
 
 interface SelectedInstance {
 	module: string;
@@ -172,7 +170,7 @@ export default function Editor() {
 								<div class="flex items-center justify-between">
 									<h3>Border</h3>
 									<div class="flex w-[60%] items-center justify-end gap-1">
-										<ColorPick
+										<ColorButton
 											color={
 												instanceStyle()["border-color"]
 											}

@@ -29,7 +29,7 @@ export const DropdownContent: ParentComponent<Props> = (props) => {
 						exit: { opacity: 0 },
 						transition: { duration: 0.2 },
 					}}
-					class="border-secondary-10 popup-shadow overflow-hidden rounded-md border bg-white text-sm dark:bg-neutral-900"
+					class="border-secondary-10 popup-shadow w-fit overflow-hidden rounded-md border bg-white text-sm dark:bg-neutral-900"
 				>
 					<div
 						style={

@@ -1,12 +1,11 @@
 import { CardType } from "@app/type/hollow";
-import { HandType } from "@app/type/HandType";
 import { Grid2X2PlusIcon, Grid2x2XIcon, StarIcon } from "lucide-solid";
 import { Accessor, createSignal, Setter, Show } from "solid-js";
-import EmojiPick from "../dynamic/EmojiPick";
 import { timeDifference } from "@app/utils/manipulation/strings";
 import { useStore } from "@shared/store";
 import ToolIcon from "./ToolIcon";
 import MyIcon from "./MyIcon";
+import { EmojiButton } from "@ui";
 
 export default function CardConfig({
 	myCard,
@@ -75,7 +74,7 @@ export default function CardConfig({
 
 					<div class="flex items-center gap-3">
 						<div class="border-secondary-10 hover:border-secondary-20 size-10 rounded border p-1 text-center text-2xl transition-colors">
-							<EmojiPick
+							<EmojiButton
 								emo={myCard.data.emoji}
 								emoChanged={onEmojiChanged}
 							/>

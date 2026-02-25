@@ -39,7 +39,7 @@ export default function Account() {
 	};
 	const submitForm = (save: (data: any) => void, id?: string) => {
 		const target = id
-			? state.account.meta.find((item) => item.id === id)
+			? state.account.character.meta.find((item) => item.id === id)
 			: null;
 		const form: FormType = {
 			id: id ?? crypto.randomUUID(),
@@ -173,11 +173,11 @@ export default function Account() {
 					<div class="w-[50%]">
 						<input
 							class="input"
-							value={state.account.name}
+							value={state.account.character.identity.name}
 							onChange={(e) => {
 								dispatch({
 									domain: "account",
-									type: "update-field",
+									type: "update-identity",
 									key: "name",
 									value: e.currentTarget.value,
 								});
@@ -198,11 +198,11 @@ export default function Account() {
 					<div class="w-[50%]">
 						<textarea
 							class="input resize-none"
-							value={state.account.bio}
+							value={state.account.character.identity.bio}
 							onchange={(e) =>
 								dispatch({
 									domain: "account",
-									type: "update-field",
+									type: "update-identity",
 									key: "bio",
 									value: e.currentTarget.value,
 								})
@@ -232,7 +232,7 @@ export default function Account() {
 						{/* 	onSelect={(t) => */}
 						{/* 		dispatch({ */}
 						{/* 			domain: "account", */}
-						{/* 			type: "update-field", */}
+						{/* 			type: "update-identity", */}
 						{/* 			key: "title", */}
 						{/* 			value: t, */}
 						{/* 		}) */}
@@ -240,16 +240,19 @@ export default function Account() {
 						{/* 	value={state.account.title} */}
 						{/* /> */}
 						<Combobox
-							items={state.account.titles.map((i) => i.title)}
+							items={state.account.character.titles.map(
+								(i) => i.label,
+							)}
 							onselect={(t) =>
 								dispatch({
 									domain: "account",
-									type: "update-field",
-									key: "title",
-									value: t,
+									type: "update-title",
+									id: state.account.character.titles.find(
+										(i) => i.label === t,
+									).id,
 								})
 							}
-							value={state.account.title}
+							value={state.account.character.title.label}
 						/>
 					</div>
 				</div>
@@ -270,7 +273,7 @@ export default function Account() {
 						</button>
 					</div>
 					<div class="bg-secondary-10/60 grid w-full grid-cols-4 gap-5 rounded-lg p-4">
-						<For each={state.account.meta}>
+						<For each={state.account.character.meta}>
 							{(item) => (
 								<div class="bg-secondary-05 border-secondary-20 group rounded border-1 p-2.5">
 									<div class="flex items-start justify-between gap-2">

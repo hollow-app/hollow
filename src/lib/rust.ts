@@ -10,6 +10,7 @@ import {
 } from "@app/type/hollow";
 import { hollow } from "../hollow";
 import { importFileUrl } from "../App/managers/Vault";
+import { User } from "@app/type/User";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
 
@@ -43,7 +44,9 @@ type startProps = {
 export async function dbg(): Promise<any> {
 	return await invoke("dbg");
 }
-
+export async function check_stronghold(): Promise<string> {
+	return await invoke("check_stronghold");
+}
 export async function start_realm({ location }: startProps) {
 	return await invoke("start_realm", {
 		location,
@@ -161,18 +164,7 @@ export async function load_plugin({
 		const PluginClass = module.exports.default;
 		const instance: IPlugin = new PluginClass(hollow.events, toolEvent);
 		return {
-			onCreate: (card: CardType): Promise<PluginResult> => {
-				return instance.onCreate(card);
-			},
-			onDelete: (card: CardType): Promise<PluginResult> => {
-				return instance.onDelete(card);
-			},
-			onLoad: (card_info: CardType): Promise<PluginResult> => {
-				return instance.onLoad(card_info);
-			},
-			onUnload: (id: string): Promise<PluginResult> => {
-				return instance.onUnload(id);
-			},
+			capabilities: instance.capabilities,
 		};
 	}
 	return null;
@@ -219,4 +211,20 @@ export function maximize_window() {
 }
 export function minimize_window() {
 	getCurrentWindow().minimize();
+}
+// auth
+export async function is_signed_in(): Promise<{
+	state: boolean;
+	type: "online" | "offline";
+}> {
+	return await invoke("is_signed_in");
+}
+export async function sign_out() {
+	return await invoke("sign_out");
+}
+export async function sign_in() {
+	return await invoke("signin");
+}
+export async function get_user(): Promise<User> {
+	return await invoke("get_user");
 }

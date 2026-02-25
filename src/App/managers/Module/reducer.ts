@@ -15,11 +15,11 @@ export function moduleReducer(
 	switch (action.type) {
 		case "set-instances":
 			return { ...state, instances: action.instances };
-		case "uninstall-module":
+		case "remove-modules":
 			return {
 				...state,
 				instances: state.instances.filter(
-					(i) => i.data.tool !== action.name,
+					(i) => !action.modules.includes(i.data.name),
 				),
 			};
 		case "add-instance": {

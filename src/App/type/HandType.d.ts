@@ -8,8 +8,8 @@ export type HandType = {
 	 */
 	name: string;
 	description: string;
-	author: string;
-	authorUrl: string;
+	author?: string;
+	authorUrl?: string;
 	cards: CardType[];
 	signed?: boolean;
 };

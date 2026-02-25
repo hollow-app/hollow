@@ -3,6 +3,7 @@ import {
 	HollowEvent,
 	IPlugin,
 	IStore,
+	PluginCapability,
 	PluginResult,
 	ToolApi,
 	ToolEvents,
@@ -25,9 +26,28 @@ export class EmbedMain implements IPlugin {
 	constructor(_, toolEvent: HollowEvent<ToolEvents>) {
 		this.toolEvents = toolEvent;
 		this.store = toolEvent.getData("config");
+		this.capabilities = [
+			{
+				kind: "module",
+				handler: {
+					onCreate: this.onCreate.bind(this),
+					onDelete: this.onDelete.bind(this),
+					onLoad: this.onLoad.bind(this),
+					onUnload: this.onUnload.bind(this),
+				},
+				meta: {
+					name: "embed",
+					version: "1.0.0",
+					description:
+						"A tool for embedding external content, including websites, videos, and widgets.",
+				},
+			},
+		] as any;
 	}
 
-	public async onCreate(card: CardType): Promise<PluginResult> {
+	public readonly capabilities: PluginCapability[];
+
+	private async onCreate(card: CardType): Promise<PluginResult> {
 		try {
 			this.store.set(card.id, { src: "" });
 			return { status: true };
@@ -40,7 +60,7 @@ export class EmbedMain implements IPlugin {
 		}
 	}
 
-	public async onDelete(card: CardType): Promise<PluginResult> {
+	private async onDelete(card: CardType): Promise<PluginResult> {
 		try {
 			this.store.remove(card.id);
 			return { status: true };
@@ -53,7 +73,7 @@ export class EmbedMain implements IPlugin {
 		}
 	}
 
-	public async onLoad(card: CardType): Promise<PluginResult> {
+	private async onLoad(card: CardType): Promise<PluginResult> {
 		try {
 			const data: EmbedData = this.store.get(card.id);
 			const targetContainer = document.getElementById(card.id);
@@ -92,7 +112,7 @@ export class EmbedMain implements IPlugin {
 		}
 	}
 
-	public async onUnload(id: string): Promise<PluginResult> {
+	private async onUnload(id: string): Promise<PluginResult> {
 		try {
 			const dispose = this.roots.get(id);
 			if (dispose) {

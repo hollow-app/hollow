@@ -1,23 +1,41 @@
-import { Character } from "@app/type/Character";
+import { Achievement, Character, Title } from "@app/type/Character";
+import { User } from "@app/type/User";
 
-export type CharacterState = Character;
+type Connection = { state: boolean; type: "offline" | "online" };
+export type AccountState = {
+	user: Omit<User, "character">;
+	character: Character;
+	connection: Connection;
+};
 
 export type Events = { domain: "account" } & (
 	| {
+			type: "set-user";
+			user: User;
+	  }
+	| {
+			type: "set-connection";
+			connection: Connection;
+	  }
+	| {
 			type: "add-achievement";
-			achievement: string;
+			achievement: Achievement;
 	  }
 	| {
 			type: "add-xp";
 			amount: number;
 	  }
 	| {
-			type: "level-up";
-			amount?: number;
+			type: "add-title";
+			title: Title;
 	  }
 	| {
-			type: "update-field";
-			key: keyof Character;
+			type: "update-title";
+			id: string;
+	  }
+	| {
+			type: "update-identity";
+			key: keyof Character["identity"];
 			value: any;
 	  }
 	| {

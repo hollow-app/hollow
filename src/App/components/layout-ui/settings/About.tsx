@@ -1,4 +1,5 @@
 import { For } from "solid-js";
+import SettingsPanel from "./SettingsPanel";
 
 type LinksType = {
 	title: string;
@@ -43,33 +44,28 @@ const links: LinksType[] = [
 ];
 export default function About() {
 	return (
-		<div class="h-fit w-full p-10">
-			<h1 class="mb-5 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-				About
-			</h1>
-			<div class="w-full space-y-5 p-5">
-				<For each={links}>
-					{(link) => (
-						<div class="flex justify-between">
-							<div>
-								<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-									{link.title}
-								</h2>
-								<p class="text-sm text-neutral-600 dark:text-neutral-400">
-									{link.description}
-								</p>
-							</div>
-							<a
-								href={link.link}
-								target="_blank"
-								class="outline-none hover:text-neutral-500"
-							>
-								{link.label}
-							</a>
+		<SettingsPanel label="About">
+			<For each={links}>
+				{(link) => (
+					<div class="flex justify-between">
+						<div>
+							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
+								{link.title}
+							</h2>
+							<p class="text-sm text-neutral-600 dark:text-neutral-400">
+								{link.description}
+							</p>
 						</div>
-					)}
-				</For>
-			</div>
-		</div>
+						<a
+							href={link.link}
+							target="_blank"
+							class="outline-none hover:text-neutral-500"
+						>
+							{link.label}
+						</a>
+					</div>
+				)}
+			</For>
+		</SettingsPanel>
 	);
 }

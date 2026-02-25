@@ -4,19 +4,21 @@ import { createMemo, For, on, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
 import { useStore } from "@store";
+import Expand from "@app/components/layout-ui/sidebars/Expand";
+import CharacterSidebar from "@app/components/layout-ui/sidebars/Character";
+import Notifications from "@app/components/layout-ui/Notifications";
+import Editor from "@app/components/layout-ui/sidebars/Editor";
 
 type SidepanelProps = {
 	type: PanelType;
 	width: string;
 	padding: string;
 };
-
 // const side = ["left", "right"];
 export default function Sidepanel(props: SidepanelProps) {
 	const { state } = useStore();
 	const layout = createMemo(() => state.layout[props.type]);
 	// const opp = side[side.indexOf(props.type) ^ 1];
-
 	return (
 		<Presence exitBeforeEnter>
 			<For each={layout().panels}>
@@ -53,19 +55,28 @@ export default function Sidepanel(props: SidepanelProps) {
 									"min-width": `calc(${props.width} - ${state.context.isFocus ? "0px" : "1px"})`,
 								}}
 							>
-								<Dynamic
-									component={
-										getLayoutPanels()[props.type][panel] ??
-										PanelWrapper({
-											id: panel,
-										})
-									}
-									{...{
-										hide: () =>
-											selectPanel(props.type, panel),
-										type: props.type,
-									}}
-								/>
+								{(() => {
+									const Comp =
+										getLayoutPanels()[props.type][panel];
+
+									return (
+										<Show when={!Comp} fallback={<Comp />}>
+											<Dynamic
+												component={PanelWrapper({
+													id: panel,
+												})}
+												{...{
+													hide: () =>
+														selectPanel(
+															props.type,
+															panel,
+														),
+													type: props.type,
+												}}
+											/>
+										</Show>
+									);
+								})()}
 							</div>
 							<Show when={!state.context.isFocus}>
 								<hr

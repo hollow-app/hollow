@@ -18,37 +18,35 @@ const Container: Component<ContainerProps> = (props) => {
 	const { state, actions } = useContainer();
 
 	return (
-		<StoreProvider>
-			<div
-				class="flex h-full w-full flex-col px-2"
-				style={{ background: "var(--back)" }}
-			>
-				<div class="relative flex h-full flex-1">
-					<SideBar />
-					<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
-						<Navbar />
-						<div class="relative flex min-h-0 w-full flex-1 pb-2">
-							<Sidepanel
-								type="left"
-								width="calc(var(--spacing) * 104)"
-								padding="0 calc(var(--spacing) * 2) 0 0"
-							/>
-							<Canvas />
-							<Sidepanel
-								type="right"
-								width="calc(var(--spacing) * 104)"
-								padding="0 0 0 calc(var(--spacing) * 2)"
-							/>
-						</div>
+		<div
+			class="flex h-full w-full flex-col px-2"
+			style={{ background: "var(--back)" }}
+		>
+			<div class="relative flex h-full flex-1">
+				<SideBar />
+				<div class="relative flex max-h-full min-w-0 flex-1 flex-col">
+					<Navbar />
+					<div class="relative flex min-h-0 w-full flex-1 pb-2">
+						<Sidepanel
+							type="left"
+							width="calc(var(--spacing) * 104)"
+							padding="0 calc(var(--spacing) * 2) 0 0"
+						/>
+						<Canvas />
+						<Sidepanel
+							type="right"
+							width="calc(var(--spacing) * 104)"
+							padding="0 0 0 calc(var(--spacing) * 2)"
+						/>
 					</div>
 				</div>
-				<Show when={store.state.context.isSettingsVisible}>
-					<Suspense>
-						<Settings />
-					</Suspense>
-				</Show>
 			</div>
-		</StoreProvider>
+			<Show when={store.state.context.isSettingsVisible}>
+				<Suspense>
+					<Settings />
+				</Suspense>
+			</Show>
+		</div>
 	);
 };
 

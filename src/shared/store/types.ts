@@ -1,4 +1,4 @@
-import { CharacterState } from "@app/managers/Account/types";
+import { AccountState } from "@app/managers/Account/types";
 import { GridStackOptions } from "gridstack";
 import { SettingsConfig } from "@app/managers/Settings/types";
 import { CodeThemeState } from "@app/managers/CodeTheme/types";
@@ -19,7 +19,7 @@ import { Events as RealmEvents, RealmState } from "../managers/Realm";
 
 // Root State
 export interface RootState {
-	account: CharacterState;
+	account: AccountState;
 	context: ContextState;
 	settings: SettingsConfig;
 	codeTheme: CodeThemeState;

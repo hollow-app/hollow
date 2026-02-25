@@ -23,7 +23,7 @@ import { toggleVault } from "@app/context/actions";
 
 interface SideBarButton {
 	id: string;
-	Icon: Component;
+	Icon: string | Component;
 	onClick: () => void;
 	tooltip?: string;
 	selectedCondition?: () => boolean;
@@ -136,19 +136,22 @@ export default function SideBar(props: SideBarProps) {
 					>
 						{(id) => {
 							const btn = getLayoutPanels().extra.find(
-								(i) => i.id === id,
+								(i) => i.meta.id === id,
 							);
 							if (!btn) return;
 							return (
 								<ControlButton
-									id={btn.id}
-									Icon={btn.icon}
-									tooltip={btn.tooltip}
+									id={btn.meta.id}
+									Icon={btn.meta.icon}
+									tooltip={btn.meta.tooltip}
 									selectedCondition={() =>
-										isPanelVisible(btn.type, btn.id)
+										isPanelVisible(
+											btn.meta.type,
+											btn.meta.id,
+										)
 									}
 									onClick={() =>
-										selectPanel(btn.type, btn.id)
+										selectPanel(btn.meta.type, btn.meta.id)
 									}
 								/>
 							);

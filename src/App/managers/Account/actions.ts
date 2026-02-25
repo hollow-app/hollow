@@ -1,6 +1,7 @@
-import { Events, CharacterState } from "./types";
+import { Achievement } from "@app/type/Character";
+import { Events, AccountState } from "./types";
 
-export const addAchievement = (achievement: string): Events => ({
+export const addAchievement = (achievement: Achievement): Events => ({
 	domain: "account",
 	type: "add-achievement",
 	achievement,
@@ -10,22 +11,6 @@ export const addXp = (amount: number): Events => ({
 	domain: "account",
 	type: "add-xp",
 	amount,
-});
-
-export const levelUp = (amount: number = 1): Events => ({
-	domain: "account",
-	type: "level-up",
-	amount,
-});
-
-export const updateField = <K extends keyof CharacterState>(
-	key: K,
-	value: any,
-): Events => ({
-	domain: "account",
-	type: "update-field",
-	key,
-	value,
 });
 
 export const setMeta = (props: {

@@ -1,15 +1,21 @@
-import { createResource, Suspense } from "solid-js";
-import { HeartHandshakeIcon, RefreshCwIcon } from "lucide-solid";
+import {
+	createEffect,
+	createResource,
+	createSignal,
+	Show,
+	Suspense,
+} from "solid-js";
+import { HeartHandshakeIcon, RefreshCwIcon, UserIcon } from "lucide-solid";
 import { guide } from "@app/utils/help";
 import { executeHotkey } from "@app/managers/Hotkeys";
-import { get_version } from "@rust";
+import { get_version, sign_in, sign_out } from "@rust";
 import {
 	selectRealmOnStartup,
 	setSelectRealmOnStartup,
 } from "@shared/managers/Realm";
 import { checkUpdate } from "../../../../lib/app";
-import { Button, Dialog, DialogContent, DialogTrigger } from "@ui";
-import Authentication from "../Authentication";
+import { Button } from "@ui";
+import { useStore } from "@shared/store";
 
 export default function General() {
 	const [version] = createResource(() => get_version());
@@ -42,24 +48,6 @@ export default function General() {
 				>
 					<HeartHandshakeIcon class="my-auto size-6" />
 				</a>
-			</div>
-			<hr class="bg-secondary-10 h-px w-full border-0" />
-			<div class="flex items-center justify-between">
-				<div>
-					<h1 class="text-lg font-bold">Account</h1>
-
-					<p class="text-sm text-neutral-600 dark:text-neutral-400">
-						Sign in
-					</p>
-				</div>
-				<Dialog>
-					<DialogTrigger>
-						<Button>Sign-Up</Button>
-					</DialogTrigger>
-					<DialogContent>
-						<Authentication />
-					</DialogContent>
-				</Dialog>
 			</div>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
 			<div class="flex items-center justify-between">

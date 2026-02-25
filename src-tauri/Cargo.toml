@@ -35,10 +35,15 @@ reqwest = { version = "0.12", features = ["json"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 trash = "3"
 tauri-plugin-process = "2"
+tauri-plugin-stronghold = "2"
+argon2 = "0.5"
+keyring = "2"
 
 [profile.dev]
 incremental = true
 
+[profile.dev.package.scrypt]
+opt-level = 3
 
 [profile.release]
 codegen-units = 1

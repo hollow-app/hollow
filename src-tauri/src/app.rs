@@ -2,7 +2,7 @@ use std::{path::PathBuf, sync::Mutex};
 use tauri::{command, AppHandle, Manager, State};
 use tauri_plugin_log::log::{self};
 
-use crate::utils::{create_dir_internal, get_full_path};
+use crate::utils::{create_dir_internal, get_full_path, get_or_create_password};
 
 #[derive(Default, Debug)]
 pub struct AppData {
@@ -19,7 +19,6 @@ pub fn start_realm(
         let mut app_data = state.lock().unwrap();
         app_data.realm_location = Some(location.clone());
     }
-
     let dot_dir = get_full_path(".hollow", &state)?;
     if !dot_dir.exists() {
         create_dir_internal(".hollow", &state)?;
@@ -45,4 +44,12 @@ pub fn get_version() -> String {
 #[command]
 pub fn get_platform() -> String {
     std::env::consts::OS.to_string()
+}
+
+pub fn initialize() -> Result<(), String> {
+    // TODO instead of storing this key and getting it from the stronghold
+    // we should store it in the keyring OS level that way we can make sure it's not deleted with
+    // local files.
+    let _ = get_or_create_password("identifier");
+    Ok(())
 }

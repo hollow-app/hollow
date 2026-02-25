@@ -2,6 +2,7 @@ import {
 	AppApi,
 	CardType,
 	IPlugin,
+	PluginCapability,
 	PluginResult,
 	ToolApi,
 } from "@app/type/hollow";
@@ -18,9 +19,29 @@ export class NotebookMain implements IPlugin {
 
 	constructor(_, toolEvent: ToolApi) {
 		NotebookManager.getSelf().init(toolEvent);
+		this.capabilities = [
+			{
+				meta: {
+					name: "notebook",
+					version: "1.0.0",
+					description:
+						"A digital notebook for writing notes, organizing thoughts, and keeping track of ideas.",
+				},
+				kind: "module",
+				handler: {
+					onCreate: this.onCreate.bind(this),
+					onDelete: this.onDelete.bind(this),
+					onLoad: this.onLoad.bind(this),
+					onUnload: this.onUnload.bind(this),
+				},
+
+			},
+		] as PluginCapability[];
 	}
 
-	public async onCreate(card: CardType): Promise<PluginResult> {
+	public readonly capabilities: PluginCapability[];
+
+	private async onCreate(card: CardType): Promise<PluginResult> {
 		try {
 			const book: NotebookType = {
 				id: card.id,
@@ -39,7 +60,7 @@ export class NotebookMain implements IPlugin {
 		}
 	}
 
-	public async onDelete(card: CardType): Promise<PluginResult> {
+	private async onDelete(card: CardType): Promise<PluginResult> {
 		try {
 			NotebookManager.getSelf().deleteNotebook(card.id);
 			return { status: true };
@@ -52,7 +73,7 @@ export class NotebookMain implements IPlugin {
 		}
 	}
 
-	public async onLoad(card: CardType): Promise<PluginResult> {
+	private async onLoad(card: CardType): Promise<PluginResult> {
 		try {
 			const targetContainer = document.getElementById(card.id);
 			if (!targetContainer) {
@@ -88,7 +109,7 @@ export class NotebookMain implements IPlugin {
 		}
 	}
 
-	public async onUnload(id: string): Promise<PluginResult> {
+	private async onUnload(id: string): Promise<PluginResult> {
 		try {
 			const dispose = this.roots.get(id);
 			if (dispose) {

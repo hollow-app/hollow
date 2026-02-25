@@ -3,11 +3,12 @@ import { hollow } from "../../../../../hollow";
 import { Character } from "@app/type/Character";
 import { useStore } from "@store";
 import { toggleVault } from "@app/context/actions";
+import { AccountState } from "@app/managers/Account";
 
 export interface CharacterProps {}
 
 export interface CharacterState {
-	character: Accessor<Character | null>;
+	account: Accessor<AccountState | null>;
 }
 
 export interface CharacterActions {
@@ -21,13 +22,13 @@ export interface CharacterHook {
 
 export const useCharacter = (): CharacterHook => {
 	const { state, dispatch } = useStore();
-	const character = createMemo(() => state.account);
+	const account = createMemo(() => state.account);
 
 	const import_image = async (key: "banner" | "avatar") => {
 		toggleVault((image: string) => {
 			dispatch({
 				domain: "account",
-				type: "update-field",
+				type: "update-identity",
 				key,
 				value: image,
 			});
@@ -36,7 +37,7 @@ export const useCharacter = (): CharacterHook => {
 
 	return {
 		state: {
-			character,
+			account,
 		},
 		actions: {
 			import_image,

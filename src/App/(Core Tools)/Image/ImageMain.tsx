@@ -2,7 +2,7 @@ import {
 	CardType,
 	IPlugin,
 	IStore,
-	PluginFeature,
+	PluginCapability,
 	PluginResult,
 	ToolApi,
 } from "@app/type/hollow";
@@ -18,7 +18,7 @@ export class ImageMain implements IPlugin {
 	private readonly toolEvents: ToolApi;
 	private readonly store: IStore;
 
-	public readonly capabilities: PluginFeature[];
+	public readonly capabilities: PluginCapability[];
 
 	constructor(_: unknown, toolEvent: ToolApi) {
 		this.toolEvents = toolEvent;
@@ -26,6 +26,12 @@ export class ImageMain implements IPlugin {
 
 		this.capabilities = [
 			{
+				meta: {
+					name: "image",
+					version: "1.0.0",
+					description:
+						"An image management tool for viewing, organizing, and editing pictures.",
+				},
 				kind: "module",
 				handler: {
 					onCreate: this.onCreate.bind(this),

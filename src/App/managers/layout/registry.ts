@@ -4,6 +4,7 @@ import { batch } from "solid-js";
 import { _dispatch, _state } from "@shared/store/effects";
 import { hollow } from "../../../hollow";
 import { RootState } from "@shared/store/types";
+import { CapabilityMeta, PanelCapability } from "@app/type/hollow";
 
 const Expand = lazy(() => import("@app/components/layout-ui/sidebars/Expand"));
 const Character = lazy(
@@ -16,16 +17,11 @@ const Notifications = lazy(
 
 export type PanelMap = Record<string, Component>;
 
+type ExtraPanelType = { capability: PanelCapability; meta: CapabilityMeta };
 export interface Panels {
 	left: PanelMap;
 	right: PanelMap;
-	extra: {
-		type: PanelType;
-		id: string;
-		icon: any;
-		mount: (el: HTMLDivElement) => { unmount: () => void };
-		tooltip?: string;
-	}[];
+	extra: ExtraPanelType[];
 }
 
 const panels: Panels = {
@@ -40,21 +36,26 @@ const panels: Panels = {
 export function getLayoutPanels() {
 	return panels;
 }
-
 export function setupLayoutRegistry(
-	d: (action: any) => void,
+	dispatch: (action: any) => void,
 	get: () => RootState,
 ) {
-	hollow.events.on("add-layout", add_layout, { source: "source" });
-}
-
-export function addPanel(type: PanelType, name: string, component: Component) {
-	panels[type][name] = component;
-	_dispatch({
-		domain: "layout",
-		type: "add-panel",
-		side: type,
-		id: name,
+	hollow.pevents.on("push-capabilities", async (capabilities) => {
+		const newModules = capabilities.filter((i) => i.kind === "panel");
+		if (newModules.length > 0) {
+			for (const capa of newModules) {
+				panels.extra.push({
+					capability: capa.handler,
+					meta: capa.meta,
+				});
+				dispatch({
+					domain: "layout",
+					type: "add-panel",
+					side: capa.meta.side,
+					id: capa.meta.id,
+				});
+			}
+		}
 	});
 }
 
@@ -98,53 +99,4 @@ export function anyExtraPanels(): boolean {
 	if (!state) return false;
 	const layout = state.layout;
 	return layout.left.panels.length > 2 || layout.right.panels.length > 2;
-}
-
-function add_layout(props: {
-	type: PanelType;
-	id: string;
-	icon: any;
-	mount: (el: HTMLDivElement) => { unmount: () => void };
-	tooltip?: string;
-}): {
-	close: () => void;
-	isOpen: () => boolean;
-} {
-	const state = _state();
-	const layout = state.layout;
-	if (layout[props.type].panels.includes(props.id)) {
-		return {
-			close: () => {},
-			isOpen: () => isPanelVisible(props.type, props.id),
-		};
-	}
-
-	const close = () => {
-		batch(() => {
-			_dispatch({
-				domain: "layout",
-				type: "remove-panel",
-				side: props.type,
-				id: props.id,
-			});
-			_dispatch({
-				domain: "layout",
-				type: "set-visibility",
-				side: props.type,
-				visible: false,
-			});
-		});
-		panels.extra = panels.extra.filter((i) => i.id !== props.id);
-	};
-	panels.extra.push(props);
-	_dispatch({
-		domain: "layout",
-		type: "add-panel",
-		side: props.type,
-		id: props.id,
-	});
-	return {
-		close,
-		isOpen: () => isPanelVisible(props.type, props.id),
-	};
 }

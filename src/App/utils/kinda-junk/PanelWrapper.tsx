@@ -10,11 +10,12 @@ export function PanelWrapper(props: PanelWrapperProps) {
 	return () => {
 		let el: HTMLDivElement;
 		onMount(() => {
-			const obj = getLayoutPanels()
-				.extra.find((i) => i.id === props.id)
-				.mount(el);
+			const obj = getLayoutPanels().extra.find(
+				(i) => i.meta.name === props.id,
+			).capability;
+			obj.mount(el);
 			onCleanup(() => {
-				obj.unmount();
+				obj.unMount();
 			});
 		});
 		return (

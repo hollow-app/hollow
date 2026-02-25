@@ -25,6 +25,7 @@ import {
 import { createMemo, For } from "solid-js";
 import { hollow } from "./hollow";
 import { PandaIcon } from "lucide-solid";
+import { Tab, TabList, TabPanel, Tabs } from "@component/ui/Tabs";
 
 export default function UI() {
 	const { state, dispatch } = useStore();
@@ -203,9 +204,6 @@ export default function UI() {
 						<Button variant="secondary">Alert</Button>
 					</AlertTrigger>
 					<Empty
-						current={
-							"https://i.pinimg.com/1200x/8b/d5/31/8bd531260c06a3bfcd70d24f94c783ff.jpg"
-						}
 						onChange={() => {}}
 						icon="comet"
 						title={"No Projects Yet"}
@@ -214,7 +212,22 @@ export default function UI() {
 						}
 					/>
 				</div>
-				<div></div>
+				<div class="w-200">
+					<Tabs defaultValue="account" variant="box">
+						<TabList>
+							<Tab value="account" icon="comet">
+								Profile
+							</Tab>
+							<Tab value="password">Password</Tab>
+						</TabList>
+						<TabPanel value="account" first>
+							Make changes to your account here.
+						</TabPanel>
+						<TabPanel value="password">
+							Change your password here.
+						</TabPanel>
+					</Tabs>
+				</div>
 			</div>
 		</div>
 	);

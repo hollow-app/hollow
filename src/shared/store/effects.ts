@@ -44,7 +44,7 @@ export function setupEffects(
 ) {
 	_dispatch = dispatch;
 	_state = getState;
-	setupAccount(dispatch);
+	setupAccount(dispatch, getState);
 	setupSettings(dispatch);
 	setupCodeTheme(dispatch);
 	setupModule(dispatch);
@@ -53,4 +53,5 @@ export function setupEffects(
 	setupNotifications(dispatch);
 	setupRealm(dispatch);
 	setupLayoutRegistry(dispatch, getState);
+	//
 }

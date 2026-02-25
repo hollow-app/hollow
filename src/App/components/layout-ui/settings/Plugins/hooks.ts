@@ -99,8 +99,8 @@ export const usePlugins = (): PluginsHook => {
 			try {
 				const success = await dispatch({
 					domain: "module",
-					type: "uninstall-module",
-					name: name.toLowerCase(),
+					type: "remove-modules",
+					modules: [name.toLowerCase()],
 				});
 
 				await delay();
@@ -182,13 +182,14 @@ export const usePlugins = (): PluginsHook => {
 					}
 				}
 
-				success = await dispatch({
-					domain: "module",
-					type: "install-module",
-					name: name.toLowerCase(),
-					repo: plugin.repo,
-					isUpdate,
-				});
+				// TODO installing plugin
+				// success = await dispatch({
+				// 	domain: "module",
+				// 	type: "install-module",
+				// 	name: name.toLowerCase(),
+				// 	repo: plugin.repo,
+				// 	isUpdate,
+				// });
 
 				if (isUpdate) {
 					await delay();

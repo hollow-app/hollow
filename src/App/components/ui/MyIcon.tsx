@@ -4,6 +4,7 @@ export type MyIconsType = keyof typeof HollowIcons;
 interface Props {
 	name: MyIconsType;
 	class?: string;
+	classList?: { [k: string]: boolean };
 	style?: JSX.CSSProperties;
 }
 export default function MyIcon(props: Props) {
@@ -16,6 +17,7 @@ export default function MyIcon(props: Props) {
 			<IconComponent
 				class={props.class ?? ""}
 				style={props.style ?? {}}
+				classList={props.classList}
 			/>
 		</Suspense>
 	);

@@ -1,11 +1,13 @@
 use std::sync::Mutex;
 use tauri_plugin_log::log::{self};
-
+mod account;
 mod app;
 mod auth;
 mod cards;
 mod deeplink;
 mod plugins;
+mod stronghold;
+mod test_stronghold;
 mod utils;
 mod vault;
 
@@ -20,9 +22,7 @@ pub fn run() {
                 | tauri_plugin_prevent_default::Flags::DOWNLOADS,
         )
         .build();
-
     tauri::Builder::default()
-        // .plugin(tauri_plugin_stronghold::Builder::new(|_pass| todo!()).build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         // static
@@ -33,14 +33,25 @@ pub fn run() {
         .manage(Mutex::new(app::AppData {
             realm_location: None,
         }))
+        .manage(Mutex::new(auth::AuthData {
+            signature: None,
+        }))
+        .manage(Mutex::new(account::AccountData {
+            user: None,
+            connection: None,
+        }))
         // .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_deep_link::init())
         .setup(|app| {
-            #[cfg(any(windows, target_os = "linux"))]
-            {
-                use tauri_plugin_deep_link::DeepLinkExt;
-                app.deep_link().register_all()?;
+            if let Err(e) = app::initialize() {
+                eprintln!("initialization failed: {e}");
+            }
+            if let Err(e) = stronghold::init(app) {
+                eprintln!("Stronghold setup failed: {e}");
+            }
+            if let Err(e) = deeplink::setup_deeplink_handler(app) {
+                eprintln!("Deeplink setup failed: {e}");
             }
             Ok(())
         })
@@ -65,8 +76,12 @@ pub fn run() {
             vault::vault_add,
             vault::vault_remove,
             vault::vault_add_url,
-            // auth::get_user,
+            auth::fetch_user,
+            auth::signin,
             // auth::update_user_character,
+            account::get_user,
+            account::is_signed_in,
+            account::sign_out,
             cards::card_read_dir,
             cards::card_read_file,
             cards::card_write_file,
@@ -74,6 +89,9 @@ pub fn run() {
             cards::card_exists,
             cards::card_mkdir,
             cards::card_rename,
+            // Test commands for Stronghold
+            test_stronghold::test_store_data,
+            test_stronghold::test_get_data,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

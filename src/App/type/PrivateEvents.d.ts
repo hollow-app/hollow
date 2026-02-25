@@ -1,3 +1,5 @@
+import { PluginCapability } from "./hollow";
+
 export type PrivateEvents = {
 	"post-realm": void;
 	"pre-realm": void;
@@ -5,4 +7,8 @@ export type PrivateEvents = {
 	"ui-set-character": (character: Character) => void;
 	editor: { tool: string; cardId: string };
 	"context-menu": boolean;
+	capabilities: PluginCapability[];
+	"post-capabilities": void;
+	"pre-capabilities": void;
+	"push-capabilities": PluginCapability[];
 };

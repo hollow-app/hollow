@@ -1,7 +1,7 @@
 import { join } from "@tauri-apps/api/path";
 import { hollow } from "../../../hollow";
 import { Storage } from "@app/managers/Storage";
-import { CoreTool, Events, ModuleState, ToolMap, ToolMethods } from "./type";
+import { Events, ModuleState, ToolMap, ToolMethods } from "./type";
 import DEFAULT from "@assets/configs/main.json?raw";
 import { HandType } from "@app/type/HandType";
 import { convertFileSrc } from "@tauri-apps/api/core";
@@ -16,6 +16,8 @@ import {
 	ToolApi,
 	AppApi,
 	PluginResult,
+	PluginCapability,
+	ModuleCapability,
 } from "@app/type/hollow";
 import { ImageMain } from "@coretools/Image/ImageMain";
 import { NotebookMain } from "@coretools/NoteBook/NotebookMain";
@@ -39,7 +41,10 @@ export let store: Storage | null = null;
 export let toolMap: ToolMap = new Map();
 
 export function setupModule(dispatch: (action: any) => void) {
-	hollow.pevents.on("post-realm", async () => {
+	hollow.pevents.on("post-capabilities", async () => {
+		const capas = hollow.pevents
+			.getData("capabilities")
+			.filter((i) => i.kind === "module");
 		const loadUnsigned = false;
 		const realmLocation = getCurrentRealm().location;
 		const path = await join(...[realmLocation, ".hollow", "main.json"]);
@@ -85,12 +90,17 @@ export function setupModule(dispatch: (action: any) => void) {
 		}> = [];
 
 		for (const key in parsedData) {
-			const tool = parsedData[key];
+			const tool: HandType = parsedData[key];
 			if (!tool.signed && !loadUnsigned) continue;
-			const toolInstance = await createToolInstance(tool);
+			const targetModule = capas.find((i) => i.meta.name === tool.name);
+			const toolEvent = await createToolEvent(tool.name);
+			const toolInstance: ToolMethods = {
+				...targetModule.handler,
+				toolEvent,
+				name: tool.name,
+			};
 			if (toolInstance) {
 				toolMap.set(tool.name, toolInstance);
-
 				toolInstance.toolEvent.on(
 					"card-fs",
 					({ cardName }: { cardName: string }) =>
@@ -123,99 +133,94 @@ export function setupModule(dispatch: (action: any) => void) {
 			type: "set-instances",
 			instances: tCards,
 		});
+		hollow.pevents.on("push-capabilities", async (capabilities) => {
+			const newModules = capabilities.filter((i) => i.kind === "module");
+			if (newModules.length > 0) {
+				for (const capa of newModules) {
+					dispatch({
+						domain: "module",
+						type: "add-module",
+						capability: capa.handler,
+						meta: capa.meta,
+					});
+				}
+			}
+		});
 	});
 }
 
 export async function moduleEffects(action: Events, state: ModuleState) {
 	if (action.domain !== "module") return;
-
 	switch (action.type) {
-		case "install-module": {
-			const { name, repo, isUpdate } = action;
-			const request = await add_plugin({
-				name: name,
-				repo: repo,
-			});
-			if (request.state) {
-				const manifest = JSON.parse(request.manifest);
+		case "add-modules": {
+			const { modules } = action;
+			const storeChanges: Record<string, HandType> = {};
+			for (const module of modules) {
+				const { meta, capability } = module;
+				const isUpdate = getHand()[meta.name];
 				const newTool: HandType = {
-					...manifest,
-					icon: request.icon,
-					name: manifest.name.toLowerCase(),
+					...meta,
 					cards: [],
 					signed: true,
 				};
-
 				if (isUpdate) {
-					const og = getHand()[name];
-					store?.set(name, {
+					storeChanges[meta.name] = {
 						...newTool,
-						cards: og.cards,
-						icon: getHand()[name].icon,
+						cards: isUpdate.cards,
+					};
+				} else {
+					storeChanges[meta.name] = newTool;
+					toolMap.set(newTool.name, {
+						...capability,
+						name: meta.name,
+						toolEvent: await createToolEvent(meta.name),
 					});
-				} else {
-					store?.set(name, newTool);
-				}
-				if (!isUpdate) {
-					const loadRequest = await loadTool(newTool);
-					if (loadRequest) {
-						toolMap.set(newTool.name, loadRequest);
-					}
-				} else {
-					await new Promise((resolve) => setTimeout(resolve, 2000));
-					reload();
 				}
 			}
+			store.setMany(storeChanges);
 			break;
 		}
-		case "uninstall-module": {
-			const { name } = action;
+		case "remove-modules": {
+			const { modules } = action;
 			try {
-				const request = await remove_plugin({ name });
-
-				const group = state.instances; // Use state.instances as source of truth for cards before removal?
-				// Actually, reducer has already removed them from state.instances if this runs after.
-				// But we need to know which cards were removed to call onDelete.
-				// This is a problem if state is already updated.
-				// Assuming state is the NEW state, the cards are gone.
-				// We need to look at the STORE (which hasn't been updated yet) to find the cards to delete.
-
-				const root = getHand();
-				const tool = root[name];
-				if (!tool) break; // Already removed?
-
-				const cards = tool.cards; // Cards from store
-
-				if (cards && cards.length > 0) {
-					const toolInstance = toolMap.get(name);
-					for (const card of cards) {
-						if (card.data.isPlaced) {
-							const result = await toolInstance?.onUnload(
-								card.id,
-							);
-							if (!result.status) {
-								console.error(result);
+				const str = store.getStore();
+				for (const name of modules) {
+					const root = getHand();
+					const tool = root[name];
+					if (!tool) break; // Already removed?
+					const cards = tool.cards; // Cards from store
+					if (cards && cards.length > 0) {
+						const toolInstance = toolMap.get(name);
+						for (const card of cards) {
+							if (card.data.isPlaced) {
+								const result = await toolInstance?.onUnload(
+									card.id,
+								);
+								if (!result.status) {
+									console.error(result);
+								}
 							}
+							await toolInstance?.onDelete(card);
 						}
-						await toolInstance?.onDelete(card);
 					}
+					await str.delete(name);
+					const toolEvents = getToolEvents(name);
+					const storeConfig: IStore = toolEvents.getData("config");
+					await storeConfig.close();
+					toolMap.delete(name);
+					const toolPath = await join("main", name);
+					await remove_dir(toolPath);
+					return true;
 				}
-				store?.remove(name);
-				const toolEvents = getToolEvents(name);
-				const storeConfig: IStore = toolEvents.getData("config");
-				await storeConfig.close();
-				toolMap.delete(name);
-				const toolPath = await join("main", name);
-				await remove_dir(toolPath);
-				return true;
 			} catch (error) {
 				console.error("[uninstallTool] FAILED", {
-					name,
+					modules,
 					error,
 					stack: (error as Error)?.stack,
 				});
 				return false;
 			}
+			break;
 		}
 		case "add-instance": {
 			const { name, toolName, emoji } = action;
@@ -398,46 +403,6 @@ export async function moduleEffects(action: Events, state: ModuleState) {
 	}
 }
 
-// loads internal tools classes
-async function createToolInstance(tool: HandType): Promise<ToolMethods | null> {
-	if (hollow.coreTools.includes(tool.name as CoreTool)) {
-		const toolEvent = await createToolEvent(tool.name);
-		const toolClass = createCoreTool(tool.name as CoreTool, toolEvent);
-		if (!toolClass) return null;
-
-		return {
-			name: tool.name,
-			onCreate: toolClass.onCreate.bind(toolClass),
-			onDelete: toolClass.onDelete.bind(toolClass),
-			onLoad: toolClass.onLoad.bind(toolClass),
-			onUnload: toolClass.onUnload.bind(toolClass),
-			toolEvent,
-		};
-	}
-	return loadTool(tool);
-}
-
-// loads external tools classes
-export async function loadTool(tool: HandType): Promise<ToolMethods | null> {
-	const semiPath = await join(...["plugins", tool.name, "index.js"]);
-
-	const toolEvent = await createToolEvent(tool.name);
-	const toolClass = await load_plugin({
-		semiPath: semiPath,
-		toolEvent,
-	});
-
-	if (!toolClass) return null;
-	return {
-		name: tool.name,
-		onCreate: toolClass.onCreate.bind(toolClass),
-		onDelete: toolClass.onDelete.bind(toolClass),
-		onLoad: toolClass.onLoad.bind(toolClass),
-		onUnload: toolClass.onUnload.bind(toolClass),
-		toolEvent,
-	};
-}
-
 // create the HollowEvent of a singal tool;
 async function createToolEvent(toolName: string): Promise<ToolApi> {
 	const toolEvent = new EventsManager<ToolEvents, ToolEvents>();
@@ -448,22 +413,6 @@ async function createToolEvent(toolName: string): Promise<ToolApi> {
 	toolEvent.emit("config", str);
 	return toolEvent;
 }
-
-// simple internal classes organizer
-function createCoreTool(name: CoreTool, toolEvent: ToolApi): IPlugin | null {
-	const toolMap: Record<
-		CoreTool,
-		new (app: AppApi, toolEvent: ToolApi) => IPlugin
-	> = {
-		image: ImageMain,
-		notebook: NotebookMain,
-		kanban: KanbanMain,
-		embed: EmbedMain,
-	};
-	return new toolMap[name](hollow.events, toolEvent);
-}
-
-// INTERNAL UTILS
 
 function updateToolMetadata(toolName: string, metadata: ToolMetadata): void {
 	getToolEvents(toolName)?.emit("metadata", metadata);

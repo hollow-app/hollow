@@ -8,8 +8,17 @@ import {
 	OrbitIcon,
 	PaletteIcon,
 	PandaIcon,
+	UserIcon,
 } from "lucide-solid";
-import { createMemo, createSignal, Setter, Show, Suspense } from "solid-js";
+import {
+	Accessor,
+	createMemo,
+	createSignal,
+	ParentComponent,
+	Setter,
+	Show,
+	Suspense,
+} from "solid-js";
 import HollowIcon from "@assets/logo.svg";
 
 import { Motion, Presence } from "solid-motionone";
@@ -24,7 +33,7 @@ const HotKeys = lazy(() => import("./settings/HotKeys"));
 const Developers = lazy(() => import("./settings/Developers"));
 const Appearance = lazy(() => import("./settings/Appearance"));
 const About = lazy(() => import("./settings/About"));
-const Account = lazy(() => import("./settings/Character"));
+const Account = lazy(() => import("./settings/Account"));
 
 type SettingsProps = {
 	selected?: number;
@@ -49,7 +58,7 @@ export default function Settings(props: SettingsProps) {
 				}}
 			>
 				<div class="flex h-full w-full">
-					<div class="bg-secondary-10/30 box-border flex h-full w-[25%] flex-col justify-between px-5 pt-5 pb-10">
+					<div class="bg-secondary-10/20 box-border flex h-full w-[20%] flex-col justify-between px-5 pt-5 pb-10">
 						<div class="flex flex-col gap-2">
 							<div class="bg-secondary-10 mb-5 box-border flex overflow-hidden rounded px-3 py-5">
 								<HollowIcon class="fill-primary orbit my-auto mr-2 size-12 shrink-0 transition-transform duration-300" />
@@ -70,109 +79,67 @@ export default function Settings(props: SettingsProps) {
 									<ArrowDownUpIcon class="m-auto" />
 								</button>
 							</div>
-							<button
-								onClick={() => setSelected(0)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 0,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 0,
-								}}
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={0}
 							>
 								<OrbitIcon /> General
-							</button>
-							<button
-								onClick={() => setSelected(1)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 1,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 1,
-								}}
+							</SettingButton>
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={1}
 							>
 								<PaletteIcon />
 								Appearance
-							</button>
-							<button
-								onClick={() => setSelected(2)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 2,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 2,
-								}}
+							</SettingButton>
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={2}
 							>
 								<HousePlugIcon /> Plugins
-							</button>
-							<hr class="border-secondary bg-secondary-10/50 mx-auto h-[2px] w-full" />
-							<button
-								onClick={() => setSelected(3)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 3,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 3,
-								}}
+							</SettingButton>
+							<hr class="border-secondary-15 mx-auto w-full" />
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={3}
 							>
 								<KeyboardIcon /> HotKeys
-							</button>
-							<button
-								onClick={() => setSelected(4)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 4,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 4,
-								}}
+							</SettingButton>
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={4}
 							>
 								<FileSlidersIcon /> Modifier
-							</button>
-
-							<button
-								onClick={() => setSelected(5)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 5,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 5,
-								}}
+							</SettingButton>
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={5}
 							>
 								<FileCodeIcon />
 								Developers
-							</button>
-
-							<button
-								onClick={() => setSelected(6)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 6,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 6,
-								}}
+							</SettingButton>
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={6}
 							>
-								<PandaIcon />
-								Character
-							</button>
-							<button
-								onClick={() => setSelected(7)}
-								class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
-								classList={{
-									"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
-										selected() === 7,
-									"text-neutral-700 dark:text-neutral-400":
-										selected() !== 7,
-								}}
+								<UserIcon />
+								Account
+							</SettingButton>
+							<SettingButton
+								setSelected={setSelected}
+								selected={selected}
+								index={7}
 							>
 								<BadgeInfoIcon />
 								About
-							</button>
+							</SettingButton>
 						</div>
 						<button
 							class="button secondary"
@@ -366,3 +333,24 @@ export default function Settings(props: SettingsProps) {
 		</div>
 	);
 }
+
+const SettingButton: ParentComponent<{
+	selected: Accessor<number>;
+	setSelected: Setter<number>;
+	index: number;
+}> = (props) => {
+	return (
+		<button
+			onClick={() => props.setSelected(props.index)}
+			class="hover:bg-secondary-10 flex h-fit w-full items-center gap-4 rounded-lg px-3 py-2 text-lg font-bold hover:text-neutral-950 active:scale-[99%] dark:hover:text-neutral-50"
+			classList={{
+				"bg-secondary-20/50 text-neutral-950 dark:text-neutral-50":
+					props.selected() === props.index,
+				"text-neutral-700 dark:text-neutral-400":
+					props.selected() !== props.index,
+			}}
+		>
+			{props.children}
+		</button>
+	);
+};

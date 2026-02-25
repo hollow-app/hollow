@@ -2,9 +2,7 @@ import { Accessor, createMemo } from "solid-js";
 import { NotifyType } from "@app/type/NotifyType";
 import { useStore } from "@store";
 
-export interface NotificationsProps {
-	hide: () => void;
-}
+export interface NotificationsProps {}
 
 export interface NotificationsState {
 	notifications: Accessor<NotifyType[]>;
@@ -35,7 +33,6 @@ export const useNotifications = (
 	};
 
 	const clearAll = () => {
-		props.hide();
 		dispatch({
 			domain: "notifications",
 			type: "clear-all",

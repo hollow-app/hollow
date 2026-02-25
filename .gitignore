@@ -9,9 +9,15 @@ npm-debug.log*
 *.log
 dist/
 
+# Tauri
 src-tauri/target/
 src-tauri/.cargo/
 src-tauri/Cargo.lock
+
+# Environment variables with sensitive data
+.env
+.env.local
+.DS_Store
+
 src/managers/SecretsManager.ts
 package-lock.json
-

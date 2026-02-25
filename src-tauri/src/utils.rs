@@ -1,8 +1,24 @@
 use crate::app::AppData;
+use keyring::Entry;
 use std::{fs, path::PathBuf, sync::Mutex};
 use tauri::{command, AppHandle, Manager, State};
 use tauri_plugin_log::log::{self};
 
+const KEYCHAIN_SERVICE: &str = "hollow-app";
+
+pub fn get_or_create_password(key: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let entry = Entry::new(KEYCHAIN_SERVICE, key)?;
+    match entry.get_password() {
+        Ok(password) => Ok(password),
+        Err(keyring::Error::NoEntry) => {
+            let new_password = uuid::Uuid::new_v4().to_string();
+            entry.set_password(&new_password)?;
+            eprintln!("Generated and stored new {} secret.", key);
+            Ok(new_password)
+        }
+        Err(e) => Err(Box::new(e)),
+    }
+}
 pub fn validate_path(path: &str) -> Result<(), String> {
     let p = std::path::Path::new(path);
     if p.is_absolute() {

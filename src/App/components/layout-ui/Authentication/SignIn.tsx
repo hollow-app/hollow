@@ -47,7 +47,8 @@ export default function SignIn(props: Props) {
 					/>
 					<button
 						class="text-secondary-50 w-fit text-start text-xs hover:underline"
-						onclick={() => props.setType("forgot-password")}
+						// TODO $
+						//onclick={() => props.setType("forgot-password")}
 					>
 						Forgot your password?
 					</button>

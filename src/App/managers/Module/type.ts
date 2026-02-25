@@ -1,6 +1,11 @@
-import { CardType, PluginResult, ToolApi } from "@app/type/hollow";
+import {
+	CapabilityMeta,
+	CardType,
+	ModuleCapability,
+	PluginResult,
+	ToolApi,
+} from "@app/type/hollow";
 import { hollow } from "../../../hollow";
-import { Part } from "solid-js/store";
 
 export type ModuleState = {
 	instances: CardType[];
@@ -12,14 +17,16 @@ export type Events = { domain: "module" } & (
 			instances: CardType[];
 	  }
 	| {
-			type: "install-module";
-			name: string;
-			repo: string;
-			isUpdate?: boolean;
+			type: "add-modules";
+			modules: {
+				meta: CapabilityMeta;
+				capability: ModuleCapability;
+				source: string;
+			}[];
 	  }
 	| {
-			type: "uninstall-module";
-			name: string;
+			type: "remove-modules";
+			modules: string[];
 	  }
 	| {
 			type: "add-instance";

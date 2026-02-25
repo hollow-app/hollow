@@ -2,8 +2,10 @@ import {
 	CardType,
 	HollowEvent,
 	IPlugin,
+	PluginCapability,
 	PluginResult,
 	ToolEvents,
+	ToolApi,
 } from "@app/type/hollow";
 import { render } from "solid-js/web";
 import { createRoot, lazy } from "solid-js";
@@ -15,11 +17,30 @@ const Column = lazy(() => import("./Kanban"));
 export class KanbanMain implements IPlugin {
 	private roots: Map<string, () => void> = new Map();
 
-	constructor(_, toolEvent: HollowEvent<ToolEvents>) {
+	constructor(_, toolEvent: ToolApi) {
 		KanbanManager.getSelf().init(toolEvent);
+		this.capabilities = [
+			{
+				kind: "module",
+				handler: {
+					onCreate: this.onCreate.bind(this),
+					onDelete: this.onDelete.bind(this),
+					onLoad: this.onLoad.bind(this),
+					onUnload: this.onUnload.bind(this),
+				},
+				meta: {
+					name: "kanban",
+					version: "1.0.0",
+					description:
+						"A kanban board for task management, allowing organization of tasks in different stages.",
+				},
+			},
+		] as any;
 	}
 
-	public async onCreate(card: CardType): Promise<PluginResult> {
+	public readonly capabilities: PluginCapability[];
+
+	private async onCreate(card: CardType): Promise<PluginResult> {
 		try {
 			KanbanManager.getSelf().saveColumn({
 				id: card.id,
@@ -38,7 +59,7 @@ export class KanbanMain implements IPlugin {
 		}
 	}
 
-	public async onDelete(card: CardType): Promise<PluginResult> {
+	private async onDelete(card: CardType): Promise<PluginResult> {
 		try {
 			KanbanManager.getSelf().removeColumn(card.id);
 			return { status: true };
@@ -51,7 +72,7 @@ export class KanbanMain implements IPlugin {
 		}
 	}
 
-	public async onLoad(card: CardType): Promise<PluginResult> {
+	private async onLoad(card: CardType): Promise<PluginResult> {
 		try {
 			const targetContainer = document.getElementById(card.id);
 			if (!targetContainer) {
@@ -84,7 +105,7 @@ export class KanbanMain implements IPlugin {
 		}
 	}
 
-	public async onUnload(id: string): Promise<PluginResult> {
+	private async onUnload(id: string): Promise<PluginResult> {
 		try {
 			const dispose = this.roots.get(id);
 			if (dispose) {

@@ -9,11 +9,19 @@ export interface PluginResult {
 	data?: unknown;
 }
 export interface IPlugin {
-	capabilities: PluginFeature[];
+	capabilities: PluginCapability[];
 }
-export type PluginFeature =
-	| { kind: "module"; handler: ToolCapability }
-	| { kind: "panel"; handler: PanelCapability };
+export type CapabilityMeta = {
+	name: string;
+	description: string;
+	version: version;
+	icon?: string;
+	source?: string;
+	[key: string]: any;
+};
+export type PluginCapability =
+	| { kind: "module"; handler: ModuleCapability; meta: CapabilityMeta }
+	| { kind: "panel"; handler: PanelCapability; meta: CapabilityMeta };
 // Represents a plugin with lifecycle methods that interact with cards and the app.
 export interface ModuleCapability {
 	/**
@@ -44,6 +52,10 @@ export interface ModuleCapability {
 	 * Cleans up resources or state as necessary.
 	 */
 	onUnload(id: string): Promise<PluginResult>;
+}
+export interface PanelCapability {
+	mount(el: Element): Promise<JSX.Element>;
+	unMount(): Promise<PluginResult>;
 }
 
 // Represents a card in the app, with properties and methods for interaction.

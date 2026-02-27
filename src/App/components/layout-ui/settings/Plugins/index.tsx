@@ -7,6 +7,7 @@ import {
 } from "lucide-solid";
 import PluginPreview from "./PluginPreview";
 import { usePlugins, PluginsProps } from "./hooks";
+import SettingsPanel from "../SettingsPanel";
 
 const Plugins: Component<PluginsProps> = (props) => {
     const { state, actions } = usePlugins();
@@ -20,58 +21,60 @@ const Plugins: Component<PluginsProps> = (props) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
-                        class="flex flex-col p-10 text-neutral-950 dark:text-neutral-100"
+                        class="flex flex-col text-neutral-950 dark:text-neutral-100"
                     >
-                        <div class="flex justify-between">
-                            <h1 class="text-4xl font-bold">Plugins</h1>
-                            <div class="flex items-center">
-                                <p>Enable Unverified Plugins</p>
-                                <div class="toggle-switch">
-                                    <input
-                                        class="toggle-input"
-                                        id="enable-unverified-toggle"
-                                        type="checkbox"
-                                        checked={state.unverified()}
-                                        onclick={actions.switchUnverified}
-                                    />
-                                    <label
-                                        class="toggle-label"
-                                        for="enable-unverified-toggle"
-                                    ></label>
+                        <SettingsPanel label="Plugins">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-neutral-600 dark:text-neutral-400">Manage and install plugins to extend Hollow's functionality.</p>
+                                <div class="flex items-center gap-2">
+                                    <p class="text-sm font-medium">Enable Unverified Plugins</p>
+                                    <div class="toggle-switch">
+                                        <input
+                                            class="toggle-input"
+                                            id="enable-unverified-toggle"
+                                            type="checkbox"
+                                            checked={state.unverified()}
+                                            onclick={actions.switchUnverified}
+                                        />
+                                        <label
+                                            class="toggle-label"
+                                            for="enable-unverified-toggle"
+                                        ></label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <input
-                            class="input my-5"
-                            style={{
-                                "--bg-color": "var(--secondary-color-10)",
-                                "--bg-color-f": "var(--secondary-color-15)",
-                            }}
-                            placeholder="Search"
-                        />
-                        <div class="grid flex-1 grid-cols-[1fr_1fr_1fr] overflow-hidden overflow-y-scroll">
-                            <Show when={state.plugins()}>
-                                <For
-                                    each={state
-                                        .plugins()!
-                                        .filter(
-                                            (i) =>
-                                                state.unverified() ||
-                                                i.verified,
+                            <input
+                                class="input my-5"
+                                style={{
+                                    "--bg-color": "var(--secondary-color-10)",
+                                    "--bg-color-f": "var(--secondary-color-15)",
+                                }}
+                                placeholder="Search"
+                            />
+                            <div class="grid flex-1 grid-cols-[1fr_1fr_1fr] overflow-hidden overflow-y-scroll">
+                                <Show when={state.plugins()}>
+                                    <For
+                                        each={state
+                                            .plugins()!
+                                            .filter(
+                                                (i) =>
+                                                    state.unverified() ||
+                                                    i.verified,
+                                            )}
+                                    >
+                                        {(plugin) => (
+                                            <PluginPreview
+                                                plugin={plugin}
+                                                setSelectedPlugin={
+                                                    state.setSelectedPlugin
+                                                }
+                                                setSelectedMD={state.setSelectedMD}
+                                            />
                                         )}
-                                >
-                                    {(plugin) => (
-                                        <PluginPreview
-                                            plugin={plugin}
-                                            setSelectedPlugin={
-                                                state.setSelectedPlugin
-                                            }
-                                            setSelectedMD={state.setSelectedMD}
-                                        />
-                                    )}
-                                </For>
-                            </Show>
-                        </div>
+                                    </For>
+                                </Show>
+                            </div>
+                        </SettingsPanel>
                     </Motion.div>
                 </Match>
                 <Match when={state.selectedPlugin()}>

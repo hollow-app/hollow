@@ -4,6 +4,7 @@ import { hollow } from "../../../../hollow";
 import TextFormater from "@app/components/ui/TextFormater";
 import { useStore } from "@store";
 import { Combobox } from "@ui";
+import SettingsPanel from "./SettingsPanel";
 
 const keys = ["color-primary", "color-secondary"];
 
@@ -71,17 +72,11 @@ export default function Modifier() {
 	};
 
 	return (
-		<div class="flex h-full w-full flex-col gap-2 p-10">
+		<SettingsPanel label="Modifier">
 			<div class="flex-1 overflow-hidden">
 				<div class="flex h-full flex-col space-y-2 text-neutral-700 dark:text-neutral-200">
 					<div class="flex flex-col gap-3">
 						<div>
-							<label
-								for="key"
-								class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50"
-							>
-								Modifier
-							</label>
 							<p class="text-sm text-neutral-600 dark:text-neutral-400">
 								Manually modify the local storage of any realm.
 							</p>
@@ -166,6 +161,6 @@ export default function Modifier() {
 					Save Changes
 				</button>
 			</div>
-		</div>
+		</SettingsPanel>
 	);
 }

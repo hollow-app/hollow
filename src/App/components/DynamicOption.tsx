@@ -169,6 +169,7 @@ const DropdownOption = (props: { option: OptionType<"dropdown"> }) => (
 				| { title: string; items: string[] }[]
 		}
 		onselect={props.option.onAction}
+		class="w-full"
 	/>
 );
 

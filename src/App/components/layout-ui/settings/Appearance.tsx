@@ -12,23 +12,32 @@ import useTags from "@app/hooks/useTags";
 import { hollow } from "../../../../hollow";
 import Loading from "@app/components/ui/Loading";
 import { CircleFadingPlusIcon } from "lucide-solid";
-import { Combobox, Tag, ColorButton, EmojiButton, NumberInput } from "@ui";
+import {
+	Combobox,
+	Tag,
+	ColorButton,
+	EmojiButton,
+	NumberInput,
+	SettingsGroup,
+	SettingsItem,
+} from "@ui";
 import useGrid from "@app/hooks/useGrid";
 import { readableColor } from "polished";
 import { useStore } from "@store";
 import { renderMarkdown } from "@app/managers/Markdown";
+import SettingsPanel from "./SettingsPanel";
 
 export default function Appearance() {
 	return (
-		<div class="h-full p-10">
+		<SettingsPanel>
 			<CanvasSettings />
-			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
+			<hr class="bg-secondary-10 mx-auto my-4 h-px w-full border-0" />
 			<ColorSettings />
-			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
+			<hr class="bg-secondary-10 mx-auto my-4 h-px w-full border-0" />
 			<CodeThemeSettings />
-			<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
+			<hr class="bg-secondary-10 mx-auto my-4 h-px w-full border-0" />
 			<TagsEditor />
-		</div>
+		</SettingsPanel>
 	);
 }
 
@@ -79,53 +88,36 @@ function CanvasSettings() {
 	});
 
 	return (
-		<>
-			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-				Canvas
-			</h1>
-			<div class="w-full pb-4">
-				<div class="flex flex-col gap-5 p-5">
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Grid Size
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Number of columns inside the canvas.
-							</p>
-						</div>
-						<div class="w-50">
-							<NumberInput
-								value={
-									typeof gridSize() === "string"
-										? 12
-										: Number(gridSize())
-								}
-								setValue={setGrid_size}
-								direct
-							/>
-						</div>
-					</div>
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-lg font-semibold text-neutral-700 dark:text-neutral-300">
-								Grid Gap
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Change the gap between cards
-							</p>
-						</div>
-						<div class="w-50">
-							<NumberInput
-								value={gridGap()}
-								setValue={setGapBetweenCards}
-								direct
-							/>
-						</div>
-					</div>
+		<SettingsGroup title="Canvas">
+			<SettingsItem
+				title="Grid Size"
+				description="Number of columns inside the canvas."
+			>
+				<div class="w-50">
+					<NumberInput
+						value={
+							typeof gridSize() === "string"
+								? 12
+								: Number(gridSize())
+						}
+						setValue={setGrid_size}
+						direct
+					/>
 				</div>
-			</div>
-		</>
+			</SettingsItem>
+			<SettingsItem
+				title="Grid Gap"
+				description="Change the gap between cards"
+			>
+				<div class="w-50">
+					<NumberInput
+						value={gridGap()}
+						setValue={setGapBetweenCards}
+						direct
+					/>
+				</div>
+			</SettingsItem>
+		</SettingsGroup>
 	);
 }
 
@@ -159,45 +151,27 @@ function ColorSettings() {
 	};
 
 	return (
-		<>
-			<h1 class="pt-8 text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-				Colors
-			</h1>
-			<div class="w-full pb-4">
-				<div class="flex flex-col gap-5 p-5">
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Primary Color
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Primary color used for highlighting important
-								elements in the app.
-							</p>
-						</div>
-						<ColorButton
-							color={primaryColor()}
-							setColor={setPrimaryColor}
-						/>
-					</div>
-					<hr class="bg-secondary-10 h-px w-full border-0" />
-					<div class="flex justify-between">
-						<div>
-							<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-								Secondary Color
-							</h2>
-							<p class="text-sm text-neutral-600 dark:text-neutral-400">
-								Secondary color used for the background theme.
-							</p>
-						</div>
-						<ColorButton
-							color={secondaryColor()}
-							setColor={setSecondaryColor}
-						/>
-					</div>
-				</div>
-			</div>
-		</>
+		<SettingsGroup title="Colors">
+			<SettingsItem
+				title="Primary Color"
+				description="Primary color used for highlighting important elements in the app."
+			>
+				<ColorButton
+					color={primaryColor()}
+					setColor={setPrimaryColor}
+				/>
+			</SettingsItem>
+			<hr class="bg-secondary-10 h-px w-full border-0" />
+			<SettingsItem
+				title="Secondary Color"
+				description="Secondary color used for the background theme."
+			>
+				<ColorButton
+					color={secondaryColor()}
+					setColor={setSecondaryColor}
+				/>
+			</SettingsItem>
+		</SettingsGroup>
 	);
 }
 
@@ -227,48 +201,32 @@ function CodeThemeSettings() {
 	};
 
 	return (
-		<>
-			<div class="flex items-center justify-between">
-				<div class="py-8">
-					<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-						Code Theme
-					</h1>
-					<p class="pl-5 text-xs text-neutral-500">
-						All themes can be easily previewed on{" "}
-						<a
-							href={"https://highlightjs.org/examples"}
-							target="_blank"
-						>
-							Highlight.js
-						</a>
-						.
-					</p>
-				</div>
-				<div class="flex h-40 items-center">
-					<Show when={codeTheme()} fallback={<Loading />}>
-						<Suspense>
-							<div class="markdown-preview" innerHTML={md()} />
-						</Suspense>
-					</Show>
-				</div>
-				<div class="w-70">
-					{/* <Dropdown */}
-					{/* 	value={codeTheme()} */}
-					{/* 	options={[ */}
-					{/* 		{ */}
-					{/* 			items: codeThemes, */}
-					{/* 		}, */}
-					{/* 	]} */}
-					{/* 	onSelect={useCodeTheme} */}
-					{/* /> */}
-					<Combobox
-						value={codeTheme()}
-						items={codeThemes}
-						onselect={useCodeTheme}
-					/>
-				</div>
+		<SettingsItem
+			title="Code Theme"
+			description="All themes can be easily previewed on Highlight.js."
+		>
+			<a
+				href={"https://highlightjs.org/examples"}
+				target="_blank"
+				class="hidden"
+			>
+				Highlight.js
+			</a>
+			<div class="flex h-40 items-center overflow-hidden">
+				<Show when={codeTheme()} fallback={<Loading />}>
+					<Suspense>
+						<div class="markdown-preview" innerHTML={md()} />
+					</Suspense>
+				</Show>
 			</div>
-		</>
+			<div class="w-70">
+				<Combobox
+					value={codeTheme()}
+					items={codeThemes}
+					onselect={useCodeTheme}
+				/>
+			</div>
+		</SettingsItem>
 	);
 }
 
@@ -339,9 +297,9 @@ function TagsEditor() {
 		<div class="w-full py-4">
 			<div class="flex justify-between pt-8">
 				<div>
-					<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
+					<h2 class="text-3xl font-extrabold text-neutral-950 dark:text-neutral-50">
 						Tags
-					</h1>
+					</h2>
 					<p class="mt-1 mb-5 text-xs text-neutral-500">
 						{" "}
 						Custom tags that will be used by tools.{" "}

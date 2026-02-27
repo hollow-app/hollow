@@ -14,8 +14,9 @@ import {
 	setSelectRealmOnStartup,
 } from "@shared/managers/Realm";
 import { checkUpdate } from "../../../../lib/app";
-import { Button } from "@ui";
+import { Button, SettingsItem } from "@ui";
 import { useStore } from "@shared/store";
+import SettingsPanel from "./SettingsPanel";
 
 export default function General() {
 	const [version] = createResource(() => get_version());
@@ -32,7 +33,7 @@ export default function General() {
 		guide();
 	};
 	return (
-		<div class="flex flex-col gap-5 p-10 text-neutral-950 dark:text-neutral-200">
+		<SettingsPanel>
 			<div class="flex justify-between">
 				<div class="flex h-fit w-full flex-col font-mono">
 					<h1 class="text-3xl font-bold">Hollow</h1>
@@ -50,58 +51,37 @@ export default function General() {
 				</a>
 			</div>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
-			<div class="flex items-center justify-between">
-				<div>
-					<h1 class="text-lg font-bold">Auto Update</h1>
-					<p class="text-sm text-neutral-600 dark:text-neutral-400">
-						Automatically downloads and installs new versions in the
-						background so you always stay up to date.
-					</p>
+			<SettingsItem
+				title="Auto Update"
+				description="Automatically downloads and installs new versions in the background so you always stay up to date."
+			>
+				<button class="button-control tool-tip" onclick={checkUpdates}>
+					<span class="tool-tip-content" data-side="left">
+						Check Update
+					</span>
+					<RefreshCwIcon />
+				</button>
+				<div class="toggle-switch">
+					<input
+						class="toggle-input"
+						id="auto-update-toggle"
+						type="checkbox"
+						disabled
+						checked={JSON.parse(localStorage.autoUpdate ?? "true")}
+						onchange={(e) =>
+						(localStorage.autoUpdate = JSON.stringify(
+							e.currentTarget.checked,
+						))
+						}
+					/>
+					<label class="toggle-label" for="auto-update-toggle"></label>
 				</div>
-				<div class="flex items-center justify-center">
-					<button
-						class="button-control tool-tip"
-						onclick={checkUpdates}
-					>
-						<span class="tool-tip-content" data-side="left">
-							Check Update
-						</span>
-						<RefreshCwIcon />
-					</button>
-					<div class="toggle-switch">
-						<input
-							class="toggle-input"
-							id="auto-update-toggle"
-							type="checkbox"
-							disabled
-							checked={JSON.parse(
-								localStorage.autoUpdate ?? "true",
-							)}
-							onchange={(e) =>
-								(localStorage.autoUpdate = JSON.stringify(
-									e.currentTarget.checked,
-								))
-							}
-						/>
-						<label
-							class="toggle-label"
-							for="auto-update-toggle"
-						></label>
-					</div>
-				</div>
-			</div>
+			</SettingsItem>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
-			<div class="flex items-center justify-between">
-				<div>
-					<h1 class="text-lg font-bold">
-						Select a Realm each time the app opens.
-					</h1>
-
-					<p class="text-sm text-neutral-600 dark:text-neutral-400">
-						Prompts you to choose which realm to connect to every
-						time Hollow starts.
-					</p>
-				</div>
+			<SettingsItem
+				title="Initial Realm Selection"
+				description="Prompts you to choose which realm to connect to every time Hollow starts."
+			>
 				<div class="toggle-switch">
 					<input
 						class="toggle-input"
@@ -118,22 +98,16 @@ export default function General() {
 						for="choose-realm-toggle"
 					></label>
 				</div>
-			</div>
+			</SettingsItem>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
-			<div class="flex items-center justify-between">
-				<div>
-					<h1 class="text-lg font-bold">Start Tour</h1>
-
-					<p class="text-sm text-neutral-600 dark:text-neutral-400">
-						Learn how to navigate and use Hollow step by step.
-					</p>
-				</div>
-				<div>
-					<button class="button secondary" onclick={startTour}>
-						Start
-					</button>
-				</div>
-			</div>
-		</div>
+			<SettingsItem
+				title="Start Tour"
+				description="Learn how to navigate and use Hollow step by step."
+			>
+				<button class="button secondary" onclick={startTour}>
+					Start
+				</button>
+			</SettingsItem>
+		</SettingsPanel>
 	);
 }

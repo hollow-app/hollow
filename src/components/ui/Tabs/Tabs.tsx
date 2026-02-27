@@ -7,7 +7,7 @@ import {
 	Setter,
 } from "solid-js";
 
-export type TabsVariant = "lift" | "box";
+export type TabsVariant = "lift" | "box" | "default";
 
 interface TabsContextValue {
 	value: Accessor<string>;

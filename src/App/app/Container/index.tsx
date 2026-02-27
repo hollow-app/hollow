@@ -43,7 +43,14 @@ const Container: Component<ContainerProps> = (props) => {
 			</div>
 			<Show when={store.state.context.isSettingsVisible}>
 				<Suspense>
-					<Settings />
+					<Settings
+						selected={
+							typeof store.state.context.isSettingsVisible ===
+							"string"
+								? store.state.context.isSettingsVisible
+								: undefined
+						}
+					/>
 				</Suspense>
 			</Show>
 		</div>

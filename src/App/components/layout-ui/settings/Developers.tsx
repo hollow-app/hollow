@@ -4,6 +4,7 @@ import { join } from "@tauri-apps/api/path";
 import { useStore } from "@store";
 import { reload } from "@rust";
 import { openPath } from "@tauri-apps/plugin-opener";
+import { SettingsItem } from "@ui";
 import SettingsPanel from "./SettingsPanel";
 import { send } from "process";
 
@@ -53,17 +54,10 @@ export default function Developers() {
 	};
 	return (
 		<SettingsPanel label="Developers">
-			<div class="flex justify-between">
-				<div>
-					<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-						Enable Dev Tools
-					</h2>
-					<p class="text-sm text-neutral-600 dark:text-neutral-400">
-						Toggle to open browser dev tools or a debug console in
-						the app.
-					</p>
-				</div>
-
+			<SettingsItem
+				title="Enable Dev Tools"
+				description="Toggle to open browser dev tools or a debug console in the app."
+			>
 				<div class="toggle-switch">
 					<input
 						class="toggle-input"
@@ -74,15 +68,13 @@ export default function Developers() {
 					/>
 					<label class="toggle-label" for="dev-tools-toggle"></label>
 				</div>
-			</div>
+			</SettingsItem>
 			<hr class="bg-secondary-10 h-px w-full border-0" />
 
-			<div class="flex justify-between">
-				<div>
-					<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-						Load Unsigned Plugins
-					</h2>
-					<p class="text-sm text-neutral-600 dark:text-neutral-400">
+			<SettingsItem
+				title="Load Unsigned Plugins"
+				description={
+					<>
 						Allows you to load any plugin inside{" "}
 						<span
 							class="text-primary cursor-pointer underline"
@@ -100,9 +92,9 @@ export default function Developers() {
 							Plugins Folder
 						</span>
 						.
-					</p>
-				</div>
-
+					</>
+				}
+			>
 				<div class="toggle-switch">
 					<input
 						class="toggle-input"
@@ -116,7 +108,7 @@ export default function Developers() {
 						for="load-unsigned-plugins-toggle"
 					></label>
 				</div>
-			</div>
+			</SettingsItem>
 		</SettingsPanel>
 	);
 }

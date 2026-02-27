@@ -373,7 +373,7 @@ export type TypedOptionMap = {
 	color: {};
 	emoji: {};
 	dropdown: {
-		options: { title?: string; items: string[] }[];
+		options: { title?: string; items: string[] }[] | string[];
 		placeholder?: string;
 	};
 	custom: {

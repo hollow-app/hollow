@@ -14,5 +14,6 @@ export interface Relationships {
 export interface RelationshipUser {
 	uid: string;
 	username: string;
+	createdAt: string;
 	character?: Omit<Character, "titles">;
 }

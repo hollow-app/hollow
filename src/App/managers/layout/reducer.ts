@@ -4,7 +4,7 @@ const defaultState: LayoutState = {
 	left: {
 		visible: false,
 		current: "expand",
-		panels: ["expand", "character"],
+		panels: ["expand", "account"],
 	},
 	right: {
 		visible: false,

@@ -25,7 +25,7 @@ export interface Panels {
 }
 
 const panels: Panels = {
-	left: { expand: Expand, character: Character },
+	left: { expand: Expand, account: Character },
 	right: {
 		editor: Editor,
 		notifications: Notifications,
@@ -86,9 +86,11 @@ export function togglePanel(type: PanelType) {
 	});
 }
 
-export function isPanelVisible(type: PanelType, name: string): boolean {
-	const state = _state();
-	if (!state) return false;
+export function isPanelVisible(
+	state: RootState,
+	type: PanelType,
+	name: string,
+): boolean {
 	const layout = state.layout;
 	const target = layout[type];
 	return target.visible && target.current === name;

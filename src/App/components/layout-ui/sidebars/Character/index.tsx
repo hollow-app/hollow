@@ -6,19 +6,28 @@ import {
 	Show,
 	onCleanup,
 } from "solid-js";
-import { Check, ImageUpIcon, XIcon } from "lucide-solid";
+import {
+	Check,
+	ImageUpIcon,
+	SettingsIcon,
+	UserCogIcon,
+	XIcon,
+} from "lucide-solid";
 import FetchedIcon from "@app/components/ui/FetchedIcon";
 import { useCharacter, CharacterProps } from "./hooks";
 import { useStore } from "@store";
 import { getCurrentRealm } from "@shared/managers/Realm";
 import { Skeleton } from "./skeleton";
 import { Tab, TabList, TabPanel, Tabs } from "@component/ui/Tabs";
+import { Avatar, RarityBadge } from "@ui";
+import Segmented from "@component/ui/Segmented";
 
 const CharacterSidebar: Component<CharacterProps> = (props) => {
+	const store = useStore();
 	const { state, actions } = useCharacter();
 
 	return (
-		<div class="h-full w-102 overflow-hidden">
+		<div class="flex h-full w-102 flex-col overflow-hidden">
 			<Show
 				when={
 					state.account().connection.state &&
@@ -34,53 +43,25 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 							class="h-full w-full object-cover"
 						/>
 					</Show>
-					<button
-						class="bg-secondary-05/60 hover:bg-secondary-05 absolute top-2 right-2 flex items-center rounded p-1 text-xs opacity-0 transition-opacity group-hover:opacity-100"
-						onclick={() => actions.import_image("banner")}
-					>
-						<ImageUpIcon class="size-5 pr-1" /> Import
-					</button>
 				</div>
 
 				{/* Avatar Section */}
-				<div class="pointer-events-none relative px-6 pb-6">
-					<div class="pointer-events-none -mt-12 flex justify-start">
-						<div class="pointer-events-auto relative">
-							<div class="group border-secondary-20 bg-secondary-05 relative h-20 w-20 overflow-hidden rounded-2xl border-3 object-cover shadow-lg">
-								<Show
-									when={
-										state.account().character.identity
-											.avatar
-									}
-								>
-									<img
-										src={
-											state.account().character.identity
-												.avatar || "/placeholder.svg"
-										}
-										alt={
-											state.account().character.identity
-												.name
-										}
-									/>
-								</Show>
-
-								<button
-									class="bg-secondary-05/50 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-									onclick={() =>
-										actions.import_image("avatar")
-									}
-								>
-									<ImageUpIcon class="mx-auto p-1" />
-								</button>
-							</div>
-							<Show when={state.account().character?.level}>
-								<div class="bg-secondary-90 text-secondary border-secondary absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-lg border-2 text-xs font-bold shadow-sm">
-									{state.account().character.level.total}
-								</div>
-							</Show>
-						</div>
+				<div class="relative flex-1 px-6 pb-6">
+					<div class="-mt-12 flex justify-start">
+						<Avatar user={state.account().character} />
 					</div>
+					<button
+						class="button-control absolute top-2 right-0"
+						onclick={() =>
+							store.dispatch({
+								domain: "context",
+								type: "toggle-settings",
+								value: "account:account",
+							})
+						}
+					>
+						<UserCogIcon class="size-4" />
+					</button>
 
 					{/* Character Info */}
 					<div class="pointer-events-auto mt-4 space-y-4 text-left">
@@ -89,9 +70,10 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 								{state.account().character.identity.name}
 							</h2>
 							<Show when={state.account().character?.title}>
-								<div class="bg-secondary-10 border-secondary-25 w-fit rounded border-0 px-1 text-xs tracking-wide">
-									{state.account().character.title.label}
-								</div>
+								<RarityBadge
+									title={state.account().character.title}
+									displayLabel
+								/>
 							</Show>
 						</div>
 						<div class="text-sm text-gray-400">
@@ -111,7 +93,7 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 									<span class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
 										Experience
 									</span>
-									<span class="font-medium text-neutral-500">
+									<span class="text-xs font-medium text-neutral-500">
 										{state.account().character.level.xp} XP
 									</span>
 								</div>

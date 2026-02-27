@@ -13,6 +13,7 @@ export const TabList: ParentComponent<TabListProps> = (props) => {
 			class={`flex flex-wrap items-center ${props.class || ""}`}
 			classList={{
 				"gap-2": variant() === "box",
+				"border-b border-secondary-15 mb-5": variant() === "default",
 			}}
 		>
 			{props.children}

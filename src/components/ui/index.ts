@@ -21,3 +21,7 @@ export * from "./NumberInput";
 export * from "./Empty";
 export * from "./Dialog";
 export * from "./GradientEffect";
+export * from "./Settings";
+export * from "./Drawer";
+export * from "./Avatar";
+export * from "./RarityBadge";

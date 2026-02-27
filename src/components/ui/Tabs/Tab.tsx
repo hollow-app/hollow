@@ -8,6 +8,7 @@ interface TabProps {
 	class?: string;
 	icon?: MyIconsType;
 	disabled?: boolean;
+	last?: boolean;
 }
 
 export const Tab: ParentComponent<TabProps> = (props) => {
@@ -21,11 +22,13 @@ export const Tab: ParentComponent<TabProps> = (props) => {
 			aria-selected={isSelected()}
 			disabled={props.disabled}
 			onClick={() => !props.disabled && setValue(props.value)}
-			class={`relative flex items-center gap-2 border border-transparent px-4 py-2 text-sm outline-none ${
+			class={`relative flex items-center gap-2 px-4 py-2 text-sm outline-none ${
 				props.class || ""
 			}`}
 			classList={{
 				// Base styles
+				"ml-auto": props.last,
+
 				"cursor-pointer text-secondary-40 hover:text-secondary-60":
 					!isSelected() && !props.disabled,
 				"text-secondary-foreground": isSelected(),
@@ -38,10 +41,14 @@ export const Tab: ParentComponent<TabProps> = (props) => {
 					variant() === "box" && isSelected(),
 
 				// Lift Variant
-				"rounded-t-lg -mb-px": variant() === "lift",
-				"border-transparent": variant() === "lift" && !isSelected(),
+				"rounded-t-lg -mb-px border": variant() === "lift",
+				"border-transparent":
+					["lift", "default"].includes(variant()) && !isSelected(),
 				"border-x-secondary-15 z-20 border-t-secondary-15 border-b-secondary border-border bg-background":
 					variant() === "lift" && isSelected(),
+				// default
+				"-mb-px border-b-2": variant() === "default",
+				"border-primary": variant() === "default" && isSelected(),
 			}}
 		>
 			<Show when={props.icon}>

@@ -9,6 +9,8 @@ import {
 	createMemo,
 } from "solid-js";
 import { useStore } from "@store";
+import { SettingsGroup, SettingsItem } from "@ui";
+import SettingsPanel from "./SettingsPanel";
 const KEY_MAP: Record<string, string> = {
 	Control: "ctrl",
 	Alt: "alt",
@@ -97,166 +99,109 @@ export default function HotKeys() {
 	});
 
 	return (
-		<div class="h-fit p-10">
+		<SettingsPanel>
 			<div class="space-y-8">
-				<div class="space-y-3">
-					<div>
-						<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-							Configuration
-						</h1>
-					</div>
-					<div class="flex flex-col gap-5 p-5">
-						<div class="space-y-3">
-							<div class="flex justify-between">
-								<div>
-									<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-										Enabled
-									</h2>
-									<p class="text-sm text-neutral-600 dark:text-neutral-400">
-										Enable or disable the hotkeys.
-									</p>
-								</div>
-								<div class="toggle-switch">
-									<input
-										class="toggle-input"
-										id="enable-hotkeys-toggle"
-										type="checkbox"
-										checked={conf().enabled}
-										onChange={handleEnabled}
-									/>
-									<label
-										class="toggle-label"
-										for="enable-hotkeys-toggle"
-									></label>
-								</div>
-							</div>
+				<SettingsGroup title="Configuration">
+					<SettingsItem
+						title="Enabled"
+						description="Enable or disable the hotkeys."
+					>
+						<div class="toggle-switch">
+							<input
+								class="toggle-input"
+								id="enable-hotkeys-toggle"
+								type="checkbox"
+								checked={conf().enabled}
+								onChange={handleEnabled}
+							/>
+							<label
+								class="toggle-label"
+								for="enable-hotkeys-toggle"
+							></label>
 						</div>
-					</div>
-				</div>
+					</SettingsItem>
+				</SettingsGroup>
 				<For each={grouped()}>
 					{(group, i) => {
 						return (
-							<div class="space-y-3">
-								<div>
-									<h1 class="text-5xl font-extrabold text-neutral-950 dark:text-neutral-50">
-										{group.type}
-									</h1>
-								</div>
-								<div class="flex flex-col gap-5 p-5">
-									<For each={group.items}>
-										{(key, index) => (
-											<div class="space-y-3">
-												<div class="flex justify-between">
-													<div>
-														<h2 class="text-xl font-bold text-neutral-700 dark:text-neutral-300">
-															{key.name}
-														</h2>
-														<p class="text-sm text-neutral-600 dark:text-neutral-400">
-															{key.description}
-														</p>
-													</div>
-													<div class="bg-secondary-10/70 flex h-fit w-70 items-center justify-between rounded py-1 pr-1 pl-3 text-sm">
-														<div class="flex gap-2">
-															<Show
-																when={
-																	target() ===
-																	key.name
-																}
-																fallback={
-																	<For
-																		each={
-																			key.keys
-																		}
-																	>
-																		{(
-																			k,
-																		) => (
-																			<span class="keyboard-button">
-																				{
-																					k
-																				}
-																			</span>
-																		)}
-																	</For>
+							<SettingsGroup title={group.type}>
+								<For each={group.items}>
+									{(key, index) => (
+										<SettingsItem
+											title={key.name}
+											description={key.description}
+										>
+											<div class="bg-secondary-10/70 flex h-fit w-70 items-center justify-between rounded py-1 pr-1 pl-3 text-sm">
+												<div class="flex gap-2">
+													<Show
+														when={
+															target() ===
+															key.name
+														}
+														fallback={
+															<For
+																each={
+																	key.keys
 																}
 															>
-																<Show
-																	when={
-																		currentKeys()
-																			.length >
-																		0
-																	}
-																	fallback={
-																		<span class="text-neutral-500 italic dark:text-neutral-400">
-																			Press
-																			keys...
-																		</span>
-																	}
-																>
-																	<For
-																		each={currentKeys()}
-																	>
-																		{(
-																			k,
-																		) => (
-																			<span class="keyboard-button">
-																				{
-																					k
-																				}
-																			</span>
-																		)}
-																	</For>
-																</Show>
-															</Show>
-														</div>
-														<button
-															class="button-control"
-															onclick={(e) => {
-																e.currentTarget.classList.toggle(
-																	"active",
-																);
-																setTarget(
-																	(prev) =>
-																		prev
-																			? null
-																			: key.name,
-																);
-																setCurrentKeys(
-																	[],
-																);
-															}}
-															disabled={
-																key.static
+																{(k) => (
+																	<span class="keyboard-button">
+																		{k}
+																	</span>
+																)}
+															</For>
+														}
+													>
+														<Show
+															when={
+																currentKeys().length >
+																0
+															}
+															fallback={
+																<span class="text-neutral-500 italic dark:text-neutral-400">
+																	Press
+																	keys...
+																</span>
 															}
 														>
-															<FeatherIcon />
-														</button>
-													</div>
+															<For
+																each={currentKeys()}
+															>
+																{(k) => (
+																	<span class="keyboard-button">
+																		{k}
+																	</span>
+																)}
+															</For>
+														</Show>
+													</Show>
 												</div>
-												<Show
-													when={
-														index() !==
-														group.items.length - 1
-													}
+												<button
+													class="button-control"
+													onclick={(e) => {
+														e.currentTarget.classList.toggle(
+															"active",
+														);
+														setTarget((prev) =>
+															prev
+																? null
+																: key.name,
+														);
+														setCurrentKeys([]);
+													}}
+													disabled={key.static}
 												>
-													<hr class="bg-secondary-10 h-px w-full border-0" />
-												</Show>
+													<FeatherIcon />
+												</button>
 											</div>
-										)}
-									</For>
-								</div>
-								<Show
-									when={
-										i() !== state.hotkeys.hotkeys.length - 1
-									}
-								>
-									<hr class="bg-secondary-10 mx-auto my-4 h-px border-0" />
-								</Show>
-							</div>
+										</SettingsItem>
+									)}
+								</For>
+							</SettingsGroup>
 						);
 					}}
 				</For>
 			</div>
-		</div>
+		</SettingsPanel>
 	);
 }

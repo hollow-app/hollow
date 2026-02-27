@@ -7,7 +7,7 @@ export interface ContextState {
 	isFocus: boolean;
 	isLiveEditor: boolean;
 	canvasConfigs: GridStackOptions;
-	isSettingsVisible: boolean;
+	isSettingsVisible: boolean | string;
 	isVaultVisible:
 		| {
 				onSelect?: (path: string) => void;
@@ -28,7 +28,7 @@ export type ContextEvents = { domain: "context" } & (
 	  }
 	| {
 			type: "toggle-settings";
-			value?: boolean;
+			value?: boolean | string;
 	  }
 	| {
 			type: "toggle-vault";

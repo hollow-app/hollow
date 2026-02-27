@@ -9,6 +9,7 @@ interface Props
 	leftIcon?: MyIconsType;
 	rightIcon?: MyIconsType;
 	icon?: boolean;
+	size?: "xs" | "sm" | "md" | "lg";
 }
 
 export function Button(props: Props) {
@@ -20,6 +21,7 @@ export function Button(props: Props) {
 		"rightIcon",
 		"icon",
 		"variant",
+		"size",
 	]);
 	const [loading, setLoading] = createSignal(false);
 
@@ -48,6 +50,9 @@ export function Button(props: Props) {
 				local.variant ?? "secondary",
 			].join(" ")}
 			onclick={handleClick}
+			classList={{
+				["text-" + local.size]: !!local.size,
+			}}
 			{...rest}
 		>
 			<Presence>
@@ -85,7 +90,7 @@ export function Button(props: Props) {
 			<Motion.div
 				animate={{ opacity: loading() ? 0 : 1, y: loading() ? -20 : 0 }}
 				transition={{ duration: 0.2 }}
-				class="flex items-center gap-2"
+				class="flex shrink-0 items-center gap-2"
 			>
 				<Show when={local.leftIcon}>
 					<MyIcon

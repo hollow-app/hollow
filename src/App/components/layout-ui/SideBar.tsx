@@ -20,6 +20,7 @@ import {
 	selectPanel,
 } from "@app/managers/layout";
 import { toggleVault } from "@app/context/actions";
+import { UserCogIcon } from "lucide-solid";
 
 interface SideBarButton {
 	id: string;
@@ -59,13 +60,13 @@ export default function SideBar(props: SideBarProps) {
 			id: "expand-btn",
 			Icon: MyIconFun({ name: "home-2-fill" }),
 			onClick: () => selectPanel("left", "expand"),
-			selectedCondition: () => isPanelVisible("left", "expand"),
+			selectedCondition: () => isPanelVisible(state, "left", "expand"),
 		},
 		{
 			id: "editor-btn",
 			Icon: MyIconFun({ name: "designtools-fill" }),
 			onClick: () => selectPanel("right", "editor"),
-			selectedCondition: () => isPanelVisible("right", "editor"),
+			selectedCondition: () => isPanelVisible(state, "right", "editor"),
 		},
 		{
 			id: "vault-btn",
@@ -82,16 +83,17 @@ export default function SideBar(props: SideBarProps) {
 			tooltip: "Edit cards directly in the canvas",
 		},
 		{
-			id: "character-btn",
+			id: "account-btn",
 			Icon: MyIconFun({ name: "user" }),
-			onClick: () => selectPanel("left", "character"),
-			selectedCondition: () => isPanelVisible("left", "character"),
+			onClick: () => selectPanel("left", "account"),
+			selectedCondition: () => isPanelVisible(state, "left", "account"),
 		},
 		{
 			id: "notifications-btn",
 			Icon: MyIconFun({ name: "bell-fill" }),
 			onClick: () => selectPanel("right", "notifications"),
-			selectedCondition: () => isPanelVisible("right", "notifications"),
+			selectedCondition: () =>
+				isPanelVisible(state, "right", "notifications"),
 			style: {
 				"--opacity": "var(--alert)",
 			},
@@ -146,6 +148,7 @@ export default function SideBar(props: SideBarProps) {
 									tooltip={btn.meta.tooltip}
 									selectedCondition={() =>
 										isPanelVisible(
+											state,
 											btn.meta.type,
 											btn.meta.id,
 										)
@@ -169,30 +172,33 @@ export default function SideBar(props: SideBarProps) {
 
 const ControlButton = (btn: SideBarButton) => {
 	return (
-		<div
-			classList={{
-				"tool-tip": !!btn.tooltip,
-			}}
-		>
-			<Show when={btn.tooltip}>
-				<span data-side="right" class="tool-tip-content">
-					{btn.tooltip}
-				</span>
-			</Show>
-			<button
-				id={btn.id}
-				class={"button-control " + (btn.class ?? "")}
-				style={{
-					"--size": "calc(var(--spacing) * 8)",
-					...(btn.style ?? {}),
-				}}
+		<div>
+			<div
 				classList={{
-					selected: btn.selectedCondition && btn.selectedCondition(),
+					"tool-tip": !!btn.tooltip,
 				}}
-				onclick={btn.onClick}
 			>
-				<DynamicIcon icon={btn.Icon} class="m-auto size-4.5" />
-			</button>
+				<Show when={btn.tooltip}>
+					<span data-side="right" class="tool-tip-content">
+						{btn.tooltip}
+					</span>
+				</Show>
+				<button
+					id={btn.id}
+					class={"button-control " + (btn.class ?? "")}
+					style={{
+						"--size": "calc(var(--spacing) * 8)",
+						...(btn.style ?? {}),
+					}}
+					classList={{
+						selected:
+							btn.selectedCondition && btn.selectedCondition(),
+					}}
+					onclick={btn.onClick}
+				>
+					<DynamicIcon icon={btn.Icon} class="m-auto size-4.5" />
+				</button>
+			</div>
 		</div>
 	);
 };

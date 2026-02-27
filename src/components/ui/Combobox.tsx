@@ -114,7 +114,7 @@ export function Combobox(props: Props) {
 			<input
 				ref={inpt}
 				type="text"
-				value={search()}
+				value={props.value}
 				readOnly={local.readonly}
 				onInput={(e) => {
 					setSearch(e.currentTarget.value);

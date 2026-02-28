@@ -6,11 +6,14 @@ import {
 	CardType,
 	IPlugin,
 	PluginResult,
+	rawIPlugin,
+	rawPluginCapability,
 	ToolApi,
 } from "@app/type/hollow";
 import { hollow } from "../hollow";
 import { importFileUrl } from "../App/managers/Vault";
 import { User } from "@app/type/User";
+import { join } from "@tauri-apps/api/path";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
 
@@ -69,11 +72,14 @@ export async function get_version(): Promise<string> {
 export async function get_platform(): Promise<string> {
 	return await invoke("get_platform");
 }
-
-export async function get_unsigned_plugins(): Promise<HandType[]> {
-	const result: HandType[] = await invoke("get_unsigned_plugins");
+export async function get_unsigned_plugins(): Promise<rawIPlugin[]> {
+	const result: string = await invoke("get_unsigned_plugins");
+	const manifests: rawIPlugin[] = JSON.parse(result);
+	for (const plg of manifests) {
+		plg.capabilities = await exchangePluginHandlers(plg);
+	}
 	return [
-		...result.map((manifest) => ({
+		...manifests.map((manifest) => ({
 			...manifest,
 			name: manifest.name.toLowerCase(),
 			signed: false,
@@ -144,28 +150,17 @@ export async function remove_plugin({ name }: RemovePluginProps): Promise<any> {
 
 export async function load_plugin({
 	semiPath,
-	toolEvent,
 }: {
 	semiPath: string;
-	toolEvent: ToolApi;
-}): Promise<IPlugin | null> {
+}): Promise<rawIPlugin | null> {
 	//
-	const indexJS: string = await invoke("read_file", {
+	const indexJSON: string = await invoke("read_file", {
 		path: semiPath,
 	});
-	if (indexJS !== "none") {
-		const pluginWrapper = new Function("exports", "module", indexJS);
-		const module = {
-			exports: {} as {
-				default: new (app: AppApi, toolEvent: ToolApi) => IPlugin;
-			},
-		};
-		pluginWrapper(module.exports, module);
-		const PluginClass = module.exports.default;
-		const instance: IPlugin = new PluginClass(hollow.events, toolEvent);
-		return {
-			capabilities: instance.capabilities,
-		};
+	if (indexJSON !== "none") {
+		const plugin: rawIPlugin = JSON.parse(indexJSON);
+		plugin.capabilities = await exchangePluginHandlers(plugin);
+		return plugin;
 	}
 	return null;
 }
@@ -227,4 +222,19 @@ export async function sign_in() {
 }
 export async function get_user(): Promise<User> {
 	return await invoke("get_user");
+}
+
+// utils
+
+async function exchangePluginHandlers(
+	plugin: rawIPlugin,
+): Promise<rawPluginCapability[]> {
+	return await Promise.all(
+		plugin.capabilities.map(async (cap) => ({
+			...cap,
+			handler: await invoke("read_file", {
+				path: await join("plugins", plugin.name, cap.handler),
+			}),
+		})),
+	);
 }

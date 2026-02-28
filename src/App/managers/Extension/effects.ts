@@ -1,11 +1,19 @@
 import { hollow } from "hollow";
 import { CoreTool } from "../Module/type";
 import { join } from "@tauri-apps/api/path";
-import { add_plugin, load_plugin, remove_plugin } from "@rust";
+import {
+	add_plugin,
+	get_unsigned_plugins,
+	load_plugin,
+	remove_plugin,
+} from "@rust";
 import {
 	AppApi,
 	IPlugin,
+	ModuleCapability,
+	PanelCapability,
 	PluginCapability,
+	rawPluginCapability,
 	ToolApi,
 	ToolEvents,
 } from "@app/type/hollow";
@@ -18,6 +26,9 @@ import { _dispatch } from "@shared/store/effects";
 import { NotebookMain } from "@app/(Core Tools)/NoteBook/NotebookMain";
 import { KanbanMain } from "@app/(Core Tools)/Kanban/KanbanMain";
 import { EmbedMain } from "@app/(Core Tools)/Embed/EmbedMain";
+import { ModuleMain } from "./utils/ModuleMain";
+import { LayoutMain } from "./utils/LayoutMain";
+import { buildPluginHTML, buildPluginIframe } from "./utils";
 
 // TODO needs to be inside an uneditable place , local file
 // maybe add this to extension state as well
@@ -44,6 +55,20 @@ export function setupExtension(dispatch: (action: any) => void) {
 					meta: { ...i.meta, source: ext.name },
 				})),
 			];
+		}
+		const loadUnsigned = false;
+		if (loadUnsigned) {
+			const unsignedExtensions = await get_unsigned_plugins();
+			for (const ext of unsignedExtensions) {
+				const capa = await loadPlugin(ext.name);
+				capabilities = [
+					...capabilities,
+					...capa.map((i) => ({
+						...i,
+						meta: { ...i.meta, source: ext.name },
+					})),
+				];
+			}
 		}
 		hollow.pevents.emit("capabilities", capabilities);
 		await hollow.pevents.emitAsync("post-capabilities");
@@ -121,21 +146,23 @@ export async function extensionEffects(action: Events, state: ExtensionState) {
 		}
 	}
 }
-async function loadPlugin(extension: string) {
+async function loadPlugin(extension: string): Promise<PluginCapability[]> {
+	const toolEvent = await createToolEvent(extension);
 	if (hollow.coreTools.includes(extension as CoreTool)) {
-		const toolEvent = await createToolEvent(extension);
 		const pluginObj = createCoreTool(extension as CoreTool, toolEvent);
 		if (!pluginObj) return null;
 		return pluginObj.capabilities;
 	} else {
-		const semiPath = await join(...["plugins", extension, "index.js"]);
-		const toolEvent = await createToolEvent(extension);
+		const semiPath = await join(...["plugins", extension, "index.json"]);
 		const pluginObj = await load_plugin({
 			semiPath: semiPath,
-			toolEvent,
 		});
 		if (!pluginObj) return null;
-		return pluginObj.capabilities;
+		// PLUGIN IFRAME
+		const iframe = buildPluginIframe(toolEvent);
+		return pluginObj.capabilities.map((i) =>
+			polishICapability(i, toolEvent, iframe),
+		);
 	}
 }
 
@@ -162,4 +189,44 @@ function createCoreTool(name: CoreTool, toolEvent: ToolApi): IPlugin | null {
 		embed: EmbedMain,
 	};
 	return new toolMap[name](hollow.events, toolEvent);
+}
+
+// utils
+function polishICapability(
+	raw: rawPluginCapability,
+	toolEvent: ToolApi,
+	iframe: HTMLIFrameElement,
+): PluginCapability {
+	switch (raw.kind) {
+		case "module":
+			return {
+				...raw,
+				kind: "module",
+				handler: polishModuleCapability(raw, toolEvent, iframe),
+			};
+		case "panel":
+			return {
+				...raw,
+				kind: "panel",
+				handler: polishLayoutCapability(raw, toolEvent, iframe),
+			};
+	}
+}
+function polishModuleCapability(
+	raw: rawPluginCapability,
+	toolEvent: ToolApi,
+	iframe: HTMLIFrameElement,
+): ModuleCapability {
+	// const store: IStore = toolEvent.getData("config");
+	//
+	return new ModuleMain(iframe, raw, hollow.events, toolEvent);
+}
+function polishLayoutCapability(
+	raw: rawPluginCapability,
+	toolEvent: ToolApi,
+	iframe: HTMLIFrameElement,
+): PanelCapability {
+	// const store: IStore = toolEvent.getData("config");
+	//
+	return new LayoutMain();
 }

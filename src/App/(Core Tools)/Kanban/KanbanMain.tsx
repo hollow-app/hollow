@@ -38,6 +38,7 @@ export class KanbanMain implements IPlugin {
 		] as any;
 	}
 
+	public readonly name = "kanban";
 	public readonly capabilities: PluginCapability[];
 
 	private async onCreate(card: CardType): Promise<PluginResult> {

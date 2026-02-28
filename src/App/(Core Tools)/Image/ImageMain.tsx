@@ -18,6 +18,7 @@ export class ImageMain implements IPlugin {
 	private readonly toolEvents: ToolApi;
 	private readonly store: IStore;
 
+	public readonly name: string = "image";
 	public readonly capabilities: PluginCapability[];
 
 	constructor(_: unknown, toolEvent: ToolApi) {
@@ -75,20 +76,16 @@ export class ImageMain implements IPlugin {
 	private async onLoad(card: CardType): Promise<PluginResult> {
 		try {
 			const container = document.getElementById(card.id);
-
 			if (!container) {
 				return {
 					status: false,
 					message: `DOM container not found for card id: ${card.id}`,
 				};
 			}
-
 			if (this.roots.has(card.id)) {
 				return { status: true };
 			}
-
 			const data: ImageType = this.store.get(card.id);
-
 			const dispose = createRoot((dispose) => {
 				render(
 					() => (

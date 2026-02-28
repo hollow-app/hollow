@@ -36,7 +36,7 @@ pub fn get_unsigned_plugins(
     {
         let entry = entry.map_err(|e| format!("Failed to read directory entry: {}", e))?;
         let path = entry.path();
-        let manifest_path = path.join("manifest.json");
+        let manifest_path = path.join("index.json");
 
         if manifest_path.exists() {
             let content = fs::read_to_string(&manifest_path)

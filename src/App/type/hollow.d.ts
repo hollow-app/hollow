@@ -8,7 +8,15 @@ export interface PluginResult {
 	error?: Error;
 	data?: unknown;
 }
+export type rawPluginCapability = Omit<PluginCapability, "handler"> & {
+	handler: string;
+};
+export interface rawIPlugin {
+	name: string;
+	capabilities: rawPluginCapability[];
+}
 export interface IPlugin {
+	name: string;
 	capabilities: PluginCapability[];
 }
 export type CapabilityMeta = {

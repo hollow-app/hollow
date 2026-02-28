@@ -19,23 +19,11 @@ import {
 	PluginCapability,
 	ModuleCapability,
 } from "@app/type/hollow";
-import { ImageMain } from "@coretools/Image/ImageMain";
-import { NotebookMain } from "@coretools/NoteBook/NotebookMain";
-import { KanbanMain } from "@coretools/Kanban/KanbanMain";
-import { EmbedMain } from "@coretools/Embed/EmbedMain";
 import { EventsManager } from "../EventsManager";
 import { ToolMetadata } from "@app/type/ToolMetadata";
 import { getCurrentRealm } from "@shared/managers/Realm";
 import * as cfm from "@app/managers/CardFS";
-import {
-	add_plugin,
-	create_dir,
-	get_unsigned_plugins,
-	load_plugin,
-	reload,
-	remove_dir,
-	remove_plugin,
-} from "@rust";
+import { create_dir, get_unsigned_plugins, remove_dir } from "@rust";
 
 export let store: Storage | null = null;
 export let toolMap: ToolMap = new Map();
@@ -45,7 +33,6 @@ export function setupModule(dispatch: (action: any) => void) {
 		const capas = hollow.pevents
 			.getData("capabilities")
 			.filter((i) => i.kind === "module");
-		const loadUnsigned = false;
 		const realmLocation = getCurrentRealm().location;
 		const path = await join(...[realmLocation, ".hollow", "main.json"]);
 		store = await Storage.create({
@@ -55,35 +42,6 @@ export function setupModule(dispatch: (action: any) => void) {
 			},
 		});
 		let parsedData = store.getData();
-		if (loadUnsigned) {
-			const unsignedTools: HandType[] = await get_unsigned_plugins();
-			const thereIsNewPlugins = {};
-			for (const tool of unsignedTools) {
-				const targetTool = parsedData[tool.name];
-				if (targetTool) {
-					parsedData[tool.name] = {
-						...targetTool,
-						...tool,
-					};
-				} else {
-					const iconPath = await join(
-						realmLocation,
-						"plugins",
-						tool.name,
-						"icon.svg",
-					);
-					const ntool = {
-						...tool,
-						cards: [],
-						icon: convertFileSrc(iconPath),
-					};
-					parsedData[tool.name] = ntool;
-					thereIsNewPlugins[tool.name] = ntool;
-				}
-			}
-			Object.keys(thereIsNewPlugins).length > 0 &&
-				store.setMany(thereIsNewPlugins);
-		}
 		const cardsWithDates: Array<{
 			createdAt: number;
 			card: (typeof parsedData)[string]["cards"][number];
@@ -91,7 +49,6 @@ export function setupModule(dispatch: (action: any) => void) {
 
 		for (const key in parsedData) {
 			const tool: HandType = parsedData[key];
-			if (!tool.signed && !loadUnsigned) continue;
 			const targetModule = capas.find((i) => i.meta.name === tool.name);
 			const toolEvent = await createToolEvent(tool.name);
 			const toolInstance: ToolMethods = {

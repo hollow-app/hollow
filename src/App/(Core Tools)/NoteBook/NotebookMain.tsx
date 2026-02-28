@@ -34,11 +34,11 @@ export class NotebookMain implements IPlugin {
 					onLoad: this.onLoad.bind(this),
 					onUnload: this.onUnload.bind(this),
 				},
-
 			},
 		] as PluginCapability[];
 	}
 
+	public readonly name: string = "notebook";
 	public readonly capabilities: PluginCapability[];
 
 	private async onCreate(card: CardType): Promise<PluginResult> {

@@ -45,6 +45,7 @@ export class EmbedMain implements IPlugin {
 		] as any;
 	}
 
+	public readonly name = "embed";
 	public readonly capabilities: PluginCapability[];
 
 	private async onCreate(card: CardType): Promise<PluginResult> {

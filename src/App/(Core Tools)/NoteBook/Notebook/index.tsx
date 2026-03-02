@@ -16,7 +16,7 @@ const MarkdownEditor = lazy(
 	() => import("@app/components/ui/MarkdownEditor.tsx"),
 );
 import MarkdownPreview from "@app/components/ui/MarkdownPreview.tsx";
-import { Combobox, Tag } from "@ui";
+import { Combobox, Tag, Keywords } from "@ui";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import MyIcon, { MyIconFun } from "@app/components/ui/MyIcon.tsx";
@@ -120,17 +120,17 @@ const Notebook: Component<NotebookProps> = (props) => {
 						onclick={() => {
 							state.note()?.newNote
 								? (() => {
-										state.setEditMode(false);
-										state.setNote(
-											state.book.last
-												? state.book.notes.find(
-														(i) =>
-															i.title ===
-															state.book.last,
-													) || null
-												: null,
-										);
-									})()
+									state.setEditMode(false);
+									state.setNote(
+										state.book.last
+											? state.book.notes.find(
+												(i) =>
+													i.title ===
+													state.book.last,
+											) || null
+											: null,
+									);
+								})()
 								: actions.onNewNote();
 						}}
 						style={{
@@ -205,11 +205,11 @@ const Notebook: Component<NotebookProps> = (props) => {
 											state.setNote((prev) =>
 												prev
 													? {
-															...prev,
-															title: e
-																.currentTarget
-																.value,
-														}
+														...prev,
+														title: e
+															.currentTarget
+															.value,
+													}
 													: null,
 											)
 										}
@@ -220,34 +220,37 @@ const Notebook: Component<NotebookProps> = (props) => {
 										}}
 										disabled={!state.editMode()}
 									/>
-									<div class="flex min-h-0 w-full flex-1 text-[0.7em]">
+									<div class="flex min-h-0 w-full text-[0.7em]">
 										<Show
 											when={!state.editMode()}
 											fallback={
-												<Combobox
-													items={
-														state.note()?.attributes
-															?.tags
-															? state
-																	.note()!
-																	.attributes.tags.split(
-																		",",
-																	)
-															: []
+												<Keywords
+													w="w-full"
+													value={
+														state
+															.note()
+															?.attributes?.tags?.split(
+																",",
+															)
+															.map((i) =>
+																i.trim(),
+															)
+															.filter(Boolean) ??
+														[]
 													}
 													onselect={(tgs) =>
 														state.setNote((prev) =>
 															prev
 																? {
-																		...prev,
-																		attributes:
-																			{
-																				...prev.attributes,
-																				tags: tgs.join(
-																					", ",
-																				),
-																			},
-																	}
+																	...prev,
+																	attributes:
+																	{
+																		...prev.attributes,
+																		tags: tgs.join(
+																			", ",
+																		),
+																	},
+																}
 																: null,
 														)
 													}
@@ -313,9 +316,9 @@ const Notebook: Component<NotebookProps> = (props) => {
 													state.setNote((prev) =>
 														prev
 															? {
-																	...prev,
-																	body: v,
-																}
+																...prev,
+																body: v,
+															}
 															: null,
 													);
 												}}

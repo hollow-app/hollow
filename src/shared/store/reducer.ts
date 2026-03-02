@@ -9,6 +9,7 @@ import { vaultReducer } from "@app/managers/Vault";
 import { notificationsReducer } from "@app/managers/Notifications";
 import { layoutReducer } from "@app/managers/layout";
 import { realmReducer } from "@shared/managers/Realm";
+import { extensionReducer } from "@app/managers/Extension/reducer";
 
 // Helper to get value from path
 function getValue(obj: any, path: string): any {
@@ -41,6 +42,8 @@ export function rootReducer(
 	// --- DRAFT CONTROL (MUST BE FIRST) ---
 	if (action.type === "DRAFT_START") {
 		if (!draftKey) return base;
+		// DEEP CLONE to break reference identity.
+		// This ensures the snapshot is independent of Solid's in-place proxy mutations.
 		let data = getValue(base, action.path);
 
 		if (action.select) {
@@ -57,7 +60,7 @@ export function rootReducer(
 				...base._drafts,
 				[draftKey]: {
 					path: action.path,
-					data,
+					data: { ...data },
 					select: action.select,
 				},
 			},
@@ -108,6 +111,7 @@ export function rootReducer(
 	// --- NORMAL STATE COMPUTATION ---
 	const nextSlices = {
 		account: accountReducer(base.account, action as any),
+		extension: extensionReducer(base.extension, action as any),
 		context: contextReducer(base.context, action as any),
 		settings: settingsReducer(base.settings, action as any),
 		codeTheme: codeThemeReducer(base.codeTheme, action as any),

@@ -4,9 +4,10 @@
 	"description": "Shape your tools, stay productive",
 	"type": "module",
 	"scripts": {
-		"start": "vite",
-		"dev": "vite",
-		"build": "tsc && vite build",
+		"start": "npm run build:bridge && vite",
+		"dev": "npm run build:bridge && vite",
+		"build": "npm run build:bridge && tsc && vite build",
+		"build:bridge": "cd sub/plugin-bridge && npm run build",
 		"serve": "vite preview",
 		"tauri": "tauri"
 	},
@@ -68,3 +69,4 @@
 		"vite-plugin-solid-svg": "^0.8.1"
 	}
 }
+

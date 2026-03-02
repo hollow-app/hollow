@@ -9,7 +9,9 @@ import {
 } from "@rust";
 import {
 	AppApi,
+	CardType,
 	IPlugin,
+	IStore,
 	ModuleCapability,
 	PanelCapability,
 	PluginCapability,
@@ -29,6 +31,7 @@ import { EmbedMain } from "@app/(Core Tools)/Embed/EmbedMain";
 import { ModuleMain } from "./utils/ModuleMain";
 import { LayoutMain } from "./utils/LayoutMain";
 import { buildPluginHTML, buildPluginIframe } from "./utils";
+import { sendIframeRequest } from "@app/utils";
 
 // TODO needs to be inside an uneditable place , local file
 // maybe add this to extension state as well
@@ -41,8 +44,9 @@ const extensions: ExtensionMeta[] = savedExtensions
 			{ name: "kanban", signed: true },
 			{ name: "embed", signed: true },
 		];
+const pluginEvents: Record<string, ToolApi> = {};
 
-export function setupExtension(dispatch: (action: any) => void) {
+export async function setupExtension(dispatch: (action: any) => void) {
 	hollow.pevents.on("post-realm", async () => {
 		await hollow.pevents.emitAsync("pre-capabilities");
 		let capabilities = [];
@@ -56,7 +60,7 @@ export function setupExtension(dispatch: (action: any) => void) {
 				})),
 			];
 		}
-		const loadUnsigned = false;
+		const loadUnsigned = true;
 		if (loadUnsigned) {
 			const unsignedExtensions = await get_unsigned_plugins();
 			for (const ext of unsignedExtensions) {
@@ -148,6 +152,7 @@ export async function extensionEffects(action: Events, state: ExtensionState) {
 }
 async function loadPlugin(extension: string): Promise<PluginCapability[]> {
 	const toolEvent = await createToolEvent(extension);
+	pluginEvents[extension] = toolEvent;
 	if (hollow.coreTools.includes(extension as CoreTool)) {
 		const pluginObj = createCoreTool(extension as CoreTool, toolEvent);
 		if (!pluginObj) return null;
@@ -159,11 +164,19 @@ async function loadPlugin(extension: string): Promise<PluginCapability[]> {
 		});
 		if (!pluginObj) return null;
 		// PLUGIN IFRAME
-		const iframe = buildPluginIframe(toolEvent);
-		return pluginObj.capabilities.map((i) =>
+		const iframe = buildPluginIframe({
+			module: toolEvent,
+			script: pluginObj.script,
+			visual: false,
+		});
+		const capas = pluginObj.capabilities.map((i) =>
 			polishICapability(i, toolEvent, iframe),
 		);
+		return capas;
 	}
+}
+export function getPluginEvents(name: string) {
+	return pluginEvents[name];
 }
 
 // create the HollowEvent of a singal tool;
@@ -173,6 +186,17 @@ async function createToolEvent(toolName: string): Promise<ToolApi> {
 		...[getCurrentRealm().location, "main", toolName, "config.json"],
 	);
 	const str = await Storage.create({ path, options: { defaults: {} } });
+	// const store: IStore = {
+	// 	close: str.close.bind(str),
+	// 	get: str.get.bind(str),
+	// 	getData: str.getData.bind(str),
+	// 	keys: str.keys.bind(str),
+	// 	reload: str.reload.bind(str),
+	// 	remove: str.remove.bind(str),
+	// 	save: str.save.bind(str),
+	// 	set: str.set.bind(str),
+	// 	setMany: str.setMany.bind(str),
+	// };
 	toolEvent.emit("config", str);
 	return toolEvent;
 }
@@ -219,7 +243,13 @@ function polishModuleCapability(
 ): ModuleCapability {
 	// const store: IStore = toolEvent.getData("config");
 	//
-	return new ModuleMain(iframe, raw, hollow.events, toolEvent);
+	const moduleMain = new ModuleMain(iframe, raw, hollow.events, toolEvent);
+	return {
+		onCreate: moduleMain.onCreate.bind(moduleMain),
+		onDelete: moduleMain.onDelete.bind(moduleMain),
+		onLoad: moduleMain.onLoad.bind(moduleMain),
+		onUnload: moduleMain.onUnload.bind(moduleMain),
+	};
 }
 function polishLayoutCapability(
 	raw: rawPluginCapability,

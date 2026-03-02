@@ -7,45 +7,43 @@ export function setupAccount(
 	dispatch: (action: any) => void,
 	get: () => RootState,
 ) {
-	hollow.pevents.on("post-realm", async () => {
-		// const connection = await is_signed_in();
+	// const connection = await is_signed_in();
+	dispatch({
+		domain: "account",
+		type: "set-connection",
+		connection: { state: true, type: "online" },
+	});
+	// const user = await get_user();
+	// localStorage.user = JSON.stringify(user);
+	if (localStorage.user) {
 		dispatch({
 			domain: "account",
-			type: "set-connection",
-			connection: { state: true, type: "online" },
+			type: "set-user",
+			user: JSON.parse(localStorage.user)["user"],
 		});
-		// const user = await get_user();
-		// localStorage.user = JSON.stringify(user);
-		if (localStorage.user) {
-			dispatch({
-				domain: "account",
-				type: "set-user",
-				user: JSON.parse(localStorage.user)["user"],
-			});
-			return;
-		}
-		// if (connection.state) {
-		// 	const user = await get_user();
-		// 	if (user) {
-		// 		localStorage.user = JSON.stringify(user);
-		// 	}
-		// 	dispatch({ domain: "account", type: "set-user", user });
-		// }
-		// hollow.events.on("network-state", async (b) => {
-		// 	const accountState = get().account;
-		// 	if (!accountState.connection.state) return;
-		// 	if (b && accountState.connection.type === "offline") {
-		// 		const connection = await is_signed_in();
-		// 		dispatch({
-		// 			domain: "account",
-		// 			type: "set-connection",
-		// 			connection,
-		// 		});
-		// 		// todo
-		// 		// user as well;
-		// 	}
-		// });
-	});
+		return;
+	}
+	// if (connection.state) {
+	// 	const user = await get_user();
+	// 	if (user) {
+	// 		localStorage.user = JSON.stringify(user);
+	// 	}
+	// 	dispatch({ domain: "account", type: "set-user", user });
+	// }
+	// hollow.events.on("network-state", async (b) => {
+	// 	const accountState = get().account;
+	// 	if (!accountState.connection.state) return;
+	// 	if (b && accountState.connection.type === "offline") {
+	// 		const connection = await is_signed_in();
+	// 		dispatch({
+	// 			domain: "account",
+	// 			type: "set-connection",
+	// 			connection,
+	// 		});
+	// 		// todo
+	// 		// user as well;
+	// 	}
+	// });
 }
 
 export function accountEffects(action: Events, state: AccountState) {

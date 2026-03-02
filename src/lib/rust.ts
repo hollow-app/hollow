@@ -73,18 +73,22 @@ export async function get_platform(): Promise<string> {
 	return await invoke("get_platform");
 }
 export async function get_unsigned_plugins(): Promise<rawIPlugin[]> {
-	const result: string = await invoke("get_unsigned_plugins");
-	const manifests: rawIPlugin[] = JSON.parse(result);
-	for (const plg of manifests) {
-		plg.capabilities = await exchangePluginHandlers(plg);
+	const manifests: rawIPlugin[] = await invoke("get_unsigned_plugins");
+	try {
+		for (const plg of manifests) {
+			plg.capabilities = await exchangePluginHandlers(plg);
+		}
+		return [
+			...manifests.map((manifest) => ({
+				...manifest,
+				name: manifest.name.toLowerCase(),
+				signed: false,
+			})),
+		];
+	} catch (e) {
+		console.log("failed::::", e);
+		return [];
 	}
-	return [
-		...manifests.map((manifest) => ({
-			...manifest,
-			name: manifest.name.toLowerCase(),
-			signed: false,
-		})),
-	];
 }
 
 export async function fetch({
@@ -160,6 +164,9 @@ export async function load_plugin({
 	if (indexJSON !== "none") {
 		const plugin: rawIPlugin = JSON.parse(indexJSON);
 		plugin.capabilities = await exchangePluginHandlers(plugin);
+		plugin.script = await invoke("read_file", {
+			path: await join("plugins", plugin.name, "index.js"),
+		});
 		return plugin;
 	}
 	return null;

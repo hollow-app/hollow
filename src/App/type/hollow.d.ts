@@ -14,6 +14,7 @@ export type rawPluginCapability = Omit<PluginCapability, "handler"> & {
 export interface rawIPlugin {
 	name: string;
 	capabilities: rawPluginCapability[];
+	script?: string;
 }
 export interface IPlugin {
 	name: string;
@@ -402,6 +403,10 @@ export type TypedOptionMap = {
  * @template Extra  The additional config for that input type.
  */
 export type BaseOption<T extends string, Extra = {}> = {
+	/**
+	 * Unique key identifying the option within the form submission.
+	 */
+	key: any;
 	type: T;
 	label: string;
 	description?: string;
@@ -417,7 +422,7 @@ type ToolOptionBase = {
 	/**
 	 * Called whenever the setting value changes.
 	 */
-	onAction: (v?: any) => void;
+	onAction?: (v?: any) => void;
 };
 
 /**
@@ -438,7 +443,6 @@ export type ToolOptions = {
 	 * Called to persist/save any changes made to the settings.
 	 */
 	save: () => void;
-
 	/**
 	 * List of editable options or settings.
 	 */
@@ -496,10 +500,6 @@ export type FormType = {
  * A single input field in a form, used when a tool requests a user to fill in information.
  */
 export type FormOption = {
-	/**
-	 * Unique key identifying the option within the form submission.
-	 */
-	key: any;
 	inline?: boolean;
 	row?: boolean;
 	/**
@@ -657,3 +657,137 @@ export type CardFs = {
 	remove(path: string): Promise<void>;
 	rename(path: string, newPath: string): Promise<void>;
 };
+/**
+ * utility to make all functions in an object return a Promise,
+ * reflecting the asynchronous nature of the iframe bridge.
+ */
+export type Asyncify<T> = T extends (...args: infer A) => infer R
+	? (...args: A) => Promise<R extends Promise<infer PR> ? PR : R>
+	: T extends object
+		? { [K in keyof T]: Asyncify<T[K]> }
+		: T;
+
+export interface PluginIStore {
+	/**
+	 * Returns the in-memory data object.
+	 * Throws if the storage has been closed.
+	 */
+	getData(): Promise<Record<string, any>>;
+
+	/**
+	 * Gets a value from the in-memory cache.
+	 * Throws if the storage has been closed.
+	 */
+	get<T>(key: string, defaultValue?: T): Promise<T | undefined>;
+
+	/**
+	 * Sets a value and persists it asynchronously.
+	 * Throws if the storage has been closed.
+	 */
+	set(key: string, value: any): void;
+
+	/**
+	 * Sets multiple values and persists them asynchronously.
+	 * Throws if the storage has been closed.
+	 */
+	setMany(values: Record<string, any>): void;
+
+	/**
+	 * Removes a key from storage.
+	 * Throws if the storage has been closed.
+	 */
+	remove(key: string): void;
+
+	/**
+	 * Returns all keys in the in-memory cache.
+	 * Throws if the storage has been closed.
+	 */
+	keys(): Promise<string[]>;
+
+	/**
+	 * Explicitly saves pending changes to disk.
+	 * Throws if the storage has been closed.
+	 */
+	save(): Promise<void>;
+
+	/**
+	 * Reloads the store from disk and refreshes in-memory cache.
+	 * Throws if the storage has been closed.
+	 */
+	reload(): Promise<void>;
+
+	/**
+	 * Disposes the underlying store resource.
+	 * After calling this, the instance must not be used.
+	 * This method is idempotent.
+	 */
+	close(): Promise<void>;
+}
+/**
+ * Redefines HollowEvent for the Plugin (Iframe) context.
+ * In the iframe, every method returns a Promise because it must cross the bridge.
+ */
+export type HollowPluginEvent<
+	EventMap extends Record<string, any> = Record<string, any>,
+	ReturnMap extends Record<keyof EventMap, any> = {
+		[K in keyof EventMap]: void;
+	},
+> = {
+	on<K extends keyof EventMap>(
+		eventName: K,
+		listener: (
+			data: Asyncify<EventMap[K]>,
+		) =>
+			| Promise<Asyncify<ReturnMap[K]> | void>
+			| Asyncify<ReturnMap[K]>
+			| void,
+	): void;
+
+	off<K extends keyof EventMap>(
+		eventName: K,
+		listener: (
+			data: Asyncify<EventMap[K]>,
+		) =>
+			| Promise<Asyncify<ReturnMap[K]> | void>
+			| Asyncify<ReturnMap[K]>
+			| void,
+	): void;
+
+	emit<K extends keyof EventMap>(
+		eventName: K,
+		data?: EventMap[K],
+	): Promise<Asyncify<ReturnMap[K]>>;
+
+	emitAsync<K extends keyof EventMap>(
+		eventName: K,
+		data?: EventMap[K],
+	): Promise<Asyncify<ReturnMap[K]>>;
+
+	getData<K extends keyof EventMap>(
+		eventName: K,
+	): Promise<Asyncify<EventMap[K]> | undefined>;
+};
+
+export interface HollowPluginAPI {
+	app: AppApi;
+	module: ToolApi;
+}
+
+declare global {
+	interface Window {
+		/**
+		 * The core Hollow API for communicating with the host app.
+		 */
+		__API__: HollowPluginAPI;
+
+		/**
+		 * Metadata about the specific card instance this plugin is running inside.
+		 */
+		__INSTANCE__: CardType;
+
+		/**
+		 * Any other additional data injected by the host manager.
+		 */
+		[key: `__${string}__`]: any;
+	}
+}

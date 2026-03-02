@@ -14,27 +14,21 @@ import { useStore } from "@shared/store";
 import { getHand } from "@app/managers/Module/effects";
 import { Combobox, ColorButton, NumberInput } from "@ui";
 
-interface SelectedInstance {
-	module: string;
-	id: string;
-}
-
 export default function Editor() {
 	const { state, dispatch } = useStore();
 	const instances = createMemo(() => state.module.instances);
-	const [instance, setInstance] = createSignal<SelectedInstance>();
 
 	const instanceData = createMemo(() => {
-		if (!instance()) return null;
-		const id = instance().id;
+		if (!state.context.editorInstance) return null;
+		const id = state.context.editorInstance.id;
 		return id ? instances().find((c) => c.id === id) : null;
 	});
 	const instanceStyle = createMemo(() => instanceData()?.style ?? {});
 
 	// updaters
 	const updateRootProp = (key: keyof CardType, value: any) => {
-		const id = instance().id;
-		const module = instance().module;
+		const id = state.context.editorInstance.id;
+		const module = state.context.editorInstance.module;
 		dispatch(
 			{
 				domain: "module",
@@ -48,8 +42,8 @@ export default function Editor() {
 	};
 
 	const updateStyleProp = (key: keyof JSX.CSSProperties, value: any) => {
-		const id = instance().id;
-		const module = instance().module;
+		const id = state.context.editorInstance.id;
+		const module = state.context.editorInstance.module;
 		const currentCard = instances().find((c) => c.id === id);
 		if (currentCard) {
 			const newStyle = { ...currentCard.style, [key]: value };
@@ -101,7 +95,7 @@ export default function Editor() {
 			class="flex size-full flex-col overflow-hidden rounded-xl p-5"
 		>
 			<div class="">
-				<Header instance={instance} setInstance={setInstance} />
+				<Header />
 			</div>
 
 			<Show
@@ -309,15 +303,12 @@ function ToggleRow(props: {
 	);
 }
 
-function Header(props: {
-	instance: Accessor<SelectedInstance>;
-	setInstance: Setter<SelectedInstance>;
-}) {
+function Header(props: {}) {
 	const { state, dispatch } = useStore();
 	const modules = getHand();
 	const cardList = createMemo<{ name: string; id: string }[]>(() => {
-		if (!props.instance()) return [];
-		const toolName = props.instance().module;
+		if (!state.context.editorInstance) return [];
+		const toolName = state.context.editorInstance.module;
 		if (!toolName) return [];
 		const tool = modules[toolName];
 		return (
@@ -326,14 +317,25 @@ function Header(props: {
 				.map((c) => ({ name: c.data.name, id: c.id })) ?? []
 		);
 	});
-	const selectCard = (payload: SelectedInstance) => {
+	const selectCard = (payload: { id: string; module: string }) => {
 		if (!payload.id) return;
 
-		if (props.instance().id === payload.id) return;
-
+		if (state.context.editorInstance.id === payload.id) return;
+		if (state.context.editorInstance.id) {
+			dispatch(
+				{
+					type: "DRAFT_CANCEL",
+				},
+				{ draft: "editor" },
+			);
+		}
 		const data = state.module.instances.find((i) => i.id === payload.id);
 		if (!data) return;
-		props.setInstance(payload);
+		dispatch({
+			domain: "context",
+			type: "edit-instance",
+			instance: payload,
+		});
 		dispatch(
 			{
 				type: "DRAFT_START",
@@ -348,6 +350,20 @@ function Header(props: {
 	};
 	onMount(() => {
 		// TODO opened by context menu
+		const targetId = state.context.editorInstance.id;
+		if (targetId) {
+			dispatch(
+				{
+					type: "DRAFT_START",
+					path: "module.instances",
+					select: {
+						key: "id",
+						value: targetId,
+					},
+				},
+				{ draft: "editor" },
+			);
+		}
 	});
 
 	return (
@@ -360,58 +376,37 @@ function Header(props: {
 			</div>
 			<div class="flex gap-2">
 				<div class="flex-1">
-					{/* <Dropdown */}
-					{/* 	value={props.instance()?.module ?? ""} */}
-					{/* 	onSelect={(v) => */}
-					{/* 		props.setInstance({ module: v, id: null }) */}
-					{/* 	} */}
-					{/* 	options={[ */}
-					{/* 		{ */}
-					{/* 			items: Object.keys(modules), */}
-					{/* 		}, */}
-					{/* 	]} */}
-					{/* 	placeholder="Select Tool" */}
-					{/* /> */}
 					<Combobox
-						value={props.instance()?.module ?? ""}
+						value={state.context.editorInstance?.module ?? ""}
 						onselect={(v) =>
-							props.setInstance({ module: v, id: null })
+							dispatch({
+								domain: "context",
+								type: "edit-instance",
+								instance: { module: v, id: null },
+							})
 						}
 						items={Object.keys(modules)}
 						placeholder="Select Tool"
+						w="w-full"
 					/>
 				</div>
-
 				<div class="flex-1">
-					{/* <Dropdown */}
-					{/* 	value={ */}
-					{/* 		cardList().find((c) => c.id === props.instance().id) */}
-					{/* 			?.name ?? "" */}
-					{/* 	} */}
-					{/* 	onSelect={(n) => { */}
-					{/* 		if (!props.instance()) return; */}
-					{/* 		selectCard({ */}
-					{/* 			module: props.instance().module, */}
-					{/* 			id: cardList().find((c) => c.name === n).id, */}
-					{/* 		}); */}
-					{/* 	}} */}
-					{/* 	options={[{ items: cardList().map((i) => i.name) }]} */}
-					{/* 	placeholder="Select Card" */}
-					{/* /> */}
 					<Combobox
 						value={
-							cardList().find((c) => c.id === props.instance().id)
-								?.name ?? ""
+							cardList().find(
+								(c) => c.id === state.context.editorInstance.id,
+							)?.name ?? ""
 						}
 						onselect={(n) => {
-							if (!props.instance()) return;
+							if (!state.context.editorInstance) return;
 							selectCard({
-								module: props.instance().module,
+								module: state.context.editorInstance.module,
 								id: cardList().find((c) => c.name === n).id,
 							});
 						}}
 						items={cardList().map((i) => i.name)}
 						placeholder="Select Card"
+						w="w-full"
 					/>
 				</div>
 			</div>

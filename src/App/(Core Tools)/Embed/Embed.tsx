@@ -1,4 +1,10 @@
-import { CardType, IStore, ToolApi, ToolOptions } from "@app/type/hollow";
+import {
+	CardType,
+	IStore,
+	ToolApi,
+	ToolOption,
+	ToolOptions,
+} from "@app/type/hollow";
 import {
 	createEffect,
 	createMemo,
@@ -12,6 +18,7 @@ import { EmbedData } from "./EmbedMain";
 import { hollow } from "../../../hollow";
 import { em } from "polished";
 import { Accessor } from "solid-js";
+import { setEngine } from "crypto";
 
 type EmbedProps = {
 	card: CardType;
@@ -29,42 +36,39 @@ export default function Embed({ toolEvents, card, data, store }: EmbedProps) {
 		}
 	});
 
-	const setSettingsVisible = () => {
-		const ini: ToolOptions = {
-			tool: "Embed",
-			card: card.data.name,
-			save: () => {
-				store.set(card.id, embed());
-			},
-			options: [
-				{
-					type: "longtext",
-					label: "IFrame",
-					description: "embed an iframe",
-					attributes: { placeholder: "src..." },
-					value: embed().src,
-					onAction: (s: string) => {
-						hollow.events.emit(
-							"character-add-achievement",
-							"🌐 Portal Opened",
-						);
-						setEmbed((prev: EmbedData) => ({
-							...prev,
-							src: s,
-						}));
-					},
-				},
-			],
-		};
-		hollow.events.emit("tool-settings", ini);
+	const updateSettings = (options: ToolOption[]) => {
+		if (options.find((i) => i.key === "src").value !== embed().src) {
+			hollow.events.emit("character-add-achievement", "🌐 Portal Opened");
+		}
+		setEmbed((p) => ({
+			...p,
+			...options.reduce((acc, curr) => {
+				const { key, value, ...rest } = curr;
+				return {
+					...acc,
+					[key]: value,
+				};
+			}, {}),
+		}));
 	};
 
 	onMount(() => {
-		toolEvents.on(`${card.id}-settings`, setSettingsVisible);
+		const settings: ToolOption[] = [
+			{
+				key: "src",
+				type: "longtext",
+				label: "IFrame",
+				description: "embed an iframe",
+				attributes: { placeholder: "src..." },
+				value: embed().src,
+			},
+		];
+		toolEvents.emit(`${card.id}-settings`, settings);
+		toolEvents.on(`${card.id}-settings`, updateSettings);
 	});
 
 	onCleanup(() => {
-		toolEvents.off(`${card.id}-settings`, setSettingsVisible);
+		toolEvents.off(`${card.id}-settings`, updateSettings);
 	});
 	return (
 		<div class="group relative size-full">

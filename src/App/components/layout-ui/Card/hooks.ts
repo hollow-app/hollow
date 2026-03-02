@@ -8,7 +8,7 @@ import {
 	Setter,
 } from "solid-js";
 import { GridStack } from "gridstack";
-import { CardType } from "@app/type/hollow";
+import { CardType, ToolOption, ToolOptions } from "@app/type/hollow";
 import { hollow } from "../../../../hollow";
 import { ExpandIcon } from "lucide-solid";
 import { MyIconFun } from "@app/components/ui/MyIcon";
@@ -50,7 +50,7 @@ export const useCard = (props: CardProps): CardHook => {
 	const [cardEl, setCardEl] = createSignal<HTMLDivElement>();
 	const [isLoaded, setLoaded] = createSignal(false);
 	const [isExpand, setExpand] = createSignal(false);
-	const tool = props.node.data.tool;
+	const tool: string = props.node.data.tool;
 
 	createEffect(
 		on(
@@ -86,7 +86,26 @@ export const useCard = (props: CardProps): CardHook => {
 	};
 
 	const showSettings = () => {
-		getToolEvents(tool)?.emit(`${props.node.id}-settings`, true);
+		// getToolEvents(tool)?.emit(`${props.node.id}-settings`, true);
+		const moduleEvents = getToolEvents(tool);
+		let configData: ToolOption[] = moduleEvents.getData(
+			`${props.node.id}-settings`,
+		);
+		const settings: ToolOptions = {
+			tool: tool,
+			card: props.node.data.name,
+			save: () => {
+				moduleEvents.emit(`${props.node.id}-settings`, configData);
+			},
+			options: configData.map((i) => ({
+				...i,
+				onAction: (v) =>
+					(configData = configData.map((j) =>
+						j.key === i.key ? { ...j, value: v } : j,
+					)),
+			})),
+		};
+		hollow.events.emit("tool-settings", settings);
 		hollow.events.emit("context-menu", false);
 	};
 

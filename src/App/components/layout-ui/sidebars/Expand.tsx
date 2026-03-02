@@ -62,11 +62,7 @@ export default function Expand() {
 					key: "tool",
 					description: "The tool that will be inside this card",
 					placeholder: "Tool",
-					options: [
-						{
-							items: Object.keys(hand()),
-						},
-					],
+					options: Object.keys(hand()),
 				},
 				{
 					type: "text",
@@ -175,7 +171,7 @@ export default function Expand() {
 						/>
 						<button
 							id="new-card-btn"
-							class="button-control border-secondary-10 border"
+							class="button-control border-secondary-10 shrink-0 border"
 							onclick={addNewCard}
 						>
 							<PlusIcon class="size-5 -rotate-90" />

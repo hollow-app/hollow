@@ -1,6 +1,6 @@
 import { ImageIcon, MoveIcon } from "lucide-solid";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { CardType, IStore, ToolApi } from "@app/type/hollow";
+import { CardType, IStore, ToolApi, ToolOption } from "@app/type/hollow";
 import { ToolOptions } from "@app/type/hollow";
 import { ImageType } from "./ImageType";
 import { hollow } from "../../../hollow";
@@ -81,67 +81,67 @@ export default function Image({ data, card, store, toolEvents }: ImageProps) {
 		}
 		toggleVault((newUrl) => setImage((prev) => ({ ...prev, url: newUrl })));
 	};
-	const setSettingsVisible = () => {
-		const settings: ToolOptions = {
-			tool: "Image",
-			card: card.data.name,
-			save: updateImage,
-			options: [
-				{
-					label: "Image",
-					description: "Upload or provide image URL",
-					type: "file",
-					onAction: selectFromVault,
-					value: image().url,
-				},
-				{
-					type: "segmented",
-					label: "Fit Mode",
-					description: "How the image should fit in its container",
-					value: image().objectFit,
-					onAction: (value: any) => {
-						setImage((prev) => ({
-							...prev,
-							objectFit: value,
-							...(value === "cover"
-								? { position: { x: 50, y: 50 } }
-								: {}),
-						}));
-					},
-					options: [
-						{ key: "contain", title: "contain" },
-						{ key: "cover", title: "cover" },
-						{ key: "fill", title: "fill" },
-						{ key: "none", title: "none" },
-						{ key: "scale-down", title: "scale-down" },
-					],
-				},
-				{
-					type: "text",
-					label: "Caption",
-					description: "Add a caption to your image",
-					value: image().caption,
-					onAction: (v) =>
-						setImage((prev) => ({ ...prev, caption: v })),
-				},
-				{
-					type: "text",
-					label: "Alt Text",
-					description: "Add alternative text for accessibility",
-					value: image().alt,
-					onAction: (v) => setImage((prev) => ({ ...prev, alt: v })),
-				},
-			],
-		};
-		hollow.events.emit("tool-settings", settings);
+	const updateSettings = (options: ToolOption[]) => {
+		setImage((p) => ({
+			...p,
+			...options.reduce((acc, curr) => {
+				const { key, value, ...rest } = curr;
+				return {
+					...acc,
+					[key]: value,
+					...(key === "objectFit" && value === "cover"
+						? { position: { x: 50, y: 50 } }
+						: {}),
+				};
+			}, {}),
+		}));
 	};
 
 	onMount(() => {
-		toolEvents.on(`${card.id}-settings`, setSettingsVisible);
+		const settings: ToolOption[] = [
+			{
+				key: "url",
+				label: "Image",
+				description: "Upload or provide image URL",
+				type: "file",
+				onAction: selectFromVault,
+				value: image().url,
+			},
+			{
+				key: "objectFit",
+				type: "segmented",
+				label: "Fit Mode",
+				description: "How the image should fit in its container",
+				value: image().objectFit,
+				options: [
+					{ key: "contain", title: "contain" },
+					{ key: "cover", title: "cover" },
+					{ key: "fill", title: "fill" },
+					{ key: "none", title: "none" },
+					{ key: "scale-down", title: "scale-down" },
+				],
+			},
+			{
+				key: "caption",
+				type: "text",
+				label: "Caption",
+				description: "Add a caption to your image",
+				value: image().caption,
+			},
+			{
+				key: "alt",
+				type: "text",
+				label: "Alt Text",
+				description: "Add alternative text for accessibility",
+				value: image().alt,
+			},
+		];
+		toolEvents.emit(`${card.id}-settings`, settings);
+		toolEvents.on(`${card.id}-settings`, updateSettings);
 	});
 
 	onCleanup(() => {
-		toolEvents.off(`${card.id}-settings`, setSettingsVisible);
+		toolEvents.off(`${card.id}-settings`, updateSettings);
 	});
 
 	return (

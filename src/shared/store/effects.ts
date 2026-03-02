@@ -14,11 +14,16 @@ import {
 } from "@app/managers/Notifications";
 import { realmEffects, setupRealm } from "../managers/Realm";
 import { setupLayoutRegistry } from "@app/managers/layout";
+import {
+	extensionEffects,
+	setupExtension,
+} from "@app/managers/Extension/effects";
 
 export let _dispatch: (action: Action) => void;
 export let _state: () => RootState;
 export function runEffects(action: Action, state: RootState) {
 	const results = [
+		extensionEffects(action as any, state.account),
 		accountEffects(action as any, state.account),
 		settingsEffects(action as any, state.settings),
 		codeThemeEffects(action as any, state.codeTheme),
@@ -38,20 +43,21 @@ export function runEffects(action: Action, state: RootState) {
 		: Promise.resolve();
 }
 
-export function setupEffects(
+export async function setupEffects(
 	dispatch: (action: Action) => void,
 	getState: () => RootState,
 ) {
 	_dispatch = dispatch;
 	_state = getState;
+	await setupRealm(dispatch);
+	setupModule(dispatch);
+	await setupExtension(dispatch);
 	setupAccount(dispatch, getState);
 	setupSettings(dispatch);
 	setupCodeTheme(dispatch);
-	setupModule(dispatch);
 	setupHotkeys(dispatch);
 	setupVault(dispatch);
 	setupNotifications(dispatch);
-	setupRealm(dispatch);
 	setupLayoutRegistry(dispatch, getState);
 	//
 }

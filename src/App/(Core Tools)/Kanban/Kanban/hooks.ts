@@ -12,6 +12,7 @@ import {
 	ContextMenuItemButton,
 	FormType,
 	ToolApi,
+	ToolOption,
 	ToolOptions,
 } from "@app/type/hollow";
 import { ToolMetadata } from "@app/type/ToolMetadata";
@@ -269,50 +270,14 @@ export const useKanban = (props: KanbanProps): KanbanHook => {
 		hollow.events.emit("form", form);
 	};
 
-	const showSettings = () => {
-		const settings: ToolOptions = {
-			tool: "Kanban",
-			card: props.card.data.name,
-			save: () => {
-				updateKanban();
-			},
-			options: [
-				{
-					type: "text",
-					label: "Title",
-					description: "Change Column Title",
-					value: kanban().name,
-					onAction: (v: string) =>
-						setKanban((prev) => ({
-							...prev,
-							name: v,
-						})),
-				},
-				{
-					type: "color",
-					label: "Accent Color",
-					description: "Change The Column's Accent Color",
-					value: kanban().accent,
-					onAction: (c: string) =>
-						setKanban((prev) => ({
-							...prev,
-							accent: c,
-						})),
-				},
-				{
-					type: "number",
-					label: "Max Items",
-					description: "Max Number of items",
-					value: kanban().max,
-					onAction: (v: number) =>
-						setKanban((prev) => ({
-							...prev,
-							max: v,
-						})),
-				},
-			],
-		};
-		hollow.events.emit("tool-settings", settings);
+	const updateSettings = (options: ToolOption[]) => {
+		setKanban((p) => ({
+			...p,
+			...options.reduce((acc, curr) => {
+				const { key, value, ...rest } = curr;
+				return { ...acc, [key]: value };
+			}, {}),
+		}));
 	};
 
 	const handleReceiveTask = (tasks: ItemType[]) => {
@@ -331,7 +296,46 @@ export const useKanban = (props: KanbanProps): KanbanHook => {
 	};
 
 	onMount(() => {
-		toolEvents.on(`${props.card.id}-settings`, showSettings);
+		const settings: ToolOption[] = [
+			{
+				key: "name",
+				type: "text",
+				label: "Title",
+				description: "Change Column Title",
+				value: kanban().name,
+				onAction: (v: string) =>
+					setKanban((prev) => ({
+						...prev,
+						name: v,
+					})),
+			},
+			{
+				key: "accent",
+				type: "color",
+				label: "Accent Color",
+				description: "Change The Column's Accent Color",
+				value: kanban().accent,
+				onAction: (c: string) =>
+					setKanban((prev) => ({
+						...prev,
+						accent: c,
+					})),
+			},
+			{
+				key: "max",
+				type: "number",
+				label: "Max Items",
+				description: "Max Number of items",
+				value: kanban().max,
+				onAction: (v: number) =>
+					setKanban((prev) => ({
+						...prev,
+						max: v,
+					})),
+			},
+		];
+		toolEvents.emit(`${props.card.id}-settings`, settings);
+		toolEvents.on(`${props.card.id}-settings`, updateSettings);
 		toolEvents.on(
 			`${props.card.data.name}-receive-task`,
 			handleReceiveTask,
@@ -340,7 +344,7 @@ export const useKanban = (props: KanbanProps): KanbanHook => {
 	});
 
 	onCleanup(() => {
-		toolEvents.off(`${props.card.id}-settings`, showSettings);
+		toolEvents.off(`${props.card.id}-settings`, updateSettings);
 		toolEvents.off(
 			`${props.card.data.name}-receive-task`,
 			handleReceiveTask,

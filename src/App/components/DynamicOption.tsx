@@ -2,6 +2,7 @@ import ImportFile from "@component/ui/ImportFile";
 import {
 	Slider,
 	Combobox,
+	Keywords,
 	Input,
 	ColorButton,
 	EmojiButton,
@@ -165,8 +166,8 @@ const DropdownOption = (props: { option: OptionType<"dropdown"> }) => (
 		placeholder={props.option.placeholder}
 		items={
 			props.option.options as
-				| string[]
-				| { title: string; items: string[] }[]
+			| string[]
+			| { title: string; items: string[] }[]
 		}
 		onselect={props.option.onAction}
 		class="w-full"
@@ -187,8 +188,8 @@ const RangeOption = (props: { option: OptionType<"range"> }) => (
 );
 
 const KeywordsOption = (props: { option: OptionType<"keywords"> }) => (
-	<Combobox
-		items={props.option.value}
+	<Keywords
+		value={props.option.value}
 		onselect={props.option.onAction}
 		placeholder={props.option.placeholder}
 	/>

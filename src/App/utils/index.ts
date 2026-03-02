@@ -21,6 +21,7 @@ export async function sendIframeRequest(
 		function handler(event: any) {
 			if (event.origin !== "null") return;
 			if (!event.data) return;
+			if (event.data.type !== type) return;
 			// if (event.data.requestId !== requestId) return;
 			window.removeEventListener("message", handler);
 			resolve(event.data.payload);
@@ -30,6 +31,7 @@ export async function sendIframeRequest(
 			{
 				type,
 				// requestId,
+				__hollow: true,
 				payload: message,
 			},
 			"*",

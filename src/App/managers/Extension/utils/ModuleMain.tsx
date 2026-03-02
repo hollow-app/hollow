@@ -10,13 +10,15 @@ import {
 import { sendIframeRequest } from "@app/utils";
 import { createRoot } from "solid-js";
 import { render } from "solid-js/web";
+import { buildPluginIframe } from ".";
 
 export class ModuleMain implements ModuleCapability {
 	private roots = new Map<string, () => void>();
 	private readonly store: IStore;
 	private capability: rawPluginCapability;
 	private iframe: HTMLIFrameElement;
-	private instances: Record<string, HTMLIFrameElement>;
+	private instances: Record<string, HTMLIFrameElement> = {};
+	private toolEvent: ToolApi;
 
 	constructor(
 		iframe: HTMLIFrameElement,
@@ -27,6 +29,7 @@ export class ModuleMain implements ModuleCapability {
 		this.iframe = iframe;
 		this.store = toolEvent.getData("config");
 		this.capability = capability;
+		this.toolEvent = toolEvent;
 	}
 
 	async onCreate(card: CardType) {
@@ -34,7 +37,7 @@ export class ModuleMain implements ModuleCapability {
 			card,
 		});
 		if (result) {
-			this.store.set(card.id, result);
+			this.store.set(card.id, result["data"]);
 		}
 		return { status: true };
 	}
@@ -53,17 +56,21 @@ export class ModuleMain implements ModuleCapability {
 		if (this.roots.has(card.id)) {
 			return { status: true };
 		}
-		const instanceIframe = document.createElement("iframe");
 		const data: any = this.store.get(card.id);
-		const code = await sendIframeRequest(
-			instanceIframe,
-			"module:load",
-			data,
-		);
+		const code = this.capability.handler;
+		const instanceIframe = buildPluginIframe({
+			module: this.toolEvent,
+			script: code,
+			additionalData: [
+				["DATA", data],
+				["INSTANCE", card],
+			],
+		});
 		const dispose = createRoot((dispose) => {
 			render(
 				() => (
 					<div
+						class="size-full"
 						ref={(container) =>
 							container.appendChild(instanceIframe)
 						}

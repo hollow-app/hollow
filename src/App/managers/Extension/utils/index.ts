@@ -1,166 +1,305 @@
 import { ToolApi } from "@app/type/hollow";
 import { hollow } from "hollow";
+import pluginHtml from "../../../../../sub/plugin-bridge/dist/index.html?raw";
 
-export function buildPluginIframe(module: ToolApi) {
+/**
+ * Bridges communication between the host and plugin iframes.
+ * Handles function marshalling, async returns, and event synchronization.
+ */
+export function buildPluginIframe({
+	module,
+	script,
+	visual = true,
+	additionalData,
+}: {
+	module: ToolApi;
+	script: string;
+	visual?: boolean;
+	additionalData?: [string, { [key: string]: string }][];
+}) {
 	const app = hollow.events;
 	const id = crypto.randomUUID();
-	//
+
 	const iframe = document.createElement("iframe");
 	iframe.sandbox.add("allow-scripts");
 	iframe.style.width = "100%";
 	iframe.style.height = "100%";
-	iframe.srcdoc = buildPluginHTML(id);
-	return iframe;
-}
-export function buildPluginHTML(id: string) {
-	return `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8" />
-</head>
-<body>
-<div id="root"></div>
-
-<script>
-(() => {
-
-const pending = new Map();
-const listeners = new Map();
-const wildcard = new Set();
-const currentData = new Map();
-
-
-function generateId() {
-	return ${id};
-}
-
-function send(message) {
-	parent.postMessage(
-		{
-			__hollow: true,
-			__domain: "plugin",
-			__id: ${id},
-			...message,
-		},
-		"*",
-	);
-}
-
-window.addEventListener("message", (event) => {
-	const data = event.data;
-	if (!data || data.__hollow !== true) return;
-	// async replies
-	if (data.replyTo && pending.has(data.replyTo)) {
-		pending.get(data.replyTo)(data.result);
-		pending.delete(data.replyTo);
-		return;
+	iframe.srcdoc = buildPluginHTML(id, script, additionalData);
+	if (!visual) {
+		iframe.style.display = "none";
+		document.body.appendChild(iframe);
 	}
-	// pushed event from parent
-	if (data.push && data.eventName) {
-		currentData.set(data.eventName, data.payload);
 
-		if (listeners.has(data.eventName)) {
-			for (const fn of listeners.get(data.eventName)) {
-				fn(data.payload);
+	const functionRegistry = new Map<string, Function>();
+	const pendingRequests = new Map<
+		string,
+		{ resolve: (res: any) => void; reject: (err: any) => void }
+	>();
+
+	const marshall = (val: any, depth = 0): any => {
+		if (depth > 5) return null; // Prevent deep recursion
+		if (typeof val === "function") {
+			const funcId = crypto.randomUUID();
+			functionRegistry.set(funcId, val);
+			return { __isFunc: true, id: funcId };
+		}
+		if (val && typeof val === "object") {
+			if (Array.isArray(val))
+				return val.map((i) => marshall(i, depth + 1));
+			const newObj: any = {};
+
+			// Collect all properties including from prototype (for classes like IStore)
+			const keys = new Set<string>();
+			let proto = val;
+			while (proto && proto !== Object.prototype) {
+				Object.getOwnPropertyNames(proto).forEach((k) => keys.add(k));
+				proto = Object.getPrototypeOf(proto);
+			}
+
+			for (const key of keys) {
+				if (key === "constructor" || key.startsWith("__")) continue;
+				try {
+					newObj[key] = marshall(val[key], depth + 1);
+				} catch (e) {
+					// Skip non-accessible properties
+				}
+			}
+			return newObj;
+		}
+		return val;
+	};
+
+	const unmarshall = (val: any): any => {
+		if (val && typeof val === "object" && val.__isFunc) {
+			return (...args: any[]) => {
+				const requestId = crypto.randomUUID();
+				return new Promise((resolve, reject) => {
+					pendingRequests.set(requestId, { resolve, reject });
+					iframe.contentWindow?.postMessage(
+						{
+							__hollow: true,
+							type: ":callFunc",
+							funcId: val.id,
+							args: marshall(args),
+							requestId,
+						},
+						"*",
+					);
+				});
+			};
+		}
+		if (val && typeof val === "object") {
+			if (Array.isArray(val)) return val.map(unmarshall);
+			const newObj: any = {};
+			for (const key in val) {
+				newObj[key] = unmarshall(val[key]);
+			}
+			return newObj;
+		}
+		return val;
+	};
+
+	// subId -> real listener function on host
+	const eventSubscribers = new Map<
+		string,
+		{ eventName: string; listener: (payload: any) => any; kind: string }
+	>();
+
+	const handleMessage = async (event: MessageEvent) => {
+		const data = event.data;
+		// Security: Validate source
+		if (event.source !== iframe.contentWindow) return;
+		if (!data || data.__hollow !== true || data.__id !== id) return;
+
+		switch (data.type) {
+			case ":on": {
+				const { eventName, subId, kind } = data;
+				if (eventSubscribers.has(subId)) return;
+
+				const target = kind === "app" ? app : module;
+				const listener = async (payload: any) => {
+					return new Promise((resolve, reject) => {
+						const requestId = crypto.randomUUID();
+						pendingRequests.set(requestId, { resolve, reject });
+						iframe.contentWindow?.postMessage(
+							{
+								__hollow: true,
+								type: ":eventTrigger",
+								subId,
+								eventName,
+								kind,
+								payload: marshall(payload),
+								requestId,
+							},
+							"*",
+						);
+					});
+				};
+
+				eventSubscribers.set(subId, { eventName, listener, kind });
+				target.on(eventName, listener);
+				break;
+			}
+
+			case ":off": {
+				const { subId } = data;
+				const sub = eventSubscribers.get(subId);
+				if (sub) {
+					const target = sub.kind === "app" ? app : module;
+					target.off(sub.eventName, sub.listener);
+					eventSubscribers.delete(subId);
+				}
+				break;
+			}
+
+			case ":emit":
+			case ":emitAsync": {
+				const target = data.kind === "app" ? app : module;
+				try {
+					const result = await target.emitAsync(
+						data.eventName,
+						unmarshall(data.payload),
+					);
+					iframe.contentWindow?.postMessage(
+						{
+							__hollow: true,
+							replyTo: data.requestId,
+							result: marshall(result),
+						},
+						"*",
+					);
+				} catch (error: any) {
+					iframe.contentWindow?.postMessage(
+						{
+							__hollow: true,
+							replyTo: data.requestId,
+							error: error.message || "Unknown error during emit",
+						},
+						"*",
+					);
+				}
+				break;
+			}
+
+			case ":getData": {
+				const target = data.kind === "app" ? app : module;
+				const result = target.getData(data.eventName);
+				iframe.contentWindow?.postMessage(
+					{
+						__hollow: true,
+						replyTo: data.requestId,
+						result: marshall(result),
+					},
+					"*",
+				);
+				break;
+			}
+
+			case ":callFunc": {
+				const func = functionRegistry.get(data.funcId);
+				if (func) {
+					try {
+						const result = await func(...unmarshall(data.args));
+						iframe.contentWindow?.postMessage(
+							{
+								__hollow: true,
+								replyTo: data.requestId,
+								result: marshall(result),
+							},
+							"*",
+						);
+					} catch (error: any) {
+						iframe.contentWindow?.postMessage(
+							{
+								__hollow: true,
+								replyTo: data.requestId,
+								error:
+									error.message ||
+									"Unknown error during function call",
+							},
+							"*",
+						);
+					}
+				}
+				break;
+			}
+
+			case ":reply": {
+				const pending = pendingRequests.get(data.replyTo);
+				if (pending) {
+					if (data.error) {
+						pending.reject(new Error(data.error));
+					} else {
+						pending.resolve(unmarshall(data.result));
+					}
+					pendingRequests.delete(data.replyTo);
+				}
+				break;
 			}
 		}
+	};
 
-		for (const fn of wildcard) {
-			fn({ event: data.eventName, data: data.payload });
-		}
-	}
-});
+	window.addEventListener("message", handleMessage);
 
-class HollowEventBridge {
-	kind;
-	constructor(kind) {
-		this.kind = kind;
-	}
-	on(eventName, listener) {
-		if (eventName === "*") {
-			wildcard.add(listener);
-			return;
-		}
-
-		if (!listeners.has(eventName)) {
-			listeners.set(eventName, new Set());
-			send({ kind: this.kind, type: ":on", eventName });
-		}
-
-		listeners.get(eventName).add(listener);
-	}
-
-	off(eventName, listener) {
-		if (eventName === "*") {
-			wildcard.delete(listener);
-			return;
-		}
-
-		if (!listeners.has(eventName)) return;
-
-		const set = listeners.get(eventName);
-		set.delete(listener);
-
-		if (set.size === 0) {
-			listeners.delete(eventName);
-			send({ kind: this.kind, type: ":off", eventName });
-		}
-	}
-
-	emit(eventName, payload) {
-		const id = generateId();
-
-		return new Promise((resolve) => {
-			pending.set(id, resolve);
-			send({ kind: this.kind, type: ":emit", id, eventName, payload });
+	// Robust Cleanup Mechanism
+	const cleanup = () => {
+		window.removeEventListener("message", handleMessage);
+		eventSubscribers.forEach((sub) => {
+			const target = sub.kind === "app" ? app : module;
+			target.off(sub.eventName, sub.listener);
 		});
-	}
+		eventSubscribers.clear();
+		pendingRequests.forEach((p) => p.reject(new Error("Iframe destroyed")));
+		pendingRequests.clear();
+		functionRegistry.clear();
+	};
 
-	emitAsync(eventName, payload) {
-		return this.emit(eventName, payload);
-	}
+	const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			for (const node of Array.from(mutation.removedNodes)) {
+				if (
+					node === iframe ||
+					(node instanceof HTMLElement && node.contains(iframe))
+				) {
+					cleanup();
+					observer.disconnect();
+					return;
+				}
+			}
+		}
+	});
 
-	async getData(eventName) {
-		// Ask parent for authoritative value
-		const id = generateId();
+	// Observe body as the iframe might be nested and parentElement is not yet available
+	observer.observe(document.body, { childList: true, subtree: true });
 
-		return new Promise((resolve) => {
-			pending.set(id, resolve);
-			send({ kind: this.kind, type: ":getData", id, eventName });
-		});
-	}
-
-	async clear(eventName) {
-		listeners.delete(eventName);
-		send({ kind: this.kind, type: ":clear", eventName });
-	}
-
-	async toggle(eventName) {
-		const id = generateId();
-
-		return new Promise((resolve) => {
-			pending.set(id, resolve);
-			send({ kind: this.kind, type: ":toggle", id, eventName });
-		});
-	}
+	return iframe;
 }
 
-const hollow = {
-	app: new HollowEventBridge("app"),
-	module: new HollowEventBridge("module"),
-};
+export function buildPluginHTML(
+	id: string,
+	script: string,
+	additionalData?: [string, { [key: string]: string }][],
+) {
+	const dataScripts = (additionalData ?? [])
+		.map(([name, obj]) => {
+			const safeName = String(name).replace(/[^\w$]/g, "");
+			return `window.__${safeName}__ = ${JSON.stringify(obj ?? {})};`;
+		})
+		.join("\n");
 
-Object.freeze(hollow);
-Object.freeze(hollow.app);
-Object.freeze(hollow.module);
-
-window.__API__ = hollow;
-})();
-
+	const injection = `
+<script>
+    window.__HOLLOW_ID__ = "${id}";
+    ${dataScripts}
 </script>
-
-</body>
-</html>
 `;
+
+	let html = pluginHtml.replace("<head>", `<head>${injection}`);
+	if (script) {
+		html = html.replace(
+			"</body>",
+			`<script type="module">${script}</script></body>`,
+		);
+	}
+	return html;
 }

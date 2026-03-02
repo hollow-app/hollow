@@ -1,5 +1,12 @@
 import { createStore, reconcile, unwrap } from "solid-js/store";
-import { createContext, useContext, JSX, onMount } from "solid-js";
+import {
+	createContext,
+	useContext,
+	JSX,
+	onMount,
+	createSignal,
+	Show,
+} from "solid-js";
 import { RootState, Action, DispatchOptions } from "./types";
 import { rootReducer } from "./reducer";
 import { runEffects as Effects, setupEffects } from "./effects";
@@ -11,6 +18,7 @@ const StoreContext = createContext<{
 }>();
 
 export function StoreProvider(props: { children: JSX.Element }) {
+	const [isSetupDone, setSetupDone] = createSignal(false);
 	// Initialize state using reducer with undefined state to get defaults
 	const initialState = rootReducer(undefined, {} as Action);
 
@@ -52,8 +60,8 @@ export function StoreProvider(props: { children: JSX.Element }) {
 		options: DispatchOptions = {},
 	): Promise<void> {
 		const { runEffects = true, draft } = options;
-		// Pure state update
-		const newState = rootReducer(state, action, draft);
+		// Pure state update - unwrap to prevent proxy mutations in drafts
+		const newState = rootReducer(unwrap(state), action, draft);
 
 		// We update the store.
 		setState(reconcile(newState));
@@ -61,8 +69,8 @@ export function StoreProvider(props: { children: JSX.Element }) {
 		// Draft
 		const draftPromise = drafter(action, options, newState);
 
-		// Side effects
-		if (runEffects) {
+		// Side effects - Only run if not drafting or if explicitly requested without a draft
+		if (runEffects && !draft) {
 			const result: any = Effects(action, newState);
 			return result instanceof Promise ? result : Promise.resolve();
 		}
@@ -70,13 +78,14 @@ export function StoreProvider(props: { children: JSX.Element }) {
 	}
 
 	// Setup global listeners
-	onMount(() => {
-		setupEffects(dispatch, () => unwrap(state));
+	onMount(async () => {
+		await setupEffects(dispatch, () => unwrap(state));
+		setSetupDone(true);
 	});
 
 	return (
 		<StoreContext.Provider value={{ state, dispatch }}>
-			{props.children}
+			<Show when={isSetupDone()}>{props.children}</Show>
 		</StoreContext.Provider>
 	);
 }

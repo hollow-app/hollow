@@ -9,6 +9,7 @@ export * from "./Switch";
 export * from "./Tooltip";
 export * from "./Checkbox";
 export * from "./Combobox";
+export * from "./Keywords";
 export * from "./FormTrigger";
 export * from "./Dropdown";
 export * from "./RadioGroup";

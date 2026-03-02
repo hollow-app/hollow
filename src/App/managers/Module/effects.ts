@@ -6,24 +6,19 @@ import DEFAULT from "@assets/configs/main.json?raw";
 import { HandType } from "@app/type/HandType";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import {
-	HollowEvent,
-	IPlugin,
 	CardType,
 	ToolEvents,
 	CardFs,
 	IStore,
-	ToolEventReturns,
 	ToolApi,
-	AppApi,
 	PluginResult,
-	PluginCapability,
-	ModuleCapability,
 } from "@app/type/hollow";
 import { EventsManager } from "../EventsManager";
 import { ToolMetadata } from "@app/type/ToolMetadata";
 import { getCurrentRealm } from "@shared/managers/Realm";
 import * as cfm from "@app/managers/CardFS";
-import { create_dir, get_unsigned_plugins, remove_dir } from "@rust";
+import { create_dir, remove_dir } from "@rust";
+import { getPluginEvents } from "../Extension/effects";
 
 export let store: Storage | null = null;
 export let toolMap: ToolMap = new Map();
@@ -47,10 +42,23 @@ export function setupModule(dispatch: (action: any) => void) {
 			card: (typeof parsedData)[string]["cards"][number];
 		}> = [];
 
-		for (const key in parsedData) {
-			const tool: HandType = parsedData[key];
+		for (const capa of capas) {
+			const key = capa.meta.source;
+			let tool: HandType | undefined = parsedData[key];
+			if (!tool) {
+				tool = {
+					name: capa.meta.name,
+					version: capa.meta.version,
+					description: capa.meta.description,
+					cards: [],
+				};
+				store.set(capa.meta.name, tool);
+			}
 			const targetModule = capas.find((i) => i.meta.name === tool.name);
-			const toolEvent = await createToolEvent(tool.name);
+			const toolEvent = await createToolEvent(
+				targetModule.meta.source,
+				tool.name,
+			);
 			const toolInstance: ToolMethods = {
 				...targetModule.handler,
 				toolEvent,
@@ -130,7 +138,10 @@ export async function moduleEffects(action: Events, state: ModuleState) {
 					toolMap.set(newTool.name, {
 						...capability,
 						name: meta.name,
-						toolEvent: await createToolEvent(meta.name),
+						toolEvent: await createToolEvent(
+							meta.source,
+							meta.name,
+						),
 					});
 				}
 			}
@@ -361,8 +372,11 @@ export async function moduleEffects(action: Events, state: ModuleState) {
 }
 
 // create the HollowEvent of a singal tool;
-async function createToolEvent(toolName: string): Promise<ToolApi> {
-	const toolEvent = new EventsManager<ToolEvents, ToolEvents>();
+async function createToolEvent(
+	pluginName: string,
+	toolName: string,
+): Promise<ToolApi> {
+	const toolEvent = getPluginEvents(pluginName);
 	const path = await join(
 		...[getCurrentRealm().location, "main", toolName, "config.json"],
 	);

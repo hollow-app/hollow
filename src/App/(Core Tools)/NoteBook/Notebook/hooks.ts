@@ -17,6 +17,7 @@ import {
 	CardType,
 	ContextMenuItem,
 	ContextMenuItemButton,
+	ToolOption,
 	ToolOptions,
 } from "@app/type/hollow";
 import { NotebookManager } from "../NotebookManager";
@@ -221,35 +222,14 @@ export const useNotebook = (props: NotebookProps): NotebookHook => {
 		hollow.events.emit("context-menu-extend", cmItems);
 	};
 
-	const showSettings = () => {
-		const settings: ToolOptions = {
-			tool: "NoteBook",
-			card: props.card.data.name,
-			save: updateBook,
-			options: [
-				{
-					type: "text",
-					label: "Name",
-					description: "Note Book's name",
-					value: book.name,
-					onAction: (v: string) =>
-						setBook((prev) => ({
-							...prev,
-							name: v,
-						})),
-				},
-				{
-					type: "longtext",
-					label: "Structure",
-					value: book.structure,
-					description: "Customize the structure of the new notes",
-					onAction: (v: string) => {
-						setBook("structure", v);
-					},
-				},
-			],
-		};
-		hollow.events.emit("tool-settings", settings);
+	const updateSettings = (options: ToolOption[]) => {
+		setBook((p) => ({
+			...p,
+			...options.reduce((acc, curr) => {
+				const { key, value, ...rest } = curr;
+				return { ...acc, [key]: value };
+			}, {}),
+		}));
 	};
 
 	const changeSelected = async (title: string) => {
@@ -264,14 +244,31 @@ export const useNotebook = (props: NotebookProps): NotebookHook => {
 	};
 
 	onMount(() => {
+		const settings: ToolOption[] = [
+			{
+				key: "name",
+				type: "text",
+				label: "Name",
+				description: "Note Book's name",
+				value: book.name,
+			},
+			{
+				key: "structure",
+				type: "longtext",
+				label: "Structure",
+				value: book.structure,
+				description: "Customize the structure of the new notes",
+			},
+		];
+		hollow.events.emit(`${props.card.id}-settings`, settings);
 		const toolEvents = NotebookManager.getSelf().getEvents();
-		toolEvents.on(`${props.card.id}-settings`, showSettings);
+		toolEvents.on(`${props.card.id}-settings`, updateSettings);
 		toolEvents.on(`${props.card.id}-expand`, setExpand);
 	});
 
 	onCleanup(() => {
 		const toolEvents = NotebookManager.getSelf().getEvents();
-		toolEvents.off(`${props.card.id}-settings`, showSettings);
+		toolEvents.off(`${props.card.id}-settings`, updateSettings);
 		toolEvents.off(`${props.card.id}-expand`, setExpand);
 	});
 

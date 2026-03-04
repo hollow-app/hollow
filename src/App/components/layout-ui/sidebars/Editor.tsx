@@ -20,14 +20,14 @@ export default function Editor() {
 
 	const instanceData = createMemo(() => {
 		if (!state.context.editorInstance) return null;
-		const id = state.context.editorInstance.id;
+		const id = state.context.editorInstance?.id;
 		return id ? instances().find((c) => c.id === id) : null;
 	});
 	const instanceStyle = createMemo(() => instanceData()?.style ?? {});
 
 	// updaters
 	const updateRootProp = (key: keyof CardType, value: any) => {
-		const id = state.context.editorInstance.id;
+		const id = state.context.editorInstance?.id;
 		const module = state.context.editorInstance.module;
 		dispatch(
 			{
@@ -42,7 +42,7 @@ export default function Editor() {
 	};
 
 	const updateStyleProp = (key: keyof JSX.CSSProperties, value: any) => {
-		const id = state.context.editorInstance.id;
+		const id = state.context.editorInstance?.id;
 		const module = state.context.editorInstance.module;
 		const currentCard = instances().find((c) => c.id === id);
 		if (currentCard) {
@@ -227,13 +227,13 @@ export default function Editor() {
 							<div class="bg-secondary-10/50 my-3 flex flex-col gap-3 rounded-lg p-3">
 								<NumRow
 									label="X"
-									value={instanceData().x}
+									value={instanceData().x ?? 0}
 									setValue={(v) => updateRootProp("x", v)}
 									min={-10000}
 								/>
 								<NumRow
 									label="Y"
-									value={instanceData().y}
+									value={instanceData().y ?? 0}
 									setValue={(v) => updateRootProp("y", v)}
 									min={-10000}
 								/>
@@ -320,8 +320,8 @@ function Header(props: {}) {
 	const selectCard = (payload: { id: string; module: string }) => {
 		if (!payload.id) return;
 
-		if (state.context.editorInstance.id === payload.id) return;
-		if (state.context.editorInstance.id) {
+		if (state.context.editorInstance?.id === payload.id) return;
+		if (state.context.editorInstance?.id) {
 			dispatch(
 				{
 					type: "DRAFT_CANCEL",
@@ -350,7 +350,7 @@ function Header(props: {}) {
 	};
 	onMount(() => {
 		// TODO opened by context menu
-		const targetId = state.context.editorInstance.id;
+		const targetId = state.context.editorInstance?.id;
 		if (targetId) {
 			dispatch(
 				{
@@ -394,7 +394,8 @@ function Header(props: {}) {
 					<Combobox
 						value={
 							cardList().find(
-								(c) => c.id === state.context.editorInstance.id,
+								(c) =>
+									c.id === state.context.editorInstance?.id,
 							)?.name ?? ""
 						}
 						onselect={(n) => {

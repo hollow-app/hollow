@@ -3,6 +3,7 @@ import { Property } from "@app/type/Property";
 import { readableColor } from "polished";
 import setStyle from "./setStyle";
 import { getCurrentRealm } from "@shared/managers/Realm";
+import { hollow } from "hollow";
 
 type useColorProps = {
 	name: string;
@@ -52,7 +53,9 @@ export function useColor({ name, color, oneTime }: useColorProps) {
 		}
 	}
 	if (name === "secondary") {
-		switchMode(readableColor(shades[1].value) === "#fff");
+		const isDark = readableColor(shades[1].value) === "#fff";
+		switchMode(isDark);
+		hollow.events.emit("theme-update", isDark ? "dark" : "light");
 	}
 	setStyle(shades);
 }

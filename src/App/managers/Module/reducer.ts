@@ -38,6 +38,7 @@ export function moduleReducer(
 					"border-width": "0px",
 					background:
 						"color-mix(in oklab, var(--front) var(--opacity), transparent)",
+					padding: "10px",
 				},
 				data: {
 					name: action.name,

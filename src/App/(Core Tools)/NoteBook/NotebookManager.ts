@@ -2,6 +2,7 @@ import fm from "front-matter";
 import { NotebookType } from "./NotebookType";
 import { AppApi, CardFs, IStore, ToolApi } from "@app/type/hollow";
 import { NoteType } from "./NoteType";
+import { getToolStore } from "@app/managers/Module/effects";
 
 export class NotebookManager {
 	private store: IStore = null;
@@ -17,9 +18,14 @@ export class NotebookManager {
 
 	private constructor() {}
 
+	private getStore() {
+		if (!this.store) {
+			this.store = getToolStore("notebook");
+		}
+		return this.store;
+	}
 	init(toolEvent: ToolApi) {
 		this.toolEvent = toolEvent;
-		this.store = this.toolEvent.getData("config");
 	}
 
 	getEvents() {
@@ -38,11 +44,11 @@ export class NotebookManager {
 	// fs
 	setNotebook(notebook: NotebookType) {
 		const { notes, ...book } = notebook;
-		this.store.set(notebook.id, book);
+		this.getStore().set(notebook.id, book);
 	}
 
 	deleteNotebook(notebookId: string) {
-		this.store.remove(notebookId);
+		this.getStore().remove(notebookId);
 	}
 
 	async getNotebook(id: string, cardName: string): Promise<NotebookType> {
@@ -56,7 +62,7 @@ export class NotebookManager {
 				})),
 		);
 		const notebook: NotebookType = {
-			...this.store.get(id),
+			...this.getStore().get(id),
 			notes,
 		};
 		return notebook;

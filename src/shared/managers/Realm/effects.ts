@@ -66,6 +66,7 @@ export async function realmEffects(action: Events, state: RealmState) {
 				name: Object.keys(colors)[0],
 				color: Object.values(colors)[0] as string,
 			});
+
 			break;
 		}
 		case "enter-realm":

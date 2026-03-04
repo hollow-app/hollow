@@ -784,6 +784,7 @@ declare global {
 		 * Metadata about the specific card instance this plugin is running inside.
 		 */
 		__INSTANCE__: CardType;
+		__TYPE__: "ui" | "script";
 
 		/**
 		 * Any other additional data injected by the host manager.

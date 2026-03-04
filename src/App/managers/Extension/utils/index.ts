@@ -15,10 +15,16 @@ export function buildPluginIframe({
 	module: ToolApi;
 	script: string;
 	visual?: boolean;
-	additionalData?: [string, { [key: string]: string }][];
-}) {
+	additionalData?: [string, { [key: string]: string } | string][];
+}): { iframe: HTMLIFrameElement; cleanup: () => void } {
 	const app = hollow.events;
 	const id = crypto.randomUUID();
+
+	// Track active plugin iframes for theme syncing
+	// if (!(window as any).__ACTIVE_PLUGINS__) {
+	// 	(window as any).__ACTIVE_PLUGINS__ = new Set<HTMLIFrameElement>();
+	// }
+	// const activePlugins = (window as any).__ACTIVE_PLUGINS__;
 
 	const iframe = document.createElement("iframe");
 	iframe.sandbox.add("allow-scripts");
@@ -29,6 +35,7 @@ export function buildPluginIframe({
 		iframe.style.display = "none";
 		document.body.appendChild(iframe);
 	}
+	// activePlugins.add(iframe);
 
 	const functionRegistry = new Map<string, Function>();
 	const pendingRequests = new Map<
@@ -37,7 +44,7 @@ export function buildPluginIframe({
 	>();
 
 	const marshall = (val: any, depth = 0): any => {
-		if (depth > 5) return null; // Prevent deep recursion
+		if (depth > 15) return null; // Prevent deep recursion
 		if (typeof val === "function") {
 			const funcId = crypto.randomUUID();
 			functionRegistry.set(funcId, val);
@@ -244,6 +251,7 @@ export function buildPluginIframe({
 	// Robust Cleanup Mechanism
 	const cleanup = () => {
 		window.removeEventListener("message", handleMessage);
+		// activePlugins.delete(iframe);
 		eventSubscribers.forEach((sub) => {
 			const target = sub.kind === "app" ? app : module;
 			target.off(sub.eventName, sub.listener);
@@ -254,31 +262,31 @@ export function buildPluginIframe({
 		functionRegistry.clear();
 	};
 
-	const observer = new MutationObserver((mutations) => {
-		for (const mutation of mutations) {
-			for (const node of Array.from(mutation.removedNodes)) {
-				if (
-					node === iframe ||
-					(node instanceof HTMLElement && node.contains(iframe))
-				) {
-					cleanup();
-					observer.disconnect();
-					return;
-				}
-			}
-		}
-	});
+	// const observer = new MutationObserver((mutations) => {
+	// 	for (const mutation of mutations) {
+	// 		for (const node of Array.from(mutation.removedNodes)) {
+	// 			if (
+	// 				node === iframe ||
+	// 				(node instanceof HTMLElement && node.contains(iframe))
+	// 			) {
+	// 				cleanup();
+	// 				observer.disconnect();
+	// 				return;
+	// 			}
+	// 		}
+	// 	}
+	// });
 
 	// Observe body as the iframe might be nested and parentElement is not yet available
-	observer.observe(document.body, { childList: true, subtree: true });
+	// observer.observe(document.body, { childList: true, subtree: true });
 
-	return iframe;
+	return { iframe, cleanup };
 }
 
 export function buildPluginHTML(
 	id: string,
 	script: string,
-	additionalData?: [string, { [key: string]: string }][],
+	additionalData?: [string, { [key: string]: string } | string][],
 ) {
 	const dataScripts = (additionalData ?? [])
 		.map(([name, obj]) => {

@@ -10,20 +10,20 @@ import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
 import { ImageType } from "./ImageType";
+import { getToolStore } from "@app/managers/Module/effects";
 
 const Image = lazy(() => import("./Image"));
 
 export class ImageMain implements IPlugin {
 	private roots = new Map<string, () => void>();
 	private readonly toolEvents: ToolApi;
-	private readonly store: IStore;
+	private store: IStore;
 
 	public readonly name: string = "image";
 	public readonly capabilities: PluginCapability[];
 
 	constructor(_: unknown, toolEvent: ToolApi) {
 		this.toolEvents = toolEvent;
-		this.store = toolEvent.getData("config");
 
 		this.capabilities = [
 			{
@@ -44,13 +44,19 @@ export class ImageMain implements IPlugin {
 		];
 	}
 
+	private getStore() {
+		if (!this.store) {
+			this.store = getToolStore("image");
+		}
+		return this.store;
+	}
 	// ---------------------------
 	// Module
 	// ---------------------------
 
 	private async onCreate(card: CardType): Promise<PluginResult> {
 		try {
-			this.store.set(card.id, {
+			this.getStore().set(card.id, {
 				url: "",
 				caption: "",
 				alt: "",
@@ -66,7 +72,7 @@ export class ImageMain implements IPlugin {
 
 	private async onDelete(card: CardType): Promise<PluginResult> {
 		try {
-			this.store.remove(card.id);
+			this.getStore().remove(card.id);
 			return { status: true };
 		} catch (error) {
 			return this.failure("Failed to delete image data", error);
@@ -85,12 +91,12 @@ export class ImageMain implements IPlugin {
 			if (this.roots.has(card.id)) {
 				return { status: true };
 			}
-			const data: ImageType = this.store.get(card.id);
+			const data: ImageType = this.getStore().get(card.id);
 			const dispose = createRoot((dispose) => {
 				render(
 					() => (
 						<Image
-							store={this.store}
+							store={this.getStore()}
 							toolEvents={this.toolEvents}
 							card={card}
 							data={data}

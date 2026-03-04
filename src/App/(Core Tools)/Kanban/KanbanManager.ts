@@ -11,6 +11,7 @@ import {
 import { ItemType } from "./types/ItemType";
 import { timeDifferenceMin } from "@app/utils/manipulation/strings";
 import { hollow } from "../../../hollow";
+import { getToolStore } from "@app/managers/Module/effects";
 
 export class KanbanManager {
 	private store: IStore = null;
@@ -26,9 +27,14 @@ export class KanbanManager {
 
 	private constructor() {}
 
+	private getStore() {
+		if (!this.store) {
+			this.store = getToolStore("kanban");
+		}
+		return this.store;
+	}
 	init(toolEvent: ToolApi) {
 		this.toolEvent = toolEvent;
-		this.store = this.toolEvent.getData("config");
 	}
 
 	getEvents() {
@@ -36,11 +42,11 @@ export class KanbanManager {
 	}
 
 	async getColumn(columnId: string): Promise<ColumnType | null> {
-		return this.store.get(columnId);
+		return this.getStore().get(columnId);
 	}
 
 	async saveColumn(column: ColumnType): Promise<void> {
-		this.store.set(column.id, column);
+		this.getStore().set(column.id, column);
 	}
 	async clearColumn(column: ColumnType): Promise<void> {
 		const emptyColumn = {
@@ -51,7 +57,7 @@ export class KanbanManager {
 	}
 
 	async removeColumn(columnId: string): Promise<void> {
-		this.store.remove(columnId);
+		this.getStore().remove(columnId);
 	}
 
 	showInsight(column: ColumnType) {

@@ -11,25 +11,35 @@ import { sendIframeRequest } from "@app/utils";
 import { createRoot } from "solid-js";
 import { render } from "solid-js/web";
 import { buildPluginIframe } from ".";
+import { getToolStore } from "@app/managers/Module/effects";
 
 export class ModuleMain implements ModuleCapability {
 	private roots = new Map<string, () => void>();
-	private readonly store: IStore;
+	private store: IStore;
 	private capability: rawPluginCapability;
 	private iframe: HTMLIFrameElement;
-	private instances: Record<string, HTMLIFrameElement> = {};
+	private instances: Record<
+		string,
+		{ iframe: HTMLIFrameElement; cleanup: () => void }
+	> = {};
 	private toolEvent: ToolApi;
 
 	constructor(
 		iframe: HTMLIFrameElement,
 		capability: rawPluginCapability,
-		appApi: AppApi,
-		toolEvent: ToolApi,
+		toolEvents: ToolApi,
 	) {
 		this.iframe = iframe;
-		this.store = toolEvent.getData("config");
 		this.capability = capability;
-		this.toolEvent = toolEvent;
+		this.toolEvent = toolEvents;
+		this.toolEvent.on("store:save", (payload: any) => {
+			if (payload) {
+				const { id, data } = payload;
+				if (id && data) {
+					this.getStore().set(id, data);
+				}
+			}
+		});
 	}
 
 	async onCreate(card: CardType) {
@@ -37,14 +47,16 @@ export class ModuleMain implements ModuleCapability {
 			card,
 		});
 		if (result) {
-			this.store.set(card.id, result["data"]);
+			this.getStore().set(card.id, result["data"]);
 		}
 		return { status: true };
 	}
+
 	async onDelete(card: CardType) {
-		this.store.remove(card.id);
+		this.getStore().remove(card.id);
 		return { status: true };
 	}
+
 	async onLoad(card: CardType) {
 		const container = document.getElementById(card.id);
 		if (!container) {
@@ -56,7 +68,7 @@ export class ModuleMain implements ModuleCapability {
 		if (this.roots.has(card.id)) {
 			return { status: true };
 		}
-		const data: any = this.store.get(card.id);
+		const data: any = this.getStore().get(card.id);
 		const code = this.capability.handler;
 		const instanceIframe = buildPluginIframe({
 			module: this.toolEvent,
@@ -64,6 +76,7 @@ export class ModuleMain implements ModuleCapability {
 			additionalData: [
 				["DATA", data],
 				["INSTANCE", card],
+				["TYPE", "ui"],
 			],
 		});
 		const dispose = createRoot((dispose) => {
@@ -72,7 +85,7 @@ export class ModuleMain implements ModuleCapability {
 					<div
 						class="size-full"
 						ref={(container) =>
-							container.appendChild(instanceIframe)
+							container.appendChild(instanceIframe.iframe)
 						}
 					/>
 				),
@@ -87,7 +100,9 @@ export class ModuleMain implements ModuleCapability {
 	async onUnload(id: string): Promise<PluginResult> {
 		try {
 			const dispose = this.roots.get(id);
+			const builtIframe = this.instances[id];
 			if (dispose) {
+				builtIframe.cleanup();
 				dispose();
 				this.roots.delete(id);
 			}
@@ -97,6 +112,12 @@ export class ModuleMain implements ModuleCapability {
 		}
 	}
 
+	private getStore() {
+		if (!this.store) {
+			this.store = getToolStore(this.capability.meta.name);
+		}
+		return this.store;
+	}
 	private failure(message: string, error: unknown): PluginResult {
 		return {
 			status: false,

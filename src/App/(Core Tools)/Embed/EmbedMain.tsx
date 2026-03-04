@@ -11,6 +11,7 @@ import {
 import { render } from "solid-js/web";
 import { createRoot } from "solid-js";
 import { lazy } from "solid-js";
+import { getToolStore } from "@app/managers/Module/effects";
 
 const Embed = lazy(() => import("./Embed"));
 
@@ -25,7 +26,6 @@ export class EmbedMain implements IPlugin {
 
 	constructor(_, toolEvent: HollowEvent<ToolEvents>) {
 		this.toolEvents = toolEvent;
-		this.store = toolEvent.getData("config");
 		this.capabilities = [
 			{
 				kind: "module",
@@ -48,9 +48,15 @@ export class EmbedMain implements IPlugin {
 	public readonly name = "embed";
 	public readonly capabilities: PluginCapability[];
 
+	private getStore() {
+		if (!this.store) {
+			this.store = getToolStore("embed");
+		}
+		return this.store;
+	}
 	private async onCreate(card: CardType): Promise<PluginResult> {
 		try {
-			this.store.set(card.id, { src: "" });
+			this.getStore().set(card.id, { src: "" });
 			return { status: true };
 		} catch (error) {
 			return {
@@ -63,7 +69,7 @@ export class EmbedMain implements IPlugin {
 
 	private async onDelete(card: CardType): Promise<PluginResult> {
 		try {
-			this.store.remove(card.id);
+			this.getStore().remove(card.id);
 			return { status: true };
 		} catch (error) {
 			return {
@@ -76,7 +82,7 @@ export class EmbedMain implements IPlugin {
 
 	private async onLoad(card: CardType): Promise<PluginResult> {
 		try {
-			const data: EmbedData = this.store.get(card.id);
+			const data: EmbedData = this.getStore().get(card.id);
 			const targetContainer = document.getElementById(card.id);
 			if (!targetContainer) {
 				return {
@@ -91,7 +97,7 @@ export class EmbedMain implements IPlugin {
 						() => (
 							<Embed
 								data={data}
-								store={this.store}
+								store={this.getStore()}
 								card={card}
 								toolEvents={this.toolEvents}
 							/>

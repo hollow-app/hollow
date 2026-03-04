@@ -2,20 +2,23 @@
 .button-control {
 	--c: var(--color-secondary-95);
 	--bg: var(--color-secondary-20);
-	--border-radius: var(--radius-lg);
-	--h: calc(var(--spacing) * 9);
-	--w: calc(var(--spacing) * 9);
+	--border-radius: var(--radius-lg, 0.5rem);
+	--h: calc(var(--spacing, 4px) * 9);
+	--w: calc(var(--spacing, 4px) * 9);
 	--px: 0;
 	--py: 0;
 	--opacity: 0.5;
-	height: var(--size, var(--h));
-	width: var(--size, var(--w));
-	border-radius: var(--border-radius);
-	padding-inline: calc(var(--spacing) * var(--px));
-	padding-block: calc(var(--spacing) * var(--py));
-	color: var(--c);
-	opacity: var(--opacity);
+	height: var(--size, var(--h, 36px));
+	width: var(--size, var(--w, 36px));
+	border-radius: var(--border-radius, 0.5rem);
+	padding-inline: calc(var(--spacing, 4px) * var(--px, 0));
+	padding-block: calc(var(--spacing, 4px) * var(--py, 0));
+	color: var(--c, inherit);
+	opacity: var(--opacity, 1);
 	transition: all 0.2s ease-in-out;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	&:hover {
 		background-color: color-mix(in oklab,
@@ -41,15 +44,15 @@
 
 .button-control.primary {
 	--c: var(--color-primary);
-	--bg: rgba(var(--primary-rgb), 0.1);
+	--bg: rgba(var(--primary-rgb, 59, 130, 246), 0.1);
 }
 
 .button-control.red {
-	--c: var(--color-red-500);
-	--bg: var(--color-red-900);
+	--c: var(--color-red-500, #ef4444);
+	--bg: var(--color-red-900, #7f1d1d);
 
 	&:hover {
-		color: var(--color-red-500);
+		color: var(--color-red-500, #ef4444);
 	}
 }
 
@@ -59,26 +62,26 @@
 			var(--color-primary) 20%,
 			transparent);
 	color: var(--color-primary);
-	border-color: var(--bg);
+	border-color: var(--bg, transparent);
 	opacity: 1;
 }
 
 .button {
-	--padding-x: calc(var(--spacing) * 5);
-	--padding-y: calc(var(--spacing) * 1.2);
+	--padding-x: calc(var(--spacing, 4px) * 5);
+	--padding-y: calc(var(--spacing, 4px) * 1.2);
 	--border-w: 1px;
 	--color: var(--color-secondary-foreground);
 	--w: fit-content;
 	--h: fit-content;
-	width: var(--w);
-	height: var(--h);
-	border-width: var(--border-w);
+	width: var(--w, fit-content);
+	height: var(--h, fit-content);
+	border-width: var(--border-w, 1px);
 	border-style: solid;
-	border-radius: var(--radius-lg);
-	padding-inline: var(--padding-x);
-	padding-block: var(--padding-y);
-	font-size: var(--text-sm);
-	font-weight: var(--font-weight-medium);
+	border-radius: var(--radius-lg, 0.5rem);
+	padding-inline: var(--padding-x, 1rem);
+	padding-block: var(--padding-y, 0.5rem);
+	font-size: var(--text-sm, 0.875rem);
+	font-weight: var(--font-weight-medium, 500);
 	transition: 0.1s all ease-in-out;
 	cursor: pointer;
 	user-select: none;
@@ -95,8 +98,8 @@
 }
 
 .button.icon {
-	--padding-y: calc(var(--spacing) * 2);
-	--padding-x: calc(var(--spacing) * 2);
+	--padding-y: calc(var(--spacing, 4px) * 2);
+	--padding-x: calc(var(--spacing, 4px) * 2);
 }
 
 .button.primary {
@@ -169,21 +172,21 @@
 
 
 .input {
-	--padding-x: calc(var(--spacing) * 2.5);
-	--padding-y: calc(var(--spacing) * 1);
+	--padding-x: calc(var(--spacing, 4px) * 2.5);
+	--padding-y: calc(var(--spacing, 4px) * 1);
 	--border-w: 2px;
-	--bg-color: var(--high);
+	--bg-color: var(--high, transparent);
 	--border-color: var(--color-secondary-15);
-	--radius: var(--radius-md);
+	--radius: var(--radius-md, 0.375rem);
 	--w: 100%;
-	width: var(--w);
-	font-size: var(--text-sm);
-	border: 1px solid var(--bg-color);
-	background-color: color-mix(in oklab, var(--bg-color) 50%, transparent);
-	padding-inline: var(--padding-x);
-	padding-block: var(--padding-y);
-	border-radius: var(--radius);
-	color: var(--secondary-text);
+	width: var(--w, 100%);
+	font-size: var(--text-sm, 0.875rem);
+	border: 1px solid var(--bg-color, transparent);
+	background-color: color-mix(in oklab, var(--bg-color, transparent) 50%, transparent);
+	padding-inline: var(--padding-x, 0.625rem);
+	padding-block: var(--padding-y, 0.25rem);
+	border-radius: var(--radius, 0.375rem);
+	color: var(--secondary-text, inherit);
 
 	&:focus {
 		/* background-color: var(--bg-color); */
@@ -203,18 +206,18 @@
 	display: flex;
 	width: 100%;
 	align-items: center;
-	gap: calc(var(--spacing) * 3);
-	padding-block: calc(var(--spacing) * 1.5);
-	border-radius: var(--radius-md);
+	gap: calc(var(--spacing, 4px) * 3);
+	padding-block: calc(var(--spacing, 4px) * 1.5);
+	border-radius: var(--radius-md, 0.375rem);
 	transition: 0.3s all ease;
-	padding-inline: calc(var(--spacing) * 2.5);
+	padding-inline: calc(var(--spacing, 4px) * 2.5);
 	margin-inline: auto;
-	color: var(--color-neutral-600);
-	font-size: var(--text-sm);
+	color: var(--color-neutral-600, #525252);
+	font-size: var(--text-sm, 0.875rem);
 
 	&:hover {
-		background: var(--secondary-color-10);
-		color: var(--color-neutral-950);
+		background: var(--secondary-color-10, rgba(0, 0, 0, 0.1));
+		color: var(--color-neutral-950, #0a0a0a);
 	}
 
 	&.active-cm:active {
@@ -223,17 +226,17 @@
 }
 
 .dark .button-cm {
-	color: var(--color-neutral-400);
+	color: var(--color-neutral-400, #a3a3a3);
 
 	&:hover {
-		color: var(--color-neutral-50);
+		color: var(--color-neutral-50, #fafafa);
 	}
 }
 
 
 .hr-cm {
-	border-color: var(--secondary-color-05);
-	margin-block: calc(var(--spacing) * 2);
+	border-color: var(--secondary-color-05, rgba(0, 0, 0, 0.05));
+	margin-block: calc(var(--spacing, 4px) * 2);
 	width: 100%;
 }
 
@@ -258,7 +261,7 @@
 	left: 0;
 	width: 40px;
 	height: 24px;
-	background-color: var(--secondary-color-20);
+	background-color: var(--secondary-color-20, rgba(0, 0, 0, 0.2));
 	border-radius: 34px;
 	cursor: pointer;
 	transition: background-color 0.3s;
@@ -280,7 +283,7 @@
 
 /* Anahtarın etkin hale gelmesindeki stil değişiklikleri */
 .toggle-switch .toggle-input:checked+.toggle-label {
-	background-color: var(--primary-color-05);
+	background-color: var(--primary-color-05, rgba(59, 130, 246, 0.05));
 }
 
 .toggle-switch .toggle-input:checked+.toggle-label::before {
@@ -304,14 +307,14 @@
 .progress-circle {
 	--thickness: calc(5%);
 	border-radius: 50%;
-	background: conic-gradient(var(--accent-color) 0% var(--percentage),
-			var(--base-color, var(--secondary-color-15)) var(--percentage) 100%);
+	background: conic-gradient(var(--accent-color, currentColor) 0% var(--percentage, 0%),
+			var(--base-color, var(--secondary-color-15, rgba(0, 0, 0, 0.15))) var(--percentage, 0%) 100%);
 	mask: radial-gradient(circle,
-			transparent calc(50% - var(--thickness)),
-			black calc(50% - var(--thickness) + 1px));
+			transparent calc(50% - var(--thickness, 5%)),
+			black calc(50% - var(--thickness, 5%) + 1px));
 	-webkit-mask: radial-gradient(circle,
-			transparent calc(50% - var(--thickness)),
-			black calc(50% - var(--thickness) + 1px));
+			transparent calc(50% - var(--thickness, 5%)),
+			black calc(50% - var(--thickness, 5%) + 1px));
 
 	transition: --percentage 0.5s ease-in-out;
 }
@@ -328,7 +331,7 @@
 
 .slider-range::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	background: var(--primary-color);
+	background: var(--primary-color, #3b82f6);
 	border-radius: 8px;
 	border: 4px solid var(--color-primary-60);
 	/* box-shadow: inset 0 0 0 4px #eaeaea; */
@@ -341,13 +344,13 @@
 
 
 .keyboard-button {
-	--tw-tracking: var(--tracking-widest);
-	letter-spacing: var(--tracking-widest);
-	color: var(--secondary-color-95);
+	--tw-tracking: var(--tracking-widest, 0.1em);
+	letter-spacing: var(--tracking-widest, 0.1em);
+	color: var(--secondary-color-95, rgba(0, 0, 0, 0.95));
 	border-width: 0.1em 0.1em 0.3em 0.1em;
-	border-color: var(--secondary-color-25);
+	border-color: var(--secondary-color-25, rgba(0, 0, 0, 0.25));
 	padding: 0 0.25em;
-	background-color: var(--secondary-color-10);
+	background-color: var(--secondary-color-10, rgba(0, 0, 0, 0.1));
 	border-radius: 0.25em;
 	text-transform: uppercase;
 }

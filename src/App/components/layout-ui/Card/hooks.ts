@@ -33,6 +33,7 @@ export interface CardState {
 	setLoaded: Setter<boolean>;
 	isExpand: Accessor<boolean>;
 	setExpand: Setter<boolean>;
+	loadInstance: () => Promise<void>;
 }
 
 export interface CardActions {
@@ -182,12 +183,15 @@ export const useCard = (props: CardProps): CardHook => {
 		}
 	});
 
-	onMount(async () => {
+	const loadInstance = async () => {
 		const result = await loadCard(props.node, tool);
 		setLoaded(result.status);
 		if (!result.status) {
 			console.error(result);
 		}
+	};
+	onMount(async () => {
+		loadInstance();
 		getToolEvents(tool)?.on(`${props.node.id}-expand`, toggleExpand);
 	});
 
@@ -209,6 +213,7 @@ export const useCard = (props: CardProps): CardHook => {
 			setLoaded,
 			isExpand,
 			setExpand,
+			loadInstance,
 		},
 		actions: {
 			onContextMenu,

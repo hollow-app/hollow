@@ -1,6 +1,7 @@
 import {
 	CapabilityMeta,
 	CardType,
+	IStore,
 	ModuleCapability,
 	PluginResult,
 	ToolApi,
@@ -80,7 +81,7 @@ export type ToolMethods = {
 	onDelete(card: CardType): Promise<PluginResult>;
 	onLoad(card: CardType): Promise<PluginResult>;
 	onUnload(name: string): Promise<PluginResult>;
-	toolEvent: ToolApi;
+	tools: { events: ToolApi; store: IStore };
 };
 export type ToolMap = Map<string, ToolMethods>;
 export type CoreTool = (typeof hollow.coreTools)[number];

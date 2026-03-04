@@ -55,18 +55,18 @@ export function setupModule(dispatch: (action: any) => void) {
 				store.set(capa.meta.name, tool);
 			}
 			const targetModule = capas.find((i) => i.meta.name === tool.name);
-			const toolEvent = await createToolEvent(
+			const moduleTools = await createModuleTools(
 				targetModule.meta.source,
 				tool.name,
 			);
 			const toolInstance: ToolMethods = {
 				...targetModule.handler,
-				toolEvent,
+				tools: moduleTools,
 				name: tool.name,
 			};
 			if (toolInstance) {
 				toolMap.set(tool.name, toolInstance);
-				toolInstance.toolEvent.on(
+				toolInstance.tools.events.on(
 					"card-fs",
 					({ cardName }: { cardName: string }) =>
 						getCardFs(tool.name, cardName),
@@ -138,10 +138,7 @@ export async function moduleEffects(action: Events, state: ModuleState) {
 					toolMap.set(newTool.name, {
 						...capability,
 						name: meta.name,
-						toolEvent: await createToolEvent(
-							meta.source,
-							meta.name,
-						),
+						tools: await createModuleTools(meta.source, meta.name),
 					});
 				}
 			}
@@ -372,17 +369,16 @@ export async function moduleEffects(action: Events, state: ModuleState) {
 }
 
 // create the HollowEvent of a singal tool;
-async function createToolEvent(
+async function createModuleTools(
 	pluginName: string,
 	toolName: string,
-): Promise<ToolApi> {
+): Promise<{ events: ToolApi; store: IStore }> {
 	const toolEvent = getPluginEvents(pluginName);
 	const path = await join(
 		...[getCurrentRealm().location, "main", toolName, "config.json"],
 	);
 	const str = await Storage.create({ path, options: { defaults: {} } });
-	toolEvent.emit("config", str);
-	return toolEvent;
+	return { events: toolEvent, store: str };
 }
 
 function updateToolMetadata(toolName: string, metadata: ToolMetadata): void {
@@ -411,7 +407,10 @@ function getCardFs(toolName: string, cardName: string) {
 
 // EXTERNAL UTILS
 export function getToolEvents(tool: string): ToolApi {
-	return toolMap.get(tool).toolEvent;
+	return toolMap.get(tool).tools.events;
+}
+export function getToolStore(tool: string): IStore {
+	return toolMap.get(tool).tools.store;
 }
 
 export function getHand(): Record<string, HandType> {

@@ -30,8 +30,8 @@ import { KanbanMain } from "@app/(Core Tools)/Kanban/KanbanMain";
 import { EmbedMain } from "@app/(Core Tools)/Embed/EmbedMain";
 import { ModuleMain } from "./utils/ModuleMain";
 import { LayoutMain } from "./utils/LayoutMain";
-import { buildPluginHTML, buildPluginIframe } from "./utils";
-import { sendIframeRequest } from "@app/utils";
+import { buildPluginIframe } from "./utils";
+import { getToolStore } from "../Module/effects";
 
 // TODO needs to be inside an uneditable place , local file
 // maybe add this to extension state as well
@@ -45,6 +45,10 @@ const extensions: ExtensionMeta[] = savedExtensions
 			{ name: "embed", signed: true },
 		];
 const pluginEvents: Record<string, ToolApi> = {};
+const pluginBuilt: Record<
+	string,
+	{ iframe: HTMLIFrameElement; cleanup: () => void }
+> = {};
 
 export async function setupExtension(dispatch: (action: any) => void) {
 	hollow.pevents.on("post-realm", async () => {
@@ -132,6 +136,12 @@ export async function extensionEffects(action: Events, state: ExtensionState) {
 					const capas = capabilities.filter(
 						(i) => i.meta.source === name,
 					);
+					delete pluginEvents[name];
+					const built = pluginBuilt[name];
+					if (built) {
+						built.cleanup();
+						delete pluginBuilt[name];
+					}
 					// TODO should remove the capabilities from thier respected Managers
 					_dispatch({
 						domain: "module",
@@ -151,10 +161,10 @@ export async function extensionEffects(action: Events, state: ExtensionState) {
 	}
 }
 async function loadPlugin(extension: string): Promise<PluginCapability[]> {
-	const toolEvent = await createToolEvent(extension);
+	const toolEvent = await createPluginEvents();
 	pluginEvents[extension] = toolEvent;
 	if (hollow.coreTools.includes(extension as CoreTool)) {
-		const pluginObj = createCoreTool(extension as CoreTool, toolEvent);
+		const pluginObj = createCorePlugin(extension as CoreTool, toolEvent);
 		if (!pluginObj) return null;
 		return pluginObj.capabilities;
 	} else {
@@ -164,13 +174,15 @@ async function loadPlugin(extension: string): Promise<PluginCapability[]> {
 		});
 		if (!pluginObj) return null;
 		// PLUGIN IFRAME
-		const iframe = buildPluginIframe({
+		const builtIframe = buildPluginIframe({
 			module: toolEvent,
 			script: pluginObj.script,
 			visual: false,
+			additionalData: [["TYPE", "script"]],
 		});
+		pluginBuilt[extension] = builtIframe;
 		const capas = pluginObj.capabilities.map((i) =>
-			polishICapability(i, toolEvent, iframe),
+			polishICapability(i, toolEvent, builtIframe.iframe),
 		);
 		return capas;
 	}
@@ -180,29 +192,13 @@ export function getPluginEvents(name: string) {
 }
 
 // create the HollowEvent of a singal tool;
-async function createToolEvent(toolName: string): Promise<ToolApi> {
+async function createPluginEvents(): Promise<ToolApi> {
 	const toolEvent = new EventsManager<ToolEvents, ToolEvents>();
-	const path = await join(
-		...[getCurrentRealm().location, "main", toolName, "config.json"],
-	);
-	const str = await Storage.create({ path, options: { defaults: {} } });
-	// const store: IStore = {
-	// 	close: str.close.bind(str),
-	// 	get: str.get.bind(str),
-	// 	getData: str.getData.bind(str),
-	// 	keys: str.keys.bind(str),
-	// 	reload: str.reload.bind(str),
-	// 	remove: str.remove.bind(str),
-	// 	save: str.save.bind(str),
-	// 	set: str.set.bind(str),
-	// 	setMany: str.setMany.bind(str),
-	// };
-	toolEvent.emit("config", str);
 	return toolEvent;
 }
 
 // simple internal classes organizer
-function createCoreTool(name: CoreTool, toolEvent: ToolApi): IPlugin | null {
+function createCorePlugin(name: CoreTool, toolEvent: ToolApi): IPlugin | null {
 	const toolMap: Record<
 		CoreTool,
 		new (app: AppApi, toolEvent: ToolApi) => IPlugin
@@ -241,9 +237,7 @@ function polishModuleCapability(
 	toolEvent: ToolApi,
 	iframe: HTMLIFrameElement,
 ): ModuleCapability {
-	// const store: IStore = toolEvent.getData("config");
-	//
-	const moduleMain = new ModuleMain(iframe, raw, hollow.events, toolEvent);
+	const moduleMain = new ModuleMain(iframe, raw, toolEvent);
 	return {
 		onCreate: moduleMain.onCreate.bind(moduleMain),
 		onDelete: moduleMain.onDelete.bind(moduleMain),

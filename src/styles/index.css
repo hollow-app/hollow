@@ -15,7 +15,6 @@
 }
 
 @theme {
-
 	/* primary */
 	--color-primary: var(--primary-color, #ffffff);
 
@@ -84,6 +83,7 @@
 	--animate-pulse-dot: pulse-dot 1s ease-in-out infinite;
 
 }
+
 
 /* @source inline("animate-ping"); */
 /* @source inline("animate-spin"); */

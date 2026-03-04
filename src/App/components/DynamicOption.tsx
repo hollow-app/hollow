@@ -166,8 +166,8 @@ const DropdownOption = (props: { option: OptionType<"dropdown"> }) => (
 		placeholder={props.option.placeholder}
 		items={
 			props.option.options as
-			| string[]
-			| { title: string; items: string[] }[]
+				| string[]
+				| { title: string; items: string[] }[]
 		}
 		onselect={props.option.onAction}
 		class="w-full"
@@ -208,7 +208,10 @@ const SegmentedOption = (props: { option: OptionType<"segmented"> }) => {
 const CustomOption = (props: { option: OptionType<"custom"> }) => {
 	let el: HTMLDivElement;
 	onMount(() => {
-		const obj = props.option.render(el, props.option);
+		const obj = props.option.render(el, {
+			...props.option,
+			onAction: props.option.onAction ?? (() => {}),
+		});
 		onCleanup(() => {
 			obj.cleanup();
 		});

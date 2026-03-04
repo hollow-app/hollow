@@ -44,7 +44,10 @@ export function buildPluginIframe({
 	>();
 
 	const marshall = (val: any, depth = 0): any => {
-		if (depth > 15) return null; // Prevent deep recursion
+		if (depth > 50) {
+			console.error("[Bridge] Maximum serialization depth reached:", val);
+			throw new Error("Bridge: Max depth exceeded");
+		}
 		if (typeof val === "function") {
 			const funcId = crypto.randomUUID();
 			functionRegistry.set(funcId, val);
@@ -53,23 +56,23 @@ export function buildPluginIframe({
 		if (val && typeof val === "object") {
 			if (Array.isArray(val))
 				return val.map((i) => marshall(i, depth + 1));
-			const newObj: any = {};
 
-			// Collect all properties including from prototype (for classes like IStore)
-			const keys = new Set<string>();
-			let proto = val;
-			while (proto && proto !== Object.prototype) {
-				Object.getOwnPropertyNames(proto).forEach((k) => keys.add(k));
-				proto = Object.getPrototypeOf(proto);
+			const proto = Object.getPrototypeOf(val);
+			if (proto !== Object.prototype && proto !== null) {
+				console.error(
+					"[Bridge] Unsupported data type detected (class instance):",
+					val.constructor?.name || "Unknown Class",
+					val,
+				);
+				throw new Error(
+					`Bridge: Unsupported data type ${val.constructor?.name || "Unknown Class"}`,
+				);
 			}
 
-			for (const key of keys) {
-				if (key === "constructor" || key.startsWith("__")) continue;
-				try {
-					newObj[key] = marshall(val[key], depth + 1);
-				} catch (e) {
-					// Skip non-accessible properties
-				}
+			const newObj: any = {};
+			for (const key in val) {
+				if (key.startsWith("__")) continue;
+				newObj[key] = marshall(val[key], depth + 1);
 			}
 			return newObj;
 		}
@@ -242,6 +245,14 @@ export function buildPluginIframe({
 					pendingRequests.delete(data.replyTo);
 				}
 				break;
+			}
+			case "iframe-contextmenu": {
+				const rect = iframe.getBoundingClientRect();
+				const postition = {
+					x: rect.left + event.data.x,
+					y: rect.top + event.data.y,
+				};
+				// TODO
 			}
 		}
 	};

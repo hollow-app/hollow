@@ -250,7 +250,10 @@ function polishLayoutCapability(
 	toolEvent: ToolApi,
 	iframe: HTMLIFrameElement,
 ): PanelCapability {
-	// const store: IStore = toolEvent.getData("config");
+	const layoutMain = new LayoutMain(iframe, raw, toolEvent);
 	//
-	return new LayoutMain();
+	return {
+		mount: layoutMain.mount.bind(layoutMain),
+		unMount: layoutMain.unMount.bind(layoutMain),
+	};
 }

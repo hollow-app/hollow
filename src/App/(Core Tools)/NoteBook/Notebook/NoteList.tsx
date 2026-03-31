@@ -187,7 +187,7 @@ function NotePreview({
 				e.ctrlKey ? onSelect() : changeSelected(note.title)
 			}
 			classList={{
-				"border-secondary-10 hover:border-secondary-10": !selected(),
+				"border-secondary-15 ": !selected(),
 			}}
 		>
 			<div

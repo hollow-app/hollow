@@ -12,6 +12,7 @@ import {
 } from "@tauri-apps/api/window";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { first_launch, get_platform, start_realm } from "./rust";
+import { DeepLink } from "./deeplink";
 
 type ShutdownHandler = () => Promise<void> | void;
 
@@ -68,6 +69,7 @@ export async function preRealmSelection() {
 		localStorage.first_launch = "true";
 		first_launch();
 	}
+	await DeepLink.listen();
 	await hollow.pevents.emitAsync("pre-realm");
 	return true;
 }

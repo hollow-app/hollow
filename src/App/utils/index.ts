@@ -38,3 +38,42 @@ export async function sendIframeRequest(
 		);
 	});
 }
+type CacheEntry<T> = {
+	data: T;
+	timestamp: number;
+};
+
+export async function fetchWithBackup<T>(
+	url: string,
+	options?: RequestInit,
+	intervalMs: number = 5000,
+): Promise<T> {
+	const now = Date.now();
+	const cachedStr = localStorage.getItem(url);
+	let cached: CacheEntry<T> | null = null;
+	if (cachedStr) {
+		try {
+			cached = JSON.parse(cachedStr) as CacheEntry<T>;
+		} catch (err) {
+			console.warn("Failed to parse cached data", err);
+			localStorage.removeItem(url);
+		}
+	}
+	if (cached && now - cached.timestamp < intervalMs) {
+		return cached.data;
+	}
+	try {
+		const response = await fetch(url, options);
+		if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+		const data: T = await response.json();
+		const entry: CacheEntry<T> = { data, timestamp: now };
+		localStorage.setItem(url, JSON.stringify(entry));
+		return data;
+	} catch (err) {
+		if (cached) {
+			console.warn(`Fetch failed, returning cached data for ${url}`, err);
+			return cached.data;
+		}
+		throw err;
+	}
+}

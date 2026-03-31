@@ -36,21 +36,24 @@ export default function Alerts() {
 
 	const addAlert = (alert: AlertType) => {
 		const id = crypto.randomUUID();
-		const uniqueAlert = { ...alert, id };
+		const duration =
+			estimateReadingTimeMs([alert.title ?? "", alert.message ?? ""]) +
+			1500;
+		const uniqueAlert = {
+			...alert,
+			id,
+			duration: alert.duration ?? duration,
+		};
 		setAlerts((prev) => [uniqueAlert, ...prev]);
 		setCue((prev) => [...prev, uniqueAlert.id]);
-		const duration = estimateReadingTimeMs([
-			alert.title ?? "",
-			alert.message ?? "",
-		]);
-		if (alert.type !== "loading") {
+		if (uniqueAlert.type !== "loading") {
 			setTimeout(() => {
 				setCue((prev) => [...prev.filter((i) => i !== id)]);
 				setTimeout(() => {
 					setAlerts((prev) => prev.filter((i) => i.id !== id));
 				}, 4000);
 				alert.onTimeOut && alert.onTimeOut();
-			}, alert.duration ?? duration);
+			}, uniqueAlert.duration);
 		} else {
 			return (alert: AlertType) => {
 				setAlerts((p) =>
@@ -62,7 +65,7 @@ export default function Alerts() {
 						setAlerts((prev) => prev.filter((i) => i.id !== id));
 					}, 4000);
 					alert.onTimeOut && alert.onTimeOut();
-				}, alert.duration ?? duration);
+				}, uniqueAlert.duration);
 			};
 		}
 	};
@@ -174,9 +177,9 @@ const NormalAlert = (props: {
 							</Show>
 						</Show>
 					</Show>
-					<Show when={props.alert().title}>
-						<h1>{props.alert().title}</h1>
-					</Show>
+					<h1 class="capitalize">
+						{props.alert().title ?? props.alert().type}
+					</h1>
 					<Show when={props.alert().button}>
 						<button
 							class="bg-secondary-10 active:bg-secondary-05 hover:bg-secondary-15 border-secondary-20 text-secondary-foreground hover:border-secondary-25 my-1 ml-auto h-fit rounded-md border px-2 py-1 text-xs transition-colors"
@@ -196,7 +199,7 @@ const NormalAlert = (props: {
 				<hr
 					class="bg-secondary-20 timer-bar absolute bottom-0 h-[2px] border-0"
 					style={{
-						"--duration": `${props.alert().duration ?? 3000}ms`,
+						"--duration": `${props.alert().duration}ms`,
 					}}
 				/>
 			</Show>

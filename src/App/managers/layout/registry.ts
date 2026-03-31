@@ -1,6 +1,5 @@
 import { Accessor, Component, createMemo, lazy } from "solid-js";
 import { LayoutState, PanelType } from "./types";
-import { batch } from "solid-js";
 import { _dispatch, _state } from "@shared/store/effects";
 import { hollow } from "../../../hollow";
 import { RootState } from "@shared/store/types";

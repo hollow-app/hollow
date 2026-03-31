@@ -11,6 +11,8 @@ import {
 	Tooltip,
 } from "@ui";
 import {
+	formatDate,
+	readableDate,
 	timeDifference,
 	timeDifferenceMin,
 } from "@app/utils/manipulation/strings";
@@ -153,11 +155,17 @@ export default function FriendProfile(props: FriendProfileProps) {
 							})()}
 						</Show>
 					</div>
-					<div class="">
+					<div class="space-y-2">
 						<div class="bg-secondary-10 w-full rounded-xl p-4">
 							<h3 class="text-sm font-semibold">Friends Since</h3>
 							<div class="text-xs text-neutral-500">
-								{timeDifference(props.user.createdAt)}
+								{readableDate(props.user.createdAt)}
+							</div>
+						</div>
+						<div class="bg-secondary-10 w-full rounded-xl p-4">
+							<h3 class="text-sm font-semibold">User Joined</h3>
+							<div class="text-xs text-neutral-500">
+								{readableDate(props.user.userCreatedAt)}
 							</div>
 						</div>
 					</div>

@@ -29,6 +29,7 @@ pub fn run() {
            .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
             log::debug!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
         }))
+            .plugin(tauri_plugin_http::init())
         // relative
         .manage(Mutex::new(app::AppData {
             realm_location: None,
@@ -77,7 +78,7 @@ pub fn run() {
             vault::vault_remove,
             vault::vault_add_url,
             auth::fetch_user,
-            auth::signin,
+            // auth::signin,
             // auth::update_user_character,
             account::get_user,
             account::is_signed_in,

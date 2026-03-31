@@ -43,16 +43,7 @@ fn load_backup_user_internal(stronghold: &Stronghold) -> Result<Value, String> {
     serde_json::from_slice(&data).map_err(|e| e.to_string())
 }
 
-// Flow : Sign in #1
-#[command]
-pub async fn signin(state: State<'_, Mutex<AuthData>>) -> Result<(), String> {
-    let signature = Uuid::new_v4().to_string();
-    let mut auth_data = state.lock().unwrap();
-    auth_data.signature = Some(signature.clone());
-    let url = build_auth_url(&signature)?;
-    let _ = open_url(url, None::<&str>);
-    Ok(())
-}
+// SignIn logic moved to TypeScript
 
 // TODO should be called upon internet connection
 #[command]

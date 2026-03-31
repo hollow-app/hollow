@@ -4,6 +4,7 @@ import {
 	createSignal,
 	For,
 	onCleanup,
+	onMount,
 	Show,
 	Suspense,
 } from "solid-js";
@@ -42,49 +43,54 @@ export default function Appearance() {
 }
 
 function CanvasSettings() {
+	const draft = "appearance.canvas";
 	const { state, dispatch } = useStore();
-	const [gridGap, setGridGap] = createSignal(
-		state.context.canvasConfigs["grid-gap"],
+	const gridGap = createMemo<number>(() => state.settings["grid-gap"]);
+	const gridSize = createMemo<number>(
+		() => state.settings["grid-size"] as number,
 	);
-	const [gridSize, setGridSize] = createSignal(
-		state.context.canvasConfigs.column,
-	);
-	const cellHeight = createMemo(() => {
-		return (window.innerHeight - 16 + gridGap()) / (gridSize() as number);
-	});
 	const setGapBetweenCards = (v: number) => {
-		setGridGap(v);
-		useGrid([{ name: "--grid-gap", value: v }]);
-		dispatch({
-			domain: "context",
-			type: "set-canvas-configs",
-			configs: {
-				cellHeight: cellHeight(),
+		dispatch(
+			{
+				domain: "settings",
+				type: "set-configs",
+				configs: {
+					"grid-gap": v,
+				},
 			},
-		});
+			{ draft },
+		);
 	};
 
 	const setGrid_size = (v: number) => {
-		setGridSize(v);
-		dispatch({
-			domain: "context",
-			type: "set-canvas-configs",
-			configs: {
-				column: v,
-				cellHeight: cellHeight(),
+		dispatch(
+			{
+				domain: "settings",
+				type: "set-configs",
+				configs: {
+					"grid-size": v,
+				},
 			},
-		});
+			{ draft },
+		);
 	};
 
-	onCleanup(() => {
-		dispatch({
-			domain: "settings",
-			type: "set-configs",
-			configs: {
-				"grid-gap": gridGap(),
-				"grid-size": Number(gridSize()),
+	onMount(() => {
+		dispatch(
+			{
+				type: "DRAFT_START",
+				path: "settings",
 			},
-		});
+			{ draft },
+		);
+	});
+	onCleanup(() => {
+		dispatch(
+			{
+				type: "DRAFT_COMMIT",
+			},
+			{ draft },
+		);
 	});
 
 	return (
@@ -95,11 +101,7 @@ function CanvasSettings() {
 			>
 				<div class="w-50">
 					<NumberInput
-						value={
-							typeof gridSize() === "string"
-								? 12
-								: Number(gridSize())
-						}
+						value={gridSize()}
 						setValue={setGrid_size}
 						direct
 					/>

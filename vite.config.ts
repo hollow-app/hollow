@@ -4,7 +4,7 @@ import solidSvg from "vite-plugin-solid-svg";
 import { aliases } from "./vite.aliases";
 import tailwindcss from "@tailwindcss/vite";
 import { visualizer } from "rollup-plugin-visualizer";
-import { resolve } from "path";
+import fs from "fs";
 
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
@@ -40,10 +40,10 @@ export default defineConfig(async () => ({
 		host: host || false,
 		hmr: host
 			? {
-				protocol: "ws",
-				host,
-				port: 1421,
-			}
+					protocol: "ws",
+					host,
+					port: 1421,
+				}
 			: undefined,
 		watch: {
 			// 3. tell vite to ignore watching `src-tauri`

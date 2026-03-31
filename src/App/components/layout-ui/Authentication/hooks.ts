@@ -22,7 +22,7 @@ interface AuthenticationHook {
 export const useAuthentication = (
 	props: AuthenticationProps,
 ): AuthenticationHook => {
-	const [type, setType] = createSignal<authType>("reset-password");
+	const [type, setType] = createSignal<authType>("sign-in");
 
 	return { state: { type, setType }, actions: {} };
 };

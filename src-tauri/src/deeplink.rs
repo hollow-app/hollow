@@ -44,7 +44,7 @@ fn handle_deeplink(app_handle: &AppHandle, url: &Url) {
     }
 
     match url.host_str() {
-        Some("auth") => handle_auth_deeplink(app_handle, url),
+        //Some("auth") => handle_auth_deeplink(app_handle, url),
         _ => {
             log::warn!("Unknown deeplink host: {:?}", url.host_str());
         }

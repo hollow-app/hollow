@@ -26,48 +26,48 @@ import { useNotebook, NotebookProps } from "./hooks";
 const Notebook: Component<NotebookProps> = (props) => {
 	const { state, actions } = useNotebook(props);
 
-	createEffect(
-		on(
-			state.isExpand,
-			(v) => {
-				if (v) {
-					const id = crypto.randomUUID();
-					const control = hollow.events.emit(
-						"add-layout",
-						{
-							id,
-							icon: MyIconFun({ name: "folder-open" }),
-							type: "left",
-							mount: (el: HTMLDivElement) => {
-								const unmount = createRoot((dispose) => {
-									render(
-										() => (
-											<NoteList
-												card={props.card}
-												book={state.book}
-												changeSelected={
-													actions.changeSelected
-												}
-												isExpand={state.isExpand}
-											/>
-										),
-										el,
-									);
-									return dispose;
-								});
-								return { unmount };
-							},
-						},
-						{ source: "source" },
-					);
-					onCleanup(() => {
-						control.close();
-					});
-				}
-			},
-			{ defer: true },
-		),
-	);
+	// createEffect(
+	// 	on(
+	// 		state.isExpand,
+	// 		(v) => {
+	// 			if (v) {
+	// 				const id = crypto.randomUUID();
+	// 				const control = hollow.events.emit(
+	// 					"add-layout",
+	// 					{
+	// 						id,
+	// 						icon: MyIconFun({ name: "folder-open" }),
+	// 						type: "left",
+	// 						mount: (el: HTMLDivElement) => {
+	// 							const unmount = createRoot((dispose) => {
+	// 								render(
+	// 									() => (
+	// 										<NoteList
+	// 											card={props.card}
+	// 											book={state.book}
+	// 											changeSelected={
+	// 												actions.changeSelected
+	// 											}
+	// 											isExpand={state.isExpand}
+	// 										/>
+	// 									),
+	// 									el,
+	// 								);
+	// 								return dispose;
+	// 							});
+	// 							return { unmount };
+	// 						},
+	// 					},
+	// 					{ source: "source" },
+	// 				);
+	// 				onCleanup(() => {
+	// 					control.close();
+	// 				});
+	// 			}
+	// 		},
+	// 		{ defer: true },
+	// 	),
+	// );
 
 	return (
 		<div
@@ -120,17 +120,17 @@ const Notebook: Component<NotebookProps> = (props) => {
 						onclick={() => {
 							state.note()?.newNote
 								? (() => {
-									state.setEditMode(false);
-									state.setNote(
-										state.book.last
-											? state.book.notes.find(
-												(i) =>
-													i.title ===
-													state.book.last,
-											) || null
-											: null,
-									);
-								})()
+										state.setEditMode(false);
+										state.setNote(
+											state.book.last
+												? state.book.notes.find(
+														(i) =>
+															i.title ===
+															state.book.last,
+													) || null
+												: null,
+										);
+									})()
 								: actions.onNewNote();
 						}}
 						style={{
@@ -205,11 +205,11 @@ const Notebook: Component<NotebookProps> = (props) => {
 											state.setNote((prev) =>
 												prev
 													? {
-														...prev,
-														title: e
-															.currentTarget
-															.value,
-													}
+															...prev,
+															title: e
+																.currentTarget
+																.value,
+														}
 													: null,
 											)
 										}
@@ -242,15 +242,15 @@ const Notebook: Component<NotebookProps> = (props) => {
 														state.setNote((prev) =>
 															prev
 																? {
-																	...prev,
-																	attributes:
-																	{
-																		...prev.attributes,
-																		tags: tgs.join(
-																			", ",
-																		),
-																	},
-																}
+																		...prev,
+																		attributes:
+																			{
+																				...prev.attributes,
+																				tags: tgs.join(
+																					", ",
+																				),
+																			},
+																	}
 																: null,
 														)
 													}
@@ -316,9 +316,9 @@ const Notebook: Component<NotebookProps> = (props) => {
 													state.setNote((prev) =>
 														prev
 															? {
-																...prev,
-																body: v,
-															}
+																	...prev,
+																	body: v,
+																}
 															: null,
 													);
 												}}

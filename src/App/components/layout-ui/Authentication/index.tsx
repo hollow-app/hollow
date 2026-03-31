@@ -1,13 +1,14 @@
 import { Component } from "solid-js";
 import { useStore } from "@store";
 import { AuthenticationProps, useAuthentication } from "./hooks";
-import { GradientEffect } from "@ui";
+import { DialogContext, GradientEffect } from "@ui";
 import { Motion, Presence } from "solid-motionone";
 import { Show } from "solid-js";
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 import RecoverAccount from "./RecoverAccount";
 import ResetPassword from "./ResetPassword";
+import { useContext } from "solid-js";
 
 const Authentication: Component<AuthenticationProps> = (props) => {
 	const store = useStore();

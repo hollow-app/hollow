@@ -28,6 +28,15 @@ export function contextReducer(
 			return { ...state, isFocus: action.focus };
 		case "set-canvas-configs":
 			return { ...state, canvasConfigs: action.configs };
+		case "toggle-live-editor":
+			return {
+				...state,
+				canvasConfigs: {
+					disableDrag: !state.canvasConfigs.disableDrag,
+					disableResize: !state.canvasConfigs.disableResize,
+				},
+				isLiveEditor: !state.isLiveEditor,
+			};
 		case "toggle-settings":
 			return {
 				...state,

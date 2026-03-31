@@ -30,7 +30,7 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 		<div class="flex h-full w-102 flex-col overflow-hidden">
 			<Show
 				when={
-					state.account().connection.state &&
+					state.account().connection?.state &&
 					state.account().character
 				}
 				fallback={<Skeleton />}

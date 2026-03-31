@@ -1,14 +1,70 @@
-import { Setter } from "solid-js";
+import { createSignal, Setter } from "solid-js";
 import { authType } from "./hooks";
 import MyIcon from "@app/components/ui/MyIcon";
 import { Separator } from "@component/ui/Separator";
 import { Button, Input } from "@ui";
+import { Turnstile, useTurnstile } from "@component/Turnstile";
+import { onCleanup } from "solid-js";
+import { useStore } from "@shared/store";
+import { Auth } from "@lib";
+import { hollow } from "hollow";
 
 interface Props {
 	setType: Setter<authType>;
 }
 
 export default function SignIn(props: Props) {
+	const { dispatch } = useStore();
+	const [username, setUsername] = createSignal("");
+	const [password, setPassword] = createSignal("");
+	const turn = useTurnstile();
+	const request = async () => {
+		const token = turn.token();
+		if (!token) {
+			turn.execute();
+			return;
+		}
+		try {
+			if (!password() || !username()) return;
+			const responde = await Auth.signIn({
+				username: username(),
+				password: password(),
+				turnstileToken: token,
+			});
+			if (responde.success) {
+				const request = await Auth.getUser();
+				if (request) {
+					dispatch({
+						domain: "account",
+						type: "set-user",
+						user: request.user,
+					});
+					dispatch({
+						domain: "account",
+						type: "set-connection",
+						connection: { state: true, type: request.kind },
+					});
+				}
+			} else {
+				console.error(responde.error);
+				hollow.events.emit("alert", {
+					type: "error",
+					message: "Something went wrong! Try again later.",
+				});
+			}
+		} catch (e) {
+			console.error(e);
+			hollow.events.emit("alert", {
+				type: "error",
+				message: "Something went wrong! Try again later.",
+			});
+		} finally {
+			turn.reset();
+		}
+	};
+	onCleanup(() => {
+		turn.clean();
+	});
 	return (
 		<>
 			<MyIcon
@@ -54,7 +110,8 @@ export default function SignIn(props: Props) {
 					</button>
 				</div>
 			</div>
-			<Button variant="secondary" class="w-full">
+			<Turnstile />
+			<Button variant="secondary" class="w-full" onclick={request}>
 				Sign In
 			</Button>
 			<span class="text-secondary-40 text-sm">

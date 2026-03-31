@@ -1,16 +1,68 @@
-import { createSignal, Setter } from "solid-js";
+import { createSignal, onCleanup, onMount, Setter } from "solid-js";
 import { authType } from "./hooks";
 import MyIcon from "@app/components/ui/MyIcon";
 import { Separator } from "@component/ui/Separator";
 import { Button, Input } from "@ui";
+import { Turnstile, useTurnstile } from "@component/Turnstile";
+import { Auth } from "@lib";
+import { hollow } from "hollow";
 
 interface Props {
 	setType: Setter<authType>;
 }
 
 export default function ResetPassword(props: Props) {
-	const [valid, setValid] = createSignal(false);
+	const [code, setCode] = createSignal("");
 	const [password, setPassword] = createSignal("");
+	const [confirmPassword, setConfirmPassword] = createSignal("");
+	const turn = useTurnstile();
+
+	const request = async () => {
+		const token = turn.token();
+		if (!token) {
+			turn.execute();
+			return;
+		}
+		try {
+			if (!code() || !password() || password() !== confirmPassword())
+				return;
+			const response = await Auth.resetPassword({
+				code: code(),
+				password: password(),
+				turnstileToken: token,
+			});
+			if (response.success) {
+				await Auth.signOut();
+				props.setType("sign-in");
+			} else {
+				console.error(response.error);
+				hollow.events.emit("alert", {
+					type: "error",
+					message: "Something went wrong! Try again later.",
+				});
+			}
+		} catch (e) {
+			console.error(e);
+			hollow.events.emit("alert", {
+				type: "error",
+				message: "Something went wrong! Try again later.",
+			});
+		} finally {
+			turn.reset();
+		}
+	};
+	onMount(() => {
+		const storedCode = sessionStorage.getItem("recoverykey-code");
+		if (!storedCode) {
+			props.setType("recover-account");
+		} else {
+			setCode(storedCode);
+		}
+	});
+	onCleanup(() => {
+		turn.clean();
+	});
+
 	return (
 		<>
 			<MyIcon
@@ -34,7 +86,8 @@ export default function ResetPassword(props: Props) {
 					icon="password"
 				/>
 			</div>
-			<Button variant="secondary" class="w-full">
+			<Turnstile />
+			<Button variant="secondary" class="w-full" onclick={request}>
 				Reset
 			</Button>
 			<span class="text-secondary-40 text-sm">

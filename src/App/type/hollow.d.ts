@@ -63,7 +63,7 @@ export interface ModuleCapability {
 	onUnload(id: string): Promise<PluginResult>;
 }
 export interface PanelCapability {
-	mount(el: Element): Promise<JSX.Element>;
+	mount(el: Element): Promise<PluginResult>;
 	unMount(): Promise<PluginResult>;
 }
 

@@ -68,7 +68,7 @@
 
 .button {
 	--padding-x: calc(var(--spacing, 4px) * 5);
-	--padding-y: calc(var(--spacing, 4px) * 1.2);
+	--padding-y: calc(var(--spacing, 4px) * 2);
 	--border-w: 1px;
 	--color: var(--color-secondary-foreground);
 	--w: fit-content;
@@ -173,7 +173,7 @@
 
 .input {
 	--padding-x: calc(var(--spacing, 4px) * 2.5);
-	--padding-y: calc(var(--spacing, 4px) * 1);
+	--padding-y: calc(var(--spacing, 4px) * 2);
 	--border-w: 2px;
 	--bg-color: var(--high, transparent);
 	--border-color: var(--color-secondary-15);

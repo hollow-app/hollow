@@ -13,10 +13,16 @@ type hollowType = {
 	coreTools: string[];
 	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
+	pause: {
+		auth: boolean;
+	};
 	// promises should accept future diff types
 };
 export const hollow: hollowType = {
 	coreTools: ["image", "notebook", "kanban", "embed"],
 	events: new EventsManager<AppEvents, AppEventReturns>(),
 	pevents: new EventsManager<PrivateEvents>(),
+	pause: {
+		auth: false,
+	},
 };

@@ -10,6 +10,10 @@ export const aliases = {
 	"@shared": path.resolve(__dirname, "src/shared"),
 	"@store": path.resolve(__dirname, "src/shared/store"),
 	"@rust": path.resolve(__dirname, "src/lib/rust.ts"),
+	"@lib": path.resolve(__dirname, "src/lib"),
 	"@ui": path.resolve(__dirname, "src/components/ui"),
 	"@component": path.resolve(__dirname, "src/components"),
+	"@hollow/center": "/home/ryu/hub/hollow-center/src/index.ts"
+            
+
 };

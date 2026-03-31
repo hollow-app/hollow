@@ -13,7 +13,11 @@ export const DialogContent: ParentComponent<Props> = (props) => {
 	return (
 		<Presence exitBeforeEnter>
 			<Show when={context.isOpen()}>
-				<div class="fixed inset-0 z-999 flex size-full items-center justify-center bg-black/20 backdrop-blur-xs">
+				<div class="fixed inset-0 z-667 flex size-full items-center justify-center bg-black/20 backdrop-blur-xs">
+					<div
+						class="absolute inset-0"
+						onclick={() => context.toggle()}
+					/>
 					<div class="">{props.children}</div>
 				</div>
 			</Show>

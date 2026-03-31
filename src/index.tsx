@@ -6,13 +6,16 @@ import { useStore } from "@shared/store";
 import Selector from "./Selector/Selector";
 import { preRealmSelection } from "./lib/app";
 import App from "@app/app/App";
+import { TurnstileProvider } from "@component/Turnstile";
 
 function Root() {
 	const { state } = useStore();
 
 	return (
 		<Show when={state.realm.current} fallback={<Selector />}>
-			<App />
+			<TurnstileProvider>
+				<App />
+			</TurnstileProvider>
 		</Show>
 	);
 }

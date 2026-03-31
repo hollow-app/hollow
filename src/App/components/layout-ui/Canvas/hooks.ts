@@ -5,8 +5,9 @@ import {
 	onMount,
 	Accessor,
 	Setter,
+	createMemo,
 } from "solid-js";
-import { GridStack, GridStackNode } from "gridstack";
+import { GridStack, GridStackNode, GridStackOptions } from "gridstack";
 import { CardType } from "@app/type/hollow";
 import { useStore } from "@shared/store";
 import {
@@ -33,8 +34,17 @@ export interface CanvasHook {
 
 export const useCanvas = (props: CanvasProps): CanvasHook => {
 	const { state, dispatch } = useStore();
-	const isLiveEditor = () => selectIsLiveEditor(state);
-	const canvasConfigs = () => selectCanvasConfigs(state);
+	const isLiveEditor = createMemo(() => state.context.isLiveEditor);
+	const canvasConfigs = createMemo<GridStackOptions>(() => {
+		console.log("updated config");
+		const gridSize = state.settings["grid-size"];
+		const gridGap = state.settings["grid-gap"];
+		return {
+			...state.context.canvasConfigs,
+			column: gridSize,
+			cellHeight: (window.innerHeight - 16 + gridGap) / gridSize,
+		};
+	});
 	const [gridEl, setGridElSignal] = createSignal<HTMLDivElement>();
 	const [canvasEl, setCanvasEl] = createSignal<HTMLDivElement>();
 	const [grid, setGrid] = createSignal<GridStack>();
@@ -88,6 +98,7 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 		on(
 			canvasConfigs,
 			(configs) => {
+				console.log("canvas-option-updated");
 				const g = grid();
 				if (g) g.updateOptions(configs);
 			},
@@ -106,6 +117,7 @@ export const useCanvas = (props: CanvasProps): CanvasHook => {
 				} else {
 					g.off("change");
 				}
+				// g.updateOptions(canvasConfigs());
 			},
 			{ defer: true },
 		),

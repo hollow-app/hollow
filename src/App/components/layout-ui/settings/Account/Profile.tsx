@@ -59,12 +59,12 @@ export default function Profile() {
 	return (
 		<div class="bg-secondary-05/0 overflow-hidden">
 			{/* Banner Section */}
-			<div class="group relative h-32 w-full overflow-hidden">
+			<div class="group bg-secondary-05 relative h-32 w-full overflow-hidden rounded-xl">
 				<Show when={state.account.character.identity.banner}>
 					<img
 						src={state.account.character.identity.banner}
 						alt="Character banner"
-						class="h-full w-full rounded-xl object-cover"
+						class="h-full w-full object-cover"
 					/>
 				</Show>
 				<button

@@ -68,109 +68,113 @@ export default function Settings(props: SettingsProps) {
 	const { state, dispatch } = useStore();
 	const currentRealm = createMemo(() => state.realm.current);
 	const [selected, setSelected] = createSignal(props.selected || "general");
-
-	const SECTIONS: SettingSection[] = [
-		{
-			title: "App Settings",
-			id: "general-group",
-			items: [
-				{
-					id: "general",
-					label: "General",
-					icon: OrbitIcon,
-					component: General,
-				},
-				{
-					id: "appearance",
-					label: "Appearance",
-					icon: PaletteIcon,
-					component: Appearance,
-				},
-				{
-					id: "plugins",
-					label: "Plugins",
-					icon: HousePlugIcon,
-					component: Plugins,
-				},
-			],
-		},
-		{
-			title: "Controls",
-			id: "controls-group",
-			items: [
-				{
-					id: "hotkeys",
-					label: "HotKeys",
-					icon: KeyboardIcon,
-					component: HotKeys,
-				},
-				{
-					id: "modifier",
-					label: "Modifier",
-					icon: FileSlidersIcon,
-					component: Modifier,
-				},
-			],
-		},
-		{
-			title: "Account",
-			id: "identity-group",
-			items: [
-				{
-					id: "account:account",
-					label: "My Account",
-					icon: UserPenIcon,
-					component: Account_Profile,
-					props: { section: "account" },
-				},
-				{
-					id: "account:relationships",
-					label: "Relationships",
-					icon: UsersIcon,
-					component: Account_Relatinoship,
-					props: { section: "relationships" },
-				},
-				{
-					id: "account:security",
-					label: "Security",
-					icon: UserLockIcon,
-					component: Account_Security,
-					props: { section: "security" },
-				},
-				{
-					id: "account:danger",
-					label: "Danger Zone",
-					icon: ShieldUserIcon,
-					component: Account_DangerZone,
-					props: { section: "danger" },
-				},
-			],
-		},
-		{
-			title: "Advanced",
-			id: "advanced-group",
-			items: [
-				{
-					id: "developers",
-					label: "Developers",
-					icon: FileCodeIcon,
-					component: Developers,
-				},
-			],
-		},
-		{
-			title: "Info",
-			id: "info-group",
-			items: [
-				{
-					id: "about",
-					label: "About",
-					icon: BadgeInfoIcon,
-					component: About,
-				},
-			],
-		},
-	];
+	const sections = createMemo(() => {
+		const SECTIONS: SettingSection[] = [
+			{
+				title: "App Settings",
+				id: "general-group",
+				items: [
+					{
+						id: "general",
+						label: "General",
+						icon: OrbitIcon,
+						component: General,
+					},
+					{
+						id: "appearance",
+						label: "Appearance",
+						icon: PaletteIcon,
+						component: Appearance,
+					},
+					{
+						id: "plugins",
+						label: "Plugins",
+						icon: HousePlugIcon,
+						component: Plugins,
+					},
+				],
+			},
+			{
+				title: "Controls",
+				id: "controls-group",
+				items: [
+					{
+						id: "hotkeys",
+						label: "HotKeys",
+						icon: KeyboardIcon,
+						component: HotKeys,
+					},
+					{
+						id: "modifier",
+						label: "Modifier",
+						icon: FileSlidersIcon,
+						component: Modifier,
+					},
+				],
+			},
+			{
+				title: "Account",
+				id: "identity-group",
+				items: state.account.connection.state
+					? [
+							{
+								id: "account:account",
+								label: "My Account",
+								icon: UserPenIcon,
+								component: Account_Profile,
+								props: { section: "account" },
+							},
+							{
+								id: "account:relationships",
+								label: "Relationships",
+								icon: UsersIcon,
+								component: Account_Relatinoship,
+								props: { section: "relationships" },
+							},
+							{
+								id: "account:security",
+								label: "Security",
+								icon: UserLockIcon,
+								component: Account_Security,
+								props: { section: "security" },
+							},
+							{
+								id: "account:danger",
+								label: "Danger Zone",
+								icon: ShieldUserIcon,
+								component: Account_DangerZone,
+								props: { section: "danger" },
+							},
+						]
+					: [],
+			},
+			{
+				title: "Advanced",
+				id: "advanced-group",
+				items: [
+					{
+						id: "developers",
+						label: "Developers",
+						icon: FileCodeIcon,
+						component: Developers,
+					},
+				],
+			},
+			{
+				title: "Info",
+				id: "info-group",
+				items: [
+					{
+						id: "about",
+						label: "About",
+						icon: BadgeInfoIcon,
+						component: About,
+					},
+				],
+			},
+		];
+		return SECTIONS;
+	});
 
 	return (
 		<div
@@ -208,7 +212,7 @@ export default function Settings(props: SettingsProps) {
 							</button>
 						</div>
 						<div class="custom-scrollbar flex-1 overflow-y-auto pr-2">
-							<For each={SECTIONS}>
+							<For each={sections()}>
 								{(section) => (
 									<SettingsSection
 										title={section.title}
@@ -239,7 +243,7 @@ export default function Settings(props: SettingsProps) {
 					</div>
 					<div class="bg-secondary relative box-border h-full flex-1 overflow-hidden overflow-y-scroll px-40 py-30">
 						<Presence exitBeforeEnter>
-							<For each={SECTIONS.flatMap((i) => i.items)}>
+							<For each={sections().flatMap((i) => i.items)}>
 								{(panel) => (
 									<Show when={selected() === panel.id}>
 										<Motion.div

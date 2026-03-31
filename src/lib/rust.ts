@@ -215,18 +215,22 @@ export function minimize_window() {
 	getCurrentWindow().minimize();
 }
 // auth
+/** @deprecated Use Auth class instead */
 export async function is_signed_in(): Promise<{
 	state: boolean;
 	type: "online" | "offline";
 }> {
 	return await invoke("is_signed_in");
 }
+/** @deprecated Use Auth class instead */
 export async function sign_out() {
 	return await invoke("sign_out");
 }
+/** @deprecated Use Auth class instead */
 export async function sign_in() {
 	return await invoke("signin");
 }
+/** @deprecated Use Auth class instead */
 export async function get_user(): Promise<User> {
 	return await invoke("get_user");
 }

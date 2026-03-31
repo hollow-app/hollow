@@ -50,6 +50,12 @@ export function formatDate(isoString: string) {
 	});
 	return `${year} at ${time}`;
 }
+export const readableDate = (iso: string, type?: "short" | "long") =>
+	new Date(iso).toLocaleDateString("en-US", {
+		month: type ?? "short",
+		day: "numeric",
+		year: "numeric",
+	});
 
 export function weekOld(n_date: string) {
 	const oneWeekInMs = 7 * 24 * 60 * 60 * 1000;

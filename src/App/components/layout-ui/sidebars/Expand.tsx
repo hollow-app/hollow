@@ -58,10 +58,10 @@ export default function Expand() {
 			options: [
 				{
 					type: "dropdown",
-					label: "Tool",
+					label: "Module",
 					key: "tool",
-					description: "The tool that will be inside this card",
-					placeholder: "Tool",
+					description: "The module that will be inside this card",
+					placeholder: "Module",
 					options: Object.keys(hand()),
 				},
 				{

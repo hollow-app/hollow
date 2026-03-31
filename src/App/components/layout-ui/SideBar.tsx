@@ -44,14 +44,9 @@ export default function SideBar(props: SideBarProps) {
 	});
 
 	const toggleDnd = () => {
-		const p = state.context.canvasConfigs;
 		dispatch({
 			domain: "context",
-			type: "set-canvas-configs",
-			configs: {
-				disableDrag: !p.disableDrag,
-				disableResize: !p.disableResize,
-			},
+			type: "toggle-live-editor",
 		});
 	};
 

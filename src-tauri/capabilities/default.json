@@ -2,10 +2,7 @@
 	"$schema": "../gen/schemas/desktop-schema.json",
 	"identifier": "default",
 	"description": "Capability for the main window",
-	"windows": [
-		"main",
-		"selector"
-	],
+	"windows": ["main", "selector"],
 	"permissions": [
 		"core:default",
 		"opener:default",
@@ -17,6 +14,14 @@
 		"dialog:allow-open",
 		"store:default",
 		"log:allow-log",
-		"updater:default"
+		"updater:default",
+		"deep-link:default",
+		{
+			"identifier": "http:default",
+			"allow": [
+				{ "url": "http://localhost:8787/*" },
+				{ "url": "https://hollow.ryusufe.workers.dev/*" }
+			]
+		}
 	]
 }

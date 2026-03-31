@@ -4,6 +4,7 @@ import { hollow } from "../../../hollow";
 import { join } from "@tauri-apps/api/path";
 import DEFAULT from "@assets/configs/settings.json?raw";
 import { getCurrentRealm } from "@shared/managers/Realm";
+import useGrid from "@app/hooks/useGrid";
 
 let storage: Storage | null = null;
 
@@ -31,6 +32,10 @@ export function settingsEffects(action: Events, state: SettingsConfig) {
 
 	switch (action.type) {
 		case "set-configs":
+			const gap = action.configs["grid-gap"];
+			if (gap) {
+				useGrid([{ name: "--grid-gap", value: gap }]);
+			}
 			if (storage) {
 				storage.setMany(action.configs);
 			}

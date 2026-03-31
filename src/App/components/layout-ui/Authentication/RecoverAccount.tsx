@@ -1,15 +1,59 @@
-import { createSignal, Setter } from "solid-js";
+import { createSignal, resetErrorBoundaries, Setter } from "solid-js";
 import { authType } from "./hooks";
 import MyIcon from "@app/components/ui/MyIcon";
 import { Separator } from "@component/ui/Separator";
 import { Button, Input } from "@ui";
+import { Turnstile, useTurnstile } from "@component/Turnstile";
+import { onCleanup } from "solid-js";
+import { Auth } from "@lib";
+import { hollow } from "hollow";
 
 interface Props {
 	setType: Setter<authType>;
 }
 
 export default function RecoverAccount(props: Props) {
-	const [valid, setValid] = createSignal(false);
+	const [username, setUsername] = createSignal("");
+	const [recoveryKey, setRecoveryKey] = createSignal("");
+	const turn = useTurnstile();
+
+	const request = async () => {
+		const token = turn.token();
+		if (!token) {
+			turn.execute();
+			return;
+		}
+		try {
+			if (!username() && !recoveryKey()) return;
+			const response = await Auth.recoverAccount({
+				username: username(),
+				recoveryKey: recoveryKey(),
+				turnstileToken: token,
+			});
+			if (response.success) {
+				sessionStorage.setItem("recoverykey-code", response.code);
+				props.setType("reset-password");
+			} else {
+				console.error(response.error);
+				hollow.events.emit("alert", {
+					type: "error",
+					message: "Something went wrong! Try again later.",
+				});
+			}
+		} catch (e) {
+			console.error(e);
+			hollow.events.emit("alert", {
+				type: "error",
+				message: "Something went wrong! Try again later.",
+			});
+		} finally {
+			turn.reset();
+		}
+	};
+	onCleanup(() => {
+		turn.clean();
+	});
+
 	return (
 		<>
 			<MyIcon
@@ -34,7 +78,8 @@ export default function RecoverAccount(props: Props) {
 					icon="password"
 				/>
 			</div>
-			<Button variant="secondary" class="w-full">
+			<Turnstile />
+			<Button variant="secondary" class="w-full" onclick={request}>
 				Verify Passphrase
 			</Button>
 			<span class="text-secondary-40 text-sm">

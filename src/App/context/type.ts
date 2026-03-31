@@ -27,6 +27,10 @@ export type ContextEvents = { domain: "context" } & (
 			configs: GridStackOptions;
 	  }
 	| {
+			type: "toggle-live-editor";
+			value?: boolean;
+	  }
+	| {
 			type: "toggle-settings";
 			value?: boolean | string;
 	  }

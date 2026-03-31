@@ -1,5 +1,4 @@
 import {
-	AppApi,
 	CardType,
 	IStore,
 	ModuleCapability,

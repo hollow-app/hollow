@@ -42,6 +42,9 @@
       "@rust": [
         "lib/rust"
       ],
+      "@lib": [
+        "lib"
+      ],
       "@ui":[
 	      "components/ui/index.ts"
       ],
@@ -50,7 +53,11 @@
       ],
       "@overlays/*":[
 	      "overlays/*"
-      ] 
+      ],
+        "@hollow/center": [
+                "/home/ryu/hub/hollow-center/src/index.ts"
+            ]
+
     }
   },
   "include": [

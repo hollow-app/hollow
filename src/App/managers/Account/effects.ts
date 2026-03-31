@@ -1,50 +1,34 @@
 import { Events, AccountState } from "./types";
 import { hollow } from "../../../hollow";
-import { get_user, is_signed_in, sign_out } from "@rust";
+import { Auth } from "../../../lib/auth";
 import { RootState } from "@shared/store/types";
 
-export function setupAccount(
+export async function setupAccount(
 	dispatch: (action: any) => void,
 	get: () => RootState,
 ) {
-	// const connection = await is_signed_in();
-	dispatch({
-		domain: "account",
-		type: "set-connection",
-		connection: { state: true, type: "online" },
-	});
-	// const user = await get_user();
-	// localStorage.user = JSON.stringify(user);
-	if (localStorage.user) {
+	const request = await Auth.getUser();
+	if (request && request.user) {
+		const { user, kind } = request;
 		dispatch({
 			domain: "account",
 			type: "set-user",
-			user: JSON.parse(localStorage.user)["user"],
+			user: user,
 		});
-		return;
+		dispatch({
+			domain: "account",
+			type: "set-connection",
+			connection: { state: true, type: kind },
+		});
+	} else {
+		dispatch({
+			domain: "account",
+			type: "set-connection",
+			connection: { state: false, type: "offline" },
+		});
 	}
-	// if (connection.state) {
-	// 	const user = await get_user();
-	// 	if (user) {
-	// 		localStorage.user = JSON.stringify(user);
-	// 	}
-	// 	dispatch({ domain: "account", type: "set-user", user });
-	// }
-	// hollow.events.on("network-state", async (b) => {
-	// 	const accountState = get().account;
-	// 	if (!accountState.connection.state) return;
-	// 	if (b && accountState.connection.type === "offline") {
-	// 		const connection = await is_signed_in();
-	// 		dispatch({
-	// 			domain: "account",
-	// 			type: "set-connection",
-	// 			connection,
-	// 		});
-	// 		// todo
-	// 		// user as well;
-	// 	}
-	// });
 }
+// });
 
 export function accountEffects(action: Events, state: AccountState) {
 	if (action.domain !== "account") return;

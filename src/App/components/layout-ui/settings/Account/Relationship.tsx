@@ -179,13 +179,12 @@ function randomDate(start, end) {
 const start = new Date(2020, 0, 1);
 const end = new Date(2025, 0, 1);
 
-console.log();
-
 const friends: RelationshipUser[] = [
 	{
 		uid: "user_001",
 		username: "Lyra",
 		createdAt: randomDate(start, end),
+		userCreatedAt: randomDate(start, end),
 		character: {
 			identity: {
 				name: "Lyra Moonwind",
@@ -231,6 +230,7 @@ const friends: RelationshipUser[] = [
 		uid: "user_002",
 		username: "Axiom",
 		createdAt: randomDate(start, end),
+		userCreatedAt: randomDate(start, end),
 		character: {
 			identity: {
 				name: "Axiom Vale",
@@ -258,6 +258,7 @@ const friends: RelationshipUser[] = [
 		uid: "user_003",
 		username: "Ember",
 		createdAt: randomDate(start, end),
+		userCreatedAt: randomDate(start, end),
 		character: {
 			identity: {
 				name: "Ember Ashfall",
@@ -285,6 +286,7 @@ const friends: RelationshipUser[] = [
 		uid: "user_004",
 		username: "Kairo",
 		createdAt: randomDate(start, end),
+		userCreatedAt: randomDate(start, end),
 		character: {
 			identity: {
 				name: "Kairo Flux",
@@ -312,6 +314,7 @@ const friends: RelationshipUser[] = [
 		uid: "user_005",
 		username: "Nyx",
 		createdAt: randomDate(start, end),
+		userCreatedAt: randomDate(start, end),
 		character: {
 			identity: {
 				name: "Nyx Shadowveil",
@@ -339,6 +342,7 @@ const friends: RelationshipUser[] = [
 		uid: "user_006",
 		username: "Orion",
 		createdAt: randomDate(start, end),
+		userCreatedAt: randomDate(start, end),
 		character: {
 			identity: {
 				name: "Orion Brightmantle",
@@ -366,6 +370,7 @@ const friends: RelationshipUser[] = [
 		uid: "user_007",
 		username: "Vex",
 		createdAt: randomDate(start, end),
+		userCreatedAt: randomDate(start, end),
 		character: {
 			identity: {
 				name: "Vex Ironclad",
@@ -391,7 +396,7 @@ const friends: RelationshipUser[] = [
 	},
 ];
 
-const blocked: Omit<RelationshipUser, "character">[] = [
+const blocked: Omit<RelationshipUser, "character" | "userCreatedAt">[] = [
 	{
 		uid: "user_101",
 		username: "GrimVoid",
@@ -406,7 +411,7 @@ const blocked: Omit<RelationshipUser, "character">[] = [
 	},
 ];
 
-const request: Omit<RelationshipUser, "character">[] = [
+const request: Omit<RelationshipUser, "character" | "userCreatedAt">[] = [
 	{
 		uid: "user_101",
 

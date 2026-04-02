@@ -7,6 +7,7 @@ import FilterButton from "@app/components/ui/FilterButton";
 import { useStore } from "@shared/store";
 import { getHand } from "@app/managers/Module/effects";
 import { Input } from "@ui";
+import { form_newInstance } from "@app/utils/common";
 
 type FilterType = {
 	tools: string[];
@@ -40,54 +41,6 @@ export default function Expand() {
 			}),
 	);
 
-	const addNewCard = () => {
-		const onSave = (data: any) => {
-			dispatch({
-				domain: "module",
-				type: "add-instance",
-				toolName: data.tool.toLowerCase(),
-				name: data.name,
-				emoji: data.emoji,
-			});
-		};
-		const form: FormType = {
-			id: crypto.randomUUID(),
-			title: "Create Card",
-			description:
-				"This form creates a new tool instance by defining its name, configuration.",
-			options: [
-				{
-					type: "dropdown",
-					label: "Module",
-					key: "tool",
-					description: "The module that will be inside this card",
-					placeholder: "Module",
-					options: Object.keys(hand()),
-				},
-				{
-					type: "text",
-					key: "name",
-					label: "Card Name",
-					attributes: {
-						pattern: "^[A-Za-z]+$",
-						placeholder: "Card name (e.g., ToDo)",
-						title: "Only letters (A-Z, a-z) are allowed",
-					},
-				},
-				{
-					type: "emoji",
-					label: "Emoji",
-					value: "☂️",
-					row: true,
-					description: "Give this card an emoji",
-					key: "emoji",
-				},
-			],
-			submit: onSave,
-		};
-
-		hollow.events.emit("form", form);
-	};
 	const selectTool = (tools: string[]) => {
 		setFilter((prev) => ({
 			...prev,
@@ -101,7 +54,7 @@ export default function Expand() {
 				<div class="border-secondary-10 flex flex-col gap-4 border-b pb-4">
 					<div class="space-y-1">
 						<h2 class="text-lg font-semibold tracking-tight">
-							Tools Manager
+							Instances Manager
 						</h2>
 						<p class="text-sm text-neutral-500">
 							Manage your tools instances.
@@ -172,7 +125,7 @@ export default function Expand() {
 						<button
 							id="new-card-btn"
 							class="button-control border-secondary-10 shrink-0 border"
-							onclick={addNewCard}
+							onclick={() => form_newInstance(dispatch, hand)}
 						>
 							<PlusIcon class="size-5 -rotate-90" />
 						</button>

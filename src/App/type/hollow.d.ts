@@ -30,7 +30,7 @@ export type CapabilityMeta = {
 };
 export type PluginCapability =
 	| { kind: "module"; handler: ModuleCapability; meta: CapabilityMeta }
-	| { kind: "panel"; handler: PanelCapability; meta: CapabilityMeta };
+	| { kind: "layout"; handler: LayoutCapability; meta: CapabilityMeta };
 // Represents a plugin with lifecycle methods that interact with cards and the app.
 export interface ModuleCapability {
 	/**
@@ -62,10 +62,16 @@ export interface ModuleCapability {
 	 */
 	onUnload(id: string): Promise<PluginResult>;
 }
-export interface PanelCapability {
+export interface LayoutCapability {
 	mount(el: Element): Promise<PluginResult>;
 	unMount(): Promise<PluginResult>;
 }
+export type LayoutCapabilityMeta = {
+	id: string;
+	variant: "left" | "right";
+	tooltip?: string;
+	icon?: string;
+} & CapabilityMeta;
 
 // Represents a card in the app, with properties and methods for interaction.
 // export type ICard = {
@@ -382,7 +388,12 @@ export type TypedOptionMap = {
 	color: {};
 	emoji: {};
 	dropdown: {
-		options: { title?: string; items: string[] }[] | string[];
+		options:
+			| {
+					title?: string;
+					items: ({ icon: any; label: string } | string)[];
+			  }[]
+			| string[];
 		placeholder?: string;
 	};
 	custom: {

@@ -9,19 +9,15 @@ import {
 } from "@rust";
 import {
 	AppApi,
-	CardType,
 	IPlugin,
-	IStore,
 	ModuleCapability,
-	PanelCapability,
+	LayoutCapability,
 	PluginCapability,
 	rawPluginCapability,
 	ToolApi,
 	ToolEvents,
 } from "@app/type/hollow";
 import { EventsManager } from "../EventsManager";
-import { getCurrentRealm } from "@shared/managers/Realm";
-import { Storage } from "../Storage";
 import { ImageMain } from "@app/(Core Tools)/Image/ImageMain";
 import { Events, ExtensionMeta, ExtensionState } from "./type";
 import { _dispatch } from "@shared/store/effects";
@@ -31,7 +27,8 @@ import { EmbedMain } from "@app/(Core Tools)/Embed/EmbedMain";
 import { ModuleMain } from "./utils/ModuleMain";
 import { LayoutMain } from "./utils/LayoutMain";
 import { buildPluginIframe } from "./utils";
-import { getToolStore } from "../Module/effects";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { getCurrentRealm } from "@shared/managers/Realm";
 
 // TODO needs to be inside an uneditable place , local file
 // maybe add this to extension state as well
@@ -68,14 +65,32 @@ export async function setupExtension(dispatch: (action: any) => void) {
 		if (loadUnsigned) {
 			const unsignedExtensions = await get_unsigned_plugins();
 			for (const ext of unsignedExtensions) {
-				const capa = await loadPlugin(ext.name);
-				capabilities = [
-					...capabilities,
-					...capa.map((i) => ({
-						...i,
-						meta: { ...i.meta, source: ext.name },
-					})),
-				];
+				try {
+					const capa = await loadPlugin(ext.name);
+					const icon = convertFileSrc(
+						await join(
+							...[
+								getCurrentRealm().location,
+								"plugins",
+								ext.name,
+								"icon.svg",
+							],
+						),
+					);
+					capabilities = [
+						...capabilities,
+						...capa.map((i) => ({
+							...i,
+							meta: { ...i.meta, source: ext.name, icon },
+						})),
+					];
+				} catch (e) {
+					console.error(
+						"Failed reading extension: ",
+						ext.name ?? "none",
+					);
+					continue;
+				}
 			}
 		}
 		hollow.pevents.emit("capabilities", capabilities);
@@ -224,10 +239,10 @@ function polishICapability(
 				kind: "module",
 				handler: polishModuleCapability(raw, toolEvent, iframe),
 			};
-		case "panel":
+		case "layout":
 			return {
 				...raw,
-				kind: "panel",
+				kind: "layout",
 				handler: polishLayoutCapability(raw, toolEvent, iframe),
 			};
 	}
@@ -249,7 +264,7 @@ function polishLayoutCapability(
 	raw: rawPluginCapability,
 	toolEvent: ToolApi,
 	iframe: HTMLIFrameElement,
-): PanelCapability {
+): LayoutCapability {
 	const layoutMain = new LayoutMain(iframe, raw, toolEvent);
 	//
 	return {

@@ -1,6 +1,6 @@
 import { ToolApi } from "@app/type/hollow";
 import { hollow } from "hollow";
-import pluginHtml from "../../../../../sub/plugin-bridge/dist/index.html?raw";
+import pluginHtml from "plugin-bridge/dist/index.html?raw";
 
 /**
  * Bridges communication between the host and plugin iframes.

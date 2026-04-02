@@ -1,9 +1,16 @@
-import { Accessor, Component, createMemo, lazy } from "solid-js";
-import { LayoutState, PanelType } from "./types";
+import { Component, lazy } from "solid-js";
+import { LayoutEvents, LayoutState, LayoutVariant } from "./types";
 import { _dispatch, _state } from "@shared/store/effects";
 import { hollow } from "../../../hollow";
 import { RootState } from "@shared/store/types";
-import { CapabilityMeta, PanelCapability } from "@app/type/hollow";
+import { LayoutWrapper } from "./utils/LayoutWrapper";
+import {
+	CapabilityMeta,
+	LayoutCapability,
+	LayoutCapabilityMeta,
+	PluginCapability,
+} from "@app/type/hollow";
+import { DispatchType } from "@shared/store";
 
 const Expand = lazy(() => import("@app/components/layout-ui/sidebars/Expand"));
 const Character = lazy(
@@ -14,80 +21,100 @@ const Notifications = lazy(
 	async () => import("@app/components/layout-ui/Notifications"),
 );
 
-export type PanelMap = Record<string, Component>;
+export type PanelMap = Record<
+	string,
+	{ Component: Component; meta?: LayoutCapabilityMeta }
+>;
 
-type ExtraPanelType = { capability: PanelCapability; meta: CapabilityMeta };
 export interface Panels {
 	left: PanelMap;
 	right: PanelMap;
-	extra: ExtraPanelType[];
 }
 
 const panels: Panels = {
-	left: { expand: Expand, account: Character },
+	left: { expand: { Component: Expand }, account: { Component: Character } },
 	right: {
-		editor: Editor,
-		notifications: Notifications,
+		editor: { Component: Editor },
+		notifications: { Component: Notifications },
 	},
-	extra: [],
 };
 
-export function getLayoutPanels() {
+export function getLayoutCore() {
 	return panels;
 }
-export function setupLayoutRegistry(
-	dispatch: (action: any) => void,
-	get: () => RootState,
-) {
-	hollow.pevents.on("push-capabilities", async (capabilities) => {
-		const newModules = capabilities.filter((i) => i.kind === "panel");
-		if (newModules.length > 0) {
-			for (const capa of newModules) {
-				panels.extra.push({
-					capability: capa.handler,
-					meta: capa.meta,
-				});
-				dispatch({
-					domain: "layout",
-					type: "add-panel",
-					side: capa.meta.side,
-					id: capa.meta.id,
-				});
+export function setupLayout(dispatch: DispatchType, get: () => RootState) {
+	const sortCapas = (capa: PluginCapability[]) => {
+		const newLayouts = capa.filter((i) => i.kind === "layout");
+		if (newLayouts.length > 0) {
+			for (const capa of newLayouts) {
+				addLayout(dispatch, capa);
 			}
 		}
+	};
+	hollow.pevents.on("post-capabilities", () => {
+		const capabilities = hollow.pevents.getData("capabilities");
+		sortCapas(capabilities);
+	});
+	hollow.pevents.on("push-capabilities", async (capabilities) => {
+		sortCapas(capabilities);
 	});
 }
 
-export function removePanel(type: PanelType, name: string) {
-	delete panels[type][name];
+export function layoutEffects(action: LayoutEvents, state: LayoutState) {
+	if (action.domain !== "layout") return;
+	switch (action.type) {
+		case "remove-panel":
+			delete panels[action.variant][action.id];
+			break;
+	}
+}
+function addLayout(dispatch: DispatchType, capa: PluginCapability) {
+	if (capa.kind !== "layout") return;
+	const variant = capa.meta.variant;
+	const id = capa.meta.id;
+	const targetSide: PanelMap | undefined = panels[variant];
+	if (!variant || !targetSide || !id) return;
+	targetSide[id] = {
+		Component: LayoutWrapper({ main: capa.handler }),
+		meta: capa.meta as LayoutCapabilityMeta,
+	};
+	dispatch({
+		domain: "layout",
+		type: "add-panel",
+		variant,
+		id,
+	});
+}
+
+export function removePanel(type: LayoutVariant, name: string) {
 	_dispatch({
 		domain: "layout",
 		type: "remove-panel",
-		side: type,
+		variant: type,
 		id: name,
 	});
 }
 
-export function selectPanel(type: PanelType, name: string) {
+export function selectPanel(type: LayoutVariant, name: string) {
 	_dispatch({
 		domain: "layout",
 		type: "select-panel",
-		side: type,
+		variant: type,
 		id: name,
 	});
 }
 
-export function togglePanel(type: PanelType) {
+export function togglePanel(type: LayoutVariant) {
 	_dispatch({
 		domain: "layout",
 		type: "toggle-panel",
-		side: type,
+		variant: type,
 	});
 }
 
 export function isPanelVisible(
 	state: RootState,
-	type: PanelType,
+	type: LayoutVariant,
 	name: string,
 ): boolean {
 	const layout = state.layout;

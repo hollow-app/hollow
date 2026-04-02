@@ -12,9 +12,13 @@ import { rootReducer } from "./reducer";
 import { runEffects as Effects, setupEffects } from "./effects";
 
 // Create Context
+export type DispatchType = (
+	action: Action,
+	options?: DispatchOptions,
+) => Promise<any>;
 const StoreContext = createContext<{
 	state: RootState;
-	dispatch: (action: Action, options?: DispatchOptions) => Promise<any>;
+	dispatch: DispatchType;
 }>();
 
 export function StoreProvider(props: { children: JSX.Element }) {

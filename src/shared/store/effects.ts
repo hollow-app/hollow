@@ -13,11 +13,12 @@ import {
 	setupNotifications,
 } from "@app/managers/Notifications";
 import { realmEffects, setupRealm } from "../managers/Realm";
-import { setupLayoutRegistry } from "@app/managers/layout";
+import { setupLayout, layoutEffects } from "@app/managers/layout";
 import {
 	extensionEffects,
 	setupExtension,
 } from "@app/managers/Extension/effects";
+import { DispatchType } from ".";
 
 export let _dispatch: (action: Action) => void;
 export let _state: () => RootState;
@@ -31,6 +32,7 @@ export function runEffects(action: Action, state: RootState) {
 		hotkeysEffects(action as any, state.hotkeys),
 		vaultEffects(action as any, state.vault),
 		notificationsEffects(action as any, state.notifications),
+		layoutEffects(action as any, state.layout),
 		realmEffects(action as any, state.realm),
 	];
 
@@ -44,20 +46,22 @@ export function runEffects(action: Action, state: RootState) {
 }
 
 export async function setupEffects(
-	dispatch: (action: Action) => void,
+	dispatch: DispatchType,
 	getState: () => RootState,
 ) {
 	_dispatch = dispatch;
 	_state = getState;
 	await setupRealm(dispatch);
+	// plugins wait for extension to setup
 	setupModule(dispatch);
+	setupLayout(dispatch, getState);
 	await setupExtension(dispatch);
+	//
 	setupAccount(dispatch, getState);
 	setupSettings(dispatch);
 	setupCodeTheme(dispatch);
 	setupHotkeys(dispatch);
 	setupVault(dispatch);
 	setupNotifications(dispatch);
-	setupLayoutRegistry(dispatch, getState);
 	//
 }

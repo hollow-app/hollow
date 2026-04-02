@@ -1,16 +1,10 @@
-import { getLayoutPanels, PanelType, selectPanel } from "@app/managers/layout";
-import { PanelWrapper } from "@app/utils/kinda-junk/PanelWrapper";
-import { createMemo, For, on, Show } from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { getLayoutCore, LayoutVariant } from "@app/managers/layout";
+import { createMemo, For, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import { useStore } from "@store";
-import Expand from "@app/components/layout-ui/sidebars/Expand";
-import CharacterSidebar from "@app/components/layout-ui/sidebars/Character";
-import Notifications from "@app/components/layout-ui/Notifications";
-import Editor from "@app/components/layout-ui/sidebars/Editor";
 
 type SidepanelProps = {
-	type: PanelType;
+	type: LayoutVariant;
 	width: string;
 	padding: string;
 };
@@ -18,7 +12,7 @@ type SidepanelProps = {
 export default function Sidepanel(props: SidepanelProps) {
 	const { state } = useStore();
 	const layout = createMemo(() => state.layout[props.type]);
-	// const opp = side[side.indexOf(props.type) ^ 1];
+
 	return (
 		<Presence exitBeforeEnter>
 			<For each={layout().panels}>
@@ -57,23 +51,17 @@ export default function Sidepanel(props: SidepanelProps) {
 							>
 								{(() => {
 									const Comp =
-										getLayoutPanels()[props.type][panel];
+										getLayoutCore()[props.type][panel]
+											.Component;
 
 									return (
-										<Show when={!Comp} fallback={<Comp />}>
-											<Dynamic
-												component={PanelWrapper({
-													id: panel,
-												})}
-												{...{
-													hide: () =>
-														selectPanel(
-															props.type,
-															panel,
-														),
-													type: props.type,
-												}}
-											/>
+										<Show
+											when={Comp}
+											fallback={
+												<div>Something went wrong</div>
+											}
+										>
+											<Comp />
 										</Show>
 									);
 								})()}

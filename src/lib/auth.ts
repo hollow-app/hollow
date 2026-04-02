@@ -1,4 +1,4 @@
-import { User } from "@app/type/User";
+import { ClientUser } from "center";
 import { DeepLink } from "./deeplink";
 import { hollow } from "hollow";
 import { AlertType } from "@app/type/hollow";
@@ -133,7 +133,7 @@ export class Auth {
 	 * If it fails, returns the backup from local storage.
 	 */
 	static async getUser(): Promise<{
-		user: User;
+		user: ClientUser;
 		kind: "online" | "offline";
 	} | null> {
 		if (hollow.pause.auth) return null;
@@ -146,7 +146,7 @@ export class Auth {
 			if (!response.ok) {
 				return { user: this.loadUserBackup(), kind: "offline" };
 			}
-			const data: { user: User } = await response.json();
+			const data: { user: ClientUser } = await response.json();
 			this.saveUserBackup(data.user);
 			return { user: data.user, kind: "online" };
 		} catch (error) {
@@ -163,7 +163,7 @@ export class Auth {
 		return !!this.loadUserBackup();
 	}
 
-	private static saveUserBackup(user: User): void {
+	private static saveUserBackup(user: ClientUser): void {
 		try {
 			localStorage.setItem(this.USER_STORAGE_KEY, JSON.stringify(user));
 		} catch (error) {
@@ -171,7 +171,7 @@ export class Auth {
 		}
 	}
 
-	private static loadUserBackup(): User | null {
+	private static loadUserBackup(): ClientUser | null {
 		try {
 			const data = localStorage.getItem(this.USER_STORAGE_KEY);
 			return data ? JSON.parse(data) : null;
@@ -251,7 +251,7 @@ export class Auth {
 	static async discordOauth(
 		callback: (data: {
 			discord: any;
-			user: User | undefined;
+			user: ClientUser | undefined;
 			userExist: boolean;
 		}) => void,
 		options?: { verify?: boolean; username?: string },

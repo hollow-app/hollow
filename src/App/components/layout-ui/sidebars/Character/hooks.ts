@@ -1,8 +1,5 @@
 import { Accessor, createMemo } from "solid-js";
-import { hollow } from "../../../../../hollow";
-import { Character } from "@app/type/Character";
 import { useStore } from "@store";
-import { toggleVault } from "@app/context/actions";
 import { AccountState } from "@app/managers/Account";
 
 export interface CharacterProps {}

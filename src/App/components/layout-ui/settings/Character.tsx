@@ -10,137 +10,137 @@ import SettingsPanel from "./SettingsPanel";
 export default function Character() {
 	const { state, dispatch } = useStore();
 
-	const addMeta = () => {
-		const save = (data: any) => {
-			dispatch({
-				domain: "account",
-				type: "set-meta",
-				props: data,
-			});
-		};
-		submitForm(save);
-	};
-
-	const removeMeta = (id: string) => {
-		dispatch({
-			domain: "account",
-			type: "remove-meta",
-			id,
-		});
-	};
-	const updateMeta = (id: string) => {
-		const save = (data: any) => {
-			dispatch({
-				domain: "account",
-				type: "set-meta",
-				props: data,
-			});
-		};
-		submitForm(save, id);
-	};
-	const submitForm = (save: (data: any) => void, id?: string) => {
-		const target = id
-			? state.account.character.meta.find((item) => item.id === id)
-			: null;
-		const form: FormType = {
-			id: id ?? crypto.randomUUID(),
-			title: id ? "Update Meta" : "Add Meta",
-			submit: save,
-			update: !!id,
-			options: [
-				{
-					key: "label",
-					label: "Label",
-					optional: true,
-					type: "text",
-					inline: true,
-					attributes: { placeholder: "Enter label" },
-					value: target?.label ?? "",
-				},
-				{
-					key: "icon",
-					label: "Icon",
-					optional: true,
-					type: "file",
-					inline: true,
-					description: "Select an svg icon.",
-					value: target?.icon ?? "",
-				},
-				{
-					key: "type",
-					label: "Type",
-					type: "dropdown",
-					options: [
-						{
-							items: ["text", "list", "progress"],
-						},
-					],
-					value: Array.isArray(target?.value)
-						? "list"
-						: typeof target?.value === "string"
-							? "text"
-							: "progress",
-				},
-				{
-					key: "value",
-					label: "Value",
-					type: "text",
-					attributes: {
-						placeholder: "Enter value",
-					},
-					dependsOn: {
-						key: "type",
-						conditions: ["text"],
-					},
-					value: !Array.isArray(target?.value) ? target?.value : "",
-				},
-				{
-					key: "value",
-					label: "Value",
-					type: "keywords",
-					placeholder: "Enter values",
-					dependsOn: {
-						key: "type",
-						conditions: ["list"],
-					},
-					value: !Array.isArray(target?.value)
-						? target?.value
-						: (target.value ?? []),
-				},
-				{
-					key: "value",
-					label: "Value",
-					description:
-						"This will be displayed as a progress bar ranging from 0 to 100",
-					type: "range",
-					min: 0,
-					max: 100,
-					row: true,
-					dependsOn: {
-						key: "type",
-						conditions: ["progress"],
-					},
-					value:
-						!Array.isArray(target?.value) && target?.value != null
-							? target.value
-							: 0,
-				},
-				{
-					key: "color",
-					label: "Color",
-					type: "color",
-					dependsOn: {
-						key: "type",
-						conditions: ["progress"],
-					},
-					row: true,
-					value: target?.color ?? "#3BA936",
-				},
-			],
-		};
-
-		hollow.events.emit("form", form);
-	};
+	// const addMeta = () => {
+	// 	const save = (data: any) => {
+	// 		dispatch({
+	// 			domain: "account",
+	// 			type: "set-meta",
+	// 			props: data,
+	// 		});
+	// 	};
+	// 	submitForm(save);
+	// };
+	//
+	// const removeMeta = (id: string) => {
+	// 	dispatch({
+	// 		domain: "account",
+	// 		type: "remove-meta",
+	// 		id,
+	// 	});
+	// };
+	// const updateMeta = (id: string) => {
+	// 	const save = (data: any) => {
+	// 		dispatch({
+	// 			domain: "account",
+	// 			type: "set-meta",
+	// 			props: data,
+	// 		});
+	// 	};
+	// 	submitForm(save, id);
+	// };
+	// const submitForm = (save: (data: any) => void, id?: string) => {
+	// 	const target = id
+	// 		? state.account.character.meta.find((item) => item.id === id)
+	// 		: null;
+	// 	const form: FormType = {
+	// 		id: id ?? crypto.randomUUID(),
+	// 		title: id ? "Update Meta" : "Add Meta",
+	// 		submit: save,
+	// 		update: !!id,
+	// 		options: [
+	// 			{
+	// 				key: "label",
+	// 				label: "Label",
+	// 				optional: true,
+	// 				type: "text",
+	// 				inline: true,
+	// 				attributes: { placeholder: "Enter label" },
+	// 				value: target?.label ?? "",
+	// 			},
+	// 			{
+	// 				key: "icon",
+	// 				label: "Icon",
+	// 				optional: true,
+	// 				type: "file",
+	// 				inline: true,
+	// 				description: "Select an svg icon.",
+	// 				value: target?.icon ?? "",
+	// 			},
+	// 			{
+	// 				key: "type",
+	// 				label: "Type",
+	// 				type: "dropdown",
+	// 				options: [
+	// 					{
+	// 						items: ["text", "list", "progress"],
+	// 					},
+	// 				],
+	// 				value: Array.isArray(target?.value)
+	// 					? "list"
+	// 					: typeof target?.value === "string"
+	// 						? "text"
+	// 						: "progress",
+	// 			},
+	// 			{
+	// 				key: "value",
+	// 				label: "Value",
+	// 				type: "text",
+	// 				attributes: {
+	// 					placeholder: "Enter value",
+	// 				},
+	// 				dependsOn: {
+	// 					key: "type",
+	// 					conditions: ["text"],
+	// 				},
+	// 				value: !Array.isArray(target?.value) ? target?.value : "",
+	// 			},
+	// 			{
+	// 				key: "value",
+	// 				label: "Value",
+	// 				type: "keywords",
+	// 				placeholder: "Enter values",
+	// 				dependsOn: {
+	// 					key: "type",
+	// 					conditions: ["list"],
+	// 				},
+	// 				value: !Array.isArray(target?.value)
+	// 					? target?.value
+	// 					: (target.value ?? []),
+	// 			},
+	// 			{
+	// 				key: "value",
+	// 				label: "Value",
+	// 				description:
+	// 					"This will be displayed as a progress bar ranging from 0 to 100",
+	// 				type: "range",
+	// 				min: 0,
+	// 				max: 100,
+	// 				row: true,
+	// 				dependsOn: {
+	// 					key: "type",
+	// 					conditions: ["progress"],
+	// 				},
+	// 				value:
+	// 					!Array.isArray(target?.value) && target?.value != null
+	// 						? target.value
+	// 						: 0,
+	// 			},
+	// 			{
+	// 				key: "color",
+	// 				label: "Color",
+	// 				type: "color",
+	// 				dependsOn: {
+	// 					key: "type",
+	// 					conditions: ["progress"],
+	// 				},
+	// 				row: true,
+	// 				value: target?.color ?? "#3BA936",
+	// 			},
+	// 		],
+	// 	};
+	//
+	// 	hollow.events.emit("form", form);
+	// };
 
 	// TODO this onSave might not be needed.
 	const onSave = (e: Event & { currentTarget: HTMLButtonElement }) => {
@@ -253,100 +253,100 @@ export default function Character() {
 					/>
 				</div>
 			</div>
-			<hr class="bg-secondary-10 h-px w-full border-0" />
-			<div class="flex w-full flex-col gap-4">
-				<div class="flex h-fit justify-between">
-					<div>
-						<h1 class="text-lg font-bold">Meta</h1>
-						<h3 class="text-secondary-40">
-							Add some meta data
-						</h3>
-					</div>
-					<button
-						class="button secondary h-fit"
-						onClick={addMeta}
-					>
-						Add
-					</button>
-				</div>
-				<div class="bg-secondary-10/60 grid w-full grid-cols-4 gap-5 rounded-lg p-4">
-					<For each={state.account.character.meta}>
-						{(item) => (
-							<div class="bg-secondary-05 border-secondary-20 group rounded border-1 p-2.5">
-								<div class="flex items-start justify-between gap-2">
-									<div class="flex min-w-0 flex-1 flex-col gap-1.5">
-										<h3 class="truncate text-base font-semibold">
-											{item.label}
-										</h3>
-										<div class="text-secondary-40 flex flex-col gap-1 text-sm">
-											<div class="flex gap-1.5">
-												<span class="font-medium">
-													icon:
-												</span>
-												<span
-													class="truncate"
-													title={item.icon}
-												>
-													{item.icon}
-												</span>
-											</div>
-											<div class="flex gap-1.5">
-												<span class="font-medium">
-													value:
-												</span>
-												{Array.isArray(
-													item.value,
-												) ? (
-													<span
-														class="truncate"
-														title={item.value.join(
-															", ",
-														)}
-													>
-														{item.value.join(
-															", ",
-														)}
-													</span>
-												) : (
-													<span
-														class="truncate"
-														title={item.value}
-													>
-														{item.value}
-													</span>
-												)}
-											</div>
-										</div>
-									</div>
-									<div class="flex flex-shrink-0 flex-col gap-1">
-										<button
-											class="button-control"
-											onclick={() =>
-												updateMeta(item.id)
-											}
-											title="Edit"
-										>
-											<SquarePenIcon class="size-3.5" />
-										</button>
-										<button
-											class="button-control red opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-											onclick={() =>
-												removeMeta(item.id)
-											}
-											title="Delete"
-										>
-											<MyIcon
-												name="trash"
-												class="size-3.5"
-											/>
-										</button>
-									</div>
-								</div>
-							</div>
-						)}
-					</For>
-				</div>
-			</div>
+			{/* <hr class="bg-secondary-10 h-px w-full border-0" /> */}
+			{/* <div class="flex w-full flex-col gap-4"> */}
+			{/* 	<div class="flex h-fit justify-between"> */}
+			{/* 		<div> */}
+			{/* 			<h1 class="text-lg font-bold">Meta</h1> */}
+			{/* 			<h3 class="text-secondary-40"> */}
+			{/* 				Add some meta data */}
+			{/* 			</h3> */}
+			{/* 		</div> */}
+			{/* 		<button */}
+			{/* 			class="button secondary h-fit" */}
+			{/* 			onClick={addMeta} */}
+			{/* 		> */}
+			{/* 			Add */}
+			{/* 		</button> */}
+			{/* 	</div> */}
+			{/* 	<div class="bg-secondary-10/60 grid w-full grid-cols-4 gap-5 rounded-lg p-4"> */}
+			{/* 		<For each={state.account.character.meta}> */}
+			{/* 			{(item) => ( */}
+			{/* 				<div class="bg-secondary-05 border-secondary-20 group rounded border-1 p-2.5"> */}
+			{/* 					<div class="flex items-start justify-between gap-2"> */}
+			{/* 						<div class="flex min-w-0 flex-1 flex-col gap-1.5"> */}
+			{/* 							<h3 class="truncate text-base font-semibold"> */}
+			{/* 								{item.label} */}
+			{/* 							</h3> */}
+			{/* 							<div class="text-secondary-40 flex flex-col gap-1 text-sm"> */}
+			{/* 								<div class="flex gap-1.5"> */}
+			{/* 									<span class="font-medium"> */}
+			{/* 										icon: */}
+			{/* 									</span> */}
+			{/* 									<span */}
+			{/* 										class="truncate" */}
+			{/* 										title={item.icon} */}
+			{/* 									> */}
+			{/* 										{item.icon} */}
+			{/* 									</span> */}
+			{/* 								</div> */}
+			{/* 								<div class="flex gap-1.5"> */}
+			{/* 									<span class="font-medium"> */}
+			{/* 										value: */}
+			{/* 									</span> */}
+			{/* 									{Array.isArray( */}
+			{/* 										item.value, */}
+			{/* 									) ? ( */}
+			{/* 										<span */}
+			{/* 											class="truncate" */}
+			{/* 											title={item.value.join( */}
+			{/* 												", ", */}
+			{/* 											)} */}
+			{/* 										> */}
+			{/* 											{item.value.join( */}
+			{/* 												", ", */}
+			{/* 											)} */}
+			{/* 										</span> */}
+			{/* 									) : ( */}
+			{/* 										<span */}
+			{/* 											class="truncate" */}
+			{/* 											title={item.value} */}
+			{/* 										> */}
+			{/* 											{item.value} */}
+			{/* 										</span> */}
+			{/* 									)} */}
+			{/* 								</div> */}
+			{/* 							</div> */}
+			{/* 						</div> */}
+			{/* 						<div class="flex flex-shrink-0 flex-col gap-1"> */}
+			{/* 							<button */}
+			{/* 								class="button-control" */}
+			{/* 								onclick={() => */}
+			{/* 									updateMeta(item.id) */}
+			{/* 								} */}
+			{/* 								title="Edit" */}
+			{/* 							> */}
+			{/* 								<SquarePenIcon class="size-3.5" /> */}
+			{/* 							</button> */}
+			{/* 							<button */}
+			{/* 								class="button-control red opacity-0 transition-opacity duration-300 group-hover:opacity-100" */}
+			{/* 								onclick={() => */}
+			{/* 									removeMeta(item.id) */}
+			{/* 								} */}
+			{/* 								title="Delete" */}
+			{/* 							> */}
+			{/* 								<MyIcon */}
+			{/* 									name="trash" */}
+			{/* 									class="size-3.5" */}
+			{/* 								/> */}
+			{/* 							</button> */}
+			{/* 						</div> */}
+			{/* 					</div> */}
+			{/* 				</div> */}
+			{/* 			)} */}
+			{/* 		</For> */}
+			{/* 	</div> */}
+			{/* </div> */}
 			<div class="bg-secondary-05 absolute bottom-10 left-10 mt-auto flex w-[calc(100%-calc(var(--spacing)*20))] justify-end gap-2 rounded-xl p-5">
 				<button
 					class="button secondary"

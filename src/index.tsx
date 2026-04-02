@@ -10,7 +10,6 @@ import { TurnstileProvider } from "@component/Turnstile";
 
 function Root() {
 	const { state } = useStore();
-
 	return (
 		<Show when={state.realm.current} fallback={<Selector />}>
 			<TurnstileProvider>

@@ -11,6 +11,7 @@ type hollowType = {
 	onCut?: () => void;
 	onPaste?: () => void;
 	coreTools: string[];
+	coreLayouts: string[];
 	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
 	pause: {
@@ -20,6 +21,7 @@ type hollowType = {
 };
 export const hollow: hollowType = {
 	coreTools: ["image", "notebook", "kanban", "embed"],
+	coreLayouts: ["expand", "editor", "account", "notifications"],
 	events: new EventsManager<AppEvents, AppEventReturns>(),
 	pevents: new EventsManager<PrivateEvents>(),
 	pause: {

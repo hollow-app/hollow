@@ -203,14 +203,14 @@ export default function UI() {
 					>
 						<Button variant="secondary">Alert</Button>
 					</AlertTrigger>
-					<Empty
-						onChange={() => {}}
-						icon="comet"
-						title={"No Projects Yet"}
-						descriptions={
-							"You haven't created any projects yet. Get started by creating your first project."
-						}
-					/>
+					<Empty.Root>
+						<Empty.Icon icon={"comet"} />
+						<Empty.Title>No Project Yet</Empty.Title>
+						<Empty.Description>
+							You haven't created any projects yet. Get started by
+							creating your first project.
+						</Empty.Description>
+					</Empty.Root>
 				</div>
 				<div class="w-200">
 					<Tabs defaultValue="account" variant="box">

@@ -45,13 +45,16 @@ export function setupModule(dispatch: (action: any) => void) {
 		for (const capa of capas) {
 			const key = capa.meta.source;
 			let tool: HandType | undefined = parsedData[key];
+			// the capa doesn't exist among the saved in main.json
 			if (!tool) {
 				tool = {
 					name: capa.meta.name,
 					version: capa.meta.version,
 					description: capa.meta.description,
+					icon: capa.meta.icon,
 					cards: [],
 				};
+				console.log(capa.meta.name, " icon : ", capa.meta.icon);
 				store.set(capa.meta.name, tool);
 			}
 			const targetModule = capas.find((i) => i.meta.name === tool.name);

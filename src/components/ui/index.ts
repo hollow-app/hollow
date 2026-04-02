@@ -25,4 +25,5 @@ export * from "./GradientEffect";
 export * from "./Settings";
 export * from "./Drawer";
 export * from "./Avatar";
+export * from "./Separator";
 export * from "./RarityBadge";

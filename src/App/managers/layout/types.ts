@@ -1,6 +1,6 @@
 import { Component } from "solid-js";
 
-export type PanelType = "left" | "right";
+export type LayoutVariant = "left" | "right";
 
 export interface SideLayout {
 	visible: boolean;
@@ -16,26 +16,26 @@ export interface LayoutState {
 export type LayoutEvents = { domain: "layout" } & (
 	| {
 			type: "add-panel";
-			side: PanelType;
+			variant: LayoutVariant;
 			id: string;
 	  }
 	| {
 			type: "remove-panel";
-			side: PanelType;
+			variant: LayoutVariant;
 			id: string;
 	  }
 	| {
 			type: "select-panel";
-			side: PanelType;
+			variant: LayoutVariant;
 			id: string;
 	  }
 	| {
 			type: "toggle-panel";
-			side: PanelType;
+			variant: LayoutVariant;
 	  }
 	| {
 			type: "set-visibility";
-			side: PanelType;
+			variant: LayoutVariant;
 			visible: boolean;
 	  }
 );

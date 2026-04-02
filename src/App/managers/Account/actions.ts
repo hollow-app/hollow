@@ -1,4 +1,4 @@
-import { Achievement } from "@app/type/Character";
+import { Achievement } from "center";
 import { Events, AccountState } from "./types";
 
 export const addAchievement = (achievement: Achievement): Events => ({

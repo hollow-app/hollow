@@ -46,10 +46,8 @@ export default function FetchedIcon(props: FetchedIconProps) {
 					.join(" "),
 			);
 		}
-
 		svg.removeAttribute("width");
 		svg.removeAttribute("height");
-
 		return svg;
 	});
 

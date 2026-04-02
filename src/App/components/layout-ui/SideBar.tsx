@@ -15,12 +15,13 @@ import { guide } from "@app/utils/help";
 import { useStore } from "@store";
 import { registerHotkeyEvent } from "@app/managers/Hotkeys";
 import {
-	getLayoutPanels,
+	getLayoutCore,
 	isPanelVisible,
 	selectPanel,
 } from "@app/managers/layout";
 import { toggleVault } from "@app/context/actions";
-import { UserCogIcon } from "lucide-solid";
+import { SaladIcon, UserCogIcon } from "lucide-solid";
+import ToolIcon from "../ui/ToolIcon";
 
 interface SideBarButton {
 	id: string;
@@ -132,24 +133,28 @@ export default function SideBar(props: SideBarProps) {
 						]}
 					>
 						{(id) => {
-							const btn = getLayoutPanels().extra.find(
-								(i) => i.meta.id === id,
-							);
-							if (!btn) return;
+							const layoutMeta = (
+								getLayoutCore().left[id] ||
+								getLayoutCore().right[id]
+							).meta;
+							if (!layoutMeta) return;
 							return (
 								<ControlButton
-									id={btn.meta.id}
-									Icon={btn.meta.icon}
-									tooltip={btn.meta.tooltip}
+									id={layoutMeta.id}
+									Icon={layoutMeta.icon}
+									tooltip={layoutMeta.tooltip}
 									selectedCondition={() =>
 										isPanelVisible(
 											state,
-											btn.meta.type,
-											btn.meta.id,
+											layoutMeta.variant,
+											layoutMeta.id,
 										)
 									}
 									onClick={() =>
-										selectPanel(btn.meta.type, btn.meta.id)
+										selectPanel(
+											layoutMeta.variant,
+											layoutMeta.id,
+										)
 									}
 								/>
 							);
@@ -191,7 +196,20 @@ const ControlButton = (btn: SideBarButton) => {
 					}}
 					onclick={btn.onClick}
 				>
-					<DynamicIcon icon={btn.Icon} class="m-auto size-4.5" />
+					<Show
+						when={typeof btn.Icon !== "string"}
+						fallback={
+							<ToolIcon
+								toolName={btn.Icon as string}
+								class="size-4.5"
+							/>
+						}
+					>
+						<DynamicIcon
+							icon={btn.Icon ?? SaladIcon}
+							class="m-auto size-4.5"
+						/>
+					</Show>
 				</button>
 			</div>
 		</div>

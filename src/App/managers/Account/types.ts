@@ -1,9 +1,9 @@
-import { Achievement, Character, Title } from "@app/type/Character";
-import { User } from "@app/type/User";
+import { Achievement, Character, Title } from "center";
+import { ClientUser } from "center";
 
 type Connection = { state: boolean; type: "offline" | "online" };
 export type AccountState = {
-	user: Omit<User, "character">;
+	user: Omit<ClientUser, "character">;
 	character: Character;
 	connection: Connection;
 };
@@ -11,7 +11,7 @@ export type AccountState = {
 export type Events = { domain: "account" } & (
 	| {
 			type: "set-user";
-			user: User;
+			user: ClientUser;
 	  }
 	| {
 			type: "set-connection";

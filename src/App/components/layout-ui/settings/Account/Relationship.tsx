@@ -1,4 +1,4 @@
-import { RelationshipUser } from "@app/type/Relationships";
+import { RelationshipUser } from "center";
 import { Tab, TabList, TabPanel, Tabs } from "@component/ui/Tabs";
 import { Button, Drawer, Input } from "@ui";
 import { UserIcon, UserPlusIcon } from "lucide-solid";
@@ -170,7 +170,7 @@ export default function Relationship() {
 	);
 }
 const now = new Date().toISOString();
-function randomDate(start, end) {
+function randomDate(start: Date, end: Date) {
 	return new Date(
 		start.getTime() + Math.random() * (end.getTime() - start.getTime()),
 	).toISOString();
@@ -213,15 +213,6 @@ const friends: RelationshipUser[] = [
 					label: "First Step",
 					description: "Completed the tutorial questline.",
 					icon: "🌀",
-				},
-			],
-			meta: [
-				{
-					id: "faction",
-					icon: "🌲",
-					label: "Faction",
-					value: "Sylvan Watch",
-					color: "#4CAF50",
 				},
 			],
 		},

@@ -1,13 +1,21 @@
+import { DynamicIcon } from "@app/components/ui/DynamicIcon";
 import MyIcon, { MyIconsType } from "@app/components/ui/MyIcon";
 import Floater from "@app/utils/kinda-junk/Floater";
 import { ChevronsUpDownIcon, XIcon } from "lucide-solid";
+import { Component, JSX } from "solid-js";
 import { For, splitProps, createSignal, Show, createMemo } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
-type GroupedItems = { title: string; items: string[] };
+interface Item {
+	icon?: Component;
+	label: string;
+}
+type ComboboxGroupedItems = { title?: string; items: (Item | string)[] };
+type GroupedItems = Omit<ComboboxGroupedItems, "items"> & { items: Item[] };
 
 type Props = {
 	value?: string;
-	items: string[] | GroupedItems[];
+	items: string[] | ComboboxGroupedItems[];
 	placeholder?: string;
 	class?: string;
 	readonly?: boolean;
@@ -36,10 +44,22 @@ export function Combobox(props: Props) {
 	let parentEl!: HTMLDivElement;
 
 	const normalizedItems = createMemo((): GroupedItems[] => {
-		if (Array.isArray(local.items) && typeof local.items[0] === "string") {
-			return [{ title: "", items: local.items as string[] }];
+		if (typeof local.items[0] === "string") {
+			return [
+				{
+					title: "",
+					items: (local.items as string[]).map((str) => ({
+						label: str,
+					})),
+				},
+			];
 		}
-		return local.items as GroupedItems[];
+		return (local.items as ComboboxGroupedItems[]).map((group) => ({
+			title: group.title,
+			items: group.items.map((item) =>
+				typeof item === "string" ? { label: item } : item,
+			),
+		}));
 	});
 
 	const filteredGroups = createMemo(() => {
@@ -48,7 +68,9 @@ export function Combobox(props: Props) {
 		return normalizedItems()
 			.map((group) => ({
 				...group,
-				items: group.items.filter((i) => i.toLowerCase().includes(s)),
+				items: group.items.filter((i) =>
+					i.label.toLowerCase().includes(s),
+				),
 			}))
 			.filter((group) => group.items.length > 0);
 	});
@@ -143,20 +165,32 @@ export function Combobox(props: Props) {
 														createMemo(
 															() =>
 																selected() ===
-																item,
+																item.label,
 														);
 													return (
 														<li
 															onClick={() =>
-																handleAdd(item)
+																handleAdd(
+																	item.label,
+																)
 															}
-															class="hover:bg-primary/10 hover:text-primary relative flex w-full cursor-pointer justify-between rounded-md bg-transparent px-3 py-2 text-xs text-neutral-800 dark:text-neutral-300"
+															class="hover:bg-primary/10 hover:text-primary relative flex w-full cursor-pointer gap-2 rounded-md bg-transparent px-3 py-2 text-xs text-neutral-800 capitalize dark:text-neutral-300"
 															classList={{
 																"underline before:content-[''] before:absolute before:left-1 before:top-1/2 before:-translate-y-1/2 before:size-1 before:bg-primary before:rounded-full":
 																	isSelected(),
 															}}
 														>
-															{item}
+															<Show
+																when={item.icon}
+															>
+																<DynamicIcon
+																	icon={
+																		item.icon
+																	}
+																	class="size-4.5"
+																/>
+															</Show>
+															{item.label}
 														</li>
 													);
 												}}

@@ -1,15 +1,20 @@
 import MyIcon, { MyIconsType } from "@app/components/ui/MyIcon";
+import { Component } from "solid-js";
 import { createSignal, JSX, Show, splitProps } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import { Motion, Presence } from "solid-motionone";
 
-interface Props
-	extends Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, "onclick"> {
+interface Props extends Omit<
+	JSX.ButtonHTMLAttributes<HTMLButtonElement>,
+	"onclick"
+> {
 	onclick?: (e: MouseEvent) => void | Promise<void>;
 	variant?: "primary" | "secondary" | "empty" | "destructive";
-	leftIcon?: MyIconsType;
-	rightIcon?: MyIconsType;
+	leftIcon?: MyIconsType | Component;
+	rightIcon?: MyIconsType | Component;
 	icon?: boolean;
 	size?: "xs" | "sm" | "md" | "lg";
+	selected?: boolean;
 }
 
 export function Button(props: Props) {
@@ -22,6 +27,7 @@ export function Button(props: Props) {
 		"icon",
 		"variant",
 		"size",
+		"selected",
 	]);
 	const [loading, setLoading] = createSignal(false);
 
@@ -51,7 +57,8 @@ export function Button(props: Props) {
 			].join(" ")}
 			onclick={handleClick}
 			classList={{
-				["text-" + local.size]: !!local.size,
+				["text-" + (local.size || "sm")]: true,
+				selected: local.selected,
 			}}
 			{...rest}
 		>
@@ -92,23 +99,33 @@ export function Button(props: Props) {
 				transition={{ duration: 0.2 }}
 				class="flex shrink-0 items-center gap-2"
 			>
-				<Show when={local.leftIcon}>
-					<MyIcon
-						name={local.leftIcon}
-						class="size-6"
-						style={{
-							color: "var(--icon-color, var(--color-secondary-30))",
-						}}
-					/>
-				</Show>
+				<Icon icon={local.leftIcon} />
 				{local.children}
-				<Show when={local.rightIcon}>
-					<MyIcon
-						name={local.rightIcon}
-						class="text-secondary-30 size-6"
-					/>
-				</Show>
+				<Icon icon={local.rightIcon} />
 			</Motion.div>
 		</button>
 	);
 }
+const Icon = (props: { icon: MyIconsType | Component }) => {
+	return (
+		<Show when={props.icon}>
+			<Show
+				when={typeof props.icon === "string"}
+				fallback={
+					<Dynamic
+						component={props.icon}
+						class={"text-secondary-30 size-4.5"}
+					/>
+				}
+			>
+				<MyIcon
+					name={props.icon as MyIconsType}
+					class="size-4.5"
+					style={{
+						color: "var(--icon-color, var(--color-secondary-30))",
+					}}
+				/>
+			</Show>
+		</Show>
+	);
+};

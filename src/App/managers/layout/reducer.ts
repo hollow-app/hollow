@@ -1,4 +1,4 @@
-import { LayoutState, LayoutEvents, PanelType } from "./types";
+import { LayoutState, LayoutEvents, LayoutVariant } from "./types";
 
 const defaultState: LayoutState = {
 	left: {
@@ -21,65 +21,67 @@ export function layoutReducer(
 
 	switch (action.type) {
 		case "add-panel": {
-			const side = state[action.side];
-			if (side.panels.includes(action.id)) return state;
+			const variant = state[action.variant];
+			if (variant.panels.includes(action.id)) return state;
 			return {
 				...state,
-				[action.side]: {
-					...side,
-					panels: [...side.panels, action.id],
+				[action.variant]: {
+					...variant,
+					panels: [...variant.panels, action.id],
 				},
 			};
 		}
 		case "remove-panel": {
-			const side = state[action.side];
+			const variant = state[action.variant];
 			return {
 				...state,
-				[action.side]: {
-					...side,
-					panels: side.panels.filter((id) => id !== action.id),
+				[action.variant]: {
+					...variant,
+					panels: variant.panels.filter((id) => id !== action.id),
 					current:
-						side.current === action.id ? undefined : side.current,
+						variant.current === action.id
+							? undefined
+							: variant.current,
 				},
 			};
 		}
 		case "select-panel": {
-			const side = state[action.side];
+			const variant = state[action.variant];
 			// Toggle off if already visible and selected
-			if (side.current === action.id && side.visible) {
+			if (variant.current === action.id && variant.visible) {
 				return {
 					...state,
-					[action.side]: {
-						...side,
+					[action.variant]: {
+						...variant,
 						visible: false,
 					},
 				};
 			}
 			return {
 				...state,
-				[action.side]: {
-					...side,
+				[action.variant]: {
+					...variant,
 					current: action.id,
 					visible: true,
 				},
 			};
 		}
 		case "toggle-panel": {
-			const side = state[action.side];
+			const variant = state[action.variant];
 			return {
 				...state,
-				[action.side]: {
-					...side,
-					visible: !side.visible,
+				[action.variant]: {
+					...variant,
+					visible: !variant.visible,
 				},
 			};
 		}
 		case "set-visibility": {
-			const side = state[action.side];
+			const variant = state[action.variant];
 			return {
 				...state,
-				[action.side]: {
-					...side,
+				[action.variant]: {
+					...variant,
 					visible: action.visible,
 				},
 			};

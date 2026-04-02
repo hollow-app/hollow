@@ -5,6 +5,7 @@ import { createSignal } from "solid-js";
 import { Show } from "solid-js";
 import DynamicOption from "@app/components/DynamicOption";
 import PopupWrapper from "@component/PopupWrapper";
+import { Button } from "@ui";
 
 type FormProps = {
 	form: FormType;
@@ -119,12 +120,10 @@ export default function Form({ form, setForm, index }: FormProps) {
 					</For>
 				</div>
 				<div class="mt-auto flex h-fit w-full justify-end gap-3 rounded">
-					<button class="button primary form-submit" type="submit">
+					<Button variant="primary" class="form-submit" type="submit">
 						{form.update ? "Update" : "Submit"}
-					</button>
-					<button class="button secondary" onclick={onCancel}>
-						Cancel
-					</button>
+					</Button>
+					<Button onclick={onCancel}>Cancel</Button>
 				</div>
 			</form>
 		</PopupWrapper>

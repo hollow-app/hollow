@@ -1,4 +1,4 @@
-import { Character } from "@app/type/Character";
+import { Character } from "center";
 import { UserIcon } from "lucide-solid";
 import { Show } from "solid-js";
 

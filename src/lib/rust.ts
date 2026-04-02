@@ -12,7 +12,7 @@ import {
 } from "@app/type/hollow";
 import { hollow } from "../hollow";
 import { importFileUrl } from "../App/managers/Vault";
-import { User } from "@app/type/User";
+import { ClientUser } from "center";
 import { join } from "@tauri-apps/api/path";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
@@ -231,7 +231,7 @@ export async function sign_in() {
 	return await invoke("signin");
 }
 /** @deprecated Use Auth class instead */
-export async function get_user(): Promise<User> {
+export async function get_user(): Promise<ClientUser> {
 	return await invoke("get_user");
 }
 

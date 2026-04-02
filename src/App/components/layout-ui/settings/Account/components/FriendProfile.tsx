@@ -1,6 +1,6 @@
 import { createSignal, For, Show } from "solid-js";
 import { ChevronDownIcon, EllipsisIcon, UserXIcon, XIcon } from "lucide-solid";
-import { RelationshipUser } from "@app/type/Relationships";
+import { RelationshipUser } from "center";
 import {
 	Avatar,
 	Button,
@@ -10,12 +10,7 @@ import {
 	RarityBadge,
 	Tooltip,
 } from "@ui";
-import {
-	formatDate,
-	readableDate,
-	timeDifference,
-	timeDifferenceMin,
-} from "@app/utils/manipulation/strings";
+import { readableDate } from "@app/utils/manipulation/strings";
 
 interface FriendProfileProps {
 	user: RelationshipUser;

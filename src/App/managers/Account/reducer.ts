@@ -1,4 +1,3 @@
-import { Achievement, Character } from "@app/type/Character";
 import { AccountState, Events } from "./types";
 import DEFAULT from "@assets/configs/character.json?raw";
 
@@ -67,32 +66,32 @@ export function accountReducer(
 			};
 		}
 
-		case "set-meta": {
-			const meta = state.character.meta || [];
-			const idx = meta.findIndex((m) => m.id === action.props.id);
-			const newMeta = [...meta];
-			if (idx >= 0) {
-				newMeta[idx] = { ...newMeta[idx], ...action.props };
-			} else {
-				// @ts-ignore
-				newMeta.push(action.props);
-			}
-			return {
-				...state,
-				character: { ...state.character, meta: newMeta },
-			};
-		}
-
-		case "remove-meta": {
-			const meta = state.character.meta || [];
-			return {
-				...state,
-				character: {
-					...state.character,
-					meta: meta.filter((i) => i.id !== action.id),
-				},
-			};
-		}
+		// case "set-meta": {
+		// 	const meta = state.character.meta || [];
+		// 	const idx = meta.findIndex((m) => m.id === action.props.id);
+		// 	const newMeta = [...meta];
+		// 	if (idx >= 0) {
+		// 		newMeta[idx] = { ...newMeta[idx], ...action.props };
+		// 	} else {
+		// 		// @ts-ignore
+		// 		newMeta.push(action.props);
+		// 	}
+		// 	return {
+		// 		...state,
+		// 		character: { ...state.character, meta: newMeta },
+		// 	};
+		// }
+		//
+		// case "remove-meta": {
+		// 	const meta = state.character.meta || [];
+		// 	return {
+		// 		...state,
+		// 		character: {
+		// 			...state.character,
+		// 			meta: meta.filter((i) => i.id !== action.id),
+		// 		},
+		// 	};
+		// }
 		case "add-title": {
 			if (state.character.titles.some((i) => i.id === action.title.id)) {
 				return state;

@@ -19,13 +19,11 @@ export default function App() {
 
 	return (
 		<main class="app-container text-black dark:text-white">
-			<Suspense>
-				<Show when={ready()} fallback={<Loading />}>
-					<Container />
-				</Show>
-				<Popups />
-				<Alerts />
-			</Suspense>
+			<Show when={ready()} fallback={<Loading />}>
+				<Container />
+			</Show>
+			<Popups />
+			<Alerts />
 		</main>
 	);
 }

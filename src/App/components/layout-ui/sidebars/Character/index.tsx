@@ -11,6 +11,7 @@ import {
 	ImageUpIcon,
 	SettingsIcon,
 	UserCogIcon,
+	UserIcon,
 	XIcon,
 } from "lucide-solid";
 import FetchedIcon from "@app/components/ui/FetchedIcon";
@@ -19,7 +20,7 @@ import { useStore } from "@store";
 import { getCurrentRealm } from "@shared/managers/Realm";
 import { Skeleton } from "./skeleton";
 import { Tab, TabList, TabPanel, Tabs } from "@component/ui/Tabs";
-import { Avatar, RarityBadge } from "@ui";
+import { Avatar, Empty, RarityBadge } from "@ui";
 import Segmented from "@component/ui/Segmented";
 
 const CharacterSidebar: Component<CharacterProps> = (props) => {
@@ -33,7 +34,20 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 					state.account().connection?.state &&
 					state.account().character
 				}
-				fallback={<Skeleton />}
+				fallback={
+					<div class="mt-30 flex h-full w-full gap-3">
+						<Empty.Root>
+							<Empty.Icon icon={"user"} />
+							<Empty.Title>You’re Not Signed In</Empty.Title>
+							<Empty.Description>
+								Sign in to access your account, save your
+								progress, and enjoy all features. If you don’t
+								have an account yet, you can create one in just
+								a few steps.
+							</Empty.Description>
+						</Empty.Root>
+					</div>
+				}
 			>
 				<div class="group border-secondary-05 relative h-32 w-full overflow-hidden rounded-xl border">
 					<Show when={state.account().character.identity.banner}>
@@ -44,7 +58,6 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 						/>
 					</Show>
 				</div>
-
 				{/* Avatar Section */}
 				<div class="relative flex-1 px-6 pb-6">
 					<div class="-mt-12 flex justify-start">
@@ -62,7 +75,6 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 					>
 						<UserCogIcon class="size-4" />
 					</button>
-
 					{/* Character Info */}
 					<div class="pointer-events-auto mt-4 space-y-4 text-left">
 						<div class="space-y-1">
@@ -112,86 +124,86 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 							{state.account().character.identity.bio}
 						</p>
 						{/* Mrta */}
-						<Show
-							when={
-								state.account().character &&
-								state.account().character!.meta?.length > 0
-							}
-						>
-							<div class="space-y-3">
-								<h3 class="text-sm font-semibold text-neutral-600 dark:text-neutral-400">
-									Meta
-								</h3>
-
-								<Show
-									when={state
-										.account()
-										.character.meta?.some(
-											(i) => typeof i.value === "number",
-										)}
-								>
-									<For
-										each={state
-											.account()
-											.character.meta?.filter(
-												(i) =>
-													typeof i.value === "number",
-											)}
-									>
-										{(m) => (
-											<ProgressBar
-												{...{
-													...m,
-													value: () =>
-														m.value as number,
-												}}
-											/>
-										)}
-									</For>
-								</Show>
-								<div class="flex flex-wrap gap-2">
-									<Show
-										when={state
-											.account()
-											.character.meta?.some(
-												(i) =>
-													typeof i.value === "string",
-											)}
-									>
-										<For
-											each={state
-												.account()
-												.character.meta?.filter(
-													(i) =>
-														typeof i.value ===
-														"string",
-												)}
-										>
-											{(m) => {
-												return (
-													<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1">
-														<Show when={m.icon}>
-															<FetchedIcon
-																class={"size-4"}
-																url={m.icon!}
-															/>
-														</Show>
-														<Show when={m.label}>
-															<span class="text-secondary-40 text-sm font-medium uppercase">
-																{m.label}
-															</span>
-														</Show>
-														<span class="text-xs">
-															{m.value}
-														</span>
-													</div>
-												);
-											}}
-										</For>
-									</Show>
-								</div>
-							</div>
-						</Show>
+						{/* <Show */}
+						{/* 	when={ */}
+						{/* 		state.account().character && */}
+						{/* 		state.account().character!.meta?.length > 0 */}
+						{/* 	} */}
+						{/* > */}
+						{/* 	<div class="space-y-3"> */}
+						{/* 		<h3 class="text-sm font-semibold text-neutral-600 dark:text-neutral-400"> */}
+						{/* 			Meta */}
+						{/* 		</h3> */}
+						{/**/}
+						{/* 		<Show */}
+						{/* 			when={state */}
+						{/* 				.account() */}
+						{/* 				.character.meta?.some( */}
+						{/* 					(i) => typeof i.value === "number", */}
+						{/* 				)} */}
+						{/* 		> */}
+						{/* 			<For */}
+						{/* 				each={state */}
+						{/* 					.account() */}
+						{/* 					.character.meta?.filter( */}
+						{/* 						(i) => */}
+						{/* 							typeof i.value === "number", */}
+						{/* 					)} */}
+						{/* 			> */}
+						{/* 				{(m) => ( */}
+						{/* 					<ProgressBar */}
+						{/* 						{...{ */}
+						{/* 							...m, */}
+						{/* 							value: () => */}
+						{/* 								m.value as number, */}
+						{/* 						}} */}
+						{/* 					/> */}
+						{/* 				)} */}
+						{/* 			</For> */}
+						{/* 		</Show> */}
+						{/* 		<div class="flex flex-wrap gap-2"> */}
+						{/* 			<Show */}
+						{/* 				when={state */}
+						{/* 					.account() */}
+						{/* 					.character.meta?.some( */}
+						{/* 						(i) => */}
+						{/* 							typeof i.value === "string", */}
+						{/* 					)} */}
+						{/* 			> */}
+						{/* 				<For */}
+						{/* 					each={state */}
+						{/* 						.account() */}
+						{/* 						.character.meta?.filter( */}
+						{/* 							(i) => */}
+						{/* 								typeof i.value === */}
+						{/* 								"string", */}
+						{/* 						)} */}
+						{/* 				> */}
+						{/* 					{(m) => { */}
+						{/* 						return ( */}
+						{/* 							<div class="bg-secondary-10 flex w-fit items-center gap-1 rounded px-2 py-1"> */}
+						{/* 								<Show when={m.icon}> */}
+						{/* 									<FetchedIcon */}
+						{/* 										class={"size-4"} */}
+						{/* 										url={m.icon!} */}
+						{/* 									/> */}
+						{/* 								</Show> */}
+						{/* 								<Show when={m.label}> */}
+						{/* 									<span class="text-secondary-40 text-sm font-medium uppercase"> */}
+						{/* 										{m.label} */}
+						{/* 									</span> */}
+						{/* 								</Show> */}
+						{/* 								<span class="text-xs"> */}
+						{/* 									{m.value} */}
+						{/* 								</span> */}
+						{/* 							</div> */}
+						{/* 						); */}
+						{/* 					}} */}
+						{/* 				</For> */}
+						{/* 			</Show> */}
+						{/* 		</div> */}
+						{/* 	</div> */}
+						{/* </Show> */}
 						{/* Achievements */}
 						<Show
 							when={

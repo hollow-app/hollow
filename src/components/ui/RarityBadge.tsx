@@ -1,4 +1,4 @@
-import { Title } from "@app/type/Character";
+import { Title } from "center";
 import { JSX } from "solid-js";
 
 interface RarityBadgeProps {

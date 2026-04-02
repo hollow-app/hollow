@@ -6,7 +6,7 @@ import { hollow } from "../../../../hollow";
 import FilterButton from "@app/components/ui/FilterButton";
 import { useStore } from "@shared/store";
 import { getHand } from "@app/managers/Module/effects";
-import { Input } from "@ui";
+import { Button, Input } from "@ui";
 import { form_newInstance } from "@app/utils/common";
 
 type FilterType = {
@@ -122,13 +122,15 @@ export default function Expand() {
 								},
 							]}
 						/>
-						<button
+						<Button.Root
 							id="new-card-btn"
-							class="button-control border-secondary-10 shrink-0 border"
+							class="shrink-0 border"
+							variant="ghost"
 							onclick={() => form_newInstance(dispatch, hand)}
+							icon
 						>
 							<PlusIcon class="size-5 -rotate-90" />
-						</button>
+						</Button.Root>
 					</div>
 				</div>
 

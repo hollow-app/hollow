@@ -9,7 +9,7 @@ import {
 	createMemo,
 } from "solid-js";
 import { useStore } from "@store";
-import { SettingsGroup, SettingsItem } from "@ui";
+import { Button, SettingsGroup, SettingsItem } from "@ui";
 import SettingsPanel from "./SettingsPanel";
 const KEY_MAP: Record<string, string> = {
 	Control: "ctrl",
@@ -140,9 +140,7 @@ export default function HotKeys() {
 														}
 														fallback={
 															<For
-																each={
-																	key.keys
-																}
+																each={key.keys}
 															>
 																{(k) => (
 																	<span class="keyboard-button">
@@ -154,8 +152,8 @@ export default function HotKeys() {
 													>
 														<Show
 															when={
-																currentKeys().length >
-																0
+																currentKeys()
+																	.length > 0
 															}
 															fallback={
 																<span class="text-neutral-500 italic dark:text-neutral-400">
@@ -176,9 +174,9 @@ export default function HotKeys() {
 														</Show>
 													</Show>
 												</div>
-												<button
-													class="button-control"
-													onclick={(e) => {
+												<Button.Root
+													variant="ghost"
+													onClick={(e) => {
 														e.currentTarget.classList.toggle(
 															"active",
 														);
@@ -192,7 +190,7 @@ export default function HotKeys() {
 													disabled={key.static}
 												>
 													<FeatherIcon />
-												</button>
+												</Button.Root>
 											</div>
 										</SettingsItem>
 									)}

@@ -6,6 +6,7 @@ import {
 } from "lucide-solid";
 import MyIcon from "@app/components/ui/MyIcon";
 import { useNotifications, NotificationsProps } from "./hooks";
+import { Button } from "@ui";
 
 const Notifications: Component<NotificationsProps> = (props) => {
 	const { state, actions } = useNotifications(props);
@@ -22,13 +23,14 @@ const Notifications: Component<NotificationsProps> = (props) => {
 					</p>
 				</div>
 				<Show when={state.notifications().length > 0}>
-					<button
+					<Button.Root
 						onclick={actions.clearAll}
-						class="button-control"
+						variant="ghost"
 						title="Clear All"
+						icon
 					>
 						<MyIcon name="broom-outline" class="size-5" />
-					</button>
+					</Button.Root>
 				</Show>
 			</div>
 			<div class="flex max-h-full flex-1 flex-col gap-3 overflow-hidden overflow-y-scroll">

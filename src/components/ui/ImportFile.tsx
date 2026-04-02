@@ -2,6 +2,7 @@ import { Show } from "solid-js";
 import { createSignal } from "solid-js";
 import MyIcon from "../../App/components/ui/MyIcon";
 import { toggleVault } from "@app/context/actions";
+import { Button } from "./Button";
 
 type ImportFileProps = {
 	xfile?: string;
@@ -25,16 +26,18 @@ export default function ImportFile({ onChange, xfile }: ImportFileProps) {
 						class="bg-secondary-10 h-full max-h-10 w-30 rounded"
 						src={file()}
 					/>
-					<button
-						class="button-control red"
+					<Button.Root
+						class="red"
 						type="button"
+						variant="ghost"
 						onclick={() => {
 							setFile("");
 							onChange("");
 						}}
+						icon
 					>
 						<MyIcon name="trash" class="size-4.5" />
-					</button>
+					</Button.Root>
 				</>
 			</Show>
 			<button class="button secondary" type="button" onclick={onImport}>

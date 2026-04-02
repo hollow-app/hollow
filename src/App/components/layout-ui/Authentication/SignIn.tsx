@@ -79,8 +79,7 @@ export default function SignIn(props: Props) {
 				</div>
 			</div>
 			<Separator />
-			<Button
-				leftIcon="discord"
+			<Button.Root
 				variant="empty"
 				class="w-full"
 				style={{
@@ -90,8 +89,9 @@ export default function SignIn(props: Props) {
 					"--icon-color": "white",
 				}}
 			>
+				<Button.Icon icon={"discord"} />
 				Sign In With Discord
-			</Button>
+			</Button.Root>
 			<Separator variant={15} label="or" />
 			<div class="flex w-full flex-col gap-4 pb-3">
 				<Input placeholder="Username" icon="username" />
@@ -111,9 +111,9 @@ export default function SignIn(props: Props) {
 				</div>
 			</div>
 			<Turnstile />
-			<Button variant="secondary" class="w-full" onclick={request}>
+			<Button.Root variant="secondary" class="w-full" onclick={request}>
 				Sign In
-			</Button>
+			</Button.Root>
 			<span class="text-secondary-40 text-sm">
 				Don’t have an account?{" "}
 				<button

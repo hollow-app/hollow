@@ -31,26 +31,29 @@ export default function FriendProfile(props: FriendProfileProps) {
 							/>
 							<div class="absolute right-5 -bottom-10 left-0 flex items-end justify-between gap-2">
 								<div class="flex w-full items-center gap-2">
-									<Button
+									<Button.Root
 										variant="primary"
 										class="flex-1"
 										size="xs"
 									>
 										Gift Title
-									</Button>
+									</Button.Root>
 									<Tooltip
 										content="Remove Friend"
 										side="bottom"
 									>
-										<Button variant="secondary" icon>
+										<Button.Root variant="secondary" icon>
 											<UserXIcon class="text-secondary-80 size-4" />
-										</Button>
+										</Button.Root>
 									</Tooltip>
 									<Dropdown>
 										<DropdownTrigger>
-											<Button variant="secondary" icon>
+											<Button.Root
+												variant="secondary"
+												icon
+											>
 												<EllipsisIcon class="text-secondary-80 size-4" />
-											</Button>
+											</Button.Root>
 										</DropdownTrigger>
 										<DropdownContent placement="left-start">
 											<div class="min-w-40 p-1">

@@ -8,7 +8,7 @@ import {
 	GiftIcon,
 	Trash2Icon,
 } from "lucide-solid";
-import { RarityBadge, SettingsItem } from "@ui";
+import { Button, RarityBadge, SettingsItem } from "@ui";
 import { toggleVault } from "@app/context/actions";
 import { Show } from "solid-js";
 import { For } from "solid-js";
@@ -119,24 +119,26 @@ export default function Profile() {
 					title="Display Name"
 					description={state.account.character.identity.name}
 				>
-					<button
-						class="button-control"
+					<Button.Root
 						onclick={() => editIdentity("name", "Name")}
+						variant="ghost"
+						icon
 					>
 						<SquarePenIcon size={14} />
-					</button>
+					</Button.Root>
 				</SettingsItem>
 
 				<SettingsItem
 					title="About Me"
 					description={state.account.character.identity.bio || "None"}
 				>
-					<button
-						class="button-control"
+					<Button.Root
+						variant="ghost"
+						icon
 						onclick={() => editIdentity("bio", "Bio")}
 					>
 						<SquarePenIcon size={14} />
-					</button>
+					</Button.Root>
 				</SettingsItem>
 
 				<SettingsItem

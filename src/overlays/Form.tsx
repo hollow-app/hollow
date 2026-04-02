@@ -120,10 +120,14 @@ export default function Form({ form, setForm, index }: FormProps) {
 					</For>
 				</div>
 				<div class="mt-auto flex h-fit w-full justify-end gap-3 rounded">
-					<Button variant="primary" class="form-submit" type="submit">
+					<Button.Root
+						variant="primary"
+						class="form-submit"
+						type="submit"
+					>
 						{form.update ? "Update" : "Submit"}
-					</Button>
-					<Button onclick={onCancel}>Cancel</Button>
+					</Button.Root>
+					<Button.Root onclick={onCancel}>Cancel</Button.Root>
 				</div>
 			</form>
 		</PopupWrapper>

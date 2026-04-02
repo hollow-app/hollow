@@ -32,6 +32,7 @@ import General from "./settings/General";
 import { lazy } from "solid-js";
 import { toggleRealm } from "@shared/managers/Realm";
 import { useStore } from "@store";
+import { Button } from "@ui";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
 const Modifier = lazy(() => import("./settings/Modifier"));
@@ -204,12 +205,14 @@ export default function Settings(props: SettingsProps) {
 									</p>
 								</div>
 							</div>
-							<button
-								class="button-control my-auto ml-auto shrink-0"
+							<Button.Root
+								class="my-auto ml-auto shrink-0"
 								onclick={() => toggleRealm()}
+								variant="ghost"
+								icon
 							>
 								<ArrowDownUpIcon class="m-auto" />
-							</button>
+							</Button.Root>
 						</div>
 						<div class="custom-scrollbar flex-1 overflow-y-auto pr-2">
 							<For each={sections()}>

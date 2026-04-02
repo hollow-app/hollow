@@ -64,21 +64,23 @@ export default function UI() {
 			</div>
 			<div class="flex flex-wrap gap-5">
 				<div class="space-y-5">
-					<Button variant="primary" onclick={handleClick}>
-						Button
-					</Button>
-					<Button variant="secondary" onclick={handleClick}>
-						Button
-					</Button>
-					<Button variant="secondary" onclick={handleDialgue}>
+					<Button.Root variant="primary" onclick={handleClick}>
+						Button.Root
+					</Button.Root>
+					<Button.Root variant="secondary" onclick={handleClick}>
+						Button.Root
+					</Button.Root>
+					<Button.Root variant="secondary" onclick={handleDialgue}>
 						Dialogue
-					</Button>
-					<Button variant="primary" icon onclick={handleClick}>
+					</Button.Root>
+					<Button.Root variant="primary" icon onclick={handleClick}>
 						<PandaIcon />
-					</Button>
+					</Button.Root>
 					<Dropdown>
 						<DropdownTrigger>
-							<Button variant="secondary">Dropdown</Button>
+							<Button.Root variant="secondary">
+								Dropdown
+							</Button.Root>
 						</DropdownTrigger>
 						<DropdownContent placement="bottom">
 							<div class="w-30">
@@ -161,7 +163,9 @@ export default function UI() {
 							]}
 							submit={() => {}}
 						>
-							<Button variant="primary">Open Form</Button>
+							<Button.Root variant="primary">
+								Open Form
+							</Button.Root>
 						</FormTrigger>
 					</div>
 					<div class="flex items-center gap-3">
@@ -201,7 +205,7 @@ export default function UI() {
 							};
 						}}
 					>
-						<Button variant="secondary">Alert</Button>
+						<Button.Root variant="secondary">Alert</Button.Root>
 					</AlertTrigger>
 					<Empty.Root>
 						<Empty.Icon icon={"comet"} />

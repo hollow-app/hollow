@@ -10,7 +10,7 @@ import MyIcon from "@app/components/ui/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
 import Segmented from "@component/ui/Segmented";
 import { useStore } from "@shared/store";
-import { ColorButton, Combobox } from "@ui";
+import { Button, ColorButton, Combobox } from "@ui";
 
 const themes = {
 	dark: [
@@ -238,27 +238,32 @@ const RealmList = (props: {
 												</div>
 											</div>
 											<div class="flex shrink-0 items-center gap-2">
-												<button
-													class="button secondary flex items-center gap-2"
+												<Button.Root
+													class="flex items-center gap-2"
+													variant="secondary"
 													onclick={() =>
 														props.onSelect(realm.id)
 													}
 												>
-													<RocketIcon class="h-4 w-4" />
+													<Button.Icon
+														icon={RocketIcon}
+													/>
 													Enter
-												</button>
-												<button
-													class="button-control red"
+												</Button.Root>
+												<Button.Root
+													class="red"
+													variant="ghost"
 													onclick={() =>
 														removeRealm(realm.id)
 													}
 													title="Delete realm"
+													icon
 												>
 													<MyIcon
 														name="trash"
 														class="size-4"
 													/>
-												</button>
+												</Button.Root>
 											</div>
 										</div>
 									</div>

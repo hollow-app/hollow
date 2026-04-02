@@ -242,17 +242,6 @@ a {
 }
 
 
-@keyframes animatetop {
-	from {
-		transform: translateY(-300px);
-		opacity: 0
-	}
-
-	to {
-		transform: translateY(0px);
-		opacity: 1
-	}
-}
 
 .up-pop .title-panel {
 	padding-bottom: 0.5rem;

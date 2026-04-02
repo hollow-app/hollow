@@ -52,7 +52,7 @@ export const Canvas: Component<CanvasProps> = (props) => {
 										Instance.
 									</Empty.Description>
 									<div class="flex gap-2">
-										<Button
+										<Button.Root
 											variant="primary"
 											onclick={() =>
 												form_newInstance(
@@ -63,8 +63,8 @@ export const Canvas: Component<CanvasProps> = (props) => {
 											size="sm"
 										>
 											Create
-										</Button>
-										<Button
+										</Button.Root>
+										<Button.Root
 											variant="secondary"
 											onclick={() =>
 												store.dispatch({
@@ -81,7 +81,7 @@ export const Canvas: Component<CanvasProps> = (props) => {
 											}
 										>
 											Browse
-										</Button>
+										</Button.Root>
 									</div>
 								</Empty.Root>
 							</div>

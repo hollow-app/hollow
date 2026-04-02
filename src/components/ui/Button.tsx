@@ -9,25 +9,23 @@ interface Props extends Omit<
 	"onclick"
 > {
 	onclick?: (e: MouseEvent) => void | Promise<void>;
-	variant?: "primary" | "secondary" | "empty" | "destructive";
-	leftIcon?: MyIconsType | Component;
-	rightIcon?: MyIconsType | Component;
-	icon?: boolean;
+	variant?: "primary" | "secondary" | "empty" | "destructive" | "ghost";
 	size?: "xs" | "sm" | "md" | "lg";
+	icon?: boolean;
+	matchPadding?: boolean;
 	selected?: boolean;
 }
 
-export function Button(props: Props) {
+function Root(props: Props) {
 	const [local, rest] = splitProps(props, [
 		"class",
 		"children",
 		"onclick",
-		"leftIcon",
-		"rightIcon",
 		"icon",
 		"variant",
 		"size",
 		"selected",
+		"matchPadding",
 	]);
 	const [loading, setLoading] = createSignal(false);
 
@@ -51,7 +49,7 @@ export function Button(props: Props) {
 		<button
 			class={[
 				"button relative flex items-center justify-center gap-3 overflow-hidden",
-				local.icon ? "icon" : "",
+				local.icon || local.matchPadding ? "icon" : "",
 				local.class,
 				local.variant ?? "secondary",
 			].join(" ")}
@@ -99,9 +97,7 @@ export function Button(props: Props) {
 				transition={{ duration: 0.2 }}
 				class="flex shrink-0 items-center gap-2"
 			>
-				<Icon icon={local.leftIcon} />
 				{local.children}
-				<Icon icon={local.rightIcon} />
 			</Motion.div>
 		</button>
 	);
@@ -114,13 +110,13 @@ const Icon = (props: { icon: MyIconsType | Component }) => {
 				fallback={
 					<Dynamic
 						component={props.icon}
-						class={"text-secondary-30 size-4.5"}
+						class={"text-secondary-30 size-4.5 opacity-100"}
 					/>
 				}
 			>
 				<MyIcon
 					name={props.icon as MyIconsType}
-					class="size-4.5"
+					class="size-4.5 opacity-100"
 					style={{
 						color: "var(--icon-color, var(--color-secondary-30))",
 					}}
@@ -128,4 +124,8 @@ const Icon = (props: { icon: MyIconsType | Component }) => {
 			</Show>
 		</Show>
 	);
+};
+export const Button = {
+	Root,
+	Icon,
 };

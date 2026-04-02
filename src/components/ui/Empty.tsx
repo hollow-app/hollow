@@ -32,14 +32,14 @@ function Icon(props: { icon: MyIconsType | Component }) {
 				<Dynamic
 					component={() =>
 						(props.icon as Component)({
-							class: "bg-secondary-10 size-10 rounded-xl p-2",
+							class: "bg-secondary-10 size-9 rounded-xl p-2",
 						})
 					}
 				/>
 			}
 		>
 			<MyIcon
-				class="bg-secondary-10 size-10 rounded-xl p-2"
+				class="bg-secondary-10 size-9 rounded-xl p-2"
 				name={(props.icon as MyIconsType) ?? "files/upload-outline"}
 			/>
 		</Show>

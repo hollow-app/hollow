@@ -87,9 +87,9 @@ export default function ResetPassword(props: Props) {
 				/>
 			</div>
 			<Turnstile />
-			<Button variant="secondary" class="w-full" onclick={request}>
+			<Button.Root variant="secondary" class="w-full" onclick={request}>
 				Reset
-			</Button>
+			</Button.Root>
 			<span class="text-secondary-40 text-sm">
 				Go back to{" "}
 				<button

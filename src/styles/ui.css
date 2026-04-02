@@ -1,71 +1,3 @@
-/* UI */
-.button-control {
-	--c: var(--color-secondary-95);
-	--bg: var(--color-secondary-20);
-	--border-radius: var(--radius-lg, 0.5rem);
-	--h: calc(var(--spacing, 4px) * 9);
-	--w: calc(var(--spacing, 4px) * 9);
-	--px: 0;
-	--py: 0;
-	--opacity: 0.75;
-	height: var(--size, var(--h, 36px));
-	width: var(--size, var(--w, 36px));
-	border-radius: var(--border-radius, 0.5rem);
-	padding-inline: calc(var(--spacing, 2px) * var(--px, 0));
-	padding-block: calc(var(--spacing, 2px) * var(--py, 0));
-	color: var(--c, inherit);
-	opacity: var(--opacity, 1);
-	transition: all 0.2s ease-in-out;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	&:hover {
-		background-color: color-mix(in oklab,
-				var(--bg) 50%,
-				transparent);
-		opacity: 1;
-	}
-
-	&:active {
-		transform: scale(0.95);
-	}
-
-	&:disabled {
-		opacity: 0.4;
-	}
-
-	& svg {
-		margin: auto;
-	}
-
-}
-
-
-.button-control.primary {
-	--c: var(--color-primary);
-	--bg: rgba(var(--primary-rgb, 59, 130, 246), 0.1);
-}
-
-.button-control.red {
-	--c: var(--color-red-500, #ef4444);
-	--bg: var(--color-red-900, #7f1d1d);
-
-	&:hover {
-		color: var(--color-red-500, #ef4444);
-	}
-}
-
-
-.button-control.selected {
-	background-color: color-mix(in oklab,
-			var(--color-primary) 20%,
-			transparent);
-	color: var(--color-primary);
-	border-color: var(--bg, transparent);
-	opacity: 1;
-}
-
 .button {
 	--padding-x: calc(var(--spacing, 4px) * 4);
 	--padding-y: calc(var(--spacing, 4px) * 1.5);
@@ -98,6 +30,64 @@
 		--w: 100%;
 	}
 }
+
+/* UI */
+.button.ghost {
+	--color: var(--color-secondary-95);
+	--bg: var(--color-secondary-20);
+	--border-radius: var(--radius-lg, 0.5rem);
+	--border-w: 0;
+	opacity: 0.75;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&:hover {
+		--background: color-mix(in oklab,
+				var(--bg) 50%,
+				transparent);
+		opacity: 1;
+	}
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	&:disabled {
+		opacity: 0.4;
+	}
+
+	& svg {
+		margin: auto;
+	}
+
+}
+
+
+.button.ghost.primary {
+	--color: var(--color-primary);
+	--background: rgba(var(--primary-rgb, 59, 130, 246), 0.1);
+}
+
+.button.ghost.red {
+	--color: var(--color-red-500, #ef4444);
+	--background: var(--color-red-900, #7f1d1d);
+
+	&:hover {
+		color: var(--color-red-500, #ef4444);
+	}
+}
+
+
+.button.ghost.selected {
+	background-color: color-mix(in oklab,
+			var(--color-primary) 20%,
+			transparent);
+	color: var(--color-primary);
+	border-color: var(--bg, transparent);
+	opacity: 1;
+}
+
 
 .button:active {
 	transform: translateY(1px);

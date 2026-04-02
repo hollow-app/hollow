@@ -21,6 +21,7 @@ import {
 	NumberInput,
 	SettingsGroup,
 	SettingsItem,
+	Button,
 } from "@ui";
 import useGrid from "@app/hooks/useGrid";
 import { readableColor } from "polished";
@@ -307,9 +308,9 @@ function TagsEditor() {
 						Custom tags that will be used by tools.{" "}
 					</p>
 				</div>
-				<button class="button-control" onclick={() => onNewTag()}>
+				<Button.Root variant="ghost" icon onclick={() => onNewTag()}>
 					<CircleFadingPlusIcon class="size-5" />
-				</button>
+				</Button.Root>
 			</div>
 			<div class="flex flex-wrap justify-center gap-3 pt-5 pb-60 text-lg">
 				<For each={tags()}>

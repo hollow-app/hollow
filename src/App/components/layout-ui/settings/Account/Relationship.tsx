@@ -47,9 +47,9 @@ export default function Relationship() {
 								// )
 							}}
 						/>
-						<Button variant="primary" size="xs">
+						<Button.Root variant="primary" size="xs">
 							Add Friend
-						</Button>
+						</Button.Root>
 					</div>
 
 					<div class="text-xs text-neutral-500">All friends</div>
@@ -115,9 +115,12 @@ export default function Relationship() {
 										{user.username}
 									</span>
 									<div class="text-secondary-40 flex justify-end gap-2">
-										<Button variant="secondary" size="xs">
+										<Button.Root
+											variant="secondary"
+											size="xs"
+										>
 											Unblock
-										</Button>
+										</Button.Root>
 									</div>
 								</div>
 							)}
@@ -142,12 +145,18 @@ export default function Relationship() {
 										{timeDifferenceMin(user.createdAt)}
 									</span>
 									<div class="text-secondary-40 flex justify-end gap-2">
-										<Button variant="secondary" size="xs">
+										<Button.Root
+											variant="secondary"
+											size="xs"
+										>
 											Reject
-										</Button>
-										<Button variant="primary" size="xs">
+										</Button.Root>
+										<Button.Root
+											variant="primary"
+											size="xs"
+										>
 											Accept
-										</Button>
+										</Button.Root>
 									</div>
 								</div>
 							)}

@@ -20,7 +20,7 @@ import { useStore } from "@store";
 import { getCurrentRealm } from "@shared/managers/Realm";
 import { Skeleton } from "./skeleton";
 import { Tab, TabList, TabPanel, Tabs } from "@component/ui/Tabs";
-import { Avatar, Empty, RarityBadge } from "@ui";
+import { Avatar, Button, Empty, RarityBadge } from "@ui";
 import Segmented from "@component/ui/Segmented";
 
 const CharacterSidebar: Component<CharacterProps> = (props) => {
@@ -63,8 +63,9 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 					<div class="-mt-12 flex justify-start">
 						<Avatar user={state.account().character} />
 					</div>
-					<button
-						class="button-control absolute top-2 right-0"
+					<Button.Root
+						class="absolute top-2 right-0"
+						variant="ghost"
 						onclick={() =>
 							store.dispatch({
 								domain: "context",
@@ -72,9 +73,10 @@ const CharacterSidebar: Component<CharacterProps> = (props) => {
 								value: "account:account",
 							})
 						}
+						icon
 					>
 						<UserCogIcon class="size-4" />
-					</button>
+					</Button.Root>
 					{/* Character Info */}
 					<div class="pointer-events-auto mt-4 space-y-4 text-left">
 						<div class="space-y-1">

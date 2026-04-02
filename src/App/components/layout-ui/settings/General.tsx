@@ -23,6 +23,7 @@ export default function General() {
 	const checkUpdates = async (
 		e: Event & { currentTarget: HTMLButtonElement },
 	) => {
+		// TODO use <Button's loading
 		e.currentTarget.classList.add("debounce");
 		await checkUpdate(true, () => {
 			e.currentTarget.classList.remove("debounce");
@@ -55,12 +56,18 @@ export default function General() {
 				title="Auto Update"
 				description="Automatically downloads and installs new versions in the background so you always stay up to date."
 			>
-				<button class="button-control tool-tip" onclick={checkUpdates}>
+				<Button.Root
+					variant="ghost"
+					class="tool-tip"
+					onClick={(e) => {
+						checkUpdates(e);
+					}}
+				>
 					<span class="tool-tip-content" data-side="left">
 						Check Update
 					</span>
 					<RefreshCwIcon />
-				</button>
+				</Button.Root>
 				<div class="toggle-switch">
 					<input
 						class="toggle-input"
@@ -69,12 +76,15 @@ export default function General() {
 						disabled
 						checked={JSON.parse(localStorage.autoUpdate ?? "true")}
 						onchange={(e) =>
-						(localStorage.autoUpdate = JSON.stringify(
-							e.currentTarget.checked,
-						))
+							(localStorage.autoUpdate = JSON.stringify(
+								e.currentTarget.checked,
+							))
 						}
 					/>
-					<label class="toggle-label" for="auto-update-toggle"></label>
+					<label
+						class="toggle-label"
+						for="auto-update-toggle"
+					></label>
 				</div>
 			</SettingsItem>
 			<hr class="bg-secondary-10 h-px w-full border-0" />

@@ -11,7 +11,7 @@ import {
 } from "lucide-solid";
 import FilterButton from "@app/components/ui/FilterButton";
 import MyIcon, { MyIconFun } from "@app/components/ui/MyIcon";
-import { Input, Tag } from "@ui";
+import { Button, Input, Tag } from "@ui";
 import { useVault, VaultProps } from "./hooks";
 import { Accessor } from "solid-js";
 import { toggleVault } from "@app/context/actions";
@@ -57,14 +57,16 @@ export const Vault: Component<VaultProps> = (props) => {
 						/>
 						<div class="bg-secondary-20 mx-1 h-4 w-[1px]"></div>
 						<AddUrl onAdd={actions.importImageFromLink} />
-						<button
+						<Button.Root
 							id="vault-import-local-btn"
-							class="button-control shrink-0"
+							class="shrink-0"
+							variant="ghost"
 							onClick={actions.importImages}
 							title="Import Local"
+							icon
 						>
 							<ImageUpIcon class="size-4" />
-						</button>
+						</Button.Root>
 						<FilterButton options={state.filterOptions} />
 					</div>
 				</div>
@@ -168,24 +170,30 @@ export const Vault: Component<VaultProps> = (props) => {
 									</button>
 								</Show>
 								<div class="flex gap-2">
-									<button
-										class="button-control flex flex-1 justify-center gap-2"
+									<Button.Root
+										variant="ghost"
+										class="flex flex-1 justify-center gap-2"
 										onclick={actions.copyItem}
+										icon
 									>
 										<CopyIcon class="size-4" />
-									</button>
-									<button
-										class="button-control flex-1 justify-center gap-2"
+									</Button.Root>
+									<Button.Root
+										variant="ghost"
+										class="button flex-1 justify-center gap-2"
 										onclick={actions.editItem}
+										icon
 									>
 										<PencilIcon class="size-4" />
-									</button>
-									<button
-										class="button-control red"
+									</Button.Root>
+									<Button.Root
+										class="red"
+										variant="ghost"
 										onclick={actions.removeItem}
+										icon
 									>
 										<MyIcon name="trash" class="size-4" />
-									</button>
+									</Button.Root>
 								</div>
 							</div>
 						</div>
@@ -204,10 +212,11 @@ export const Vault: Component<VaultProps> = (props) => {
 							of {state.filteredImages().length}
 						</div>
 						<div class="flex items-center gap-2">
-							<button
-								class="button-control disabled:opacity-50"
+							<Button.Root
+								class="disabled:opacity-50"
+								variant="ghost"
 								disabled={state.start() === 0}
-								onclick={() =>
+								onClick={() =>
 									state.setStart(
 										Math.max(
 											0,
@@ -215,9 +224,10 @@ export const Vault: Component<VaultProps> = (props) => {
 										),
 									)
 								}
+								icon
 							>
 								<ChevronLeftIcon class="size-4" />
-							</button>
+							</Button.Root>
 							<span class="text-secondary-60 text-xs font-medium">
 								Page{" "}
 								{Math.floor(state.start() / ITEMS_PER_PAGE) + 1}{" "}
@@ -227,20 +237,22 @@ export const Vault: Component<VaultProps> = (props) => {
 										ITEMS_PER_PAGE,
 								)}
 							</span>
-							<button
-								class="button-control disabled:opacity-50"
+							<Button.Root
+								class="disabled:opacity-50"
+								icon
 								disabled={
 									state.start() + ITEMS_PER_PAGE >=
 									state.filteredImages().length
 								}
-								onclick={() =>
+								onClick={() =>
 									state.setStart(
 										state.start() + ITEMS_PER_PAGE,
 									)
 								}
+								variant="ghost"
 							>
 								<ChevronRightIcon class="size-4" />
-							</button>
+							</Button.Root>
 						</div>
 					</div>
 				</Show>
@@ -262,14 +274,15 @@ function AddUrl({ onAdd }: AddUrlProps) {
 	};
 	return (
 		<div class="relative">
-			<button
+			<Button.Root
 				id="vault-import-url-btn"
-				class="button-control"
-				onclick={() => setOpen(!isOpen())}
+				variant="ghost"
+				onClick={() => setOpen(!isOpen())}
 				title="Import URL"
+				icon
 			>
 				<LinkIcon class="size-4" />
-			</button>
+			</Button.Root>
 			<Show when={isOpen()}>
 				<div class="border-secondary-10 bg-secondary-05 animate-in fade-in zoom-in-95 absolute top-full right-0 z-50 mt-2 flex w-72 gap-2 rounded-lg border p-2 shadow-lg duration-100">
 					<input
@@ -279,12 +292,14 @@ function AddUrl({ onAdd }: AddUrlProps) {
 						placeholder="https://..."
 						autofocus={true}
 					/>
-					<button
-						class="button-control flex h-8 w-8 shrink-0 items-center justify-center rounded-md p-0"
+					<Button.Root
+						class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md p-0"
 						onclick={importImage}
+						icon
+						variant="ghost"
 					>
 						+
-					</button>
+					</Button.Root>
 				</div>
 			</Show>
 		</div>

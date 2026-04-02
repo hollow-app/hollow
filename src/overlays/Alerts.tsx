@@ -18,6 +18,7 @@ import { Motion, Presence } from "solid-motionone";
 import { XIcon } from "lucide-solid";
 import { estimateReadingTimeMs } from "@app/utils/manipulation/strings";
 import { Accessor } from "solid-js";
+import { Button } from "@ui";
 
 const alertTypes: Record<AlertType["type"], (props: any) => JSX.Element> = {
 	success: CheckSquareOutlineIcon,
@@ -148,15 +149,16 @@ const NormalAlert = (props: {
 								!hovered() || props.alert().type === "loading"
 							}
 							fallback={
-								<button
-									class="button-control"
+								<Button.Root
+									variant="ghost"
 									style={{
 										"--size": "calc(var(--spacing) * 5)",
 									}}
 									onclick={props.dismiss}
+									icon
 								>
 									<XIcon class="size-4" />
-								</button>
+								</Button.Root>
 							}
 						>
 							<Show when={props.alert().type}>

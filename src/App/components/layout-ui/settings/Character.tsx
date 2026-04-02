@@ -320,7 +320,7 @@ export default function Character() {
 			{/* 						</div> */}
 			{/* 						<div class="flex flex-shrink-0 flex-col gap-1"> */}
 			{/* 							<button */}
-			{/* 								class="button-control" */}
+			{/* 								class="button.ghost" */}
 			{/* 								onclick={() => */}
 			{/* 									updateMeta(item.id) */}
 			{/* 								} */}
@@ -329,7 +329,7 @@ export default function Character() {
 			{/* 								<SquarePenIcon class="size-3.5" /> */}
 			{/* 							</button> */}
 			{/* 							<button */}
-			{/* 								class="button-control red opacity-0 transition-opacity duration-300 group-hover:opacity-100" */}
+			{/* 								class="button.ghost red opacity-0 transition-opacity duration-300 group-hover:opacity-100" */}
 			{/* 								onclick={() => */}
 			{/* 									removeMeta(item.id) */}
 			{/* 								} */}

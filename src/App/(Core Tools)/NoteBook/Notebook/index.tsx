@@ -16,7 +16,7 @@ const MarkdownEditor = lazy(
 	() => import("@app/components/ui/MarkdownEditor.tsx"),
 );
 import MarkdownPreview from "@app/components/ui/MarkdownPreview.tsx";
-import { Combobox, Tag, Keywords } from "@ui";
+import { Combobox, Tag, Keywords, Button } from "@ui";
 import { NotebookTabsIcon } from "lucide-solid";
 import NoteList from "./NoteList.tsx";
 import MyIcon, { MyIconFun } from "@app/components/ui/MyIcon.tsx";
@@ -87,8 +87,8 @@ const Notebook: Component<NotebookProps> = (props) => {
 					style={{ "--size": "calc(var(--spacing) * 7)" }}
 				>
 					<Show when={state.note() || state.editMode()}>
-						<button
-							class="button-control"
+						<Button.Root
+							variant="ghost"
 							onclick={() => {
 								state.editMode()
 									? actions.onSave()
@@ -98,6 +98,7 @@ const Notebook: Component<NotebookProps> = (props) => {
 								"--p": 1,
 								"--border-radius": "var(--radius-sm)",
 							}}
+							icon
 						>
 							<Show
 								when={state.editMode()}
@@ -113,10 +114,10 @@ const Notebook: Component<NotebookProps> = (props) => {
 									class="size-4"
 								/>
 							</Show>
-						</button>
+						</Button.Root>
 					</Show>
-					<button
-						class="button-control"
+					<Button.Root
+						variant="ghost"
 						onclick={() => {
 							state.note()?.newNote
 								? (() => {
@@ -137,6 +138,7 @@ const Notebook: Component<NotebookProps> = (props) => {
 							"--p": 1,
 							"--border-radius": "var(--radius-sm)",
 						}}
+						icon
 					>
 						<Show
 							when={!state.note()?.newNote}
@@ -146,15 +148,16 @@ const Notebook: Component<NotebookProps> = (props) => {
 						>
 							<MyIcon name="files/file-plus" class="size-4" />
 						</Show>
-					</button>
+					</Button.Root>
 					<Show when={!state.isExpand()}>
-						<button
-							class="button-control"
+						<Button.Root
+							variant="ghost"
 							onclick={actions.onFolder}
 							style={{
 								"--p": 1,
 								"--border-radius": "var(--radius-sm)",
 							}}
+							icon
 						>
 							<Show
 								when={state.showList()}
@@ -167,7 +170,7 @@ const Notebook: Component<NotebookProps> = (props) => {
 							>
 								<MyIcon name="folder-open" class="size-4" />
 							</Show>
-						</button>
+						</Button.Root>
 					</Show>
 				</div>
 			</div>

@@ -22,6 +22,7 @@ import {
 import { toggleVault } from "@app/context/actions";
 import { SaladIcon, UserCogIcon } from "lucide-solid";
 import ToolIcon from "../ui/ToolIcon";
+import { Button } from "@ui";
 
 interface SideBarButton {
 	id: string;
@@ -183,18 +184,17 @@ const ControlButton = (btn: SideBarButton) => {
 						{btn.tooltip}
 					</span>
 				</Show>
-				<button
+				<Button.Root
 					id={btn.id}
-					class={"button-control " + (btn.class ?? "")}
+					class={btn.class}
+					variant="ghost"
 					style={{
 						"--size": "calc(var(--spacing) * 8)",
 						...(btn.style ?? {}),
 					}}
-					classList={{
-						selected:
-							btn.selectedCondition && btn.selectedCondition(),
-					}}
+					selected={btn.selectedCondition && btn.selectedCondition()}
 					onclick={btn.onClick}
+					icon
 				>
 					<Show
 						when={typeof btn.Icon !== "string"}
@@ -210,7 +210,7 @@ const ControlButton = (btn: SideBarButton) => {
 							class="m-auto size-4.5"
 						/>
 					</Show>
-				</button>
+				</Button.Root>
 			</div>
 		</div>
 	);

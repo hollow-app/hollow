@@ -84,8 +84,7 @@ export default function SignUp(props: Props) {
 				</div>
 			</div>
 			<Separator />
-			<Button
-				leftIcon="discord"
+			<Button.Root
 				variant="empty"
 				class="w-full"
 				style={{
@@ -95,8 +94,9 @@ export default function SignUp(props: Props) {
 					"--icon-color": "white",
 				}}
 			>
+				<Button.Icon icon={"discord"} />
 				Sign Up With Discord
-			</Button>
+			</Button.Root>
 			<Separator variant={15} label="or" />
 			<div class="flex w-full flex-col gap-4 pb-3">
 				<Input placeholder="Username" icon="username" />
@@ -108,9 +108,9 @@ export default function SignUp(props: Props) {
 				/>
 			</div>
 			<Turnstile />
-			<Button variant="secondary" class="w-full" onclick={request}>
+			<Button.Root variant="secondary" class="w-full" onclick={request}>
 				Sign Up
-			</Button>
+			</Button.Root>
 			<span class="text-secondary-40 text-sm">
 				Already have an account?{" "}
 				<button

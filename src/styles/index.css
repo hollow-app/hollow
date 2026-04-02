@@ -80,7 +80,22 @@
 		}
 	}
 
+	@keyframes slide-down {
+		from {
+			transform: translateY(-10px);
+			opacity: 0
+		}
+
+		to {
+			transform: translateY(0px);
+			opacity: 1
+		}
+	}
+
 	--animate-pulse-dot: pulse-dot 1s ease-in-out infinite;
+	--animate-slide-down: slide-down 0.3s ease-in-out;
+
+
 
 }
 

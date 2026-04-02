@@ -79,9 +79,9 @@ export default function RecoverAccount(props: Props) {
 				/>
 			</div>
 			<Turnstile />
-			<Button variant="secondary" class="w-full" onclick={request}>
+			<Button.Root variant="secondary" class="w-full" onclick={request}>
 				Verify Passphrase
-			</Button>
+			</Button.Root>
 			<span class="text-secondary-40 text-sm">
 				Go back to{" "}
 				<button

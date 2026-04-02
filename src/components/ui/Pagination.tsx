@@ -1,6 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-solid";
 import { createSignal } from "solid-js";
 import { Show } from "solid-js";
+import { Button } from "./Button";
 
 interface Props {
 	length: number;
@@ -18,26 +19,32 @@ export function Pagination(props: Props) {
 					{props.length}
 				</div>
 				<div class="flex items-center gap-2">
-					<button
-						class="button-control disabled:opacity-50"
+					<Button.Root
+						class="disabled:opacity-50"
+						variant="ghost"
 						disabled={start() === 0}
-						onclick={() =>
-							setStart(Math.max(0, start() - props.perPage))
-						}
+						onclick={() => {
+							setStart(Math.max(0, start() - props.perPage));
+						}}
+						icon
 					>
 						<ChevronLeftIcon class="size-4" />
-					</button>
+					</Button.Root>
 					<span class="text-secondary-60 text-xs font-medium">
 						Page {Math.floor(start() / props.perPage) + 1} of{" "}
 						{Math.ceil(props.length / props.perPage)}
 					</span>
-					<button
-						class="button-control disabled:opacity-50"
+					<Button.Root
+						class="disabled:opacity-50"
+						variant="ghost"
 						disabled={start() + props.perPage >= props.length}
-						onclick={() => setStart(start() + props.perPage)}
+						onclick={() => {
+							setStart(start() + props.perPage);
+						}}
+						icon
 					>
 						<ChevronRightIcon class="size-4" />
-					</button>
+					</Button.Root>
 				</div>
 			</div>
 		</Show>

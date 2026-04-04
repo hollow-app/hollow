@@ -4,7 +4,7 @@ import { hollow } from "../hollow";
 
 import { ConfirmType, FormType, InsightType } from "@app/type/hollow";
 import { Options } from "vanilla-calendar-pro";
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 import UI from "../UI";
 
 const ContextMenu = lazy(() =>

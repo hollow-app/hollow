@@ -1,15 +1,5 @@
 import { RootState, Action } from "./types";
-import { accountReducer } from "@app/managers/Account/reducer";
-import { contextReducer } from "@app/context/reducer";
-import { settingsReducer } from "@app/managers/Settings/reducer";
-import { codeThemeReducer } from "@app/managers/CodeTheme/reducer";
-import { moduleReducer } from "@app/managers/Module/reducer";
-import { hotkeysReducer } from "@app/managers/Hotkeys";
-import { vaultReducer } from "@app/managers/Vault";
-import { notificationsReducer } from "@app/managers/Notifications";
-import { layoutReducer } from "@app/managers/layout";
-import { realmReducer } from "@shared/managers/Realm";
-import { extensionReducer } from "@app/managers/Extension/reducer";
+import { realmReducer } from "../managers/Realm";
 
 // Helper to get value from path
 function getValue(obj: any, path: string): any {
@@ -110,17 +100,7 @@ export function rootReducer(
 
 	// --- NORMAL STATE COMPUTATION ---
 	const nextSlices = {
-		account: accountReducer(base.account, action as any),
-		extension: extensionReducer(base.extension, action as any),
-		context: contextReducer(base.context, action as any),
-		settings: settingsReducer(base.settings, action as any),
-		codeTheme: codeThemeReducer(base.codeTheme, action as any),
-		module: moduleReducer(base.module, action as any),
-		hotkeys: hotkeysReducer(base.hotkeys, action as any),
-		vault: vaultReducer(base.vault, action as any),
-		notifications: notificationsReducer(base.notifications, action as any),
 		realm: realmReducer(base.realm, action as any),
-		layout: layoutReducer(base.layout, action as any),
 	};
 
 	return {

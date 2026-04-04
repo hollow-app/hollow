@@ -2,15 +2,16 @@ import { formatDate, timeDifference } from "@app/utils/manipulation/strings";
 import { Realm } from "@app/type/Realm";
 import HollowIcon from "@assets/logo.svg";
 import { CalendarIcon, PlusIcon, RocketIcon } from "lucide-solid";
-import { batch, createSignal, For, onMount, Show } from "solid-js";
+import { batch, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
 import WindowControl from "@app/components/ui/WindowControl";
 import { open } from "@tauri-apps/plugin-dialog";
 import MyIcon from "@app/components/ui/MyIcon";
 import { homeDir } from "@tauri-apps/api/path";
 import Segmented from "@component/ui/Segmented";
-import { useStore } from "@shared/store";
+import { useStore } from "@selector/store";
 import { Button, ColorButton, Combobox } from "@ui";
+import { reload } from "@rust";
 
 const themes = {
 	dark: [
@@ -547,7 +548,7 @@ const CreateRealm = (props: { onBack: () => void; onSuccess: () => void }) => {
 export default function Selector() {
 	const { state, dispatch } = useStore();
 	const [level, setLevel] = createSignal(
-		state.realm.realms.length > 0 ? 1 : 0,
+		state.realm.realms.length > 0 && import.meta.env.PROD ? 1 : 0,
 	);
 	const handleSelect = async (id: string) => {
 		// Update realm in manager
@@ -557,14 +558,20 @@ export default function Selector() {
 			realmId: id,
 		}).finally(() => {});
 	};
+	onMount(() => {
+		const onkeydown = (e: KeyboardEvent) => {
+			if (e.ctrlKey && e.key === "r") reload();
+		};
+		window.addEventListener("keydown", onkeydown);
+		onCleanup(() => {
+			window.removeEventListener("keydown", onkeydown);
+		});
+	});
 
 	return (
 		<div class="h-full w-full overflow-hidden">
-			<div class="titlebar bg-secondary-05 flex justify-end rounded">
-				<WindowControl expanded isSelector />
-			</div>
-			<div class="box-border flex h-full w-full flex-col px-5 pb-5">
-				<div class="flex h-fit min-h-14 w-full items-center justify-between gap-10 overflow-hidden">
+			<div class="titlebar flex justify-between gap-2 rounded p-2">
+				<div class="flex h-fit w-full items-center justify-between gap-10 overflow-hidden">
 					<div class="flex-1">
 						<Show when={level() !== 0}>
 							<Segmented
@@ -579,6 +586,9 @@ export default function Selector() {
 						</Show>
 					</div>
 				</div>
+				<WindowControl expanded isSelector />
+			</div>
+			<div class="box-border flex h-full w-full flex-col px-5 pb-5">
 				<div class="flex w-full flex-1 items-center justify-center overflow-hidden">
 					<Presence exitBeforeEnter>
 						<Show when={level() === 0}>

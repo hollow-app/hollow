@@ -1,4 +1,4 @@
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 import { FormType } from "@app/type/hollow";
 import { hollow } from "../../../../../hollow";
 import {

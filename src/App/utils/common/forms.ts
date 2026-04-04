@@ -1,7 +1,7 @@
 import ToolIcon from "@app/components/ui/ToolIcon";
 import { HandType } from "@app/type/HandType";
 import { FormType } from "@app/type/hollow";
-import { DispatchType } from "@shared/store";
+import { DispatchType } from "@app/store";
 import { hollow } from "hollow";
 import { Accessor } from "solid-js";
 

@@ -16,8 +16,8 @@ import {
 } from "lucide-solid";
 import FetchedIcon from "@app/components/ui/FetchedIcon";
 import { useCharacter, CharacterProps } from "./hooks";
-import { useStore } from "@store";
-import { getCurrentRealm } from "@shared/managers/Realm";
+import { useStore } from "@app/store";
+import { getCurrentRealm } from "@app/managers/Settings/effects.ts";
 import { Skeleton } from "./skeleton";
 import { Tab, TabList, TabPanel, Tabs } from "@component/ui/Tabs";
 import { Avatar, Button, Empty, RarityBadge } from "@ui";

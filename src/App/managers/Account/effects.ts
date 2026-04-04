@@ -1,7 +1,7 @@
 import { Events, AccountState } from "./types";
 import { hollow } from "../../../hollow";
 import { Auth } from "../../../lib/auth";
-import { RootState } from "@shared/store/types";
+import { RootState } from "@app/store/types";
 
 export async function setupAccount(
 	dispatch: (action: any) => void,

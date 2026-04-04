@@ -6,6 +6,7 @@ mod auth;
 mod cards;
 mod deeplink;
 mod plugins;
+mod realm;
 mod stronghold;
 mod test_stronghold;
 mod utils;
@@ -54,7 +55,17 @@ pub fn run() {
             if let Err(e) = deeplink::setup_deeplink_handler(app) {
                 eprintln!("Deeplink setup failed: {e}");
             }
+            
+            // Check if current realm is set
+            let app_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                match realm::open_window(app_handle).await {
+                    Ok(_) => log::info!("Window opened based on realm check"),
+                    Err(e) => log::error!("Failed to check realm: {}", e),
+                }
+            });
             Ok(())
+
         })
         .plugin(tauri_plugin_tcp::init())
         .plugin(tauri_plugin_dialog::init())
@@ -90,6 +101,19 @@ pub fn run() {
             cards::card_exists,
             cards::card_mkdir,
             cards::card_rename,
+            //realm
+            realm::get_current_realm,
+            realm::has_realm_selected,
+            realm::open_realm_selector,
+            realm::open_main_window,
+            realm::add_realm,
+            realm::remove_realm,
+            realm::update_realm,
+            realm::select_realm,
+            realm::get_realms,
+            realm::get_realms_config,
+            realm::update_realms_config,
+            realm::toggle_select_realm_on_startup,
             // Test commands for Stronghold
             test_stronghold::test_store_data,
             test_stronghold::test_get_data,

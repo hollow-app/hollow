@@ -24,20 +24,17 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@shared/*": [
-        "shared/*"
-      ],
       "@app/*": [
         "App/*"
+      ],
+      "@selector/*": [
+        "Selector/*"
       ],
       "@coretools/*": [
         "App/(Core Tools)/*"
       ],
       "@styles/*": [
         "styles/*"
-      ],
-      "@store": [
-        "shared/store"
       ],
       "@rust": [
         "lib/rust"

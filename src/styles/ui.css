@@ -2,6 +2,7 @@
 	--padding-x: calc(var(--spacing, 4px) * 4);
 	--padding-y: calc(var(--spacing, 4px) * 1.5);
 	--border-w: 1px;
+	--border-color: transparent;
 	--color: var(--color-secondary-foreground);
 	--background: transparent;
 	--w: fit-content;
@@ -11,6 +12,7 @@
 	border-width: var(--border-w, 1px);
 	border-style: solid;
 	border-radius: var(--radius-lg, 0.5rem);
+	border-color: var(--border-color);
 	padding-inline: var(--padding-x, 1rem);
 	padding-block: var(--padding-y, 0.5rem);
 	font-size: var(--text-sm, 0.875rem);
@@ -80,11 +82,11 @@
 
 
 .button.ghost.selected {
-	background-color: color-mix(in oklab,
+	--background: color-mix(in oklab,
 			var(--color-primary) 20%,
 			transparent);
-	color: var(--color-primary);
-	border-color: var(--bg, transparent);
+	--color: var(--color-primary);
+	--border-color: var(--bg, transparent);
 	opacity: 1;
 }
 
@@ -96,7 +98,7 @@
 .button.selected {
 	--background: var(--color-primary-60);
 	--color: var(--color-primary-foreground);
-	border-color: var(--color-primary);
+	--border-color: var(--color-primary);
 }
 
 .button.icon {
@@ -105,33 +107,47 @@
 
 .button.primary:not(.selected) {
 	--color: var(--color-primary-foreground);
-	border-color: var(--color-primary);
+	--border-color: var(--color-primary);
 	--background: var(--color-primary-20);
 
 	&:not(:disabled):hover {
 		--background: var(--color-primary-10);
-		border-color: var(--color-primary);
+		--border-color: var(--color-primary);
 	}
 
 	&:not(:disabled):active {
 		--background: var(--color-primary-30);
-		border-color: var(--color-primary-10);
+		--border-color: var(--color-primary-10);
+	}
+}
+
+.light-primary .button.primary:not(.selected) {
+	--background: var(--color-primary);
+
+	&:not(:disabled):hover {
+		--background: var(--color-primary-10);
+		--border-color: var(--color-primary-10);
+	}
+
+	&:not(:disabled):active {
+		--background: var(--color-primary-30);
+		--border-color: var(--color-primary-30);
 	}
 }
 
 .button.secondary:not(.selected) {
 	--color: var(--color-secondary-foreground);
-	border-color: var(--color-secondary-15);
+	--border-color: var(--color-secondary-15);
 	--background: var(--color-secondary-05);
 
 	&:not(:disabled):hover {
 		--background: var(--color-secondary-10);
-		border-color: var(--color-secondary-15);
+		--border-color: var(--color-secondary-15);
 	}
 
 	&:not(:disabled):active {
 		--background: var(--color-secondary);
-		border-color: var(--color-secondary-10);
+		--border-color: var(--color-secondary-10);
 	}
 }
 

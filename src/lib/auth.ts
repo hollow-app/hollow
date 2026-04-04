@@ -2,7 +2,7 @@ import { ClientUser } from "center";
 import { DeepLink } from "./deeplink";
 import { hollow } from "hollow";
 import { AlertType } from "@app/type/hollow";
-import { _dispatch } from "@shared/store/effects";
+import { _dispatch } from "@app/store/effects";
 import { fetch } from "@tauri-apps/plugin-http";
 
 const WORKER_URL = import.meta.env.VITE_WORKER_URL;

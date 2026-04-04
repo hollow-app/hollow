@@ -1,21 +1,10 @@
-import {
-	createEffect,
-	createResource,
-	createSignal,
-	Show,
-	Suspense,
-} from "solid-js";
+import { createResource, Suspense } from "solid-js";
 import { HeartHandshakeIcon, RefreshCwIcon, UserIcon } from "lucide-solid";
 import { guide } from "@app/utils/help";
 import { executeHotkey } from "@app/managers/Hotkeys";
-import { get_version, sign_in, sign_out } from "@rust";
-import {
-	selectRealmOnStartup,
-	setSelectRealmOnStartup,
-} from "@shared/managers/Realm";
+import { get_version } from "@rust";
 import { checkUpdate } from "../../../../lib/app";
 import { Button, SettingsItem } from "@ui";
-import { useStore } from "@shared/store";
 import SettingsPanel from "./SettingsPanel";
 
 export default function General() {
@@ -32,6 +21,13 @@ export default function General() {
 	const startTour = () => {
 		executeHotkey("Toggle Settings");
 		guide();
+	};
+	const selectRealmOnStartup = () => {
+		// TODO realm
+		return true;
+	};
+	const setSelectRealmOnStartup = (v: boolean) => {
+		// TODO realm
 	};
 	return (
 		<SettingsPanel>

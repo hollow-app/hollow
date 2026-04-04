@@ -2,7 +2,7 @@ import { ShadeIt } from "@app/utils/manipulation/colors";
 import { Property } from "@app/type/Property";
 import { readableColor } from "polished";
 import setStyle from "./setStyle";
-import { getCurrentRealm } from "@shared/managers/Realm";
+import { getCurrentRealm } from "@app/managers/Settings/effects.ts";
 import { hollow } from "hollow";
 
 type useColorProps = {
@@ -56,6 +56,9 @@ export function useColor({ name, color, oneTime }: useColorProps) {
 		const isDark = readableColor(shades[1].value) === "#fff";
 		switchMode(isDark);
 		hollow.events.emit("theme-update", isDark ? "dark" : "light");
+	} else if (name === "primary") {
+		const isDark = readableColor(shades[1].value) === "#fff";
+		document.documentElement.classList.toggle("light-primary", !isDark);
 	}
 	setStyle(shades);
 }

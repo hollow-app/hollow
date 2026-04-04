@@ -8,7 +8,7 @@ import {
 	onCleanup,
 	createMemo,
 } from "solid-js";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { Button, SettingsGroup, SettingsItem } from "@ui";
 import SettingsPanel from "./SettingsPanel";
 const KEY_MAP: Record<string, string> = {

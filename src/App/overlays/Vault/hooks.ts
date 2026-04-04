@@ -6,7 +6,7 @@ import { VaultItem } from "@app/type/VaultItem";
 import { join } from "@tauri-apps/api/path";
 import { DropdownOption } from "@app/components/ui/FilterButton";
 import { openPath } from "@tauri-apps/plugin-opener";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { importFiles, importFileUrl } from "@app/managers/Vault";
 import { toggleVault } from "@app/context/actions";
 
@@ -218,7 +218,7 @@ export const useVault = (props: VaultProps): VaultHook => {
 	};
 
 	const openVaultDirectory = async () => {
-		await openPath(await join(...[state.realm.current.location, "vault"]));
+		await openPath(await join(...[state.settings.realm.location, "vault"]));
 	};
 
 	return {

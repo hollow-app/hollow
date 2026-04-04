@@ -1,4 +1,4 @@
-import { RootState } from "@shared/store/types";
+import { RootState } from "@app/store/types";
 
 export const selectCharacter = (state: RootState) => state.account;
 export const selectLevel = (state: RootState) => state.account.character.level;

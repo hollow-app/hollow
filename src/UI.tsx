@@ -1,5 +1,5 @@
 import FilterButton from "@app/components/ui/FilterButton";
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 import {
 	Slider,
 	Button,
@@ -29,18 +29,18 @@ import { Tab, TabList, TabPanel, Tabs } from "@component/ui/Tabs";
 
 export default function UI() {
 	const { state, dispatch } = useStore();
-	const primary = createMemo(() => state.realm.current.colors.primary);
-	const secondary = createMemo(() => state.realm.current.colors.secondary);
+	const primary = createMemo(() => state.settings.realm.colors.primary);
+	const secondary = createMemo(() => state.settings.realm.colors.secondary);
 	const setPrimary = (c: string) => {
 		dispatch({
-			domain: "realm",
+			domain: "settings",
 			type: "update-colors",
 			colors: { primary: c },
 		});
 	};
 	const setSecondary = (c: string) => {
 		dispatch({
-			domain: "realm",
+			domain: "settings",
 			type: "update-colors",
 			colors: { secondary: c },
 		});

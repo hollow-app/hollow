@@ -64,8 +64,8 @@ for (const method of Object.keys(logMap) as ConsoleMethod[]) {
 	};
 }
 
-export async function preRealmSelection() {
-	if (!localStorage.first_launch) {
+export async function preRealmSelection(selector?: boolean) {
+	if (!localStorage.first_launch && selector) {
 		localStorage.first_launch = "true";
 		first_launch();
 	}

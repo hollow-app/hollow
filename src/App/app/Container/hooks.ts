@@ -2,7 +2,7 @@ import { onMount, Accessor, Setter } from "solid-js";
 import { hollow } from "../../../hollow";
 import { registerHotkeyEvent } from "@app/managers/Hotkeys";
 import { selectPanel } from "@app/managers/layout";
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 
 export interface ContainerState {}
 

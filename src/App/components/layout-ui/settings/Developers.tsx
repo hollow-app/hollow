@@ -1,7 +1,7 @@
 import { createSignal, onMount } from "solid-js";
 import { hollow } from "../../../../hollow";
 import { join } from "@tauri-apps/api/path";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { reload } from "@rust";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { SettingsItem } from "@ui";
@@ -82,7 +82,7 @@ export default function Developers() {
 								await openPath(
 									await join(
 										...[
-											state.realm.current.location,
+											state.settings.realm.location,
 											"plugins",
 										],
 									),

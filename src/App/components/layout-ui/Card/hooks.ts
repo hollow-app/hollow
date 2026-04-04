@@ -14,7 +14,7 @@ import { ExpandIcon } from "lucide-solid";
 import { MyIconFun } from "@app/components/ui/MyIcon";
 import { ContextMenuItem } from "@app/type/hollow";
 import { autoUpdate, computePosition, size } from "@floating-ui/dom";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { getToolEvents, loadCard } from "@app/managers/Module/effects";
 import { selectPanel } from "@app/managers/layout";
 

@@ -25,7 +25,7 @@ import {
 	flip,
 	shift,
 } from "@floating-ui/dom";
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 import { reload } from "@rust";
 
 const MenuButton: Component<{
@@ -159,7 +159,7 @@ export const ContextMenu: Component<ContextMenuProps> = (props) => {
 									</For>
 								</Show>
 								<SectionHeader
-									title={`${store.state.realm.current.name} Realm`}
+									title={`${store.state.settings.realm.name} Realm`}
 									showDivider={true}
 								/>
 								<div class="">

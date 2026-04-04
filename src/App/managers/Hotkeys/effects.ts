@@ -3,8 +3,7 @@ import { HotKeyName } from "@app/type/HotKeyType";
 import { hollow } from "../../../hollow";
 import { defaultState } from "./reducer";
 import { reload } from "@rust";
-import { toggleRealm } from "@shared/managers/Realm";
-import { _dispatch } from "@shared/store/effects";
+import { _dispatch } from "@app/store/effects";
 import { toggleVault } from "@app/context/actions";
 
 let globalListener: ((e: KeyboardEvent) => void) | null = null;
@@ -114,7 +113,9 @@ export function executeHotkey(name: HotKeyName) {
 			toggleVault();
 			break;
 		case "Go to Realm Selector":
-			toggleRealm();
+			// TODO realm
+			//toggleRealm();
+
 			break;
 		default:
 			try {

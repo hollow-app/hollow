@@ -12,6 +12,14 @@ export function settingsReducer(
 	switch (action.type) {
 		case "set-configs":
 			return { ...state, ...action.configs };
+		case "update-colors":
+			return {
+				...state,
+				realm: {
+					...state.realm,
+					colors: { ...state.realm.colors, ...action.colors },
+				},
+			};
 		default:
 			return state;
 	}

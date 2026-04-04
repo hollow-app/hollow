@@ -30,8 +30,7 @@ import HollowIcon from "@assets/logo.svg";
 import { Motion, Presence } from "solid-motionone";
 import General from "./settings/General";
 import { lazy } from "solid-js";
-import { toggleRealm } from "@shared/managers/Realm";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { Button } from "@ui";
 
 const Plugins = lazy(() => import("./settings/Plugins"));
@@ -67,7 +66,7 @@ type SettingSection = {
 
 export default function Settings(props: SettingsProps) {
 	const { state, dispatch } = useStore();
-	const currentRealm = createMemo(() => state.realm.current);
+	const currentRealm = createMemo(() => state.settings.realm!);
 	const [selected, setSelected] = createSignal(props.selected || "general");
 	const sections = createMemo(() => {
 		const SECTIONS: SettingSection[] = [
@@ -207,7 +206,6 @@ export default function Settings(props: SettingsProps) {
 							</div>
 							<Button.Root
 								class="my-auto ml-auto shrink-0"
-								onclick={() => toggleRealm()}
 								variant="ghost"
 								icon
 							>

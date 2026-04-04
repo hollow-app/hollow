@@ -4,9 +4,9 @@ import { Storage } from "@app/managers/Storage";
 import { join } from "@tauri-apps/api/path";
 import { hollow } from "../../../hollow";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { getCurrentRealm } from "@shared/managers/Realm";
+import { getCurrentRealm } from "@app/managers/Settings/effects.ts";
 import { vault_add, vault_add_url, vault_remove } from "@rust";
-import { _dispatch } from "@shared/store/effects";
+import { _dispatch } from "@app/store/effects";
 
 let store: Storage | null = null;
 

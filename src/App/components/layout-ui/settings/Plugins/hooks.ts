@@ -43,7 +43,7 @@ export interface PluginsHook {
 }
 
 import { HandType } from "@app/type/HandType";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { getHand } from "@app/managers/Module/effects";
 import { add_plugin, reload } from "@rust";
 import { EventEmitterSource } from "@app/utils/manipulation/strings";

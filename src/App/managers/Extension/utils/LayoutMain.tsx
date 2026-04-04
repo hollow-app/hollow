@@ -1,6 +1,6 @@
 import {
 	IStore,
-	PanelCapability,
+	LayoutCapability,
 	PluginResult,
 	rawPluginCapability,
 	ToolApi,
@@ -9,7 +9,7 @@ import { createRoot, JSX } from "solid-js";
 import { buildPluginIframe } from ".";
 import { render } from "solid-js/web";
 
-export class LayoutMain implements PanelCapability {
+export class LayoutMain implements LayoutCapability {
 	private store: IStore;
 	private capability: rawPluginCapability;
 	private iframe: HTMLIFrameElement;

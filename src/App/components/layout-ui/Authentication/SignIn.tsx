@@ -5,7 +5,7 @@ import { Separator } from "@component/ui/Separator";
 import { Button, Input } from "@ui";
 import { Turnstile, useTurnstile } from "@component/Turnstile";
 import { onCleanup } from "solid-js";
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 import { Auth } from "@lib";
 import { hollow } from "hollow";
 

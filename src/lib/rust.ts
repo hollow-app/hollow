@@ -14,6 +14,7 @@ import { hollow } from "../hollow";
 import { importFileUrl } from "../App/managers/Vault";
 import { ClientUser } from "center";
 import { join } from "@tauri-apps/api/path";
+import { Realm } from "@app/type/Realm";
 
 const PLUGIN_FILES = ["index.js", "manifest.json", "icon.svg"] as const;
 
@@ -248,4 +249,58 @@ async function exchangePluginHandlers(
 			}),
 		})),
 	);
+}
+
+//
+
+export async function get_current_realm(): Promise<Realm | null> {
+	return invoke<Realm | null>("get_current_realm");
+}
+
+export async function has_realm_selected(): Promise<boolean> {
+	return invoke<boolean>("has_realm_selected");
+}
+
+export async function get_realms(): Promise<Realm[]> {
+	return invoke<Realm[]>("get_realms");
+}
+
+export async function select_realm(id: string): Promise<void> {
+	return invoke("select_realm", { id });
+}
+
+export async function add_realm(realm: Realm): Promise<void> {
+	return invoke("add_realm", { realm });
+}
+
+export async function update_realm(realm: Realm): Promise<void> {
+	return invoke("update_realm", { updated_realm: realm });
+}
+
+export async function remove_realm(id: string): Promise<void> {
+	return invoke("remove_realm", { id });
+}
+
+export async function toggle_select_realm_on_startup(): Promise<boolean> {
+	return invoke<boolean>("toggle_select_realm_on_startup");
+}
+
+export async function open_main_window(): Promise<void> {
+	return invoke("open_main_window");
+}
+
+export async function open_realm_selector(): Promise<void> {
+	return invoke("open_realm_selector");
+}
+
+export async function get_realms_config(): Promise<any> {
+	return invoke("get_realms_config");
+}
+export async function update_realms_config(config: any) {
+	try {
+		await invoke("update_full_store", { newData: config });
+		console.log("Configuration synced to disk!");
+	} catch (error) {
+		console.error("Failed to sync settings:", error);
+	}
 }

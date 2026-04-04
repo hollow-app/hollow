@@ -20,7 +20,7 @@ import {
 import { EventsManager } from "../EventsManager";
 import { ImageMain } from "@app/(Core Tools)/Image/ImageMain";
 import { Events, ExtensionMeta, ExtensionState } from "./type";
-import { _dispatch } from "@shared/store/effects";
+import { _dispatch } from "@app/store/effects";
 import { NotebookMain } from "@app/(Core Tools)/NoteBook/NotebookMain";
 import { KanbanMain } from "@app/(Core Tools)/Kanban/KanbanMain";
 import { EmbedMain } from "@app/(Core Tools)/Embed/EmbedMain";
@@ -28,7 +28,7 @@ import { ModuleMain } from "./utils/ModuleMain";
 import { LayoutMain } from "./utils/LayoutMain";
 import { buildPluginIframe } from "./utils";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { getCurrentRealm } from "@shared/managers/Realm";
+import { getCurrentRealm } from "@app/managers/Settings/effects.ts";
 
 // TODO needs to be inside an uneditable place , local file
 // maybe add this to extension state as well

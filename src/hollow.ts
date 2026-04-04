@@ -6,6 +6,7 @@ import {
 	HollowEvent,
 } from "@app/type/hollow";
 import { PrivateEvents } from "@app/type/PrivateEvents";
+import { Realm } from "@app/type/Realm";
 type hollowType = {
 	onCopy?: () => void;
 	onCut?: () => void;
@@ -14,6 +15,7 @@ type hollowType = {
 	coreLayouts: string[];
 	events: HollowEvent<AppEvents, AppEventReturns>;
 	pevents: HollowEvent<PrivateEvents>;
+	realm?: Realm;
 	pause: {
 		auth: boolean;
 	};

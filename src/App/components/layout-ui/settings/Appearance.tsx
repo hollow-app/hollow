@@ -25,7 +25,7 @@ import {
 } from "@ui";
 import useGrid from "@app/hooks/useGrid";
 import { readableColor } from "polished";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { renderMarkdown } from "@app/managers/Markdown";
 import SettingsPanel from "./SettingsPanel";
 
@@ -126,7 +126,7 @@ function CanvasSettings() {
 
 function ColorSettings() {
 	const { state, dispatch } = useStore();
-	const realmId = state.realm.current.id;
+	const realmId = state.settings.realm.id;
 	const primaryColor = createMemo(
 		() =>
 			JSON.parse(localStorage.getItem(`${realmId}-color-primary`))
@@ -140,14 +140,14 @@ function ColorSettings() {
 
 	const setPrimaryColor = (c: string) => {
 		dispatch({
-			domain: "realm",
+			domain: "settings",
 			type: "update-colors",
 			colors: { primary: c },
 		});
 	};
 	const setSecondaryColor = (c: string) => {
 		dispatch({
-			domain: "realm",
+			domain: "settings",
 			type: "update-colors",
 			colors: { secondary: c },
 		});

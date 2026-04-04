@@ -15,7 +15,7 @@ import {
 } from "@app/type/hollow";
 import { EventsManager } from "../EventsManager";
 import { ToolMetadata } from "@app/type/ToolMetadata";
-import { getCurrentRealm } from "@shared/managers/Realm";
+import { getCurrentRealm } from "@app/managers/Settings/effects.ts";
 import * as cfm from "@app/managers/CardFS";
 import { create_dir, remove_dir } from "@rust";
 import { getPluginEvents } from "../Extension/effects";

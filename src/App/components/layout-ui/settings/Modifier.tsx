@@ -2,7 +2,7 @@ import { KeyIcon } from "lucide-solid";
 import { createMemo, createSignal, Show } from "solid-js";
 import { hollow } from "../../../../hollow";
 import TextFormater from "@app/components/ui/TextFormater";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { Combobox } from "@ui";
 import SettingsPanel from "./SettingsPanel";
 
@@ -116,7 +116,9 @@ export default function Modifier() {
 									placeholder="Select Key"
 									items={keys}
 									onselect={(v) => {
-										setKey(`${state.realm.current}-${v}`);
+										setKey(
+											`${state.settings.realm.id}-${v}`,
+										);
 										selectKey();
 									}}
 								/>

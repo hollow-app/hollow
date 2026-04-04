@@ -1,5 +1,5 @@
 import { Accessor, createMemo } from "solid-js";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { AccountState } from "@app/managers/Account";
 
 export interface CharacterProps {}

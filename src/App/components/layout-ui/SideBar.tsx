@@ -12,7 +12,7 @@ import { hollow } from "../../../hollow";
 import { MyIconFun } from "@app/components/ui/MyIcon";
 import { DynamicIcon } from "@app/components/ui/DynamicIcon";
 import { guide } from "@app/utils/help";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { registerHotkeyEvent } from "@app/managers/Hotkeys";
 import {
 	getLayoutCore,

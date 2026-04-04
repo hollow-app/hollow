@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 import { hollow } from "../../../../hollow";
 import { CardType } from "@app/type/hollow";
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 import { getHand } from "@app/managers/Module/effects";
 import { Combobox, ColorButton, NumberInput } from "@ui";
 

@@ -1,8 +1,8 @@
 import { Component, lazy } from "solid-js";
 import { LayoutEvents, LayoutState, LayoutVariant } from "./types";
-import { _dispatch, _state } from "@shared/store/effects";
+import { _dispatch, _state } from "@app/store/effects";
 import { hollow } from "../../../hollow";
-import { RootState } from "@shared/store/types";
+import { RootState } from "@app/store/types";
 import { LayoutWrapper } from "./utils/LayoutWrapper";
 import {
 	CapabilityMeta,
@@ -10,7 +10,7 @@ import {
 	LayoutCapabilityMeta,
 	PluginCapability,
 } from "@app/type/hollow";
-import { DispatchType } from "@shared/store";
+import { DispatchType } from "@app/store";
 
 const Expand = lazy(() => import("@app/components/layout-ui/sidebars/Expand"));
 const Character = lazy(

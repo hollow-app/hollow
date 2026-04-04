@@ -1,7 +1,7 @@
 import { Events, NotificationsState } from "./type";
 import { NotifyType } from "@app/type/NotifyType";
 import { isExpired, weekOld } from "../../utils/manipulation/strings";
-import { _dispatch } from "@shared/store/effects";
+import { _dispatch } from "@app/store/effects";
 
 export function setupNotifications(d: (action: any) => void) {
 	const savedData = localStorage.getItem("notifications");

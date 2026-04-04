@@ -3,7 +3,7 @@ import SignIn from "../../Authentication/SignIn";
 import Authentication from "../../Authentication";
 import { Auth } from "@lib";
 import { Show } from "solid-js";
-import { useStore } from "@shared/store";
+import { useStore } from "@app/store";
 
 export function Skeleton() {
 	const { state } = useStore();

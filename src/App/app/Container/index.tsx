@@ -4,7 +4,7 @@ import Navbar from "../../components/layout-ui/sidebars/Navbar";
 import Canvas from "../../components/layout-ui/Canvas";
 import Sidepanel from "./Sidepanel";
 import { useContainer } from "./hooks";
-import { StoreProvider, useStore } from "@shared/store";
+import { StoreProvider, useStore } from "@app/store";
 
 const Settings = lazy(
 	async () => import("../../components/layout-ui/Settings"),

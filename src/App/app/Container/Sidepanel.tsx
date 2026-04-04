@@ -1,7 +1,7 @@
 import { getLayoutCore, LayoutVariant } from "@app/managers/layout";
 import { createMemo, For, Show } from "solid-js";
 import { Motion, Presence } from "solid-motionone";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 
 type SidepanelProps = {
 	type: LayoutVariant;

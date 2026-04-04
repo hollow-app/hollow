@@ -1,6 +1,6 @@
 import { TagType } from "@app/type/hollow";
 import setStyle from "./setStyle";
-import { _dispatch } from "@shared/store/effects";
+import { _dispatch } from "@app/store/effects";
 import { getSettingsConfig } from "@app/managers/Settings/effects";
 
 export default function useTags(tags?: TagType[]) {

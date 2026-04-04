@@ -1,7 +1,7 @@
 import { TagType } from "../type/hollow";
 import { GridStackOptions } from "gridstack";
 import { ContextEvents } from "./type";
-import { _dispatch } from "@shared/store/effects";
+import { _dispatch } from "@app/store/effects";
 
 export const setTags = (tags: TagType[]): ContextEvents => ({
 	domain: "context",

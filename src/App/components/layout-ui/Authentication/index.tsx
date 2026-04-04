@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import { useStore } from "@store";
+import { useStore } from "@app/store";
 import { AuthenticationProps, useAuthentication } from "./hooks";
 import { DialogContext, GradientEffect } from "@ui";
 import { Motion, Presence } from "solid-motionone";

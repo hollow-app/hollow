@@ -12,7 +12,6 @@ import {
 	notificationsEffects,
 	setupNotifications,
 } from "@app/managers/Notifications";
-import { realmEffects, setupRealm } from "../managers/Realm";
 import { setupLayout, layoutEffects } from "@app/managers/layout";
 import {
 	extensionEffects,
@@ -33,7 +32,6 @@ export function runEffects(action: Action, state: RootState) {
 		vaultEffects(action as any, state.vault),
 		notificationsEffects(action as any, state.notifications),
 		layoutEffects(action as any, state.layout),
-		realmEffects(action as any, state.realm),
 	];
 
 	const promises = results.filter(
@@ -51,14 +49,13 @@ export async function setupEffects(
 ) {
 	_dispatch = dispatch;
 	_state = getState;
-	await setupRealm(dispatch);
 	// plugins wait for extension to setup
 	setupModule(dispatch);
 	setupLayout(dispatch, getState);
 	await setupExtension(dispatch);
 	//
 	setupAccount(dispatch, getState);
-	setupSettings(dispatch);
+	await setupSettings(dispatch);
 	setupCodeTheme(dispatch);
 	setupHotkeys(dispatch);
 	setupVault(dispatch);
